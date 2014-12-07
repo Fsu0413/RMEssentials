@@ -157,4 +157,19 @@ Are you sure?</source>
         <translation>文件名：</translation>
     </message>
 </context>
+<context>
+    <name>MainDialog</name>
+    <message>
+        <source>Rhythm Master Essensials</source>
+        <translation>节奏大师工具箱</translation>
+    </message>
+    <message>
+        <source>Filename Changer</source>
+        <translation>文件改名器</translation>
+    </message>
+    <message>
+        <source>File Downloader</source>
+        <translation>文件下载器</translation>
+    </message>
+</context>
 </TS>
