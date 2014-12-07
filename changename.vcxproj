@@ -262,7 +262,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Debug\moc_maindialog.cpp">
+    <ClCompile Include="Debug\moc_ChangeNameDialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -281,8 +281,8 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="maindialog.cpp" />
-    <ClCompile Include="Release\moc_maindialog.cpp">
+    <ClCompile Include="ChangeNameDialog.cpp" />
+    <ClCompile Include="Release\moc_ChangeNameDialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -294,23 +294,23 @@
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="maindialog.h">
+    <CustomBuild Include="ChangeNameDialog.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing maindialog.h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing maindialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing ChangeNameDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing ChangeNameDialog.h...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing maindialog.h...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing maindialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing ChangeNameDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing ChangeNameDialog.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <CustomBuild Include="renamer.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013"</Command>

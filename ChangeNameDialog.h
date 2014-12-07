@@ -8,14 +8,14 @@ class QLabel;
 class QString;
 class QLayout;
 
-class MainDialog : public QDialog
+class ChangeNameDialog : public QDialog
 {
     Q_OBJECT
 
 public:
 
-    MainDialog(QWidget *parent = 0);
-    ~MainDialog();
+    ChangeNameDialog(QWidget *parent = 0);
+    ~ChangeNameDialog();
 
 private:
     QLineEdit *m_folderName;

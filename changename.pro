@@ -11,11 +11,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        maindialog.cpp \
+        ChangeNameDialog.cpp \
     utils.cpp \
     renamer.cpp
 
-HEADERS  += maindialog.h \
+HEADERS  += ChangeNameDialog.h \
     utils.h \
     renamer.h
 

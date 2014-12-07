@@ -60,20 +60,11 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="maindialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="renamer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_maindialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_maindialog.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="Debug\moc_renamer.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -84,17 +75,26 @@
     <ClCompile Include="GeneratedFiles\qrc_lang.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\moc_ChangeNameDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_ChangeNameDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="ChangeNameDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="maindialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="renamer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <CustomBuild Include="ChangeNameDialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="changename.ts">

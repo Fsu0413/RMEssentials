@@ -1,4 +1,4 @@
-#include "maindialog.h"
+#include "ChangeNameDialog.h"
 #include "utils.h"
 #include "renamer.h"
 #include <QLabel>
@@ -14,7 +14,7 @@
 
 
 
-QLayout *MainDialog::layFiles(QLabel *labels[12]) {
+QLayout *ChangeNameDialog::layFiles(QLabel *labels[12]) {
     static QStringList layDecriptions;
     if (layDecriptions.isEmpty())
         layDecriptions << tr("MP3:")          << tr("Big PNG:")        << tr("Small PNG:")
@@ -36,7 +36,7 @@ QLayout *MainDialog::layFiles(QLabel *labels[12]) {
     return totalLayout;
 }
 
-MainDialog::MainDialog(QWidget *parent)
+ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle(tr("RMNameChanger"));
@@ -48,10 +48,10 @@ MainDialog::MainDialog(QWidget *parent)
     m_folderName = new QLineEdit;
     m_folderName->setPlaceholderText(tr("Browse the folder using the Browse button"));
     m_folderName->setReadOnly(true);
-    connect(this, &MainDialog::enable_widgets, m_folderName, &QLineEdit::setEnabled);
+    connect(this, &ChangeNameDialog::enable_widgets, m_folderName, &QLineEdit::setEnabled);
     QPushButton *browseButton = new QPushButton(tr("Browse..."));
-    connect(browseButton, &QPushButton::clicked, this, &MainDialog::selectFolder);
-    connect(this, &MainDialog::enable_widgets, browseButton, &QPushButton::setEnabled);
+    connect(browseButton, &QPushButton::clicked, this, &ChangeNameDialog::selectFolder);
+    connect(this, &ChangeNameDialog::enable_widgets, browseButton, &QPushButton::setEnabled);
     QHBoxLayout *layout1 = new QHBoxLayout;
     layout1->addWidget(m_folderName);
     layout1->addWidget(browseButton);
@@ -60,7 +60,7 @@ MainDialog::MainDialog(QWidget *parent)
     m_toRename = new QLineEdit;
     m_toRename->setPlaceholderText(tr("Input the name to rename"));
     flayout->addRow(tr("Rename:"), m_toRename);
-    connect(this, &MainDialog::enable_widgets, m_toRename, &QLineEdit::setEnabled);
+    connect(this, &ChangeNameDialog::enable_widgets, m_toRename, &QLineEdit::setEnabled);
 
     totalLayout->addLayout(flayout);
 
@@ -75,21 +75,21 @@ MainDialog::MainDialog(QWidget *parent)
     totalLayout->addLayout(filesLayout);
 
     QPushButton *renameButton = new QPushButton(tr("Rename!"));
-    connect(this, &MainDialog::enable_widgets, renameButton, &QPushButton::setEnabled);
-    connect(renameButton, &QPushButton::clicked, this, &MainDialog::renameAsk);
+    connect(this, &ChangeNameDialog::enable_widgets, renameButton, &QPushButton::setEnabled);
+    connect(renameButton, &QPushButton::clicked, this, &ChangeNameDialog::renameAsk);
     totalLayout->addWidget(renameButton);
 
     setLayout(totalLayout);
 
-    connect(this, &MainDialog::folder_selected, this, &MainDialog::checkFiles);
+    connect(this, &ChangeNameDialog::folder_selected, this, &ChangeNameDialog::checkFiles);
 }
 
-MainDialog::~MainDialog()
+ChangeNameDialog::~ChangeNameDialog()
 {
 
 }
 
-void MainDialog::selectFolder()
+void ChangeNameDialog::selectFolder()
 {
 #ifdef Q_OS_ANDROID
     QString dir;
@@ -117,7 +117,7 @@ void MainDialog::selectFolder()
     emit folder_selected(d.absolutePath());
 }
 
-void MainDialog::renameAsk()
+void ChangeNameDialog::renameAsk()
 {
     if (m_toRename->text().isEmpty()) {
         QMessageBox::information(this, windowTitle(), tr("Please enter the new name"));
@@ -131,13 +131,13 @@ void MainDialog::renameAsk()
         Renamer *renamer = new Renamer;
         renamer->setDir(QDir(m_folderName->text()));
         renamer->setToRename(m_toRename->text());
-        connect(renamer, &Renamer::rename_finished, this, &MainDialog::renameFinished);
+        connect(renamer, &Renamer::rename_finished, this, &ChangeNameDialog::renameFinished);
         connect(renamer, &Renamer::finished, renamer, &Renamer::deleteLater);
         renamer->run();
     }
 }
 
-void MainDialog::checkFiles(const QString &folder)
+void ChangeNameDialog::checkFiles(const QString &folder)
 {
     static const QString strExists = tr("Exists");
     static const QString strMissing = tr("Missing");
@@ -177,7 +177,7 @@ void MainDialog::checkFiles(const QString &folder)
     }
 }
 
-void MainDialog::renameFinished(bool succeeded)
+void ChangeNameDialog::renameFinished(bool succeeded)
 {
     if (!succeeded)
         QMessageBox::critical(this, tr("Error"), tr("unknown error"));

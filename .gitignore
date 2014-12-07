@@ -36,3 +36,4 @@ changename.exe
 *.user
 [Dd]ebug/
 [Rr]elease/
+*.opensdf
