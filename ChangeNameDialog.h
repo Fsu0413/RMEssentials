@@ -1,5 +1,5 @@
-#ifndef __MAINDIALOG_H__
-#define __MAINDIALOG_H__
+#ifndef __CHANGENAMEDIALOG_H__
+#define __CHANGENAMEDIALOG_H__
 
 #include <QDialog>
 
