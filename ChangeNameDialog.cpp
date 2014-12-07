@@ -14,7 +14,7 @@
 
 
 
-QLayout *ChangeNameDialog::layFiles(QLabel *labels[12]) {
+QLayout *ChangeNameDialog::layFiles(QLabel *labels[18]) {
     static QStringList layDecriptions;
     if (layDecriptions.isEmpty())
         layDecriptions << tr("MP3:")          << tr("Big PNG:")        << tr("Small PNG:")
@@ -82,11 +82,6 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     setLayout(totalLayout);
 
     connect(this, &ChangeNameDialog::folder_selected, this, &ChangeNameDialog::checkFiles);
-}
-
-ChangeNameDialog::~ChangeNameDialog()
-{
-
 }
 
 void ChangeNameDialog::selectFolder()
