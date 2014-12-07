@@ -17,6 +17,7 @@ private:
     bool renameMp3();
     bool renameBigPng();
     bool renameSmallPng();
+    bool renamePapaPngs();
     bool renameImds();
     bool renameSelf();
     bool deleteExtra();

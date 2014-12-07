@@ -38,7 +38,7 @@ void Renamer::run()
         return;
     }
 
-    if (!(renameMp3() && renameBigPng() && renameImds() && renameSmallPng() && renameSelf())) {
+    if (!(renameMp3() && renameBigPng() && renameImds() && renameSmallPng() && renamePapaPngs() && renameSelf())) {
         emit rename_finished(false);
         return;
     }
@@ -118,28 +118,56 @@ bool Renamer::renameSmallPng()
     return true;
 }
 
+bool Renamer::renamePapaPngs()
+{
+    // in fact, not all notes has Papa mode, so ignore the result here
+    static QStringList l;
+    if (l.isEmpty())
+        l << "*.png";
+
+    QString origname_small;
+    QString origname_big;
+    foreach (const QString &s, m_d.entryList(l)) {
+        if (s.toLower() == (m_d.dirName() + "_title_140_90.png").toLower()) {
+            origname_small = s;
+            break;
+        } else if (s.toLower() == (m_d.dirName() + "_ipad.png").toLower()) {
+            origname_big = s;
+        }
+    }
+
+    if (!origname_small.isEmpty())
+        m_d.rename(origname_small, m_toRename + "_title_140_90.png");
+    if (!origname_big.isEmpty())
+        m_d.rename(origname_big, m_toRename + "_ipad.png");
+
+    return true;
+}
 
 bool Renamer::renameImds()
 {
-    static QMap<ExistImd, QString> suffixs;
+    static QMap<ExistNote, QString> suffixs;
     if (suffixs.isEmpty()) {
-        suffixs[IMD_4K_EZ] = "_4k_ez";
-        suffixs[IMD_4K_NM] = "_4k_nm";
-        suffixs[IMD_4K_HD] = "_4k_hd";
-        suffixs[IMD_5K_EZ] = "_5k_ez";
-        suffixs[IMD_5K_NM] = "_5k_nm";
-        suffixs[IMD_5K_HD] = "_5k_hd";
-        suffixs[IMD_6K_EZ] = "_6k_ez";
-        suffixs[IMD_6K_NM] = "_6k_nm";
-        suffixs[IMD_6K_HD] = "_6k_hd";
+        suffixs[IMD_4K_EZ] = "_4k_ez.imd";
+        suffixs[IMD_4K_NM] = "_4k_nm.imd";
+        suffixs[IMD_4K_HD] = "_4k_hd.imd";
+        suffixs[IMD_5K_EZ] = "_5k_ez.imd";
+        suffixs[IMD_5K_NM] = "_5k_nm.imd";
+        suffixs[IMD_5K_HD] = "_5k_hd.imd";
+        suffixs[IMD_6K_EZ] = "_6k_ez.imd";
+        suffixs[IMD_6K_NM] = "_6k_nm.imd";
+        suffixs[IMD_6K_HD] = "_6k_hd.imd";
+        suffixs[MDE_EZ] = "_Papa_Easy.mde";
+        suffixs[MDE_NM] = "_Papa_Normal.mde";
+        suffixs[MDE_HD] = "_Papa_Hard.mde";
     }
 
 
-    for (ExistImd i = IMD_4K_EZ; i <= IMD_6K_HD; i = static_cast<ExistImd>(i << 1)) {
+    for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
-        file_name.append(m_d.dirName()).append(suffixs[i]).append(".imd");
+        file_name.append(m_d.dirName()).append(suffixs[i]);
         if (m_d.exists(file_name))
-            m_d.rename(file_name, m_toRename + suffixs[i] + ".imd");
+            m_d.rename(file_name, m_toRename + suffixs[i]);
     }
 
     return true;
