@@ -15,13 +15,15 @@ SOURCES += main.cpp\
     utils.cpp \
     renamer.cpp \
     DownloadDialog.cpp \
-    downloader.cpp
+    downloader.cpp \
+    maindialog.cpp
 
 HEADERS  += ChangeNameDialog.h \
     utils.h \
     renamer.h \
     DownloadDialog.h \
-    downloader.h
+    downloader.h \
+    maindialog.h
 
 CONFIG += mobility
 MOBILITY = 
@@ -32,3 +34,5 @@ RESOURCES += \
 TRANSLATIONS += changename.ts
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+FORMS +=

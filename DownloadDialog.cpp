@@ -34,8 +34,6 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     setLayout(alllayout);
 }
 
-
-
 void DownloadDialog::startDownload() {
     static QStringList suffixs;
     static QString prefix = "http://game.ds.qq.com/Com_SongRes/song/";

@@ -102,6 +102,15 @@
     <ClCompile Include="Release\moc_DownloadDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\moc_maindialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Release\moc_maindialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="maindialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="renamer.h">
@@ -117,6 +126,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="DownloadDialog.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="maindialog.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
