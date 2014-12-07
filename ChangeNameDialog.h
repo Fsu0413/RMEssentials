@@ -14,7 +14,7 @@ class ChangeNameDialog : public QDialog
 
 public:
 
-    ChangeNameDialog(QWidget *parent = 0);
+    ChangeNameDialog(QWidget *parent = NULL);
     ~ChangeNameDialog();
 
 private:

@@ -39,7 +39,7 @@ QLayout *ChangeNameDialog::layFiles(QLabel *labels[12]) {
 ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(tr("RMNameChanger"));
+    setWindowTitle(tr("Rhythm Master Filename Changer"));
 
     QVBoxLayout *totalLayout = new QVBoxLayout;
 

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets network
 
 TARGET = changename
 TEMPLATE = app
@@ -13,11 +13,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         ChangeNameDialog.cpp \
     utils.cpp \
-    renamer.cpp
+    renamer.cpp \
+    DownloadDialog.cpp \
+    downloader.cpp
 
 HEADERS  += ChangeNameDialog.h \
     utils.h \
-    renamer.h
+    renamer.h \
+    DownloadDialog.h \
+    downloader.h
 
 CONFIG += mobility
 MOBILITY = 

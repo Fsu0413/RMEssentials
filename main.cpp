@@ -1,4 +1,5 @@
 #include "ChangeNameDialog.h"
+#include "DownloadDialog.h"
 #include <QApplication>
 #include <QTranslator>
 
@@ -18,7 +19,7 @@ int main(int argc, char *argv[])
     translator.load(":/changename.qm");
     qApp->installTranslator(&translator);
 
-    ChangeNameDialog w;
+    DownloadDialog w;
 
 #ifdef Q_OS_ANDROID
     w.showMaximized();

@@ -2,7 +2,79 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>MainDialog</name>
+    <name>ChangeNameDialog</name>
+    <message>
+        <source>MP3:</source>
+        <translation>MP3：</translation>
+    </message>
+    <message>
+        <source>Big PNG:</source>
+        <translation>大PNG图：</translation>
+    </message>
+    <message>
+        <source>Small PNG:</source>
+        <translation>小PNG图：</translation>
+    </message>
+    <message>
+        <source>Papa Big PNG:</source>
+        <translation>星动大图：</translation>
+    </message>
+    <message>
+        <source>Para Small PNG:</source>
+        <translation>星动小图：</translation>
+    </message>
+    <message>
+        <source>4K Easy IMD:</source>
+        <translation>4键简单IMD：</translation>
+    </message>
+    <message>
+        <source>4K Normal IMD:</source>
+        <translation>4键一般IMD：</translation>
+    </message>
+    <message>
+        <source>4K Hard IMD:</source>
+        <translation>4键困难IMD：</translation>
+    </message>
+    <message>
+        <source>5K Easy IMD:</source>
+        <translation>5键简单IMD：</translation>
+    </message>
+    <message>
+        <source>5K Normal IMD:</source>
+        <translation>5键一般IMD：</translation>
+    </message>
+    <message>
+        <source>5K Hard IMD:</source>
+        <translation>5键困难IMD：</translation>
+    </message>
+    <message>
+        <source>6K Easy IMD:</source>
+        <translation>6键简单IMD：</translation>
+    </message>
+    <message>
+        <source>6K Normal IMD:</source>
+        <translation>6键一般IMD：</translation>
+    </message>
+    <message>
+        <source>6K Hard IMD:</source>
+        <translation>6键困难IMD：</translation>
+    </message>
+    <message>
+        <source>Easy MDE:</source>
+        <translation>星动简单MDE：</translation>
+    </message>
+    <message>
+        <source>Normal MDE:</source>
+        <translation>星动一般MDE：</translation>
+    </message>
+    <message>
+        <source>Hard MDE:</source>
+        <translation>星动困难MDE：</translation>
+    </message>
+    <message>
+        <source>Rhythm Master Filename Changer</source>
+        <translation>节奏大师文件改名器</translation>
+    </message>
     <message>
         <source>Browse the folder using the Browse button</source>
         <translation>使用浏览按钮浏览文件夹</translation>
@@ -61,57 +133,28 @@ Are you sure?</source>
         <source>Rename succeeded</source>
         <translation>重命名成功</translation>
     </message>
+</context>
+<context>
+    <name>DownloadDialog</name>
     <message>
-        <source>MP3:</source>
-        <translation>MP3：</translation>
+        <source> download successful</source>
+        <translation> 下载完成</translation>
     </message>
     <message>
-        <source>Big PNG:</source>
-        <translation>大PNG图：</translation>
+        <source> download failed</source>
+        <translation> 下载失败</translation>
     </message>
     <message>
-        <source>Small PNG:</source>
-        <translation>小PNG图：</translation>
+        <source>Rhythm Master Downloader</source>
+        <translation>节奏大师文件下载器</translation>
     </message>
     <message>
-        <source>4K Easy IMD:</source>
-        <translation>4键简单IMD:</translation>
+        <source>Download!</source>
+        <translation>下载！</translation>
     </message>
     <message>
-        <source>4K Normal IMD:</source>
-        <translation>4键一般IMD:</translation>
-    </message>
-    <message>
-        <source>4K Hard IMD:</source>
-        <translation>4键困难IMD:</translation>
-    </message>
-    <message>
-        <source>5K Easy IMD:</source>
-        <translation>5键简单IMD:</translation>
-    </message>
-    <message>
-        <source>5K Normal IMD:</source>
-        <translation>5键一般IMD:</translation>
-    </message>
-    <message>
-        <source>5K Hard IMD:</source>
-        <translation>5键困难IMD:</translation>
-    </message>
-    <message>
-        <source>6K Easy IMD:</source>
-        <translation>6键简单IMD:</translation>
-    </message>
-    <message>
-        <source>6K Normal IMD:</source>
-        <translation>6键一般IMD:</translation>
-    </message>
-    <message>
-        <source>6K Hard IMD:</source>
-        <translation>6键困难IMD:</translation>
-    </message>
-    <message>
-        <source>RMNameChanger</source>
-        <translation>节奏大师谱面改名器</translation>
+        <source>Filename:</source>
+        <translation>文件名：</translation>
     </message>
 </context>
 </TS>
