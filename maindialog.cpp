@@ -22,6 +22,8 @@ MainDialog::MainDialog(QWidget *parent)
     alllayout->addWidget(download);
 
     setLayout(alllayout);
+
+    setMinimumWidth(150);
 }
 
 void MainDialog::showChangeNameDialog() {
