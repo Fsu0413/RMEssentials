@@ -4,7 +4,8 @@
 #include <QDialog>
 
 class QListWidget;
-class QLineEdit;
+//class QLineEdit;
+class QComboBox;
 
 class DownloadDialog : public QDialog
 {
@@ -14,6 +15,7 @@ public:
     DownloadDialog(QWidget *parent = NULL);
 
 private:
+    void loadPaths();
     void appendLog(const QString &log);
 
 signals:
@@ -28,7 +30,8 @@ private slots:
 
 private:
     QListWidget *m_list;
-    QLineEdit *m_nameEdit;
+    //QLineEdit *m_nameEdit;
+    QComboBox *m_nameCombo;
 };
 
 #endif

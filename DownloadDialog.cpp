@@ -1,7 +1,8 @@
 #include "DownloadDialog.h"
 #include "downloader.h"
 #include <QListWidget>
-#include <QLineEdit>
+//#include <QLineEdit>
+#include <QComboBox>
 #include <QPushButton>
 
 #include <QFormLayout>
@@ -16,13 +17,16 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QVBoxLayout *alllayout = new QVBoxLayout;
 
     QFormLayout *flayout = new QFormLayout;
-    m_nameEdit = new QLineEdit;
-    connect(this, &DownloadDialog::enable_controls, m_nameEdit, &QLineEdit::setEnabled);
+    //m_nameEdit = new QLineEdit;
+    //connect(this, &DownloadDialog::enable_controls, m_nameEdit, &QLineEdit::setEnabled);
+    m_nameCombo = new QComboBox;
+    m_nameCombo->setEditable(true);
+    connect(this, &DownloadDialog::enable_controls, m_nameCombo, &QComboBox::setEnabled);
     QPushButton *btn = new QPushButton(tr("Download!"));
     connect(btn, &QPushButton::clicked, this, &DownloadDialog::startDownload);
     connect(this, &DownloadDialog::enable_controls, btn, &QPushButton::setEnabled);
     QHBoxLayout *layout1 = new QHBoxLayout;
-    layout1->addWidget(m_nameEdit);
+    layout1->addWidget(m_nameCombo);
     layout1->addWidget(btn);
     flayout->addRow(tr("Filename:"), layout1);
 
@@ -32,6 +36,8 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     alllayout->addLayout(flayout);
     alllayout->addWidget(m_list);
     setLayout(alllayout);
+
+    loadPaths();
 }
 
 void DownloadDialog::startDownload() {
@@ -46,7 +52,7 @@ void DownloadDialog::startDownload() {
 
 
     Downloader *downloader = new Downloader;
-    QString songname = m_nameEdit->text();
+    QString songname = m_nameCombo->currentText();
     foreach (const QString &suf, suffixs)
         (*downloader) << (prefix + songname + "/" + songname + suf);
 
@@ -86,4 +92,61 @@ void DownloadDialog::errorOccurred() {
 void DownloadDialog::appendLog(const QString &log) {
     m_list->addItem(log);
     m_list->scrollToBottom();
+}
+
+void DownloadDialog::loadPaths() {
+    QDir dir("downloader");
+    if (!dir.exists())
+        return;
+
+    QSet<QString> paths;
+
+    if (dir.exists("MD5List.xml")) {
+        QFile f("downloader/MD5List.xml");
+        f.open(QIODevice::ReadOnly);
+        while (!f.atEnd()) {
+            QString s = f.readLine();
+            s = s.trimmed();
+            QRegExp rx("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>");
+            if (rx.exactMatch(s))
+                paths.insert(rx.capturedTexts()[1]);
+        }
+        f.close();
+    }
+
+    if (dir.exists("mrock_song_client_android.bin")) {
+        QFile f("downloader/mrock_song_client_android.bin");
+        f.open(QIODevice::ReadOnly);
+        f.seek(0xcel);
+        while (f.pos() < f.size()) {
+            qDebug() << f.pos();
+            QByteArray s = f.peek(0x40l);
+            QString path = QString::fromUtf8(s);
+            paths.insert(path);
+            f.seek(f.pos() + 0x33el);
+        }
+        f.close();
+    }
+
+    if (dir.exists("mrock_papasong_client.bin")) {
+        QFile f("downloader/mrock_papasong_client.bin");
+        f.open(QIODevice::ReadOnly);
+        f.seek(0xd0l);
+        while (f.pos() < f.size()) {
+            qDebug() << f.pos();
+            QByteArray s = f.peek(0x40l);
+            QString path = QString::fromUtf8(s);
+            paths.insert(path);
+            f.seek(f.pos() + 0x169l);
+        }
+        f.close();
+    }
+
+    QStringList l;
+    foreach (const QString &path, paths)
+        l << path;
+
+    qSort(l);
+
+    m_nameCombo->addItems(l);
 }
