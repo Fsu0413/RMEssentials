@@ -65,20 +65,25 @@ void DownloadDialog::startDownload() {
 
 void DownloadDialog::oneCompleted(const QString &url) {
     QString filename = QUrl(url).fileName();
-    m_list->addItem(filename + tr(" download successful"));
+    appendLog(filename + tr(" download successful"));
 }
 
 void DownloadDialog::oneFailed(const QString &url) {
     QString filename = QUrl(url).fileName();
-    m_list->addItem(filename + tr(" download failed"));
+    appendLog(filename + tr(" download failed"));
 }
 
 void DownloadDialog::allCompleted() {
-    m_list->addItem("All files downloaded");
+    appendLog(tr("All files downloaded"));
     emit enable_controls(true);
 }
 
 void DownloadDialog::errorOccurred() {
-    m_list->addItem("Download failed");
+    appendLog(tr("Download failed"));
     emit enable_controls(true);
+}
+
+void DownloadDialog::appendLog(const QString &log) {
+    m_list->addItem(log);
+    m_list->scrollToBottom();
 }

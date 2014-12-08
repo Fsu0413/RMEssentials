@@ -13,6 +13,9 @@ class DownloadDialog : public QDialog
 public:
     DownloadDialog(QWidget *parent = NULL);
 
+private:
+    void appendLog(const QString &log);
+
 signals:
     void enable_controls(bool);
 
