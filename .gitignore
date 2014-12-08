@@ -30,7 +30,7 @@ Makefile*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
-changename.exe
+RMEssentials.exe
 *.sdf
 *.suo
 *.user
