@@ -6,7 +6,7 @@
 
 QT       += core gui widgets network
 
-TARGET = changename
+TARGET = RMEssentials
 TEMPLATE = app
 
 
