@@ -2,7 +2,6 @@
 
 #include <QNetworkAccessManager>
 #include <QFile>
-#include <QDir>
 
 namespace {
     QNetworkAccessManager mgr;
@@ -10,14 +9,27 @@ namespace {
 
 void Downloader::run()
 {
-    QDir dir(m_savePath);
-    if (!dir.exists()) {
-        dir.cdUp();
-        if (!dir.exists() || !dir.mkdir(m_savePath)) {
+    QDir currentDir = QDir::current();
+    if (!currentDir.cd("downloader")) {
+        if (!currentDir.mkdir("downloader")) {
             emit error();
             return;
         }
+        currentDir.cd("downloader");
     }
+
+    QDir dir = currentDir;
+    if (!m_savePath.isEmpty()) {
+        if (!dir.cd(m_savePath)) {
+            if (!dir.mkdir(m_savePath)) {
+                emit error();
+                return;
+            }
+            dir.cd(m_savePath);
+        }
+    }
+
+    m_downloadDir = dir;
 
     downloadSingleFile();
     
@@ -50,7 +62,7 @@ void Downloader::singleFileFinished() {
     else {
         QIODevice *r = qobject_cast<QIODevice *>(sender());
         QString filename = QUrl(m_currentDownloadingFile).fileName();
-        QFile file(QDir(m_savePath).absoluteFilePath(filename));
+        QFile file(m_downloadDir.absoluteFilePath(filename));
         file.open(QIODevice::Truncate | QIODevice::WriteOnly);
         file.write(r->readAll());
         file.close();
@@ -59,7 +71,7 @@ void Downloader::singleFileFinished() {
             QString new_filename = filename;
             new_filename.chop(4);
             new_filename.append(".png");
-            QDir(m_savePath).rename(filename, new_filename);
+            m_downloadDir.rename(filename, new_filename);
         }
 
         emit one_completed(m_currentDownloadingFile);

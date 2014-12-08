@@ -5,6 +5,7 @@
 #include <QStringList>
 
 #include <QNetworkReply>
+#include <QDir>
 
 class Downloader : public QThread
 {
@@ -44,6 +45,7 @@ private:
     QStringList m_failedList;
     QString m_savePath;
     QString m_currentDownloadingFile;
+    QDir m_downloadDir;
 };
 
 #endif
