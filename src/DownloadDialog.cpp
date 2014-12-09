@@ -24,6 +24,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     m_nameCombo->setEditable(true);
     connect(this, &DownloadDialog::enable_controls, m_nameCombo, &QComboBox::setEnabled);
     QPushButton *btn = new QPushButton(tr("Download!"));
+    btn->setMaximumWidth(150);
     connect(btn, &QPushButton::clicked, this, &DownloadDialog::startDownload);
     connect(this, &DownloadDialog::enable_controls, btn, &QPushButton::setEnabled);
     QHBoxLayout *layout1 = new QHBoxLayout;
@@ -88,6 +89,10 @@ void DownloadDialog::errorOccurred() {
     emit enable_controls(true);
 }
 
+void DownloadDialog::oneUncompressed(const QString &filename) {
+    appendLog(filename + tr(" has been uncompressed"));
+}
+
 void DownloadDialog::startUncompress() {
     Uncompresser *unc = new Uncompresser;
     unc->zipNames << "downloader/MD5List.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin.zip";
@@ -95,7 +100,8 @@ void DownloadDialog::startUncompress() {
 
     connect(unc, &Uncompresser::finished, this, &DownloadDialog::loadPaths);
     connect(unc, &Uncompresser::finished, unc, &Uncompresser::deleteLater);
-    
+    connect(unc, &Uncompresser::signal_file_finished, this, &DownloadDialog::oneUncompressed);
+
     unc->start();
 }
 
@@ -143,6 +149,7 @@ void DownloadDialog::loadPaths() {
                 paths.insert(rx.capturedTexts()[1]);
         }
         f.close();
+        appendLog("MD5List.xml" + tr(" has been loaded"));
     }
 
     if (dir.exists("mrock_song_client_android.bin")) {
@@ -157,6 +164,7 @@ void DownloadDialog::loadPaths() {
             f.seek(f.pos() + 0x33el);
         }
         f.close();
+        appendLog("mrock_song_client_android.bin" + tr(" has been loaded"));
     }
 
     if (dir.exists("mrock_papasong_client.bin")) {
@@ -171,6 +179,7 @@ void DownloadDialog::loadPaths() {
             f.seek(f.pos() + 0x169l);
         }
         f.close();
+        appendLog("mrock_papasong_client.bin" + tr(" has been loaded"));
     }
 
     QStringList l;
@@ -180,6 +189,8 @@ void DownloadDialog::loadPaths() {
     qSort(l);
 
     m_nameCombo->addItems(l);
+
+    appendLog(tr("All files loaded"));
 
     emit enable_controls(true);
 }

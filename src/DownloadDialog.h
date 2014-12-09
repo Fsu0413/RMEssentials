@@ -25,6 +25,7 @@ signals:
 private slots:
     void startDownload();
     void oneCompleted(const QString &url);
+    void oneUncompressed(const QString &filename);
     void oneFailed(const QString &url);
     void errorOccurred();
     void allCompleted();

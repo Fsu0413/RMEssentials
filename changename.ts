@@ -164,6 +164,18 @@ Are you sure?</source>
         <source>Download failed</source>
         <translation>下载失败</translation>
     </message>
+    <message>
+        <source> has been uncompressed</source>
+        <translation> 已解压</translation>
+    </message>
+    <message>
+        <source> has been loaded</source>
+        <translation> 已载入</translation>
+    </message>
+    <message>
+        <source>All files loaded</source>
+        <translation>全部文件已载入</translation>
+    </message>
 </context>
 <context>
     <name>MainDialog</name>

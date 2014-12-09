@@ -16,6 +16,7 @@ void Uncompresser::run() {
             output.write(f.readAll());
             output.close();
             f.close();
+            emit signal_file_finished(fileName);
         }
     }
 }

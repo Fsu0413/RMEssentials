@@ -13,6 +13,9 @@ public:
 
     QStringList zipNames;
     QStringList fileNames;
+
+signals:
+    void signal_file_finished(const QString &filename);
 };
 
 #endif
