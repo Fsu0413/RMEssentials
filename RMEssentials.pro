@@ -90,5 +90,5 @@ linux{
     }
 }
 
-LIBS = -lquazip
+LIBS += -lquazip
 DEFINES += QUAZIP_STATIC
