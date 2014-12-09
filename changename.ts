@@ -156,6 +156,14 @@ Are you sure?</source>
         <source>Filename:</source>
         <translation>文件名：</translation>
     </message>
+    <message>
+        <source>All files downloaded</source>
+        <translation>全部文件已下载</translation>
+    </message>
+    <message>
+        <source>Download failed</source>
+        <translation>下载失败</translation>
+    </message>
 </context>
 <context>
     <name>MainDialog</name>

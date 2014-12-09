@@ -57,13 +57,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renamer.cpp">
+    <ClCompile Include="..\src\renamer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils.cpp">
+    <ClCompile Include="..\src\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Debug\moc_renamer.cpp">
@@ -81,13 +81,13 @@
     <ClCompile Include="Release\moc_ChangeNameDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="ChangeNameDialog.cpp">
+    <ClCompile Include="..\src\ChangeNameDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DownloadDialog.cpp">
+    <ClCompile Include="..\src\DownloadDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="downloader.cpp">
+    <ClCompile Include="..\src\downloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Debug\moc_downloader.cpp">
@@ -108,37 +108,37 @@
     <ClCompile Include="Release\moc_maindialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="maindialog.cpp">
+    <ClCompile Include="..\src\maindialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="renamer.h">
+    <CustomBuild Include="..\src\renamer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="..\src\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <CustomBuild Include="ChangeNameDialog.h">
+    <CustomBuild Include="..\src\ChangeNameDialog.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="downloader.h">
+    <CustomBuild Include="..\src\downloader.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="DownloadDialog.h">
+    <CustomBuild Include="..\src\DownloadDialog.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="maindialog.h">
+    <CustomBuild Include="..\src\maindialog.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <None Include="changename.ts">
+    <None Include="..\changename.ts">
       <Filter>Translation Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="lang.qrc">
+    <CustomBuild Include="..\lang.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
   </ItemGroup>

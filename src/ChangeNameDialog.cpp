@@ -12,8 +12,6 @@
 #include <QStandardPaths>
 #include <QMessageBox>
 
-
-
 QLayout *ChangeNameDialog::layFiles(QLabel *labels[18]) {
     static QStringList layDecriptions;
     if (layDecriptions.isEmpty())
