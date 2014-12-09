@@ -36,4 +36,5 @@ void MainDialog::showDownloadDialog() {
     DownloadDialog *dl = new DownloadDialog;
     connect(dl, &DownloadDialog::finished, dl, &DownloadDialog::deleteLater);
     dl->show();
+    dl->downloadList();
 }

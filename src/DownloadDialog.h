@@ -14,8 +14,9 @@ class DownloadDialog : public QDialog
 public:
     DownloadDialog(QWidget *parent = NULL);
 
+    void downloadList();
+
 private:
-    void loadPaths();
     void appendLog(const QString &log);
 
 signals:
@@ -27,6 +28,8 @@ private slots:
     void oneFailed(const QString &url);
     void errorOccurred();
     void allCompleted();
+    void startUncompress();
+    void loadPaths();
 
 private:
     QListWidget *m_list;

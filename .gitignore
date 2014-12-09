@@ -1,14 +1,4 @@
-# C++ objects and libs
 
-*.slo
-*.lo
-*.o
-*.a
-*.la
-*.lai
-*.so
-*.dll
-*.dylib
 
 # Qt-es
 
@@ -39,3 +29,4 @@ RMEssentials.exe
 *.opensdf
 *.qm
 downloader/
+Qt*.dll

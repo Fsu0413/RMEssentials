@@ -8,6 +8,7 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include "uncompresser.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent)
     : QDialog(parent)
@@ -36,8 +37,6 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     alllayout->addLayout(flayout);
     alllayout->addWidget(m_list);
     setLayout(alllayout);
-
-    loadPaths();
 }
 
 void DownloadDialog::startDownload() {
@@ -87,6 +86,38 @@ void DownloadDialog::allCompleted() {
 void DownloadDialog::errorOccurred() {
     appendLog(tr("Download failed"));
     emit enable_controls(true);
+}
+
+void DownloadDialog::startUncompress() {
+    Uncompresser *unc = new Uncompresser;
+    unc->zipNames << "downloader/MD5List.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin.zip";
+    unc->fileNames << "MD5List.xml" << "mrock_song_client_android.bin" << "mrock_papasong_client.bin";
+
+    connect(unc, &Uncompresser::finished, this, &DownloadDialog::loadPaths);
+    connect(unc, &Uncompresser::finished, unc, &Uncompresser::deleteLater);
+    
+    unc->start();
+}
+
+void DownloadDialog::downloadList() {
+    static const QString md5 = "http://game.ds.qq.com/Com_SongRes/MD5List.zip";
+    static const QString bin = "http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip";
+
+
+    Downloader *downloader = new Downloader;
+    (*downloader) << md5 << bin;
+
+    downloader->setSavePath(QString());
+
+    connect(downloader, &Downloader::finished, downloader, &Downloader::deleteLater);
+    connect(downloader, &Downloader::one_completed, this, &DownloadDialog::oneCompleted);
+    connect(downloader, &Downloader::one_failed, this, &DownloadDialog::oneFailed);
+    connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startUncompress);
+    connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
+
+    emit enable_controls(false);
+
+    downloader->start();
 }
 
 void DownloadDialog::appendLog(const QString &log) {
@@ -149,4 +180,6 @@ void DownloadDialog::loadPaths() {
     qSort(l);
 
     m_nameCombo->addItems(l);
+
+    emit enable_controls(true);
 }
