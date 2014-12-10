@@ -82,10 +82,10 @@ linux{
     else {
         DEFINES += LINUX
         !contains(QMAKE_HOST.arch, x86_64) {
-            LIBS += -L"$$_PRO_FILE_PWD_/lib/linux/x86"
+            LIBS += -L"$$_PRO_FILE_PWD_/lib/linux86"
         }
         else {
-            LIBS += -L"$$_PRO_FILE_PWD_/lib/linux/x64"
+            LIBS += -L"$$_PRO_FILE_PWD_/lib/linux64"
         }
     }
 }
