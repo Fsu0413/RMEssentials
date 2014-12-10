@@ -79,3 +79,8 @@ void Downloader::singleFileFinished() {
 
     downloadSingleFile();
 }
+
+Downloader *operator <<(Downloader *downloader, const QString &filename) {
+    (*downloader) << filename;
+    return downloader;
+}

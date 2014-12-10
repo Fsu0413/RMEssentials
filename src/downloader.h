@@ -48,4 +48,6 @@ private:
     QDir m_downloadDir;
 };
 
+Downloader *operator <<(Downloader *downloader, const QString &filename);
+
 #endif

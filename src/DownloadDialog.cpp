@@ -54,7 +54,7 @@ void DownloadDialog::startDownload() {
     Downloader *downloader = new Downloader;
     QString songname = m_nameCombo->currentText();
     foreach (const QString &suf, suffixs)
-        (*downloader) << (prefix + songname + "/" + songname + suf);
+        downloader << (prefix + songname + "/" + songname + suf);
 
     downloader->setSavePath(songname);
     
@@ -111,7 +111,7 @@ void DownloadDialog::downloadList() {
 
 
     Downloader *downloader = new Downloader;
-    (*downloader) << md5 << bin;
+    downloader << md5 << bin;
 
     downloader->setSavePath(QString());
 
