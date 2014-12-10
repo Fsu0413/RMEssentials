@@ -64,10 +64,14 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 
     QFontMetrics fm(font());
     int width = fm.width(tr("Missing"));
+    int titleWidth = fm.width("_title_ipad");
 
     for (int i = 0; i < 18; ++i) {
         m_filesLabels[i] = new QLabel;
-        m_filesLabels[i]->setMinimumWidth(width);
+        if (i != 2)
+            m_filesLabels[i]->setMinimumWidth(width);
+        else
+            m_filesLabels[2]->setMinimumWidth(titleWidth);
     }
     QLayout *filesLayout = layFiles(m_filesLabels);
     totalLayout->addLayout(filesLayout);
