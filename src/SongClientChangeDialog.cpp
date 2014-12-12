@@ -17,6 +17,22 @@
 
 using namespace RMSong;
 
+/*
+namespace {
+    const char fileheader[0x88] = {
+        0x4D, 0x53, 0x45, 0x53, 0x06, 0x00, 0x00, 0x00, 0x3E, 0x03, 0x00, 0x00, 0x73, 0x01, 0x00, 0x00,
+        0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61,
+        0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x55, 0x54, 0x46, 0x2D, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x32, 0x35, 0x64, 0x35, 0x64, 0x39, 0x66, 0x31, 0x37, 0x37, 0x35, 0x33, 0x65, 0x33, 0x37, 0x32,
+        0x34, 0x37, 0x34, 0x63, 0x63, 0x38, 0x61, 0x61, 0x37, 0x62, 0x33, 0x37, 0x30, 0x65, 0x38, 0x39,
+        0x00, 0x00, 0x00, 0x00, 0x88, 0x00, 0x00, 0x00
+    };
+}
+*/
+
 SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     : QDialog(parent), currentIndex(-1), isLoaded(false)
 {
@@ -36,9 +52,12 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     connect(prevBtn, &QPushButton::clicked, this, &SongClientChangeDialog::movePrev);
     QPushButton *nextBtn = new QPushButton(tr("next"));
     connect(nextBtn, &QPushButton::clicked, this, &SongClientChangeDialog::moveNext);
+    QPushButton *saveCurrentBtn = new QPushButton(tr("save current"));
+    connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientChangeDialog::saveCurrent);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);
     hlayout1->addWidget(nextBtn);
+    hlayout1->addWidget(saveCurrentBtn);
 
     // 2nd, 3rd, 4th lines...
     QHBoxLayout *hlayout234 = new QHBoxLayout;
@@ -253,7 +272,7 @@ void SongClientChangeDialog::movePrev() {
 }
 
 void SongClientChangeDialog::readCurrent() {
-    const SongStruct &c = *(songs[currentIndex]);
+    const SongStruct &c = *(songs.at(currentIndex));
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
 #define RP_ST(p) p->setText(c.m_ ## p)
@@ -316,4 +335,59 @@ void SongClientChangeDialog::calculateSongTime() {
     }
     r = r.left(8);
     szSongTime->setText(r);
+}
+
+void SongClientChangeDialog::saveCurrent() {
+    SongStruct &c = *(songs[currentIndex]);
+
+#define SP_NS(p) c.m_ ## p = p->text().toShort()
+#define SP_NI(p) c.m_ ## p = p->text().toInt()
+#define SP_ST(p) c.m_ ## p = p->text()
+#define SP_BN(p) c.m_ ## p = (p->isChecked() ? 1 : 0)
+#define SP_BL(p) c.m_ ## p = p->isChecked()
+
+    SP_NS(ushSongID);
+    SP_NI(iVersion);
+    SP_ST(szSongName);
+    SP_ST(szPath);
+    SP_ST(szArtist);
+    SP_ST(szComposer);
+    SP_ST(szSongTime);
+    SP_NI(iGameTime);
+    SP_NI(iRegion);
+    SP_NI(iStyle);
+    SP_ST(szBPM);
+    SP_BN(ucIsNew);
+    SP_BN(ucIsHot);
+    SP_BN(ucIsRecommend);
+    SP_BN(ucIsOpen);
+    SP_BL(ucCanBuy);
+    SP_BL(bIsFree);
+    SP_BL(bSongPkg);
+    SP_NI(iOrderIndex);
+    SP_ST(szFreeBeginTime);
+    SP_ST(szFreeEndTime);
+    SP_NS(ush4KeyEasy);
+    SP_NS(ush4KeyNormal);
+    SP_NS(ush4KeyHard);
+    SP_NS(ush5KeyEasy);
+    SP_NS(ush5KeyNormal);
+    SP_NS(ush5KeyHard);
+    SP_NS(ush6KeyEasy);
+    SP_NS(ush6KeyNormal);
+    SP_NS(ush6KeyHard);
+    SP_ST(szNoteNumber);
+    SP_NI(iPrice);
+    SP_ST(szProductID);
+    SP_BN(iVipFlag);
+    SP_BL(bIsHide);
+    SP_BL(bIsReward);
+    SP_BL(bIsLevelReward);
+
+#undef SP_BL
+#undef SP_BN
+#undef SP_ST
+#undef SP_NI
+#undef SP_NS
+
 }
