@@ -216,20 +216,20 @@ bool SongClientChangeDialog::loadFile() {
     QFile f(filepath);
     if (f.open(QIODevice::ReadOnly)) {
         QByteArray ba = f.readAll();
-        //if (ba.size() % 0x33e == 0x88) {
-        for (int i = 0x88; i < ba.size(); i += 0x33e) {
-            QByteArray sp = ba.mid(i, 0x33e);
-            SongStruct *ss = new SongStruct;
-            Array2Song(sp, *ss);
-            songs << ss;
+        if (ba.size() % 0x33e == 0x88) {
+            for (int i = 0x88; i < ba.size(); i += 0x33e) {
+                QByteArray sp = ba.mid(i, 0x33e);
+                SongStruct *ss = new SongStruct;
+                Array2Song(sp, *ss);
+                songs << ss;
+            }
+            if (!songs.isEmpty()) {
+                isLoaded = true;
+                currentIndex = 0;
+                readCurrent();
+                return true;
+            }
         }
-        if (!songs.isEmpty()) {
-            isLoaded = true;
-            currentIndex = 0;
-            readCurrent();
-            return true;
-        }
-        //}
         f.close();
     }
     return false;
