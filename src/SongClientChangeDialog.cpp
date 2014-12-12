@@ -58,6 +58,7 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     iGameTime = new QLineEdit;
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
     iGameTime->setValidator(iGameTimeValidator);
+    connect(iGameTime, &QLineEdit::textEdited, this, &SongClientChangeDialog::calculateSongTime);
     iStyle = new QLineEdit;
     QIntValidator *iStyleValidator = new QIntValidator(0, 20, this);
     iStyle->setValidator(iStyleValidator);
@@ -145,7 +146,7 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     QFormLayout *hlayout10 = new QFormLayout;
     szNoteNumber = new QLineEdit;
     szNoteNumber->setPlaceholderText("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH");
-    szNoteNumber->setInputMask("0009,0009,0009,0009,0009,0009,0009,0009,0009");
+    szNoteNumber->setInputMask("9000,9000,9000,9000,9000,9000,9000,9000,9000");
     AR(hlayout10, szNoteNumber);
 
     // 11th line...
@@ -300,4 +301,19 @@ void SongClientChangeDialog::readCurrent() {
 #undef RP_ST
 #undef RP_NM
 
+}
+
+void SongClientChangeDialog::calculateSongTime() {
+    int gameTime = iGameTime->text().toInt();
+    float songTime = gameTime / 1440.f;
+    QString r = QString::number(songTime);
+    if (r.length() > 8) {
+        int r9 = r.at(8).toLatin1() - 48;
+        if (r9 >= 5) {
+            songTime += 0.000001f;
+            r = QString::number(songTime);
+        }
+    }
+    r = r.left(8);
+    szSongTime->setText(r);
 }

@@ -29,7 +29,7 @@ private slots:
     void moveNext();
     void readCurrent();
     //void addNew();
-    //void calculateSongTime();
+    void calculateSongTime();
 
 signals:
     void enable_controls(bool enable);
