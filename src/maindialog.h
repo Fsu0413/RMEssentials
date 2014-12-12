@@ -13,6 +13,7 @@ public:
 private slots:
     void showDownloadDialog();
     void showChangeNameDialog();
+    void showSongClientChangeDialog();
 };
 
 #endif

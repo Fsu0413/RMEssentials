@@ -17,7 +17,9 @@ SOURCES += src/main.cpp\
     src/DownloadDialog.cpp \
     src/downloader.cpp \
     src/maindialog.cpp \
-    src/uncompresser.cpp
+    src/uncompresser.cpp \
+    src/SongClientChangeDialog.cpp \
+    src/songstruct.cpp
 
 HEADERS  += src/ChangeNameDialog.h \
     src/utils.h \
@@ -25,7 +27,9 @@ HEADERS  += src/ChangeNameDialog.h \
     src/DownloadDialog.h \
     src/downloader.h \
     src/maindialog.h \
-    src/uncompresser.h
+    src/uncompresser.h \
+    src/SongClientChangeDialog.h \
+    src/songstruct.h
 
 CONFIG += mobility
 MOBILITY = 

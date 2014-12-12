@@ -215,6 +215,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\SongClientChangeDialog.cpp" />
+    <ClCompile Include="..\src\songstruct.cpp" />
     <ClCompile Include="..\src\uncompresser.cpp" />
     <ClCompile Include="Debug\moc_ChangeNameDialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -238,6 +240,10 @@
     </ClCompile>
     <ClCompile Include="..\src\DownloadDialog.cpp" />
     <ClCompile Include="..\src\downloader.cpp" />
+    <ClCompile Include="Debug\moc_SongClientChangeDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Debug\moc_uncompresser.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -268,6 +274,10 @@
     </ClCompile>
     <ClCompile Include="..\src\renamer.cpp" />
     <ClCompile Include="..\src\utils.cpp" />
+    <ClCompile Include="Release\moc_SongClientChangeDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Release\moc_uncompresser.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -382,6 +392,25 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DQUAZIP_STATIC -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -DQT_NETWORK_LIB  "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\..\include\quazip" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtNetwork" "-I.\GeneratedFiles"</Command>
     </CustomBuild>
+    <CustomBuild Include="..\src\SongClientChangeDialog.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing SongClientChangeDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DQUAZIP_STATIC -DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_NETWORK_LIB "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\..\include\quazip" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtNetwork" "-I.\GeneratedFiles"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing SongClientChangeDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DQUAZIP_STATIC -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -DQT_NETWORK_LIB "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\..\include\quazip" "-I.\debug" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtNetwork" "-I.\GeneratedFiles"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing SongClientChangeDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DQUAZIP_STATIC -DUNICODE -DWIN32 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_NETWORK_LIB "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\..\include\quazip" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtNetwork" "-I.\GeneratedFiles"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing SongClientChangeDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DQUAZIP_STATIC -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -DQT_NETWORK_LIB "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtCore" "-I.\..\include\quazip" "-I.\release" "-I$(QTDIR)\mkspecs\win32-msvc2013" "-I$(QTDIR)\include\QtNetwork" "-I.\GeneratedFiles"</Command>
+    </CustomBuild>
+    <ClInclude Include="..\src\songstruct.h" />
     <ClInclude Include="..\src\utils.h" />
   </ItemGroup>
   <ItemGroup>
