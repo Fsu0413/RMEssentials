@@ -116,7 +116,6 @@ bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr) {
 #undef SETSTR
 #undef SETX
 
-    //arr.setRawData(c, 0x33e);
     return true;
 }
 
