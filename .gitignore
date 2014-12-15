@@ -30,3 +30,4 @@ RMEssentials.exe
 *.qm
 downloader/
 Qt*.dll
+*.pd_
