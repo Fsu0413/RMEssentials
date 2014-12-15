@@ -54,6 +54,8 @@ bool RMSong::Array2Song(const QByteArray &arr, SongStruct &song) {
 }
 
 bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr) {
+    arr.clear();
+    arr.resize(0x33e);
     char c[0x33e] = {};
 
 #define SETX(name, offset) { \

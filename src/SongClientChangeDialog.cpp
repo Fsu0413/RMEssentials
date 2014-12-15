@@ -17,7 +17,6 @@
 
 using namespace RMSong;
 
-/*
 namespace {
     const char fileheader[0x88] = {
         0x4D, 0x53, 0x45, 0x53, 0x06, 0x00, 0x00, 0x00, 0x3E, 0x03, 0x00, 0x00, 0x73, 0x01, 0x00, 0x00,
@@ -31,7 +30,6 @@ namespace {
         0x00, 0x00, 0x00, 0x00, 0x88, 0x00, 0x00, 0x00
     };
 }
-*/
 
 SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     : QDialog(parent), currentIndex(-1), isLoaded(false)
@@ -54,10 +52,13 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     connect(nextBtn, &QPushButton::clicked, this, &SongClientChangeDialog::moveNext);
     QPushButton *saveCurrentBtn = new QPushButton(tr("save current"));
     connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientChangeDialog::saveCurrent);
+    QPushButton *saveAllBtn = new QPushButton(tr("save file"));
+    connect(saveAllBtn, &QPushButton::clicked, this, &SongClientChangeDialog::saveFile);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);
     hlayout1->addWidget(nextBtn);
     hlayout1->addWidget(saveCurrentBtn);
+    hlayout1->addWidget(saveAllBtn);
 
     // 2nd, 3rd, 4th lines...
     QHBoxLayout *hlayout234 = new QHBoxLayout;
@@ -165,7 +166,7 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     QFormLayout *hlayout10 = new QFormLayout;
     szNoteNumber = new QLineEdit;
     szNoteNumber->setPlaceholderText("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH");
-    szNoteNumber->setInputMask("9000,9000,9000,9000,9000,9000,9000,9000,9000");
+    //szNoteNumber->setInputMask("9000,9000,9000,9000,9000,9000,9000,9000,9000");
     AR(hlayout10, szNoteNumber);
 
     // 11th line...
@@ -255,6 +256,23 @@ bool SongClientChangeDialog::loadFile() {
     return false;
 }
 
+void SongClientChangeDialog::saveFile() {
+    QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+    QFile f(filepath);
+    if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
+        return;
+
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        f.write(fileheader, 0x88);
+        foreach (SongStruct *const &s, songs) {
+            QByteArray arr;
+            Song2Array(*s, arr);
+            f.write(arr.constData(), 0x33e);
+        }
+        f.close();
+    }
+}
+
 void SongClientChangeDialog::moveNext() {
     if (currentIndex + 1 == songs.length())
         return;
@@ -276,7 +294,7 @@ void SongClientChangeDialog::readCurrent() {
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
 #define RP_ST(p) p->setText(c.m_ ## p)
-#define RP_BL(p) p->setChecked(c.m_ ## p);
+#define RP_BL(p) p->setChecked(c.m_ ## p)
 
     RP_NM(ushSongID);
     RP_NM(iVersion);

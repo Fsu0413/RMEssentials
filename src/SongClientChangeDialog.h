@@ -31,6 +31,7 @@ private slots:
     //void addNew();
     void calculateSongTime();
     void saveCurrent();
+    void saveFile();
 
 signals:
     void enable_controls(bool enable);
