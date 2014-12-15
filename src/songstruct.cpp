@@ -56,13 +56,12 @@ bool RMSong::Array2Song(const QByteArray &arr, SongStruct &song) {
 bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr) {
     arr.clear();
     arr.resize(0x33e);
-    char c[0x33e] = {};
 
 #define SETX(name, offset) { \
         int length = sizeof(song.m_ ## name); \
         const char *data = reinterpret_cast<const char *>(&(song.m_ ## name)); \
         for (int i = 0; i < length; ++i) \
-            c[offset + i] = data[i]; \
+            arr[offset + i] = data[i]; \
     }
 
 #define SETSTR(name, offset, len) { \
@@ -70,9 +69,9 @@ bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr) {
         const char *data = dataArr.constData(); \
         for (int i = 0; i < len; ++i) { \
             if (i < dataArr.length()) \
-                c[offset + i] = data[i]; \
+                arr[offset + i] = data[i]; \
             else \
-                c[offset + i] = '\0'; \
+                arr[offset + i] = '\0'; \
         } \
     }
 
@@ -117,7 +116,7 @@ bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr) {
 #undef SETSTR
 #undef SETX
 
-    arr.setRawData(c, 0x33e);
+    //arr.setRawData(c, 0x33e);
     return true;
 }
 
