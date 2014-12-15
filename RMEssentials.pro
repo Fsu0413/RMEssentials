@@ -80,7 +80,7 @@ ios{
 linux{
     android{
         DEFINES += ANDROID
-        ANDROID_LIBPATH = $$_PRO_FILE_PWD_/lib/android/$$ANDROID_ARCHITECTURE/lib
+        ANDROID_LIBPATH = $$_PRO_FILE_PWD_/lib/and$$ANDROID_ARCHITECTURE/
         LIBS += -L"$$ANDROID_LIBPATH"
     }
     else {
@@ -94,5 +94,7 @@ linux{
     }
 }
 
-LIBS += -lquazip
+CONFIG(debug, debug|release):LIBS += -lquazip_d
+else:LIBS += -lquazip
+
 DEFINES += QUAZIP_STATIC
