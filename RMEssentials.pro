@@ -43,6 +43,10 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 INCLUDEPATH += include/quazip
 
+win32{
+    RC_FILE += res/icon.rc
+}
+
 LIBS += -L.
 win32-msvc*{
     DEFINES += _CRT_SECURE_NO_WARNINGS

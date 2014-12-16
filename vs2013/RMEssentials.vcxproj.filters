@@ -174,4 +174,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\res\icon.rc" />
+  </ItemGroup>
 </Project>
