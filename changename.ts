@@ -176,6 +176,22 @@ Are you sure?</source>
         <source>All files loaded</source>
         <translation>全部文件已载入</translation>
     </message>
+    <message>
+        <source>Download All</source>
+        <translation>下载全部</translation>
+    </message>
+    <message>
+        <source>Download missing</source>
+        <translation>下载缺失</translation>
+    </message>
+    <message>
+        <source>Download canceled</source>
+        <translation>下载已取消</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
 </context>
 <context>
     <name>MainDialog</name>
