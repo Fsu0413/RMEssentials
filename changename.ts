@@ -191,5 +191,52 @@ Are you sure?</source>
         <source>File Downloader</source>
         <translation>文件下载器</translation>
     </message>
+    <message>
+        <source>Song Client Changer</source>
+        <translation>客户端歌曲修改器</translation>
+    </message>
+</context>
+<context>
+    <name>SongClientChangeDialog</name>
+    <message>
+        <source>prev</source>
+        <translation>前一个</translation>
+    </message>
+    <message>
+        <source>next</source>
+        <translation>后一个</translation>
+    </message>
+    <message>
+        <source>save current</source>
+        <translation>保存当前</translation>
+    </message>
+    <message>
+        <source>save file</source>
+        <translation>保存文件</translation>
+    </message>
+    <message>
+        <source>Better keep empty</source>
+        <translation>最好留空</translation>
+    </message>
+    <message>
+        <source>Number only, Better keep empty</source>
+        <translation>只能输入数字，最好留空</translation>
+    </message>
+    <message>
+        <source>RMEssentials</source>
+        <translation>节奏大师工具箱</translation>
+    </message>
+    <message>
+        <source>mrock_song_client_android.bin doesn&apos;t exist, please select the file to open.</source>
+        <translation>mrock_song_client_android.bin不存在，请选择文件打开。</translation>
+    </message>
+    <message>
+        <source>bin files</source>
+        <translation>bin文件</translation>
+    </message>
+    <message>
+        <source>File is already exists, do you want to overwrite?</source>
+        <translation>文件已存在，覆盖？</translation>
+    </message>
 </context>
 </TS>
