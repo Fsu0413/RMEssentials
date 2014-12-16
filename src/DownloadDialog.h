@@ -5,6 +5,7 @@
 
 class QListWidget;
 class QComboBox;
+class QPushButton;
 
 class DownloadDialog : public QDialog
 {
@@ -20,14 +21,17 @@ private:
 
 signals:
     void busy(bool);
+    void cancel_download();
 
 private slots:
+    void downloadClicked();
     void startDownload();
     void oneCompleted(const QString &url);
     void oneUncompressed(const QString &filename);
     void oneFailed(const QString &url);
     void errorOccurred();
     void allCompleted();
+    void canceled();
     void startUncompress();
     void loadPaths();
     void setBusy(bool b);
@@ -38,6 +42,7 @@ protected:
 private:
     QListWidget *m_list;
     QComboBox *m_nameCombo;
+    QPushButton *m_downloadBtn;
 
     bool m_busy;
 };

@@ -9,6 +9,7 @@ namespace {
 
 void Downloader::run()
 {
+    m_cancelRequested = false;
     QDir currentDir = QDir::current();
     if (!currentDir.cd("downloader")) {
         if (!currentDir.mkdir("downloader")) {
@@ -39,6 +40,10 @@ void Downloader::run()
 void Downloader::downloadSingleFile() {
     if (m_downloadSequence.isEmpty()) {
         emit all_completed();
+        quit();
+        return;
+    } else if (m_cancelRequested) {
+        emit canceled();
         quit();
         return;
     }
@@ -83,4 +88,8 @@ void Downloader::singleFileFinished() {
 Downloader *operator <<(Downloader *downloader, const QString &filename) {
     (*downloader) << filename;
     return downloader;
+}
+
+void Downloader::cancel() {
+    m_cancelRequested = true;
 }

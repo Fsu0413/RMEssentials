@@ -34,8 +34,12 @@ private slots:
     void singleFileFinished();
     void singleFileError(QNetworkReply::NetworkError e);
 
+public slots:
+    void cancel();
+
 signals:
     void all_completed();
+    void canceled();
     void one_completed(const QString &url);
     void one_failed(const QString &url);
     void error();
@@ -46,6 +50,8 @@ private:
     QString m_savePath;
     QString m_currentDownloadingFile;
     QDir m_downloadDir;
+
+    bool m_cancelRequested;
 };
 
 Downloader *operator <<(Downloader *downloader, const QString &filename);

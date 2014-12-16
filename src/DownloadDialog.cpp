@@ -23,13 +23,12 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     m_nameCombo = new QComboBox;
     m_nameCombo->setEditable(true);
     connect(this, &DownloadDialog::busy, m_nameCombo, &QComboBox::setDisabled);
-    QPushButton *btn = new QPushButton(tr("Download!"));
-    btn->setMaximumWidth(150);
-    connect(btn, &QPushButton::clicked, this, &DownloadDialog::startDownload);
-    connect(this, &DownloadDialog::busy, btn, &QPushButton::setDisabled);
+    m_downloadBtn = new QPushButton(tr("Download!"));
+    m_downloadBtn->setMaximumWidth(120);
+    connect(m_downloadBtn, &QPushButton::clicked, this, &DownloadDialog::downloadClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;
     layout1->addWidget(m_nameCombo);
-    layout1->addWidget(btn);
+    layout1->addWidget(m_downloadBtn);
     flayout->addRow(tr("Filename:"), layout1);
 
     m_list = new QListWidget;
@@ -40,6 +39,13 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     setLayout(alllayout);
 
     connect(this, &DownloadDialog::busy, this, &DownloadDialog::setBusy);
+}
+
+void DownloadDialog::downloadClicked() {
+    if (!m_busy)
+        startDownload();
+    else
+        emit cancel_download();
 }
 
 void DownloadDialog::startDownload() {
@@ -64,7 +70,9 @@ void DownloadDialog::startDownload() {
     connect(downloader, &Downloader::one_completed, this, &DownloadDialog::oneCompleted);
     connect(downloader, &Downloader::one_failed, this, &DownloadDialog::oneFailed);
     connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
+    connect(downloader, &Downloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
+    connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
 
     emit busy(true);
 
@@ -88,6 +96,11 @@ void DownloadDialog::allCompleted() {
 
 void DownloadDialog::errorOccurred() {
     appendLog(tr("Download failed"));
+    emit busy(false);
+}
+
+void DownloadDialog::canceled() {
+    appendLog(tr("Download canceled"));
     emit busy(false);
 }
 
@@ -121,7 +134,9 @@ void DownloadDialog::downloadList() {
     connect(downloader, &Downloader::one_completed, this, &DownloadDialog::oneCompleted);
     connect(downloader, &Downloader::one_failed, this, &DownloadDialog::oneFailed);
     connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startUncompress);
+    connect(downloader, &Downloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
+    connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
 
     emit busy(true);
 
@@ -199,6 +214,12 @@ void DownloadDialog::loadPaths() {
 
 void DownloadDialog::setBusy(bool b) {
     m_busy = b;
+    if (b)
+        m_downloadBtn->setText(tr("Cancel"));
+    else {
+        m_downloadBtn->setText(tr("Download!"));
+        m_downloadBtn->setEnabled(true);
+    }
 }
 
 void DownloadDialog::closeEvent(QCloseEvent *e) {
