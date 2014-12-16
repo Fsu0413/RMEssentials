@@ -47,6 +47,10 @@ win32{
     RC_FILE += res/icon.rc
 }
 
+mac{
+    ICON = res/1.icns
+}
+
 LIBS += -L.
 win32-msvc*{
     DEFINES += _CRT_SECURE_NO_WARNINGS
@@ -68,7 +72,7 @@ winrt{
     DEFINES += WINRT
     LIBS += -L"$$_PRO_FILE_PWD_/lib/winrt/x64"
 }
-macx{
+mac{
     DEFINES += MAC
     LIBS += -L"$$_PRO_FILE_PWD_/lib/mac/lib"
 }
