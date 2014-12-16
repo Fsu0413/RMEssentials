@@ -97,4 +97,6 @@ linux{
 CONFIG(debug, debug|release):LIBS += -lquazip_d
 else:LIBS += -lquazip
 
+mac:LIBS += -lz
+
 DEFINES += QUAZIP_STATIC

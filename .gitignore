@@ -31,3 +31,4 @@ RMEssentials.exe
 downloader/
 Qt*.dll
 *.pd_
+.DS_Store
