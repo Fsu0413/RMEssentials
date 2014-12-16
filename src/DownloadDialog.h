@@ -4,7 +4,6 @@
 #include <QDialog>
 
 class QListWidget;
-//class QLineEdit;
 class QComboBox;
 
 class DownloadDialog : public QDialog
@@ -20,7 +19,7 @@ private:
     void appendLog(const QString &log);
 
 signals:
-    void enable_controls(bool);
+    void busy(bool);
 
 private slots:
     void startDownload();
@@ -31,11 +30,16 @@ private slots:
     void allCompleted();
     void startUncompress();
     void loadPaths();
+    void setBusy(bool b);
+
+protected:
+    virtual void closeEvent(QCloseEvent *e);
 
 private:
     QListWidget *m_list;
-    //QLineEdit *m_nameEdit;
     QComboBox *m_nameCombo;
+
+    bool m_busy;
 };
 
 #endif

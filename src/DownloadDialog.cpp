@@ -4,14 +4,14 @@
 //#include <QLineEdit>
 #include <QComboBox>
 #include <QPushButton>
-
+#include <QCloseEvent>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "uncompresser.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(parent), m_busy(false)
 {
     setWindowTitle(tr("Rhythm Master Downloader"));
 
@@ -22,11 +22,11 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     //connect(this, &DownloadDialog::enable_controls, m_nameEdit, &QLineEdit::setEnabled);
     m_nameCombo = new QComboBox;
     m_nameCombo->setEditable(true);
-    connect(this, &DownloadDialog::enable_controls, m_nameCombo, &QComboBox::setEnabled);
+    connect(this, &DownloadDialog::busy, m_nameCombo, &QComboBox::setDisabled);
     QPushButton *btn = new QPushButton(tr("Download!"));
     btn->setMaximumWidth(150);
     connect(btn, &QPushButton::clicked, this, &DownloadDialog::startDownload);
-    connect(this, &DownloadDialog::enable_controls, btn, &QPushButton::setEnabled);
+    connect(this, &DownloadDialog::busy, btn, &QPushButton::setDisabled);
     QHBoxLayout *layout1 = new QHBoxLayout;
     layout1->addWidget(m_nameCombo);
     layout1->addWidget(btn);
@@ -38,6 +38,8 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     alllayout->addLayout(flayout);
     alllayout->addWidget(m_list);
     setLayout(alllayout);
+
+    connect(this, &DownloadDialog::busy, this, &DownloadDialog::setBusy);
 }
 
 void DownloadDialog::startDownload() {
@@ -64,7 +66,7 @@ void DownloadDialog::startDownload() {
     connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
 
-    emit enable_controls(false);
+    emit busy(true);
 
     downloader->start();
 }
@@ -81,12 +83,12 @@ void DownloadDialog::oneFailed(const QString &url) {
 
 void DownloadDialog::allCompleted() {
     appendLog(tr("All files downloaded"));
-    emit enable_controls(true);
+    emit busy(false);
 }
 
 void DownloadDialog::errorOccurred() {
     appendLog(tr("Download failed"));
-    emit enable_controls(true);
+    emit busy(false);
 }
 
 void DownloadDialog::oneUncompressed(const QString &filename) {
@@ -121,7 +123,7 @@ void DownloadDialog::downloadList() {
     connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startUncompress);
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
 
-    emit enable_controls(false);
+    emit busy(true);
 
     downloader->start();
 }
@@ -192,5 +194,16 @@ void DownloadDialog::loadPaths() {
 
     appendLog(tr("All files loaded"));
 
-    emit enable_controls(true);
+    emit busy(false);
+}
+
+void DownloadDialog::setBusy(bool b) {
+    m_busy = b;
+}
+
+void DownloadDialog::closeEvent(QCloseEvent *e) {
+    if (m_busy)
+        e->ignore();
+    else
+        QDialog::closeEvent(e);
 }
