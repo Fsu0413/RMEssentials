@@ -7,6 +7,10 @@ namespace {
     QNetworkAccessManager mgr;
 }
 
+Downloader::Downloader() {
+    m_isAll = false;
+}
+
 void Downloader::run()
 {
     m_cancelRequested = false;
@@ -38,17 +42,30 @@ void Downloader::run()
 }
 
 void Downloader::downloadSingleFile() {
-    if (m_downloadSequence.isEmpty()) {
-        emit all_completed();
+    if (m_cancelRequested) {
+        emit canceled();
         quit();
         return;
-    } else if (m_cancelRequested) {
-        emit canceled();
+    } else if (m_downloadSequence.isEmpty()) {
+        emit all_completed();
         quit();
         return;
     }
 
     m_currentDownloadingFile = m_downloadSequence.takeFirst();
+    if (m_isAll) {
+        QString filename = QUrl(m_currentDownloadingFile).fileName();
+        if (filename.endsWith(".jpg")) { // important hack!!
+            filename.chop(4);
+            filename.append(".png");
+        }
+
+        if (m_downloadDir.exists(filename)) {
+            emit one_completed(m_currentDownloadingFile);
+            downloadSingleFile();
+            return;
+        }
+    }
     QNetworkReply *r = mgr.get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
     connect(r, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     connect(r, &QNetworkReply::finished, this, &Downloader::singleFileFinished);

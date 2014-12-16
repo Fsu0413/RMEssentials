@@ -12,6 +12,12 @@ class DownloadDialog : public QDialog
     Q_OBJECT
 
 public:
+    enum DownloadMode {
+        One ,
+        All ,
+        Mis
+    };
+
     DownloadDialog(QWidget *parent = NULL);
 
     void downloadList();
@@ -25,7 +31,7 @@ signals:
 
 private slots:
     void downloadClicked();
-    void startDownload();
+    void startDownload(DownloadMode mode = One);
     void oneCompleted(const QString &url);
     void oneUncompressed(const QString &filename);
     void oneFailed(const QString &url);
@@ -35,6 +41,11 @@ private slots:
     void startUncompress();
     void loadPaths();
     void setBusy(bool b);
+
+    void startDownloadAll();
+    void startDownloadNext();
+    void startDownloadAllMissing();
+    void startDownloadNextMissing();
 
 protected:
     virtual void closeEvent(QCloseEvent *e);

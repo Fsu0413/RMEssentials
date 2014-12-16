@@ -31,10 +31,21 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     layout1->addWidget(m_downloadBtn);
     flayout->addRow(tr("Filename:"), layout1);
 
+    QPushButton *downloadAllBtn = new QPushButton(tr("Download All"));
+    connect(downloadAllBtn, &QPushButton::clicked, this, &DownloadDialog::startDownloadAll);
+    connect(this, &DownloadDialog::busy, downloadAllBtn, &QPushButton::setDisabled);
+    QPushButton *downloadMissingBtn = new QPushButton(tr("Download missing"));
+    connect(downloadMissingBtn, &QPushButton::clicked, this, &DownloadDialog::startDownloadAllMissing);
+    connect(this, &DownloadDialog::busy, downloadMissingBtn, &QPushButton::setDisabled);
+    QHBoxLayout *layout2 = new QHBoxLayout;
+    layout2->addWidget(downloadAllBtn);
+    layout2->addWidget(downloadMissingBtn);
+
     m_list = new QListWidget;
     m_list->setSortingEnabled(false);
 
     alllayout->addLayout(flayout);
+    alllayout->addLayout(layout2);
     alllayout->addWidget(m_list);
     setLayout(alllayout);
 
@@ -48,7 +59,44 @@ void DownloadDialog::downloadClicked() {
         emit cancel_download();
 }
 
-void DownloadDialog::startDownload() {
+void DownloadDialog::startDownloadAll() {
+    m_nameCombo->setCurrentIndex(0);
+    startDownload(All);
+}
+
+void DownloadDialog::startDownloadNext() {
+    if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1)
+        allCompleted();
+
+    m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
+    startDownload(All);
+}
+
+void DownloadDialog::startDownloadAllMissing() {
+    m_nameCombo->setCurrentIndex(0);
+    while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
+        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1)
+            allCompleted();
+
+        m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
+    }
+
+    startDownload(Mis);
+}
+
+void DownloadDialog::startDownloadNextMissing() {
+    m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
+    while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
+        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1)
+            allCompleted();
+
+        m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
+    }
+
+    startDownload(Mis);
+}
+
+void DownloadDialog::startDownload(DownloadMode mode) {
     static QStringList suffixs;
     static QString prefix = "http://game.ds.qq.com/Com_SongRes/song/";
     if (suffixs.isEmpty())
@@ -69,10 +117,23 @@ void DownloadDialog::startDownload() {
     connect(downloader, &Downloader::finished, downloader, &Downloader::deleteLater);
     connect(downloader, &Downloader::one_completed, this, &DownloadDialog::oneCompleted);
     connect(downloader, &Downloader::one_failed, this, &DownloadDialog::oneFailed);
-    connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
     connect(downloader, &Downloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
+
+    switch (mode) {
+    case All:
+        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNext);
+        downloader->setIsAll(true);
+        break;
+    case One:
+        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
+        break;
+    case Mis:
+        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNextMissing);
+        downloader->setIsAll(true);
+        break;
+    }
 
     emit busy(true);
 
