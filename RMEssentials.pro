@@ -10,26 +10,6 @@ TARGET = RMEssentials
 TEMPLATE = app
 
 
-SOURCES += src/main.cpp\
-        src/ChangeNameDialog.cpp \
-    src/utils.cpp \
-    src/renamer.cpp \
-    src/DownloadDialog.cpp \
-    src/downloader.cpp \
-    src/maindialog.cpp \
-    src/uncompresser.cpp \
-    src/SongClientChangeDialog.cpp \
-    src/songstruct.cpp
-
-HEADERS  += src/ChangeNameDialog.h \
-    src/utils.h \
-    src/renamer.h \
-    src/DownloadDialog.h \
-    src/downloader.h \
-    src/maindialog.h \
-    src/uncompresser.h \
-    src/SongClientChangeDialog.h \
-    src/songstruct.h
 
 CONFIG += mobility
 MOBILITY = 
@@ -41,8 +21,6 @@ TRANSLATIONS += changename.ts
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-INCLUDEPATH += include/quazip
-
 win32{
     RC_FILE += res/icon.rc
 }
@@ -51,60 +29,65 @@ mac{
     ICON = res/1.icns
 }
 
-LIBS += -L.
-win32-msvc*{
-    DEFINES += _CRT_SECURE_NO_WARNINGS
-    !contains(QMAKE_HOST.arch, x86_64) {
-        DEFINES += WIN32
-        LIBS += -L"$$_PRO_FILE_PWD_/lib/win32"
-    } else {
-        DEFINES += WIN64
-        LIBS += -L"$$_PRO_FILE_PWD_/lib/win64"
-    }
-}
-win32-g++{
-    DEFINES += WIN32
-    LIBS += -L"$$_PRO_FILE_PWD_/lib/MinGW"
-    DEFINES += GPP
-}
-winrt{
-    DEFINES += _CRT_SECURE_NO_WARNINGS
-    DEFINES += WINRT
-    LIBS += -L"$$_PRO_FILE_PWD_/lib/winrt/x64"
-}
-mac{
-    DEFINES += MAC
-    LIBS += -L"$$_PRO_FILE_PWD_/lib/mac/lib"
-}
-ios{
-    DEFINES += IOS
-    CONFIG(iphonesimulator){
-        LIBS += -L"$$_PRO_FILE_PWD_/lib/ios/simulator/lib"
-    }
-    else {
-        LIBS += -L"$$_PRO_FILE_PWD_/lib/ios/device/lib"
-    }
-}
-linux{
-    android{
-        DEFINES += ANDROID
-        ANDROID_LIBPATH = $$_PRO_FILE_PWD_/lib/and$$ANDROID_ARCHITECTURE/
-        LIBS += -L"$$ANDROID_LIBPATH"
-    }
-    else {
-        DEFINES += LINUX
-        !contains(QMAKE_HOST.arch, x86_64) {
-            LIBS += -L"$$_PRO_FILE_PWD_/lib/linux86"
-        }
-        else {
-            LIBS += -L"$$_PRO_FILE_PWD_/lib/linux64"
-        }
-    }
-}
-
-CONFIG(debug, debug|release):LIBS += -lquazip_d
-else:LIBS += -lquazip
-
-mac:LIBS += -lz
-
 DEFINES += QUAZIP_STATIC
+
+HEADERS += \
+    src/core/downloader.h \
+    src/core/renamer.h \
+    src/core/songstruct.h \
+    src/core/uncompresser.h \
+    src/core/utils.h \
+    src/dialog/ChangeNameDialog.h \
+    src/dialog/DownloadDialog.h \
+    src/dialog/maindialog.h \
+    src/dialog/SongClientChangeDialog.h \
+    src/quazip/crypt.h \
+    src/quazip/ioapi.h \
+    src/quazip/JlCompress.h \
+    src/quazip/quaadler32.h \
+    src/quazip/quachecksum32.h \
+    src/quazip/quacrc32.h \
+    src/quazip/quagzipfile.h \
+    src/quazip/quaziodevice.h \
+    src/quazip/quazip.h \
+    src/quazip/quazip_global.h \
+    src/quazip/quazipdir.h \
+    src/quazip/quazipfile.h \
+    src/quazip/quazipfileinfo.h \
+    src/quazip/quazipnewinfo.h \
+    src/quazip/unzip.h \
+    src/quazip/zconf.h \
+    src/quazip/zip.h \
+    src/quazip/zlib.h
+
+SOURCES += \
+    src/core/downloader.cpp \
+    src/core/main.cpp \
+    src/core/renamer.cpp \
+    src/core/songstruct.cpp \
+    src/core/uncompresser.cpp \
+    src/core/utils.cpp \
+    src/dialog/ChangeNameDialog.cpp \
+    src/dialog/DownloadDialog.cpp \
+    src/dialog/maindialog.cpp \
+    src/dialog/SongClientChangeDialog.cpp \
+    src/quazip/JlCompress.cpp \
+    src/quazip/qioapi.cpp \
+    src/quazip/quaadler32.cpp \
+    src/quazip/quacrc32.cpp \
+    src/quazip/quagzipfile.cpp \
+    src/quazip/quaziodevice.cpp \
+    src/quazip/quazip.cpp \
+    src/quazip/quazipdir.cpp \
+    src/quazip/quazipfile.cpp \
+    src/quazip/quazipfileinfo.cpp \
+    src/quazip/quazipnewinfo.cpp \
+    src/quazip/unzip.c \
+    src/quazip/zip.c
+
+INCLUDEPATH += src/core
+INCLUDEPATH += src/dialog
+INCLUDEPATH += src/quazip
+
+LIBS += -L.
+

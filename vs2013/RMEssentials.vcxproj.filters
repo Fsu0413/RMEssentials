@@ -13,10 +13,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
       <Extensions>qrc;*</Extensions>
@@ -26,10 +22,6 @@
       <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
       <Extensions>qrc;*</Extensions>
       <ParseFiles>false</ParseFiles>
-    </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
@@ -55,109 +47,149 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{0edb46f3-01bb-4272-bcd1-1a75dd29b816}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="quazip">
+      <UniqueIdentifier>{d3e76040-87aa-4533-b47c-1301211885f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dialog">
+      <UniqueIdentifier>{0ac0573f-c4fe-4bc0-be00-90a4f61d7f78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\renamer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_renamer.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="Release\moc_renamer.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\qrc_lang.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_ChangeNameDialog.cpp">
+    <ClCompile Include="..\src\core\downloader.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_downloader.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_ChangeNameDialog.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_downloader.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ChangeNameDialog.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\core\main.cpp">
+      <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\DownloadDialog.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\core\renamer.cpp">
+      <Filter>core</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\downloader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_downloader.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_renamer.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_downloader.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_renamer.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_DownloadDialog.cpp">
+    <ClCompile Include="..\src\core\songstruct.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\core\uncompresser.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_uncompresser.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_DownloadDialog.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_uncompresser.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Debug\moc_maindialog.cpp">
+    <ClCompile Include="..\src\core\utils.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dialog\ChangeNameDialog.cpp">
+      <Filter>dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ChangeNameDialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_maindialog.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_ChangeNameDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\maindialog.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\dialog\DownloadDialog.cpp">
+      <Filter>dialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\uncompresser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_uncompresser.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_DownloadDialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_uncompresser.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_DownloadDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\songstruct.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\dialog\maindialog.cpp">
+      <Filter>dialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\SongClientChangeDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug\moc_SongClientChangeDialog.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_maindialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Release\moc_SongClientChangeDialog.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_maindialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="..\src\renamer.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <ClInclude Include="..\src\utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <CustomBuild Include="..\src\ChangeNameDialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\src\downloader.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\src\DownloadDialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\src\maindialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\src\uncompresser.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\src\SongClientChangeDialog.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
+    <ClCompile Include="..\src\dialog\SongClientChangeDialog.cpp">
+      <Filter>dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SongClientChangeDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SongClientChangeDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\JlCompress.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\qioapi.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quaadler32.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quacrc32.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quagzipfile.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_quagzipfile.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_quagzipfile.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quaziodevice.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_quaziodevice.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_quaziodevice.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quazip.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quazipdir.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quazipfile.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_quazipfile.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_quazipfile.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quazipfileinfo.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\quazipnewinfo.cpp">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\unzip.c">
+      <Filter>quazip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\quazip\zip.c">
+      <Filter>quazip</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\changename.ts">
@@ -168,13 +200,91 @@
     <CustomBuild Include="..\lang.qrc">
       <Filter>Resource Files</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\songstruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <CustomBuild Include="..\src\core\downloader.h">
+      <Filter>core</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\core\renamer.h">
+      <Filter>core</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\core\uncompresser.h">
+      <Filter>core</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\dialog\ChangeNameDialog.h">
+      <Filter>dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\dialog\DownloadDialog.h">
+      <Filter>dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\dialog\maindialog.h">
+      <Filter>dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\dialog\SongClientChangeDialog.h">
+      <Filter>dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\quazip\quagzipfile.h">
+      <Filter>quazip</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\quazip\quaziodevice.h">
+      <Filter>quazip</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\quazip\quazipfile.h">
+      <Filter>quazip</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\res\icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\core\songstruct.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\utils.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\crypt.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\ioapi.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\JlCompress.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quaadler32.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quachecksum32.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quacrc32.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quazip.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quazip_global.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quazipdir.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quazipfileinfo.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\quazipnewinfo.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\unzip.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\zconf.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\zip.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\quazip\zlib.h">
+      <Filter>quazip</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
