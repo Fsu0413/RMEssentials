@@ -124,15 +124,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_maindialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\dialog\SongClientChangeDialog.cpp">
-      <Filter>dialog</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_SongClientChangeDialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_SongClientChangeDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\quazip\JlCompress.cpp">
       <Filter>quazip</Filter>
     </ClCompile>
@@ -190,6 +181,15 @@
     <ClCompile Include="..\src\quazip\zip.c">
       <Filter>quazip</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\dialog\SongClientEditDialog.cpp">
+      <Filter>dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SongClientEditDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SongClientEditDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\changename.ts">
@@ -218,9 +218,6 @@
     <CustomBuild Include="..\src\dialog\maindialog.h">
       <Filter>dialog</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\src\dialog\SongClientChangeDialog.h">
-      <Filter>dialog</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\src\quazip\quagzipfile.h">
       <Filter>quazip</Filter>
     </CustomBuild>
@@ -229,6 +226,9 @@
     </CustomBuild>
     <CustomBuild Include="..\src\quazip\quazipfile.h">
       <Filter>quazip</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\src\dialog\SongClientEditDialog.h">
+      <Filter>dialog</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

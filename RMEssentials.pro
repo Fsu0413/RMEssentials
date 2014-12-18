@@ -40,7 +40,7 @@ HEADERS += \
     src/dialog/ChangeNameDialog.h \
     src/dialog/DownloadDialog.h \
     src/dialog/maindialog.h \
-    src/dialog/SongClientChangeDialog.h \
+    src/dialog/SongClientEditDialog.h \
     src/quazip/crypt.h \
     src/quazip/ioapi.h \
     src/quazip/JlCompress.h \
@@ -70,7 +70,7 @@ SOURCES += \
     src/dialog/ChangeNameDialog.cpp \
     src/dialog/DownloadDialog.cpp \
     src/dialog/maindialog.cpp \
-    src/dialog/SongClientChangeDialog.cpp \
+    src/dialog/SongClientEditDialog.cpp \
     src/quazip/JlCompress.cpp \
     src/quazip/qioapi.cpp \
     src/quazip/quaadler32.cpp \

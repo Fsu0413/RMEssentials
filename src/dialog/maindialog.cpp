@@ -1,7 +1,7 @@
 #include "maindialog.h"
 #include "ChangeNameDialog.h"
 #include "DownloadDialog.h"
-#include "SongClientChangeDialog.h"
+#include "SongClientEditDialog.h"
 
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -19,8 +19,8 @@ MainDialog::MainDialog(QWidget *parent)
     QPushButton *download = new QPushButton(tr("File Downloader"));
     connect(download, &QPushButton::clicked, this, &MainDialog::showDownloadDialog);
 
-    QPushButton *songclient = new QPushButton(tr("Song Client Changer"));
-    connect(songclient, &QPushButton::clicked, this, &MainDialog::showSongClientChangeDialog);
+    QPushButton *songclient = new QPushButton(tr("Song Client Editor"));
+    connect(songclient, &QPushButton::clicked, this, &MainDialog::showSongClientEditDialog);
 
     alllayout->addWidget(changename);
     alllayout->addWidget(download);
@@ -44,9 +44,9 @@ void MainDialog::showDownloadDialog() {
     dl->downloadList();
 }
 
-void MainDialog::showSongClientChangeDialog() {
-    SongClientChangeDialog *dl = new SongClientChangeDialog;
-    connect(dl, &SongClientChangeDialog::finished, dl, &SongClientChangeDialog::deleteLater);
+void MainDialog::showSongClientEditDialog() {
+    SongClientEditDialog *dl = new SongClientEditDialog;
+    connect(dl, &SongClientEditDialog::finished, dl, &SongClientEditDialog::deleteLater);
     dl->show();
     dl->loadFile();
 }

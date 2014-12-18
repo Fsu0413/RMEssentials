@@ -1,5 +1,5 @@
-#ifndef __SONGCLIENTCHANGEDIALOG_H__
-#define __SONGCLIENTCHANGEDIALOG_H__
+#ifndef __SONGCLIENTEDITDIALOG_H__
+#define __SONGCLIENTEDITDIALOG_H__
 
 #include <QDialog>
 #include <QHash>
@@ -10,12 +10,12 @@ class QCheckBox;
 class QLabel;
 
 
-class SongClientChangeDialog : public QDialog {
+class SongClientEditDialog : public QDialog {
     Q_OBJECT
 
 public:
-    SongClientChangeDialog(QWidget *parent = NULL);
-    ~SongClientChangeDialog();
+    SongClientEditDialog(QWidget *parent = NULL);
+    ~SongClientEditDialog();
 
     bool loadFile();
 

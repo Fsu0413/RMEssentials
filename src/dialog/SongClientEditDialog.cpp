@@ -1,4 +1,4 @@
-#include "SongClientChangeDialog.h"
+#include "SongClientEditDialog.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -31,9 +31,11 @@ namespace {
     };
 }
 
-SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
+SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     : QDialog(parent), currentIndex(-1), isLoaded(false)
 {
+    setWindowTitle(tr("Rhythm Master Song Client Editor"));
+
     QVBoxLayout *alllayout = new QVBoxLayout;
 
 // for QFormLayout
@@ -47,13 +49,13 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     AR(flayout1, ushSongID);
 
     QPushButton *prevBtn = new QPushButton(tr("prev"));
-    connect(prevBtn, &QPushButton::clicked, this, &SongClientChangeDialog::movePrev);
+    connect(prevBtn, &QPushButton::clicked, this, &SongClientEditDialog::movePrev);
     QPushButton *nextBtn = new QPushButton(tr("next"));
-    connect(nextBtn, &QPushButton::clicked, this, &SongClientChangeDialog::moveNext);
+    connect(nextBtn, &QPushButton::clicked, this, &SongClientEditDialog::moveNext);
     QPushButton *saveCurrentBtn = new QPushButton(tr("save current"));
-    connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientChangeDialog::saveCurrent);
+    connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveCurrent);
     QPushButton *saveAllBtn = new QPushButton(tr("save file"));
-    connect(saveAllBtn, &QPushButton::clicked, this, &SongClientChangeDialog::saveFile);
+    connect(saveAllBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveFile);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);
     hlayout1->addWidget(nextBtn);
@@ -78,7 +80,7 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     iGameTime = new QLineEdit;
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
     iGameTime->setValidator(iGameTimeValidator);
-    connect(iGameTime, &QLineEdit::textEdited, this, &SongClientChangeDialog::calculateSongTime);
+    connect(iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::calculateSongTime);
     iStyle = new QLineEdit;
     QIntValidator *iStyleValidator = new QIntValidator(0, 20, this);
     iStyle->setValidator(iStyleValidator);
@@ -213,14 +215,14 @@ SongClientChangeDialog::SongClientChangeDialog(QWidget *parent)
     setLayout(alllayout);
 }
 
-SongClientChangeDialog::~SongClientChangeDialog() {
+SongClientEditDialog::~SongClientEditDialog() {
     if (!songs.isEmpty()) {
         foreach (SongStruct *const &s, songs)
             delete s;
     }
 }
 
-bool SongClientChangeDialog::loadFile() {
+bool SongClientEditDialog::loadFile() {
 #ifndef Q_OS_ANDROID
     QDir d("downloader");
 #else
@@ -256,7 +258,7 @@ bool SongClientChangeDialog::loadFile() {
     return false;
 }
 
-void SongClientChangeDialog::saveFile() {
+void SongClientEditDialog::saveFile() {
     QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
     QFile f(filepath);
     if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
@@ -273,7 +275,7 @@ void SongClientChangeDialog::saveFile() {
     }
 }
 
-void SongClientChangeDialog::moveNext() {
+void SongClientEditDialog::moveNext() {
     if (currentIndex + 1 == songs.length())
         return;
 
@@ -281,7 +283,7 @@ void SongClientChangeDialog::moveNext() {
     readCurrent();
 }
 
-void SongClientChangeDialog::movePrev() {
+void SongClientEditDialog::movePrev() {
     if (currentIndex <= 0)
         return;
     
@@ -289,7 +291,7 @@ void SongClientChangeDialog::movePrev() {
     readCurrent();
 }
 
-void SongClientChangeDialog::readCurrent() {
+void SongClientEditDialog::readCurrent() {
     const SongStruct &c = *(songs.at(currentIndex));
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
@@ -340,7 +342,7 @@ void SongClientChangeDialog::readCurrent() {
 
 }
 
-void SongClientChangeDialog::calculateSongTime() {
+void SongClientEditDialog::calculateSongTime() {
     int gameTime = iGameTime->text().toInt();
     float songTime = gameTime / 1440.f;
     QString r = QString::number(songTime);
@@ -355,7 +357,7 @@ void SongClientChangeDialog::calculateSongTime() {
     szSongTime->setText(r);
 }
 
-void SongClientChangeDialog::saveCurrent() {
+void SongClientEditDialog::saveCurrent() {
     SongStruct &c = *(songs[currentIndex]);
 
 #define SP_NS(p) c.m_ ## p = p->text().toShort()
