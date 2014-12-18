@@ -88,16 +88,18 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 
 void ChangeNameDialog::selectFolder()
 {
-#ifdef Q_OS_ANDROID
+
     QString dir;
+#ifdef Q_OS_ANDROID
     QDir d_detect("/sdcard/RM/res/song");
+#else
+    QDir d_detect("downloader");
+#endif
     if (d_detect.exists())
         dir = d_detect.absolutePath();
     else
         dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-#else
-    QString dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-#endif
+
     QString selected = QFileDialog::getExistingDirectory(this, QString(), dir/*, QFileDialog::DontUseNativeDialog*/);
 
     QDir d(selected);
