@@ -208,12 +208,53 @@ Are you sure?</source>
         <translation>文件下载器</translation>
     </message>
     <message>
-        <source>Song Client Changer</source>
-        <translation>客户端歌曲修改器</translation>
+        <source>Song Client Editor</source>
+        <translation>客户端歌曲编辑器</translation>
     </message>
 </context>
 <context>
-    <name>SongClientChangeDialog</name>
+    <name>QuaGzipFile</name>
+    <message>
+        <source>QIODevice::Append is not supported for GZIP</source>
+        <translation>GZIP不支持QIODevice::Append</translation>
+    </message>
+    <message>
+        <source>Opening gzip for both reading and writing is not supported</source>
+        <translation>不支持作为读写模式打开gzip</translation>
+    </message>
+    <message>
+        <source>You can open a gzip either for reading or for writing. Which is it?</source>
+        <translation>你可以以只读或读写的方式打开gzip文件。要选择哪一种？</translation>
+    </message>
+    <message>
+        <source>Could not gzopen() file</source>
+        <translation>不能gzopen()文件</translation>
+    </message>
+</context>
+<context>
+    <name>QuaZIODevice</name>
+    <message>
+        <source>QIODevice::Append is not supported for QuaZIODevice</source>
+        <translation>QuaZIODevice不支持QIODevice::Append</translation>
+    </message>
+    <message>
+        <source>QIODevice::ReadWrite is not supported for QuaZIODevice</source>
+        <translation>QuaZIODevice不支持QIODevice::ReadWrite</translation>
+    </message>
+</context>
+<context>
+    <name>QuaZipFile</name>
+    <message>
+        <source>ZIP/UNZIP API error %1</source>
+        <translation>ZIP/UNZIP AP 错误 %1</translation>
+    </message>
+</context>
+<context>
+    <name>SongClientEditDialog</name>
+    <message>
+        <source>Rhythm Master Song Client Editor</source>
+        <translation>节奏大师客户端歌曲编辑器</translation>
+    </message>
     <message>
         <source>prev</source>
         <translation>前一个</translation>
