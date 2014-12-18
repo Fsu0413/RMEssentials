@@ -2,6 +2,7 @@
 
 #include <QNetworkAccessManager>
 #include <QFile>
+#include <QPixmap>
 
 namespace {
     QNetworkAccessManager mgr;
@@ -93,7 +94,20 @@ void Downloader::singleFileFinished() {
             QString new_filename = filename;
             new_filename.chop(4);
             new_filename.append(".png");
-            m_downloadDir.rename(filename, new_filename);
+            //m_downloadDir.rename(filename, new_filename);
+            QPixmap pm;
+            if (pm.load(m_downloadDir.absoluteFilePath(filename))) {
+                if (pm.save(m_downloadDir.absoluteFilePath(new_filename), "PNG")) {
+                    m_downloadDir.remove(filename);
+                } else
+                    qDebug() << "save png error " << new_filename;
+            } else if (pm.load(m_downloadDir.absoluteFilePath(filename), "PNG")) {
+                if (pm.save(m_downloadDir.absoluteFilePath(new_filename), "PNG")) {
+                    m_downloadDir.remove(filename);
+                } else
+                    qDebug() << "save png error " << new_filename;
+            } else
+                qDebug() << "load jpg error " << filename;
         }
 
         emit one_completed(m_currentDownloadingFile);
