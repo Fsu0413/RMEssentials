@@ -124,6 +124,7 @@ void Downloader::singleFileFinished() {
             QUrl u = r->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl().resolved(QUrl(m_currentDownloadingFile));
             qDebug() << "redirect!!";
             qDebug() << u;
+            m_currentDownloadingFile = u.toString();
             QNetworkReply *r = mgr.get(QNetworkRequest(u));
             connect(r, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
             connect(r, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
