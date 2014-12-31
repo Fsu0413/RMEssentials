@@ -10,6 +10,7 @@ namespace {
 
 Downloader::Downloader() {
     m_isAll = false;
+    m_currentDownloadingReply = NULL;
 }
 
 void Downloader::run()
@@ -37,12 +38,17 @@ void Downloader::run()
 
     m_downloadDir = dir;
 
+    m_timeoutTimer.setInterval(30000);
+    connect(&m_timeoutTimer, &QTimer::timeout, this, &Downloader::timeout);
+
     downloadSingleFile();
     
     exec();
 }
 
 void Downloader::downloadSingleFile() {
+    m_timeoutTimer.stop();
+
     if (m_cancelRequested) {
         emit canceled();
         quit();
@@ -67,16 +73,16 @@ void Downloader::downloadSingleFile() {
             return;
         }
     }
-    QNetworkReply *r = mgr.get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
-    connect(r, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
-    connect(r, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+    m_currentDownloadingReply = mgr.get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
+    connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
+    connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+    m_timeoutTimer.start();
 }
 
 void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/) {
     m_failedList << m_currentDownloadingFile;
-    QIODevice *r = qobject_cast<QIODevice *>(sender());
-    if (r != NULL)
-        qDebug() << r->errorString();
+    if (m_currentDownloadingReply != NULL)
+        qDebug() << m_currentDownloadingReply->errorString();
 }
 
 void Downloader::singleFileFinished() {
@@ -84,13 +90,11 @@ void Downloader::singleFileFinished() {
         emit one_failed(m_currentDownloadingFile);
         downloadSingleFile();
     } else {
-        QNetworkReply *r = qobject_cast<QNetworkReply *>(sender());
-
-        if (r->attribute(QNetworkRequest::RedirectionTargetAttribute).isNull()) {
+        if (m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).isNull()) {
             QString filename = QUrl(m_currentDownloadingFile).fileName();
             QFile file(m_downloadDir.absoluteFilePath(filename));
             file.open(QIODevice::Truncate | QIODevice::WriteOnly);
-            file.write(r->readAll());
+            file.write(m_currentDownloadingReply->readAll());
             file.close();
 
             if (filename.endsWith(".jpg")) { // important hack!!
@@ -121,13 +125,13 @@ void Downloader::singleFileFinished() {
                 quit();
                 return;
             }
-            QUrl u = r->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl().resolved(QUrl(m_currentDownloadingFile));
+            QUrl u = m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl().resolved(QUrl(m_currentDownloadingFile));
             qDebug() << "redirect!!";
             qDebug() << u;
             m_currentDownloadingFile = u.toString();
-            QNetworkReply *r = mgr.get(QNetworkRequest(u));
-            connect(r, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
-            connect(r, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+            m_currentDownloadingReply = mgr.get(QNetworkRequest(u));
+            connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
+            connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
         }
     }
 }
@@ -139,4 +143,18 @@ Downloader *operator <<(Downloader *downloader, const QString &filename) {
 
 void Downloader::cancel() {
     m_cancelRequested = true;
+}
+
+void Downloader::timeout() {
+    m_currentDownloadingReply->abort();
+
+    m_timeoutTimer.stop();
+
+    disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+
+    m_failedList << m_currentDownloadingFile;
+    qDebug() << m_currentDownloadingFile << "timeout";
+
+    singleFileFinished();
 }
