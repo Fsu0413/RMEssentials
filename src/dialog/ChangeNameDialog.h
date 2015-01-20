@@ -29,6 +29,7 @@ private slots:
     void selectFolder();
     void rename();
     void checkFiles(const QString &folder);
+    void renameToEasy();
 
 signals:
     void folder_selected(const QString &folder);

@@ -79,7 +79,16 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     QPushButton *renameButton = new QPushButton(tr("Rename!"));
     connect(this, &ChangeNameDialog::enable_widgets, renameButton, &QPushButton::setEnabled);
     connect(renameButton, &QPushButton::clicked, this, &ChangeNameDialog::rename);
-    totalLayout->addWidget(renameButton);
+
+    QPushButton *toEasyButton = new QPushButton(tr("Rename to Easy"));
+    connect(this, &ChangeNameDialog::enable_widgets, toEasyButton, &QPushButton::setEnabled);
+    connect(toEasyButton, &QPushButton::clicked, this, &ChangeNameDialog::renameToEasy);
+
+    QHBoxLayout *layout2 = new QHBoxLayout;
+    layout2->addWidget(renameButton);
+    layout2->addWidget(toEasyButton);
+
+    totalLayout->addLayout(layout2);
 
     setLayout(totalLayout);
 
@@ -127,16 +136,37 @@ void ChangeNameDialog::rename()
 
     if (QMessageBox::question(this, windowTitle(), tr("You are now renaming %1 to %2.\nAre you sure?").arg(originPath).arg(m_toRename->text())) == QMessageBox::Yes) {
         emit enable_widgets(false);
-        Renamer *renamer = new Renamer;
-        renamer->setDir(QDir(m_folderName->text()));
-        renamer->setToRename(m_toRename->text());
+        Renamer renamer;
+        renamer.setDir(QDir(m_folderName->text()));
+        renamer.setToRename(m_toRename->text());
 
-        bool succeeded = renamer->run();
+        bool succeeded = renamer.run();
         if (!succeeded)
             QMessageBox::critical(this, tr("Error"), tr("unknown error"));
         else {
             QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
-            m_folderName->setText(renamer->dir().absolutePath());
+            m_folderName->setText(renamer.dir().absolutePath());
+        }
+
+        emit enable_widgets(true);
+    }
+}
+
+void ChangeNameDialog::renameToEasy()
+{
+    QString originPath = QDir(m_folderName->text()).dirName().toLower();
+
+    if (QMessageBox::question(this, windowTitle(), tr("You are now renaming %1 to easy.\nAre you sure?").arg(originPath)) == QMessageBox::Yes) {
+        emit enable_widgets(false);
+        Renamer renamer;
+        renamer.setDir(QDir(m_folderName->text()));
+
+        bool succeeded = renamer.runToEasy();
+        if (!succeeded)
+            QMessageBox::critical(this, tr("Error"), tr("unknown error"));
+        else {
+            QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
+            checkFiles(m_folderName->text());
         }
 
         emit enable_widgets(true);

@@ -35,6 +35,54 @@ bool Renamer::run()
     return true;
 }
 
+bool Renamer::runToEasy()
+{
+    if (!m_d.exists())
+        return false;
+
+    if (!renameImdsToEasy())
+        return false;
+
+    return true;
+}
+
+bool Renamer::renameImdsToEasy()
+{
+    static QMap<ExistNote, QString> suffixs;
+    if (suffixs.isEmpty()) {
+        suffixs[IMD_4K_EZ] = "_4k_ez.imd";
+        suffixs[IMD_4K_NM] = "_4k_nm.imd";
+        suffixs[IMD_4K_HD] = "_4k_hd.imd";
+        suffixs[IMD_5K_EZ] = "_5k_ez.imd";
+        suffixs[IMD_5K_NM] = "_5k_nm.imd";
+        suffixs[IMD_5K_HD] = "_5k_hd.imd";
+        suffixs[IMD_6K_EZ] = "_6k_ez.imd";
+        suffixs[IMD_6K_NM] = "_6k_nm.imd";
+        suffixs[IMD_6K_HD] = "_6k_hd.imd";
+        suffixs[MDE_EZ] = "_Papa_Easy.mde";
+        suffixs[MDE_NM] = "_Papa_Normal.mde";
+        suffixs[MDE_HD] = "_Papa_Hard.mde";
+    }
+
+    for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
+        QString file_name;
+        file_name.append(m_d.dirName()).append(suffixs[i]);
+        if (m_d.exists(file_name)) {
+            ExistNote i_easiest = i;
+            while (!suffixs[i_easiest].contains("ez") && !suffixs[i_easiest].contains("Easy"))
+                i_easiest = static_cast<ExistNote>(i_easiest >> 1);
+
+            while (m_d.exists(m_d.dirName() + suffixs[i_easiest]) && (m_d.dirName() + suffixs[i_easiest]) != file_name)
+                i_easiest = static_cast<ExistNote>(i_easiest << 1);
+
+            if ((m_d.dirName() + suffixs[i_easiest]) != file_name)
+                m_d.rename(file_name, (m_d.dirName() + suffixs[i_easiest]));
+        }
+    }
+
+    return true;
+}
+
 bool Renamer::renameMp3()
 {
     static QStringList l;
@@ -71,7 +119,7 @@ bool Renamer::renameBigPng()
     }
 
     if (origname.isEmpty())
-        return false;
+        return true; // in fact the Bluecat 3 version 2.1 can play imds without big pngs, so ignore this
 
     m_d.rename(origname, m_toRename + ".png");
     return true;

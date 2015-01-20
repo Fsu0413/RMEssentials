@@ -11,6 +11,7 @@ class Renamer : public QObject
 
 public:
     bool run();
+    bool runToEasy();
 
 private:
     bool renameMp3();
@@ -18,6 +19,7 @@ private:
     bool renameSmallPng();
     bool renamePapaPngs();
     bool renameImds();
+    bool renameImdsToEasy();
     bool renameSelf();
     bool deleteExtra();
 
