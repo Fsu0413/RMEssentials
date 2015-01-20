@@ -6,6 +6,7 @@
 class QListWidget;
 class QComboBox;
 class QPushButton;
+class QTimer;
 
 class DownloadDialog : public QDialog
 {
@@ -28,6 +29,7 @@ private:
 signals:
     void busy(bool);
     void cancel_download();
+    void timeout();
 
 private slots:
     void downloadClicked();
@@ -54,6 +56,7 @@ private:
     QListWidget *m_list;
     QComboBox *m_nameCombo;
     QPushButton *m_downloadBtn;
+    QTimer *m_timer;
 
     bool m_busy;
 };

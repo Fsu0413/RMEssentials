@@ -3,7 +3,6 @@
 
 #include <QThread>
 #include <QStringList>
-#include <QTimer>
 #include <QNetworkReply>
 #include <QDir>
 
@@ -35,10 +34,10 @@ private:
 private slots:
     void singleFileFinished();
     void singleFileError(QNetworkReply::NetworkError e);
-    void timeout();
 
 public slots:
     void cancel();
+    void timeout();
 
 signals:
     void all_completed();
@@ -54,8 +53,6 @@ private:
     QString m_currentDownloadingFile;
     QDir m_downloadDir;
     QNetworkReply *m_currentDownloadingReply;
-
-    QTimer m_timeoutTimer;
 
     bool m_cancelRequested;
     bool m_isAll;

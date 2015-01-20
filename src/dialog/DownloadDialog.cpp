@@ -2,6 +2,7 @@
 #include "downloader.h"
 #include <QListWidget>
 //#include <QLineEdit>
+#include <QTimer>
 #include <QComboBox>
 #include <QPushButton>
 #include <QCloseEvent>
@@ -50,6 +51,11 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     setLayout(alllayout);
 
     connect(this, &DownloadDialog::busy, this, &DownloadDialog::setBusy);
+
+    m_timer = new QTimer(this);
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(30000);
+    connect(m_timer, &QTimer::timeout, this, &DownloadDialog::timeout);
 }
 
 void DownloadDialog::downloadClicked() {
@@ -119,6 +125,7 @@ void DownloadDialog::startDownload(DownloadMode mode) {
     connect(downloader, &Downloader::one_failed, this, &DownloadDialog::oneFailed);
     connect(downloader, &Downloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
+    connect(this, &DownloadDialog::timeout, downloader, &Downloader::timeout);
     connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
 
     switch (mode) {
@@ -137,31 +144,39 @@ void DownloadDialog::startDownload(DownloadMode mode) {
 
     emit busy(true);
 
+    m_timer->start();
     downloader->start();
 }
 
 void DownloadDialog::oneCompleted(const QString &url) {
     QString filename = QUrl(url).fileName();
     appendLog(filename + tr(" download successful"));
+    m_timer->stop();
+    m_timer->start();
 }
 
 void DownloadDialog::oneFailed(const QString &url) {
     QString filename = QUrl(url).fileName();
     appendLog(filename + tr(" download failed"));
+    m_timer->stop();
+    m_timer->start();
 }
 
 void DownloadDialog::allCompleted() {
     appendLog(tr("All files downloaded"));
+    m_timer->stop();
     emit busy(false);
 }
 
 void DownloadDialog::errorOccurred() {
     appendLog(tr("Download failed"));
+    m_timer->stop();
     emit busy(false);
 }
 
 void DownloadDialog::canceled() {
     appendLog(tr("Download canceled"));
+    m_timer->stop();
     emit busy(false);
 }
 
@@ -197,6 +212,7 @@ void DownloadDialog::downloadList() {
     connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startUncompress);
     connect(downloader, &Downloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
+    connect(this, &DownloadDialog::timeout, downloader, &Downloader::timeout);
     connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
 
     emit busy(true);
@@ -210,6 +226,7 @@ void DownloadDialog::appendLog(const QString &log) {
 }
 
 void DownloadDialog::loadPaths() {
+    m_timer->stop();
     QDir dir("downloader");
     if (!dir.exists())
         return;

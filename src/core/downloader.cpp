@@ -38,23 +38,18 @@ void Downloader::run()
 
     m_downloadDir = dir;
 
-    m_timeoutTimer.setInterval(30000);
-    connect(&m_timeoutTimer, &QTimer::timeout, this, &Downloader::timeout);
-
     downloadSingleFile();
     
     exec();
 }
 
 void Downloader::downloadSingleFile() {
-    m_timeoutTimer.stop();
-
-    if (m_cancelRequested) {
-        emit canceled();
+    if (m_downloadSequence.isEmpty()) {
+        emit all_completed();
         quit();
         return;
-    } else if (m_downloadSequence.isEmpty()) {
-        emit all_completed();
+    } else if (m_cancelRequested) {
+        emit canceled();
         quit();
         return;
     }
@@ -76,7 +71,6 @@ void Downloader::downloadSingleFile() {
     m_currentDownloadingReply = mgr.get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
     connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-    m_timeoutTimer.start();
 }
 
 void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/) {
@@ -142,13 +136,21 @@ Downloader *operator <<(Downloader *downloader, const QString &filename) {
 }
 
 void Downloader::cancel() {
+    m_currentDownloadingReply->abort();
+
+    disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+
+    m_failedList << m_currentDownloadingFile;
+    qDebug() << m_currentDownloadingFile << "abort";
+
     m_cancelRequested = true;
+
+    singleFileFinished();
 }
 
 void Downloader::timeout() {
     m_currentDownloadingReply->abort();
-
-    m_timeoutTimer.stop();
 
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
