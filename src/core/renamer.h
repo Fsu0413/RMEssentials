@@ -1,17 +1,16 @@
 #ifndef __RENAMER_H__
 #define __RENAMER_H__
 
-#include <QThread>
 #include <QDir>
 
-class Renamer : public QThread
+class Renamer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QDir dir READ dir WRITE setDir)
     Q_PROPERTY(QString toRename READ toRename WRITE setToRename)
 
 public:
-    virtual void run();
+    bool run();
 
 private:
     bool renameMp3();
@@ -21,9 +20,6 @@ private:
     bool renameImds();
     bool renameSelf();
     bool deleteExtra();
-
-signals:
-    void rename_finished(bool success);
 
 public:
     inline void setDir(const QDir &d) { m_d = d; }

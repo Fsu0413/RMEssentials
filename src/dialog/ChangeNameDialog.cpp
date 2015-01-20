@@ -78,7 +78,7 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 
     QPushButton *renameButton = new QPushButton(tr("Rename!"));
     connect(this, &ChangeNameDialog::enable_widgets, renameButton, &QPushButton::setEnabled);
-    connect(renameButton, &QPushButton::clicked, this, &ChangeNameDialog::renameAsk);
+    connect(renameButton, &QPushButton::clicked, this, &ChangeNameDialog::rename);
     totalLayout->addWidget(renameButton);
 
     setLayout(totalLayout);
@@ -116,7 +116,7 @@ void ChangeNameDialog::selectFolder()
     emit folder_selected(d.absolutePath());
 }
 
-void ChangeNameDialog::renameAsk()
+void ChangeNameDialog::rename()
 {
     if (m_toRename->text().isEmpty()) {
         QMessageBox::information(this, windowTitle(), tr("Please enter the new name"));
@@ -130,9 +130,16 @@ void ChangeNameDialog::renameAsk()
         Renamer *renamer = new Renamer;
         renamer->setDir(QDir(m_folderName->text()));
         renamer->setToRename(m_toRename->text());
-        connect(renamer, &Renamer::rename_finished, this, &ChangeNameDialog::renameFinished);
-        connect(renamer, &Renamer::finished, renamer, &Renamer::deleteLater);
-        renamer->run();
+
+        bool succeeded = renamer->run();
+        if (!succeeded)
+            QMessageBox::critical(this, tr("Error"), tr("unknown error"));
+        else {
+            QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
+            m_folderName->setText(renamer->dir().absolutePath());
+        }
+
+        emit enable_widgets(true);
     }
 }
 
@@ -174,18 +181,4 @@ void ChangeNameDialog::checkFiles(const QString &folder)
         else
             m_filesLabels[2]->setText(smallPngSuffix);
     }
-}
-
-void ChangeNameDialog::renameFinished(bool succeeded)
-{
-    if (!succeeded)
-        QMessageBox::critical(this, tr("Error"), tr("unknown error"));
-    else {
-        QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
-        Renamer *renamer = qobject_cast<Renamer *>(sender());
-        if (renamer)
-            m_folderName->setText(renamer->dir().absolutePath());
-    }
-
-    emit enable_widgets(true);
 }

@@ -5,50 +5,34 @@
 #include <QMap>
 
 
-void Renamer::run()
+bool Renamer::run()
 {
-    if (!m_d.exists()) {
-        emit rename_finished(false);
-        return;
-    }
+    if (!m_d.exists())
+        return false;
 
-    if (m_toRename.isEmpty()) {
-        emit rename_finished(false);
-        return;
-    }
+    if (m_toRename.isEmpty())
+        return false;
 
-    if (m_d.dirName() == m_toRename) {
-        emit rename_finished(false);
-        return;
-    }
+    if (m_d.dirName() == m_toRename)
+        return false;
 
     QDir dotdotToRename(m_d.absolutePath() + "/../" + m_toRename);
-    if (dotdotToRename.exists()) {
-        emit rename_finished(false);
-        return;
-    }
+    if (dotdotToRename.exists())
+        return false;
 
-    if (!hasMp3(m_d)) {
-        emit rename_finished(false);
-        return;
-    }
+    if (!hasMp3(m_d))
+        return false;
 
-    if (!hasBigPng(m_d)) {
-        emit rename_finished(false);
-        return;
-    }
+    if (!hasBigPng(m_d))
+        return false;
 
-    if (!(renameMp3() && renameBigPng() && renameImds() && renameSmallPng() && renamePapaPngs() && renameSelf())) {
-        emit rename_finished(false);
-        return;
-    }
+    if (!(renameMp3() && renameBigPng() && renameImds() && renameSmallPng() && renamePapaPngs() && renameSelf()))
+        return false;
+    
+    if (!deleteExtra())
+        return false;
 
-    if (!deleteExtra()) {
-        emit rename_finished(false);
-        return;
-    }
-
-    emit rename_finished(true);
+    return true;
 }
 
 bool Renamer::renameMp3()

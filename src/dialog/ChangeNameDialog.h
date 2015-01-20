@@ -27,9 +27,8 @@ private:
 
 private slots:
     void selectFolder();
-    void renameAsk();
+    void rename();
     void checkFiles(const QString &folder);
-    void renameFinished(bool succeeded);
 
 signals:
     void folder_selected(const QString &folder);
