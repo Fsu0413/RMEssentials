@@ -119,7 +119,9 @@ void Downloader::singleFileFinished() {
                 quit();
                 return;
             }
-            QUrl u = m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl().resolved(QUrl(m_currentDownloadingFile));
+            QUrl u = m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
+            if (u.isRelative())
+                u = u.resolved(QUrl(m_currentDownloadingFile));
             qDebug() << "redirect!!";
             qDebug() << u;
             m_currentDownloadingFile = u.toString();
