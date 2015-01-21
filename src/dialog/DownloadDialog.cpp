@@ -71,8 +71,10 @@ void DownloadDialog::startDownloadAll() {
 }
 
 void DownloadDialog::startDownloadNext() {
-    if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1)
+    if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
         allCompleted();
+        return;
+    }
 
     m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
     startDownload(All);
@@ -81,8 +83,10 @@ void DownloadDialog::startDownloadNext() {
 void DownloadDialog::startDownloadAllMissing() {
     m_nameCombo->setCurrentIndex(0);
     while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
-        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1)
+        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
+            return;
+        }
 
         m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
     }
@@ -93,8 +97,10 @@ void DownloadDialog::startDownloadAllMissing() {
 void DownloadDialog::startDownloadNextMissing() {
     m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
     while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
-        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1)
+        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
+            return;
+        }
 
         m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
     }
