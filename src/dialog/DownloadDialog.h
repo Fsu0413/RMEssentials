@@ -7,6 +7,7 @@ class QListWidget;
 class QComboBox;
 class QPushButton;
 class QTimer;
+class QProgressBar;
 
 class DownloadDialog : public QDialog
 {
@@ -48,6 +49,7 @@ private slots:
     void startDownloadNext();
     void startDownloadAllMissing();
     void startDownloadNextMissing();
+    void downloadProgress(quint64 downloaded, quint64 total);
 
 protected:
     virtual void closeEvent(QCloseEvent *e);
@@ -57,6 +59,7 @@ private:
     QComboBox *m_nameCombo;
     QPushButton *m_downloadBtn;
     QTimer *m_timer;
+    QProgressBar *m_progressBar;
 
     bool m_busy;
 };

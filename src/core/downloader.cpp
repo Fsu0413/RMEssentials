@@ -71,6 +71,7 @@ void Downloader::downloadSingleFile() {
     m_currentDownloadingReply = mgr.get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
     connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+    connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
 }
 
 void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/) {
@@ -128,6 +129,7 @@ void Downloader::singleFileFinished() {
             m_currentDownloadingReply = mgr.get(QNetworkRequest(u));
             connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
             connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+            connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
         }
     }
 }
@@ -142,6 +144,7 @@ void Downloader::cancel() {
 
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
 
     m_failedList << m_currentDownloadingFile;
     qDebug() << m_currentDownloadingFile << "abort";
@@ -156,6 +159,7 @@ void Downloader::timeout() {
 
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
 
     m_failedList << m_currentDownloadingFile;
     qDebug() << m_currentDownloadingFile << "timeout";

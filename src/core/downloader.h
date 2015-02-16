@@ -45,6 +45,7 @@ signals:
     void one_completed(const QString &url);
     void one_failed(const QString &url);
     void error();
+    void download_progress(quint64, quint64);
 
 private:
     QStringList m_downloadSequence;

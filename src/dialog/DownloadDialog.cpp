@@ -9,6 +9,7 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QProgressBar>
 #include "uncompresser.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent)
@@ -45,9 +46,12 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     m_list = new QListWidget;
     m_list->setSortingEnabled(false);
 
+    m_progressBar = new QProgressBar;
+
     alllayout->addLayout(flayout);
     alllayout->addLayout(layout2);
     alllayout->addWidget(m_list);
+    alllayout->addWidget(m_progressBar);
     setLayout(alllayout);
 
     connect(this, &DownloadDialog::busy, this, &DownloadDialog::setBusy);
@@ -133,6 +137,7 @@ void DownloadDialog::startDownload(DownloadMode mode) {
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::timeout, downloader, &Downloader::timeout);
     connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
+    connect(downloader, &Downloader::download_progress, this, &DownloadDialog::downloadProgress);
 
     switch (mode) {
     case All:
@@ -220,6 +225,7 @@ void DownloadDialog::downloadList() {
     connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::timeout, downloader, &Downloader::timeout);
     connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
+    connect(downloader, &Downloader::download_progress, this, &DownloadDialog::downloadProgress);
 
     emit busy(true);
 
@@ -311,4 +317,11 @@ void DownloadDialog::closeEvent(QCloseEvent *e) {
         e->ignore();
     else
         QDialog::closeEvent(e);
+}
+
+void DownloadDialog::downloadProgress(quint64 downloaded, quint64 total) {
+    if (m_busy) {
+        m_progressBar->setMaximum(total);
+        m_progressBar->setValue(downloaded);
+    }
 }
