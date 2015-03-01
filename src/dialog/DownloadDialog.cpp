@@ -116,7 +116,7 @@ void DownloadDialog::startDownload(DownloadMode mode) {
     static QStringList suffixs;
     static QString prefix = "http://game.ds.qq.com/Com_SongRes/song/";
     if (suffixs.isEmpty())
-        suffixs << ".mp3" << ".jpg" << "_title_ipad.jpg" << "_ipad.jpg" << "_title_140_90.jpg" << "_title_hd.jpg" // do not use .png here
+        suffixs << ".mp3" << ".jpg" << "_title_ipad.jpg" << "_ipad.jpg" << "_title_140_90.jpg" /*<< "_title_hd.jpg"*/ // do not use .png here
                 << "_4k_ez.imd" << "_4k_nm.imd" << "_4k_hd.imd"
                 << "_5k_ez.imd" << "_5k_nm.imd" << "_5k_hd.imd"
                 << "_6k_ez.imd" << "_6k_nm.imd" << "_6k_hd.imd"
