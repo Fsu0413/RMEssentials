@@ -58,7 +58,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
 
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
-    m_timer->setInterval(30000);
+    m_timer->setInterval(300000);
     connect(m_timer, &QTimer::timeout, this, &DownloadDialog::timeout);
 }
 
