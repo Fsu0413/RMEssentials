@@ -17,3 +17,8 @@ platforms/
 imageformats/
 OGLdpf.log
 *.pdb
+icudt54.dll
+icuin54.dll
+icuuc54.dll
+libEGL.dll
+libGLESv2.dll
