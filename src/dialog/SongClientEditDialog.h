@@ -8,6 +8,7 @@
 class QLineEdit;
 class QCheckBox;
 class QLabel;
+class QMenu;
 
 
 class SongClientEditDialog : public QDialog {
@@ -32,6 +33,9 @@ private slots:
     void calculateSongTime();
     void saveCurrent();
     void saveFile();
+    void convertToFree();
+
+    void popup();
 
 signals:
     void enable_controls(bool enable);
@@ -75,6 +79,8 @@ private:
     QCheckBox *bIsHide;
     QCheckBox *bIsReward;
     QCheckBox *bIsLevelReward; // OBSOLETE???
+
+    QMenu *m_popup;
 
 };
 

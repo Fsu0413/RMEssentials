@@ -10,6 +10,8 @@
 #include <QRegExpValidator>
 #include <QLabel>
 
+#include <QMenu>
+
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -56,11 +58,19 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveCurrent);
     QPushButton *saveAllBtn = new QPushButton(tr("save file"));
     connect(saveAllBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveFile);
+    // convenient functions...
+    m_popup = new QMenu(tr("Convenient Functions"), this);
+    QAction *act = m_popup->addAction(tr("Convert All Songs to Free"));
+    connect(act, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
+    QPushButton *convenientFuncBtn = new QPushButton(tr("Convenient Functions"));
+    connect(convenientFuncBtn, &QPushButton::clicked, this, &SongClientEditDialog::popup);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);
     hlayout1->addWidget(nextBtn);
     hlayout1->addWidget(saveCurrentBtn);
     hlayout1->addWidget(saveAllBtn);
+    hlayout1->addWidget(convenientFuncBtn);
+
 
     // 2nd, 3rd, 4th lines...
     QHBoxLayout *hlayout234 = new QHBoxLayout;
@@ -340,6 +350,27 @@ void SongClientEditDialog::readCurrent() {
 #undef RP_ST
 #undef RP_NM
 
+}
+
+void SongClientEditDialog::convertToFree()
+{
+    foreach (SongStruct *const &c, songs) {
+        if (!IsLevel(*c) && !IsHidden(*c) && !IsBuy(*c)) {
+            c->m_ucIsOpen = true;
+            //c->m_bIsHide = false;
+            c->m_bIsLevelReward = false;
+            c->m_bIsReward = false;
+            //c->m_ucCanBuy = false;
+            c->m_bIsFree = false;
+        }
+    }
+
+    readCurrent();
+}
+
+void SongClientEditDialog::popup()
+{
+    m_popup->popup(QCursor::pos());
 }
 
 void SongClientEditDialog::calculateSongTime() {
