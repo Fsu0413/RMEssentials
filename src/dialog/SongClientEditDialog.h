@@ -82,6 +82,8 @@ private:
 
     QMenu *m_popup;
 
+    QByteArray fileHeader;
+
 };
 
 #endif
