@@ -1,3 +1,6 @@
+
+#ifdef RME_USE_QUAZIP
+
 #include "uncompresser.h"
 #include "quazipfile.h"
 
@@ -20,3 +23,5 @@ void Uncompresser::run() {
         }
     }
 }
+
+#endif

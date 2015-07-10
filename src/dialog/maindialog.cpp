@@ -34,19 +34,31 @@ MainDialog::MainDialog(QWidget *parent)
 void MainDialog::showChangeNameDialog() {
     ChangeNameDialog *dl = new ChangeNameDialog;
     connect(dl, &ChangeNameDialog::finished, dl, &ChangeNameDialog::deleteLater);
+#ifndef Q_OS_ANDROID
     dl->show();
+#else
+    dl->showMaximized();
+#endif
 }
 
 void MainDialog::showDownloadDialog() {
     DownloadDialog *dl = new DownloadDialog;
     connect(dl, &DownloadDialog::finished, dl, &DownloadDialog::deleteLater);
+#ifndef Q_OS_ANDROID
     dl->show();
+#else
+    dl->showMaximized();
+#endif
     dl->downloadList();
 }
 
 void MainDialog::showSongClientEditDialog() {
     SongClientEditDialog *dl = new SongClientEditDialog;
     connect(dl, &SongClientEditDialog::finished, dl, &SongClientEditDialog::deleteLater);
+#ifndef Q_OS_ANDROID
     dl->show();
+#else
+    dl->showMaximized();
+#endif
     dl->loadFile();
 }

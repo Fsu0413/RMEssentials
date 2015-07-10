@@ -16,6 +16,7 @@ Downloader::Downloader() {
 void Downloader::run()
 {
     m_cancelRequested = false;
+#ifndef Q_OS_ANDROID
     QDir currentDir = QDir::current();
     if (!currentDir.cd("downloader")) {
         if (!currentDir.mkdir("downloader")) {
@@ -24,6 +25,9 @@ void Downloader::run()
         }
         currentDir.cd("downloader");
     }
+#else
+    QDir currentDir( "/sdcard/RM/res/song");
+#endif
 
     QDir dir = currentDir;
     if (!m_savePath.isEmpty()) {

@@ -86,7 +86,11 @@ void DownloadDialog::startDownloadNext() {
 
 void DownloadDialog::startDownloadAllMissing() {
     m_nameCombo->setCurrentIndex(0);
+#ifndef Q_OS_ANDROID
     while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
+#else
+    while (QDir("/sdcard/RM/res/song/" + m_nameCombo->currentText()).exists()) {
+#endif
         if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
             return;
@@ -100,7 +104,11 @@ void DownloadDialog::startDownloadAllMissing() {
 
 void DownloadDialog::startDownloadNextMissing() {
     m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
+#ifndef Q_OS_ANDROID
     while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
+#else
+    while (QDir("/sdcard/RM/res/song/" + m_nameCombo->currentText()).exists()) {
+#endif
         if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
             return;
@@ -196,6 +204,7 @@ void DownloadDialog::oneUncompressed(const QString &filename) {
 }
 
 void DownloadDialog::startUncompress() {
+#ifdef RME_USE_QUAZIP
     Uncompresser *unc = new Uncompresser;
     unc->zipNames << "downloader/MD5List.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin.zip";
     unc->fileNames << "MD5List.xml" << "mrock_song_client_android.bin" << "mrock_papasong_client.bin";
@@ -205,9 +214,11 @@ void DownloadDialog::startUncompress() {
     connect(unc, &Uncompresser::signal_file_finished, this, &DownloadDialog::oneUncompressed);
 
     unc->start();
+#endif
 }
 
 void DownloadDialog::downloadList() {
+#ifdef RME_USE_QUAZIP
     static const QString md5 = "http://game.ds.qq.com/Com_SongRes/MD5List.zip";
     static const QString bin = "http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip";
 
@@ -230,6 +241,9 @@ void DownloadDialog::downloadList() {
     emit busy(true);
 
     downloader->start();
+#else
+    loadPaths();
+#endif
 }
 
 void DownloadDialog::appendLog(const QString &log) {
@@ -239,14 +253,18 @@ void DownloadDialog::appendLog(const QString &log) {
 
 void DownloadDialog::loadPaths() {
     m_timer->stop();
+#ifndef Q_OS_ANDROID
     QDir dir("downloader");
+#else
+    QDir dir("/sdcard/RM/res");
+#endif
     if (!dir.exists())
         return;
 
     QSet<QString> paths;
 
     if (dir.exists("MD5List.xml")) {
-        QFile f("downloader/MD5List.xml");
+        QFile f(dir.absoluteFilePath("MD5List.xml"));
         f.open(QIODevice::ReadOnly);
         while (!f.atEnd()) {
             QString s = f.readLine();
@@ -260,7 +278,7 @@ void DownloadDialog::loadPaths() {
     }
 
     if (dir.exists("mrock_song_client_android.bin")) {
-        QFile f("downloader/mrock_song_client_android.bin");
+        QFile f(dir.absoluteFilePath("mrock_song_client_android.bin"));
         f.open(QIODevice::ReadOnly);
         f.seek(0xcel);
         while (f.pos() < f.size()) {
@@ -275,7 +293,7 @@ void DownloadDialog::loadPaths() {
     }
 
     if (dir.exists("mrock_papasong_client.bin")) {
-        QFile f("downloader/mrock_papasong_client.bin");
+        QFile f(dir.absoluteFilePath("mrock_papasong_client.bin"));
         f.open(QIODevice::ReadOnly);
         f.seek(0xd0l);
         while (f.pos() < f.size()) {
