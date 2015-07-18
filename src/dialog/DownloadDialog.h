@@ -14,9 +14,10 @@ class DownloadDialog : public QDialog
     Q_OBJECT
 
 public:
-    enum DownloadMode {
-        One ,
-        All ,
+    enum DownloadMode
+    {
+        One,
+        All,
         Mis
     };
 

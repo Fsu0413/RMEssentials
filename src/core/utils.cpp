@@ -4,8 +4,8 @@
 #include <QDir>
 
 namespace {
-const char *suffix_hd = "_title_hd";
-const char *suffix_ipad = "_title_ipad";
+    const char *suffix_hd = "_title_hd";
+    const char *suffix_ipad = "_title_ipad";
 }
 
 bool hasMp3(const QDir &dir)
@@ -120,12 +120,6 @@ ExistNotes existNotes(const QDir &dir)
         suffixs[MDE_HD] = "_Papa_Hard.mde";
     }
 
-    /*
-    static QStringList l;
-    if (l.isEmpty())
-        l << "*.imd";
-    */
-
     ExistNotes result;
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
@@ -133,15 +127,6 @@ ExistNotes existNotes(const QDir &dir)
         if (dir.exists(file_name))
             result |= i;
     }
-
-    /*
-    foreach (const QString &s, suffixs) {
-        QString file_name;
-        file_name.append(dir.dirName()).append(s).append(".imd");
-        if (dir.exists(file_name))
-            result |= suffixs.key(s);
-    }
-    */
     return result;
 }
 

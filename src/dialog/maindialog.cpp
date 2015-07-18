@@ -31,7 +31,8 @@ MainDialog::MainDialog(QWidget *parent)
     setMinimumWidth(150);
 }
 
-void MainDialog::showChangeNameDialog() {
+void MainDialog::showChangeNameDialog()
+{
     ChangeNameDialog *dl = new ChangeNameDialog;
     connect(dl, &ChangeNameDialog::finished, dl, &ChangeNameDialog::deleteLater);
 #ifndef Q_OS_ANDROID
@@ -41,7 +42,8 @@ void MainDialog::showChangeNameDialog() {
 #endif
 }
 
-void MainDialog::showDownloadDialog() {
+void MainDialog::showDownloadDialog()
+{
     DownloadDialog *dl = new DownloadDialog;
     connect(dl, &DownloadDialog::finished, dl, &DownloadDialog::deleteLater);
 #ifndef Q_OS_ANDROID
@@ -52,7 +54,8 @@ void MainDialog::showDownloadDialog() {
     dl->downloadList();
 }
 
-void MainDialog::showSongClientEditDialog() {
+void MainDialog::showSongClientEditDialog()
+{
     SongClientEditDialog *dl = new SongClientEditDialog;
     connect(dl, &SongClientEditDialog::finished, dl, &SongClientEditDialog::deleteLater);
 #ifndef Q_OS_ANDROID

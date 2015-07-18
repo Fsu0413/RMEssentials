@@ -26,7 +26,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     QVBoxLayout *alllayout = new QVBoxLayout;
 
-// for QFormLayout
+    // for QFormLayout
 #define AR(l, x) l->addRow(#x, x)
 
     // 1st line
@@ -112,7 +112,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     hlayout5->addWidget(ucCanBuy);
     hlayout5->addWidget(bIsFree);
     hlayout5->addWidget(bSongPkg);
-    
+
     // 6th, 7th, 8th, 9th lines...
     QHBoxLayout *hlayout6789 = new QHBoxLayout;
     QFormLayout *flayout5 = new QFormLayout;
@@ -197,7 +197,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     hlayout12->addWidget(bIsLevelReward);
     hlayout12->addLayout(flayout10);
 
-// OK, thank you
+    // OK, thank you
 #undef AR
 
     alllayout->addLayout(hlayout1);
@@ -211,14 +211,16 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     setLayout(alllayout);
 }
 
-SongClientEditDialog::~SongClientEditDialog() {
+SongClientEditDialog::~SongClientEditDialog()
+{
     if (!songs.isEmpty()) {
-        foreach (SongStruct *const &s, songs)
+        foreach(SongStruct *const &s, songs)
             delete s;
     }
 }
 
-bool SongClientEditDialog::loadFile() {
+bool SongClientEditDialog::loadFile()
+{
 #ifndef Q_OS_ANDROID
     QDir d("downloader");
 #else
@@ -255,7 +257,8 @@ bool SongClientEditDialog::loadFile() {
     return false;
 }
 
-void SongClientEditDialog::saveFile() {
+void SongClientEditDialog::saveFile()
+{
     QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
     QFile f(filepath);
     if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
@@ -272,7 +275,8 @@ void SongClientEditDialog::saveFile() {
     }
 }
 
-void SongClientEditDialog::moveNext() {
+void SongClientEditDialog::moveNext()
+{
     if (currentIndex + 1 == songs.length())
         return;
 
@@ -280,15 +284,17 @@ void SongClientEditDialog::moveNext() {
     readCurrent();
 }
 
-void SongClientEditDialog::movePrev() {
+void SongClientEditDialog::movePrev()
+{
     if (currentIndex <= 0)
         return;
-    
+
     --currentIndex;
     readCurrent();
 }
 
-void SongClientEditDialog::readCurrent() {
+void SongClientEditDialog::readCurrent()
+{
     const SongStruct &c = *(songs.at(currentIndex));
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
@@ -360,7 +366,8 @@ void SongClientEditDialog::popup()
     m_popup->popup(QCursor::pos());
 }
 
-void SongClientEditDialog::calculateSongTime() {
+void SongClientEditDialog::calculateSongTime()
+{
     int gameTime = iGameTime->text().toInt();
     float songTime = gameTime / 1440.f;
     QString r = QString::number(songTime);
@@ -375,7 +382,8 @@ void SongClientEditDialog::calculateSongTime() {
     szSongTime->setText(r);
 }
 
-void SongClientEditDialog::saveCurrent() {
+void SongClientEditDialog::saveCurrent()
+{
     SongStruct &c = *(songs[currentIndex]);
 
 #define SP_NS(p) c.m_ ## p = p->text().toShort()

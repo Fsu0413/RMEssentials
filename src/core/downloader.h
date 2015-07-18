@@ -17,16 +17,36 @@ public:
     Downloader();
     virtual void run();
 
-    inline Downloader &operator <<(const QString &filename) {
+    inline Downloader &operator <<(const QString &filename)
+    {
         m_downloadSequence << filename;
         return *this;
     }
 
-    inline const QStringList &downloadSequence() const { return m_downloadSequence; }
-    inline const QStringList &failedList() const { return m_failedList; }
-    inline const QString &savePath() const { return m_savePath; }
-    inline void setSavePath(const QString &sp) { m_savePath = sp; }
-    inline void setIsAll(bool all) { m_isAll = all; }
+    inline const QStringList &downloadSequence() const
+    {
+        return m_downloadSequence;
+    }
+
+    inline const QStringList &failedList() const
+    {
+        return m_failedList;
+    }
+
+    inline const QString &savePath() const
+    {
+        return m_savePath;
+    }
+
+    inline void setSavePath(const QString &sp)
+    {
+        m_savePath = sp;
+    }
+
+    inline void setIsAll(bool all)
+    {
+        m_isAll = all;
+    }
 
 private:
     void downloadSingleFile();

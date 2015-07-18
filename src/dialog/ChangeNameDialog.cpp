@@ -12,15 +12,16 @@
 #include <QStandardPaths>
 #include <QMessageBox>
 
-QLayout *ChangeNameDialog::layFiles(QLabel *labels[18]) {
+QLayout *ChangeNameDialog::layFiles(QLabel *labels[18])
+{
     static QStringList layDecriptions;
     if (layDecriptions.isEmpty())
-        layDecriptions << tr("MP3:")          << tr("Big PNG:")        << tr("Small PNG:")
-                       << tr("Papa Big PNG:") << tr("Para Small PNG:") << QString()
-                       << tr("4K Easy IMD:")  << tr("4K Normal IMD:")  << tr("4K Hard IMD:")
-                       << tr("5K Easy IMD:")  << tr("5K Normal IMD:")  << tr("5K Hard IMD:")
-                       << tr("6K Easy IMD:")  << tr("6K Normal IMD:")  << tr("6K Hard IMD:")
-                       << tr("Easy MDE:")     << tr("Normal MDE:")     << tr("Hard MDE:");
+        layDecriptions << tr("MP3:") << tr("Big PNG:") << tr("Small PNG:")
+        << tr("Papa Big PNG:") << tr("Para Small PNG:") << QString()
+        << tr("4K Easy IMD:") << tr("4K Normal IMD:") << tr("4K Hard IMD:")
+        << tr("5K Easy IMD:") << tr("5K Normal IMD:") << tr("5K Hard IMD:")
+        << tr("6K Easy IMD:") << tr("6K Normal IMD:") << tr("6K Hard IMD:")
+        << tr("Easy MDE:") << tr("Normal MDE:") << tr("Hard MDE:");
 
 
     QHBoxLayout *totalLayout = new QHBoxLayout;
@@ -179,7 +180,7 @@ void ChangeNameDialog::checkFiles(const QString &folder)
     static const QString strMissing = tr("Missing");
 
     QDir d(folder);
-    bool exists[18] = {false};
+    bool exists[18] = { false };
     exists[0] = hasMp3(d);
     exists[1] = hasBigPng(d);
     const char *smallPngSuffix = NULL;

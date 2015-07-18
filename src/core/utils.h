@@ -5,7 +5,8 @@
 
 class QDir;
 
-enum ExistNote {
+enum ExistNote
+{
     IMD_4K_EZ = 0x1,
     IMD_4K_NM = 0x2,
     IMD_4K_HD = 0x4,

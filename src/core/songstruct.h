@@ -6,7 +6,8 @@
 class QByteArray;
 
 namespace RMSong {
-    struct SongStruct {
+    struct SongStruct
+    {
         short m_ushSongID;
         int m_iVersion; // what's this?
         QString m_szSongName;

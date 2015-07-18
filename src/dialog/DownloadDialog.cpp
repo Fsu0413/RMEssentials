@@ -62,19 +62,22 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     connect(m_timer, &QTimer::timeout, this, &DownloadDialog::timeout);
 }
 
-void DownloadDialog::downloadClicked() {
+void DownloadDialog::downloadClicked()
+{
     if (!m_busy)
         startDownload();
     else
         emit cancel_download();
 }
 
-void DownloadDialog::startDownloadAll() {
+void DownloadDialog::startDownloadAll()
+{
     m_nameCombo->setCurrentIndex(0);
     startDownload(All);
 }
 
-void DownloadDialog::startDownloadNext() {
+void DownloadDialog::startDownloadNext()
+{
     if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
         allCompleted();
         return;
@@ -84,7 +87,8 @@ void DownloadDialog::startDownloadNext() {
     startDownload(All);
 }
 
-void DownloadDialog::startDownloadAllMissing() {
+void DownloadDialog::startDownloadAllMissing()
+{
     m_nameCombo->setCurrentIndex(0);
 #ifndef Q_OS_ANDROID
     while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
@@ -102,7 +106,8 @@ void DownloadDialog::startDownloadAllMissing() {
     startDownload(Mis);
 }
 
-void DownloadDialog::startDownloadNextMissing() {
+void DownloadDialog::startDownloadNextMissing()
+{
     m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
 #ifndef Q_OS_ANDROID
     while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
@@ -120,24 +125,25 @@ void DownloadDialog::startDownloadNextMissing() {
     startDownload(Mis);
 }
 
-void DownloadDialog::startDownload(DownloadMode mode) {
+void DownloadDialog::startDownload(DownloadMode mode)
+{
     static QStringList suffixs;
     static QString prefix = "http://game.ds.qq.com/Com_SongRes/song/";
     if (suffixs.isEmpty())
         suffixs << ".mp3" << ".jpg" << "_title_ipad.jpg" << "_ipad.jpg" << "_title_140_90.jpg" /*<< "_title_hd.jpg"*/ // do not use .png here
-                << "_4k_ez.imd" << "_4k_nm.imd" << "_4k_hd.imd"
-                << "_5k_ez.imd" << "_5k_nm.imd" << "_5k_hd.imd"
-                << "_6k_ez.imd" << "_6k_nm.imd" << "_6k_hd.imd"
-                << "_Papa_Easy.mde" << "_Papa_Normal.mde" << "_Papa_Hard.mde";
+        << "_4k_ez.imd" << "_4k_nm.imd" << "_4k_hd.imd"
+        << "_5k_ez.imd" << "_5k_nm.imd" << "_5k_hd.imd"
+        << "_6k_ez.imd" << "_6k_nm.imd" << "_6k_hd.imd"
+        << "_Papa_Easy.mde" << "_Papa_Normal.mde" << "_Papa_Hard.mde";
 
 
     Downloader *downloader = new Downloader;
     QString songname = m_nameCombo->currentText();
-    foreach (const QString &suf, suffixs)
+    foreach(const QString &suf, suffixs)
         downloader << (prefix + songname + "/" + songname + suf);
 
     downloader->setSavePath(songname);
-    
+
     connect(downloader, &Downloader::finished, downloader, &Downloader::deleteLater);
     connect(downloader, &Downloader::one_completed, this, &DownloadDialog::oneCompleted);
     connect(downloader, &Downloader::one_failed, this, &DownloadDialog::oneFailed);
@@ -167,43 +173,50 @@ void DownloadDialog::startDownload(DownloadMode mode) {
     downloader->start();
 }
 
-void DownloadDialog::oneCompleted(const QString &url) {
+void DownloadDialog::oneCompleted(const QString &url)
+{
     QString filename = QUrl(url).fileName();
     appendLog(filename + tr(" download successful"));
     m_timer->stop();
     m_timer->start();
 }
 
-void DownloadDialog::oneFailed(const QString &url) {
+void DownloadDialog::oneFailed(const QString &url)
+{
     QString filename = QUrl(url).fileName();
     appendLog(filename + tr(" download failed"));
     m_timer->stop();
     m_timer->start();
 }
 
-void DownloadDialog::allCompleted() {
+void DownloadDialog::allCompleted()
+{
     appendLog(tr("All files downloaded"));
     m_timer->stop();
     emit busy(false);
 }
 
-void DownloadDialog::errorOccurred() {
+void DownloadDialog::errorOccurred()
+{
     appendLog(tr("Download failed"));
     m_timer->stop();
     emit busy(false);
 }
 
-void DownloadDialog::canceled() {
+void DownloadDialog::canceled()
+{
     appendLog(tr("Download canceled"));
     m_timer->stop();
     emit busy(false);
 }
 
-void DownloadDialog::oneUncompressed(const QString &filename) {
+void DownloadDialog::oneUncompressed(const QString &filename)
+{
     appendLog(filename + tr(" has been uncompressed"));
 }
 
-void DownloadDialog::startUncompress() {
+void DownloadDialog::startUncompress()
+{
 #ifdef RME_USE_QUAZIP
     Uncompresser *unc = new Uncompresser;
     unc->zipNames << "downloader/MD5List.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin.zip";
@@ -217,7 +230,8 @@ void DownloadDialog::startUncompress() {
 #endif
 }
 
-void DownloadDialog::downloadList() {
+void DownloadDialog::downloadList()
+{
 #ifdef RME_USE_QUAZIP
     static const QString md5 = "http://game.ds.qq.com/Com_SongRes/MD5List.zip";
     static const QString bin = "http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip";
@@ -246,12 +260,14 @@ void DownloadDialog::downloadList() {
 #endif
 }
 
-void DownloadDialog::appendLog(const QString &log) {
+void DownloadDialog::appendLog(const QString &log)
+{
     m_list->addItem(log);
     m_list->scrollToBottom();
 }
 
-void DownloadDialog::loadPaths() {
+void DownloadDialog::loadPaths()
+{
     m_timer->stop();
 #ifndef Q_OS_ANDROID
     QDir dir("downloader");
@@ -308,7 +324,7 @@ void DownloadDialog::loadPaths() {
     }
 
     QStringList l;
-    foreach (const QString &path, paths)
+    foreach(const QString &path, paths)
         l << path;
 
     qSort(l);
@@ -320,7 +336,8 @@ void DownloadDialog::loadPaths() {
     emit busy(false);
 }
 
-void DownloadDialog::setBusy(bool b) {
+void DownloadDialog::setBusy(bool b)
+{
     m_busy = b;
     if (b)
         m_downloadBtn->setText(tr("Cancel"));
@@ -330,14 +347,16 @@ void DownloadDialog::setBusy(bool b) {
     }
 }
 
-void DownloadDialog::closeEvent(QCloseEvent *e) {
+void DownloadDialog::closeEvent(QCloseEvent *e)
+{
     if (m_busy)
         e->ignore();
     else
         QDialog::closeEvent(e);
 }
 
-void DownloadDialog::downloadProgress(quint64 downloaded, quint64 total) {
+void DownloadDialog::downloadProgress(quint64 downloaded, quint64 total)
+{
     if (m_busy) {
         m_progressBar->setMaximum(total);
         m_progressBar->setValue(downloaded);

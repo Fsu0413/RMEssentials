@@ -28,7 +28,7 @@ bool Renamer::run()
 
     if (!(renameMp3() && renameBigPng() && renameImds() && renameSmallPng() && renamePapaPngs() && renameSelf()))
         return false;
-    
+
     if (!deleteExtra())
         return false;
 

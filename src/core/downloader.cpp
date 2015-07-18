@@ -8,7 +8,8 @@ namespace {
     QNetworkAccessManager mgr;
 }
 
-Downloader::Downloader() {
+Downloader::Downloader()
+{
     m_isAll = false;
     m_currentDownloadingReply = NULL;
 }
@@ -43,11 +44,12 @@ void Downloader::run()
     m_downloadDir = dir;
 
     downloadSingleFile();
-    
+
     exec();
 }
 
-void Downloader::downloadSingleFile() {
+void Downloader::downloadSingleFile()
+{
     if (m_downloadSequence.isEmpty()) {
         emit all_completed();
         quit();
@@ -78,13 +80,15 @@ void Downloader::downloadSingleFile() {
     connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
 }
 
-void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/) {
+void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/)
+{
     m_failedList << m_currentDownloadingFile;
     if (m_currentDownloadingReply != NULL)
         qDebug() << m_currentDownloadingReply->errorString();
 }
 
-void Downloader::singleFileFinished() {
+void Downloader::singleFileFinished()
+{
     if (m_failedList.contains(m_currentDownloadingFile)) {
         emit one_failed(m_currentDownloadingFile);
         downloadSingleFile();
@@ -138,12 +142,14 @@ void Downloader::singleFileFinished() {
     }
 }
 
-Downloader *operator <<(Downloader *downloader, const QString &filename) {
+Downloader *operator <<(Downloader *downloader, const QString &filename)
+{
     (*downloader) << filename;
     return downloader;
 }
 
-void Downloader::cancel() {
+void Downloader::cancel()
+{
     m_currentDownloadingReply->abort();
 
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
@@ -158,7 +164,8 @@ void Downloader::cancel() {
     singleFileFinished();
 }
 
-void Downloader::timeout() {
+void Downloader::timeout()
+{
     m_currentDownloadingReply->abort();
 
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);

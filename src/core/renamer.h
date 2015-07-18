@@ -24,10 +24,25 @@ private:
     bool deleteExtra();
 
 public:
-    inline void setDir(const QDir &d) { m_d = d; }
-    inline const QDir &dir() const { return m_d; }
-    inline void setToRename(const QString &to) { m_toRename = to; }
-    inline const QString &toRename() const { return m_toRename; }
+    inline void setDir(const QDir &d)
+    {
+        m_d = d;
+    }
+
+    inline const QDir &dir() const
+    {
+        return m_d;
+    }
+
+    inline void setToRename(const QString &to)
+    {
+        m_toRename = to;
+    }
+
+    inline const QString &toRename() const
+    {
+        return m_toRename;
+    }
 
 private:
     QDir m_d;

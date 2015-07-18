@@ -11,7 +11,8 @@ class QLabel;
 class QMenu;
 
 
-class SongClientEditDialog : public QDialog {
+class SongClientEditDialog : public QDialog
+{
     Q_OBJECT
 
 public:
@@ -39,7 +40,7 @@ private slots:
 
 signals:
     void enable_controls(bool enable);
-    
+
 private:
     // controls
     QLineEdit *ushSongID; // Readonly, User Making note better > 800

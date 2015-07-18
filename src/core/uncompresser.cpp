@@ -6,7 +6,8 @@
 
 #include <QDir>
 
-void Uncompresser::run() {
+void Uncompresser::run()
+{
     for (int i = 0; i < zipNames.length(); ++i) {
         const QString &zipName = zipNames.at(i);
         const QString &fileName = fileNames.at(i);
