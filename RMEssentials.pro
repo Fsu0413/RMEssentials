@@ -41,6 +41,7 @@ HEADERS += \
     src/dialog/DownloadDialog.h \
     src/dialog/maindialog.h \
     src/dialog/SongClientEditDialog.h \
+    src/dialog/PapaSongClientEditDialog.h
 
 SOURCES += \
     src/core/downloader.cpp \
@@ -51,7 +52,8 @@ SOURCES += \
     src/dialog/ChangeNameDialog.cpp \
     src/dialog/DownloadDialog.cpp \
     src/dialog/maindialog.cpp \
-    src/dialog/SongClientEditDialog.cpp
+    src/dialog/SongClientEditDialog.cpp \
+    src/dialog/PapaSongClientEditDialog.cpp
 
 INCLUDEPATH += src/core
 INCLUDEPATH += src/dialog
