@@ -2,6 +2,7 @@
 #include "ChangeNameDialog.h"
 #include "DownloadDialog.h"
 #include "SongClientEditDialog.h"
+#include "PapaSongClientEditDialog.h"
 
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -22,9 +23,13 @@ MainDialog::MainDialog(QWidget *parent)
     QPushButton *songclient = new QPushButton(tr("Song Client Editor"));
     connect(songclient, &QPushButton::clicked, this, &MainDialog::showSongClientEditDialog);
 
+    QPushButton *papasongclient = new QPushButton(tr("Papa Song Client Editor"));
+    connect(papasongclient, &QPushButton::clicked, this, &MainDialog::showPapaSongClientEditDialog);
+
     alllayout->addWidget(changename);
     alllayout->addWidget(download);
     alllayout->addWidget(songclient);
+    alllayout->addWidget(papasongclient);
 
     setLayout(alllayout);
 
@@ -58,6 +63,18 @@ void MainDialog::showSongClientEditDialog()
 {
     SongClientEditDialog *dl = new SongClientEditDialog;
     connect(dl, &SongClientEditDialog::finished, dl, &SongClientEditDialog::deleteLater);
+#ifndef Q_OS_ANDROID
+    dl->show();
+#else
+    dl->showMaximized();
+#endif
+    dl->loadFile();
+}
+
+void MainDialog::showPapaSongClientEditDialog()
+{
+    PapaSongClientEditDialog *dl = new PapaSongClientEditDialog;
+    connect(dl, &PapaSongClientEditDialog::finished, dl, &PapaSongClientEditDialog::deleteLater);
 #ifndef Q_OS_ANDROID
     dl->show();
 #else

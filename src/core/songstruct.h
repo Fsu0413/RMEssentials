@@ -57,6 +57,36 @@ namespace RMSong {
     bool IsLevel(const SongStruct &song);
 
     bool sortByID(const SongStruct &a, const SongStruct &b);
+
+    struct PapaSongStruct
+    {
+        short m_ushSongID;
+        int m_iVersion; // what's this?
+        QString m_szSongName;
+        char m_cDifficulty;
+        char m_cLevel;
+        QString m_szPath;
+        QString m_szArtist;
+        QString m_szSongTime;
+        int m_iGameTime;
+        QString m_szRegion;
+        QString m_szStyle;
+        QString m_szBPM;
+        QString m_szNoteNumber;
+        int m_iOrderIndex;
+        char m_ucIsOpen;
+        char m_ucIsFree;
+        char m_ucIsHide;
+        char m_ucIsReward;
+        char m_ucIsLevelReward; // obsolete?
+        int m_iSongType;
+    };
+
+    bool Array2Song(const QByteArray &arr, PapaSongStruct &song);
+    bool Song2Array(const PapaSongStruct &song, QByteArray &arr);
+
+    bool sortByID(const PapaSongStruct &a, const PapaSongStruct &b);
+
 }
 
 #endif

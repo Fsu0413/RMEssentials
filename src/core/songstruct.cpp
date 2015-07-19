@@ -51,7 +51,7 @@ bool RMSong::Array2Song(const QByteArray &arr, SongStruct &song)
 #undef GETSTR
 #undef GETX
 
-        return true;
+    return true;
 }
 
 bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr)
@@ -155,6 +155,98 @@ bool RMSong::IsReward(const SongStruct &song)
 }
 
 bool RMSong::sortByID(const SongStruct &a, const SongStruct &b)
+{
+    return a.m_ushSongID < b.m_ushSongID;
+}
+
+bool RMSong::Array2Song(const QByteArray &arr, PapaSongStruct &song)
+{
+    Q_ASSERT(arr.length() == 0x169);
+    const char *data = arr.constData();
+
+#define GETX(type, name, offset) \
+    song.m_ ## name = *(reinterpret_cast<const type *>(data + offset))
+#define GETSTR(name, offset) \
+    song.m_ ## name = QString::fromUtf8(data + offset)
+
+    GETX(short, ushSongID, 0x0);
+    GETX(int, iVersion, 0x2);
+    GETSTR(szSongName, 0x6);
+    GETX(char, cDifficulty, 0x46);
+    GETX(char, cLevel, 0x47);
+    GETSTR(szPath, 0x48);
+    GETSTR(szArtist, 0x88);
+    GETSTR(szSongTime, 0xc8);
+    GETX(int, iGameTime, 0x108);
+    GETSTR(szRegion, 0x10c);
+    GETSTR(szStyle, 0x120);
+    GETSTR(szBPM, 0x134);
+    GETSTR(szNoteNumber, 0x148);
+    GETX(int, iOrderIndex, 0x15c);
+    GETX(char, ucIsOpen, 0x160);
+    GETX(char, ucIsFree, 0x161);
+    GETX(char, ucIsHide, 0x162);
+    GETX(char, ucIsReward, 0x163);
+    GETX(char, ucIsLevelReward, 0x164);
+    GETX(int, iSongType, 0x165);
+
+#undef GETSTR
+#undef GETX
+
+    return true;
+}
+
+bool RMSong::Song2Array(const PapaSongStruct &song, QByteArray &arr)
+{
+    arr.clear();
+    arr.resize(0x169);
+
+#define SETX(name, offset) do { \
+        int length = sizeof(song.m_ ## name); \
+        const char *data = reinterpret_cast<const char *>(&(song.m_ ## name)); \
+        for (int i = 0; i < length; ++i) \
+            arr[offset + i] = data[i]; \
+    } while (false)
+
+#define SETSTR(name, offset, len) do { \
+        QByteArray dataArr = song.m_ ## name.toUtf8(); \
+        const char *data = dataArr.constData(); \
+        for (int i = 0; i < len; ++i) { \
+            if (i < dataArr.length()) \
+                arr[offset + i] = data[i]; \
+            else \
+                arr[offset + i] = '\0'; \
+        } \
+    } while(false)
+
+    SETX(ushSongID, 0x0);
+    SETX(iVersion, 0x2);
+    SETSTR(szSongName, 0x6, 0x40);
+    SETX(cDifficulty, 0x46);
+    SETX(cLevel, 0x47);
+    SETSTR(szPath, 0x48, 0x40);
+    SETSTR(szArtist, 0x88, 0x40);
+    SETSTR(szSongTime, 0xc8, 0x40);
+    SETX(iGameTime, 0x108);
+    SETSTR(szRegion, 0x10c, 0x14);
+    SETSTR(szStyle, 0x120, 0x14);
+    SETSTR(szBPM, 0x134, 0x14);
+    SETSTR(szNoteNumber, 0x148, 0x14);
+    SETX(iOrderIndex, 0x15c);
+    SETX(ucIsOpen, 0x160);
+    SETX(ucIsFree, 0x161);
+    SETX(ucIsHide, 0x162);
+    SETX(ucIsReward, 0x163);
+    SETX(ucIsLevelReward, 0x164);
+    SETX(iSongType, 0x165);
+
+#undef SETSTR
+#undef SETX
+
+    return true;
+}
+
+bool RMSong::sortByID(const PapaSongStruct &a, const PapaSongStruct &b)
 {
     return a.m_ushSongID < b.m_ushSongID;
 }

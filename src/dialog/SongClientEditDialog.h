@@ -2,7 +2,7 @@
 #define __SONGCLIENTEDITDIALOG_H__
 
 #include <QDialog>
-#include <QHash>
+#include <QList>
 #include "songstruct.h"
 
 class QLineEdit;
