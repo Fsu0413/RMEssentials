@@ -216,10 +216,20 @@ bool Renamer::renameSelf()
 
 bool Renamer::deleteExtra()
 {
-    foreach (const QString &s, m_d.entryList()) {
-        if (!s.startsWith(m_d.dirName()))
-            m_d.remove(s);
-
+    foreach (const QFileInfo &s, m_d.entryInfoList()) {
+        if (s.isDir()) {
+            QDir d(s.absoluteFilePath());
+            d.cdUp();
+            if (d != m_d)
+                continue;
+            QDir(s.absoluteFilePath()).removeRecursively();
+        } else {
+            QDir d(s.path());
+            if (d != m_d)
+                continue;
+            if (!s.fileName().toLower().startsWith(m_d.dirName().toLower()))
+                m_d.remove(s.absoluteFilePath());
+        }
     }
     return true;
 }
