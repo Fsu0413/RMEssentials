@@ -91,7 +91,6 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     szBPM = new QLineEdit;
     QIntValidator *szBPMValidator = new QIntValidator(1, 1000, this);
     szBPM->setValidator(szBPMValidator);
-    QFormLayout *flayout10 = new QFormLayout;
     iVersion = new QLineEdit;
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
     iVersion->setValidator(iVersionValidator);
