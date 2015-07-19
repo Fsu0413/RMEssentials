@@ -348,12 +348,12 @@ void SongClientEditDialog::readCurrent()
 void SongClientEditDialog::convertToFree()
 {
     foreach (SongStruct *const &c, songs) {
-        if (!IsLevel(*c) && !IsHidden(*c) && !IsBuy(*c)) {
+        if (!IsLevel(*c)) {
             c->m_ucIsOpen = true;
-            //c->m_bIsHide = false;
+            c->m_bIsHide = false;
             c->m_bIsLevelReward = false;
             c->m_bIsReward = false;
-            //c->m_ucCanBuy = false;
+            c->m_ucCanBuy = false;
             c->m_bIsFree = false;
         }
     }
