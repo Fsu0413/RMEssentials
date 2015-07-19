@@ -104,3 +104,12 @@ CONFIG(quazip) {
 
 LIBS += -L.
 
+linux{
+    !android {
+        !contains(QMAKE_HOST.arch, x86_64) {
+            QMAKE_LFLAGS += -Wl,--rpath=lib/linux/x86
+        } else {
+            QMAKE_LFLAGS += -Wl,--rpath=lib/linux/x64
+        }
+    }
+}
