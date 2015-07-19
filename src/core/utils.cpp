@@ -50,7 +50,7 @@ bool hasSmallPng(const QDir &dir, const char * &suffix)
         QString s2 = s;
         s2.chop(4);
         if (s2.startsWith(dir.dirName().toLower())) {
-            s2 = s2.mid(dir.dirName().length());
+            s2 = s2.mid(dir.dirName().length()).toLower();
             if (s2 == suffix_hd) {
                 suffix = suffix_hd;
                 return true;
