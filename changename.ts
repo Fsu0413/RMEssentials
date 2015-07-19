@@ -133,6 +133,16 @@ Are you sure?</source>
         <source>Rename succeeded</source>
         <translation>重命名成功</translation>
     </message>
+    <message>
+        <source>Rename to Easy</source>
+        <translation>重命名为简单</translation>
+    </message>
+    <message>
+        <source>You are now renaming %1 to easy.
+Are you sure?</source>
+        <translation>你正在将 %1 重命名为简单。
+确认？</translation>
+    </message>
 </context>
 <context>
     <name>DownloadDialog</name>
@@ -210,6 +220,57 @@ Are you sure?</source>
     <message>
         <source>Song Client Editor</source>
         <translation>客户端歌曲编辑器</translation>
+    </message>
+    <message>
+        <source>Papa Song Client Editor</source>
+        <translation>星动模式客户端编辑器</translation>
+    </message>
+</context>
+<context>
+    <name>PapaSongClientEditDialog</name>
+    <message>
+        <source>Rhythm Master PapaSong Client Editor</source>
+        <translation>节奏大师星动模式客户端编辑器</translation>
+    </message>
+    <message>
+        <source>prev</source>
+        <translation>前一个</translation>
+    </message>
+    <message>
+        <source>next</source>
+        <translation>后一个</translation>
+    </message>
+    <message>
+        <source>save current</source>
+        <translation>保存当前</translation>
+    </message>
+    <message>
+        <source>Functions</source>
+        <translation>功能...</translation>
+    </message>
+    <message>
+        <source>open an other file</source>
+        <translation>打开一个其他文件</translation>
+    </message>
+    <message>
+        <source>save file</source>
+        <translation>保存文件</translation>
+    </message>
+    <message>
+        <source>RMEssentials</source>
+        <translation>节奏大师工具箱</translation>
+    </message>
+    <message>
+        <source>bin files</source>
+        <translation>bin文件</translation>
+    </message>
+    <message>
+        <source>mrock_papasong_client.bin doesn&apos;t exist, please select the file to open.</source>
+        <translation>mrock_papasong_client.bin不存在，请选择文件打开。</translation>
+    </message>
+    <message>
+        <source>File is already exists, do you want to overwrite?</source>
+        <translation>文件已存在，覆盖？</translation>
     </message>
 </context>
 <context>
@@ -294,6 +355,18 @@ Are you sure?</source>
     <message>
         <source>File is already exists, do you want to overwrite?</source>
         <translation>文件已存在，覆盖？</translation>
+    </message>
+    <message>
+        <source>Functions</source>
+        <translation>功能...</translation>
+    </message>
+    <message>
+        <source>open an other file</source>
+        <translation>打开一个其他文件</translation>
+    </message>
+    <message>
+        <source>Convert All Songs to Free</source>
+        <translation>将所有歌曲转为免费</translation>
     </message>
 </context>
 </TS>
