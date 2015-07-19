@@ -35,6 +35,7 @@ private slots:
     void saveCurrent();
     void saveFile();
     void convertToFree();
+    bool reloadFile();
 
     void popup();
 

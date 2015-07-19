@@ -42,20 +42,22 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(nextBtn, &QPushButton::clicked, this, &SongClientEditDialog::moveNext);
     QPushButton *saveCurrentBtn = new QPushButton(tr("save current"));
     connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveCurrent);
-    QPushButton *saveAllBtn = new QPushButton(tr("save file"));
-    connect(saveAllBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveFile);
-    // convenient functions...
-    m_popup = new QMenu(tr("Convenient Functions"), this);
-    QAction *act = m_popup->addAction(tr("Convert All Songs to Free"));
-    connect(act, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
-    QPushButton *convenientFuncBtn = new QPushButton(tr("Convenient Functions"));
-    connect(convenientFuncBtn, &QPushButton::clicked, this, &SongClientEditDialog::popup);
+    // functions...
+    m_popup = new QMenu(tr("Functions"), this);
+    QAction *openFileBtn = m_popup->addAction(tr("open an other file"));
+    connect(openFileBtn, &QAction::triggered, this, &SongClientEditDialog::reloadFile);
+    QAction *saveFileBtn = m_popup->addAction(tr("save file"));
+    connect(saveFileBtn, &QAction::triggered, this, &SongClientEditDialog::saveFile);
+    m_popup->addSeparator();
+    QAction *castf = m_popup->addAction(tr("Convert All Songs to Free"));
+    connect(castf, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
+    QPushButton *funcBtn = new QPushButton(tr("Functions"));
+    connect(funcBtn, &QPushButton::clicked, this, &SongClientEditDialog::popup);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);
     hlayout1->addWidget(nextBtn);
     hlayout1->addWidget(saveCurrentBtn);
-    hlayout1->addWidget(saveAllBtn);
-    hlayout1->addWidget(convenientFuncBtn);
+    hlayout1->addWidget(funcBtn);
 
 
     // 2nd, 3rd, 4th lines...
@@ -164,7 +166,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QFormLayout *hlayout10 = new QFormLayout;
     szNoteNumber = new QLineEdit;
     szNoteNumber->setPlaceholderText("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH");
-    //szNoteNumber->setInputMask("9000,9000,9000,9000,9000,9000,9000,9000,9000");
+    //szNoteNumber->setInputMask("9990,9990,9990,9990,9990,9990,9990,9990,9990");
     AR(hlayout10, szNoteNumber);
 
     // 11th line...
@@ -219,6 +221,45 @@ SongClientEditDialog::~SongClientEditDialog()
     }
 }
 
+bool SongClientEditDialog::reloadFile()
+{
+    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+
+    QFile f(filepath);
+    if (f.open(QIODevice::ReadOnly)) {
+        QByteArray ba = f.readAll();
+
+        if (ba.size() % 0x33e == 0x88) {
+
+            if (!songs.isEmpty()) {
+                foreach(SongStruct *const &s, songs)
+                    delete s;
+                songs.clear();
+                isLoaded = false;
+                currentIndex = -1;
+            }
+
+            fileHeader = ba.mid(0, 0x88);
+            for (int i = 0x88; i < ba.size(); i += 0x33e) {
+                QByteArray sp = ba.mid(i, 0x33e);
+                SongStruct *ss = new SongStruct;
+                Array2Song(sp, *ss);
+                songs << ss;
+            }
+            if (!songs.isEmpty()) {
+                isLoaded = true;
+                currentIndex = 0;
+                readCurrent();
+                f.close();
+                return true;
+            }
+        }
+        f.close();
+    }
+
+    return false;
+}
+
 bool SongClientEditDialog::loadFile()
 {
 #ifndef Q_OS_ANDROID
@@ -249,6 +290,7 @@ bool SongClientEditDialog::loadFile()
                 isLoaded = true;
                 currentIndex = 0;
                 readCurrent();
+                f.close();
                 return true;
             }
         }
