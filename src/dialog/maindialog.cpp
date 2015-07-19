@@ -6,6 +6,8 @@
 
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QMessageBox>
+#include <QApplication>
 
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
@@ -26,14 +28,23 @@ MainDialog::MainDialog(QWidget *parent)
     QPushButton *papasongclient = new QPushButton(tr("Papa Song Client Editor"));
     connect(papasongclient, &QPushButton::clicked, this, &MainDialog::showPapaSongClientEditDialog);
 
+    QHBoxLayout *aboutLayout = new QHBoxLayout;
+    QPushButton *abouT = new QPushButton(tr("About..."));
+    connect(abouT, &QPushButton::clicked, this, &MainDialog::about);
+    QPushButton *aboutQt = new QPushButton(tr("About Qt..."));
+    connect(aboutQt, &QPushButton::clicked, qApp, &QApplication::aboutQt);
+    aboutLayout->addWidget(abouT);
+    aboutLayout->addWidget(aboutQt);
+
     alllayout->addWidget(changename);
     alllayout->addWidget(download);
     alllayout->addWidget(songclient);
     alllayout->addWidget(papasongclient);
+    alllayout->addLayout(aboutLayout);
 
     setLayout(alllayout);
 
-    setMinimumWidth(150);
+    setMinimumWidth(200);
 }
 
 void MainDialog::showChangeNameDialog()
@@ -81,4 +92,14 @@ void MainDialog::showPapaSongClientEditDialog()
     dl->showMaximized();
 #endif
     dl->loadFile();
+}
+
+void MainDialog::about()
+{
+    QMessageBox::about(this, tr("About RMEssentials"), tr(
+        "RMEssentials is a small software written by Fsu0413. \n"
+        "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
+        "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
+        "This Program is powered by Qt %1."
+        ).arg(QT_VERSION_STR));
 }

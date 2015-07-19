@@ -225,6 +225,30 @@ Are you sure?</source>
         <source>Papa Song Client Editor</source>
         <translation>星动模式客户端编辑器</translation>
     </message>
+    <message>
+        <source>About...</source>
+        <translation>关于...</translation>
+    </message>
+    <message>
+        <source>About Qt...</source>
+        <translation>关于Qt...</translation>
+    </message>
+    <message>
+        <source>About RMEssentials</source>
+        <translation>关于节奏大师工具箱</translation>
+    </message>
+    <message>
+        <source>RMEssentials is a small software written by Fsu0413. 
+It is used to operate the files for a game by Tencent: Rhythm Master. 
+It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. 
+
+This Program is powered by Qt %1.</source>
+        <translation>节奏大师工具箱是一个由Fsu0413写的小软件。
+用来操作一款由腾讯开发的游戏：节奏大师的文件。
+现在主要拥有4个功能：文件改名，下载，客户端编辑，星动模式客户端编辑。
+
+这个程序使用 Qt %1。</translation>
+    </message>
 </context>
 <context>
     <name>PapaSongClientEditDialog</name>

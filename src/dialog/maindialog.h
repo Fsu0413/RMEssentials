@@ -15,6 +15,7 @@ private slots:
     void showChangeNameDialog();
     void showSongClientEditDialog();
     void showPapaSongClientEditDialog();
+    void about();
 };
 
 #endif
