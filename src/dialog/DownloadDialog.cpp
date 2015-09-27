@@ -153,17 +153,17 @@ void DownloadDialog::startDownload(DownloadMode mode)
     connect(downloader, &Downloader::download_progress, this, &DownloadDialog::downloadProgress);
 
     switch (mode) {
-    case All:
-        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNext);
-        downloader->setIsAll(true);
-        break;
-    case One:
-        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
-        break;
-    case Mis:
-        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNextMissing);
-        downloader->setIsAll(true);
-        break;
+        case All:
+            connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNext);
+            downloader->setIsAll(true);
+            break;
+        case One:
+            connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
+            break;
+        case Mis:
+            connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNextMissing);
+            downloader->setIsAll(true);
+            break;
     }
 
     emit busy(true);

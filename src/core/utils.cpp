@@ -1,6 +1,7 @@
 #include "utils.h"
 
-namespace {
+namespace
+{
     const char *suffix_hd = "_title_hd";
     const char *suffix_ipad = "_title_ipad";
 }
