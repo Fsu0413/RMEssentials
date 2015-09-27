@@ -43,8 +43,10 @@ namespace RMSong {
         bool m_bIsLevelReward; // obsolete?
     };
 
-    bool Array2Song(const QByteArray &arr, SongClientItemStruct &song);
-    bool Song2Array(const SongClientItemStruct &song, QByteArray &arr);
+    bool ByteArray2Song(const QByteArray &arr, SongClientItemStruct &song);
+    bool Song2ByteArray(const SongClientItemStruct &song, QByteArray &arr);
+    bool Map2Song(const QVariantMap &arr, SongClientItemStruct &song);
+    bool Song2Map(const SongClientItemStruct &song, QVariantMap &arr);
     bool IsHidden(const SongClientItemStruct &song);
     bool IsReward(const SongClientItemStruct &song);
     bool IsDown(const SongClientItemStruct &song);
@@ -78,8 +80,10 @@ namespace RMSong {
         int m_iSongType;
     };
 
-    bool Array2Song(const QByteArray &arr, PapaSongClientItemStruct &song);
-    bool Song2Array(const PapaSongClientItemStruct &song, QByteArray &arr);
+    bool ByteArray2Song(const QByteArray &arr, PapaSongClientItemStruct &song);
+    bool Song2ByteArray(const PapaSongClientItemStruct &song, QByteArray &arr);
+    bool Map2Song(const QVariantMap &arr, PapaSongClientItemStruct &song);
+    bool Song2Map(const PapaSongClientItemStruct &song, QVariantMap &arr);
 
     bool sortByID(const PapaSongClientItemStruct &a, const PapaSongClientItemStruct &b);
 

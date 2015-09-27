@@ -129,7 +129,7 @@ bool Renamer::renameSmallPng()
 
     const char *suffix = NULL;
     if (!hasSmallPng(m_d, suffix))
-        return true; // in fact we can play this imd without small pngs, so ignore this
+        return true; // in fact we can play this imd without small pngs in Bluecat 3, so temporily ignore this, I will make a setting later to set this
 
     QString origname;
     foreach (const QString &s, m_d.entryList(l)) {
@@ -143,6 +143,7 @@ bool Renamer::renameSmallPng()
         return true; // also ignore
 
     m_d.rename(origname, m_toRename + "_title_ipad.png");
+    // QFile::copy(m_d.absoluteFilePath(m_toRename + "_title_ipad.png"), m_d.absoluteFilePath(m_toRename + "_title_hd.png")); // I don't know whether the small pngs is in this style of name in iOS version
     return true;
 }
 

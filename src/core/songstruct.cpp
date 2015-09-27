@@ -1,6 +1,6 @@
 #include "songstruct.h"
 
-bool RMSong::Array2Song(const QByteArray &arr, SongClientItemStruct &song)
+bool RMSong::ByteArray2Song(const QByteArray &arr, SongClientItemStruct &song)
 {
     Q_ASSERT(arr.length() == 0x33e);
     const char *data = arr.constData();
@@ -54,7 +54,7 @@ bool RMSong::Array2Song(const QByteArray &arr, SongClientItemStruct &song)
     return true;
 }
 
-bool RMSong::Song2Array(const SongClientItemStruct &song, QByteArray &arr)
+bool RMSong::Song2ByteArray(const SongClientItemStruct &song, QByteArray &arr)
 {
     arr.clear();
     arr.resize(0x33e);
@@ -121,6 +121,117 @@ bool RMSong::Song2Array(const SongClientItemStruct &song, QByteArray &arr)
     return true;
 }
 
+bool RMSong::Map2Song(const QVariantMap &arr, SongClientItemStruct &song)
+{
+#define GETSTR(name) \
+    song.m_ ## name = arr["m_" # name].toString()
+#define GETINT(name) \
+    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt()
+#define GETHEX(name) \
+    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt(NULL, 16)
+
+
+    GETINT(ushSongID);
+    GETINT(iVersion);
+    GETSTR(szSongName);
+    GETSTR(szPath);
+    GETSTR(szArtist);
+    GETSTR(szComposer);
+    GETSTR(szSongTime);
+    GETINT(iGameTime);
+    GETINT(iRegion);
+    GETINT(iStyle);
+    GETINT(ucIsNew);
+    GETINT(ucIsHot);
+    GETINT(ucIsRecommend);
+    GETSTR(szBPM);
+    GETINT(ucIsOpen);
+    GETHEX(ucCanBuy);
+    GETINT(iOrderIndex);
+    GETHEX(bIsFree);
+    GETHEX(bSongPkg);
+    GETSTR(szFreeBeginTime);
+    GETSTR(szFreeEndTime);
+    GETINT(ush4KeyEasy);
+    GETINT(ush4KeyNormal);
+    GETINT(ush4KeyHard);
+    GETINT(ush5KeyEasy);
+    GETINT(ush5KeyNormal);
+    GETINT(ush5KeyHard);
+    GETINT(ush6KeyEasy);
+    GETINT(ush6KeyNormal);
+    GETINT(ush6KeyHard);
+    GETINT(iPrice);
+    GETSTR(szNoteNumber);
+    GETSTR(szProductID);
+    GETINT(iVipFlag);
+    GETHEX(bIsHide);
+    GETHEX(bIsReward);
+    GETHEX(bIsLevelReward);
+
+#undef GETSTR
+#undef GETINT
+#undef GETHEX
+
+    return true;
+}
+
+bool RMSong::Song2Map(const SongClientItemStruct &song, QVariantMap &arr)
+{
+    arr.clear();
+
+#define SETSTR(name) \
+    arr["m_" # name] = song.m_ ## name
+#define SETINT(name) \
+    arr["m_" # name] = QString::number(static_cast<int>(song.m_ ## name)) + QString(" ")
+#define SETHEX(name) \
+    arr["m_" # name] = QString("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QString(" ")
+
+    SETINT(ushSongID);
+    SETINT(iVersion);
+    SETSTR(szSongName);
+    SETSTR(szPath);
+    SETSTR(szArtist);
+    SETSTR(szComposer);
+    SETSTR(szSongTime);
+    SETINT(iGameTime);
+    SETINT(iRegion);
+    SETINT(iStyle);
+    SETINT(ucIsNew);
+    SETINT(ucIsHot);
+    SETINT(ucIsRecommend);
+    SETSTR(szBPM);
+    SETINT(ucIsOpen);
+    SETHEX(ucCanBuy);
+    SETINT(iOrderIndex);
+    SETHEX(bIsFree);
+    SETHEX(bSongPkg);
+    SETSTR(szFreeBeginTime);
+    SETSTR(szFreeEndTime);
+    SETINT(ush4KeyEasy);
+    SETINT(ush4KeyNormal);
+    SETINT(ush4KeyHard);
+    SETINT(ush5KeyEasy);
+    SETINT(ush5KeyNormal);
+    SETINT(ush5KeyHard);
+    SETINT(ush6KeyEasy);
+    SETINT(ush6KeyNormal);
+    SETINT(ush6KeyHard);
+    SETINT(iPrice);
+    SETSTR(szNoteNumber);
+    SETSTR(szProductID);
+    SETINT(iVipFlag);
+    SETHEX(bIsHide);
+    SETHEX(bIsReward);
+    SETHEX(bIsLevelReward);
+
+#undef SETSTR
+#undef SETINT
+#undef SETHEX
+
+    return true;
+}
+
 bool RMSong::IsBuy(const SongClientItemStruct &song)
 {
     return song.m_ucCanBuy;
@@ -159,7 +270,7 @@ bool RMSong::sortByID(const SongClientItemStruct &a, const SongClientItemStruct 
     return a.m_ushSongID < b.m_ushSongID;
 }
 
-bool RMSong::Array2Song(const QByteArray &arr, PapaSongClientItemStruct &song)
+bool RMSong::ByteArray2Song(const QByteArray &arr, PapaSongClientItemStruct &song)
 {
     Q_ASSERT(arr.length() == 0x169);
     const char *data = arr.constData();
@@ -196,7 +307,7 @@ bool RMSong::Array2Song(const QByteArray &arr, PapaSongClientItemStruct &song)
     return true;
 }
 
-bool RMSong::Song2Array(const PapaSongClientItemStruct &song, QByteArray &arr)
+bool RMSong::Song2ByteArray(const PapaSongClientItemStruct &song, QByteArray &arr)
 {
     arr.clear();
     arr.resize(0x169);
@@ -242,6 +353,82 @@ bool RMSong::Song2Array(const PapaSongClientItemStruct &song, QByteArray &arr)
 
 #undef SETSTR
 #undef SETX
+
+    return true;
+}
+
+bool RMSong::Map2Song(const QVariantMap &arr, PapaSongClientItemStruct &song)
+{
+#define GETSTR(name) \
+    song.m_ ## name = arr["m_" # name].toString()
+#define GETINT(name) \
+    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt()
+#define GETHEX(name) \
+    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt(NULL, 16)
+
+    GETINT(ushSongID);
+    GETINT(iVersion);
+    GETSTR(szSongName);
+    GETHEX(cDifficulty);
+    GETHEX(cLevel);
+    GETSTR(szPath);
+    GETSTR(szArtist);
+    GETSTR(szSongTime);
+    GETINT(iGameTime);
+    GETSTR(szRegion);
+    GETSTR(szStyle);
+    GETSTR(szBPM);
+    GETSTR(szNoteNumber);
+    GETINT(iOrderIndex);
+    GETHEX(ucIsOpen);
+    GETHEX(ucIsFree);
+    GETHEX(ucIsHide);
+    GETHEX(ucIsReward);
+    GETHEX(ucIsLevelReward);
+    GETINT(iSongType);
+
+#undef GETSTR
+#undef GETINT
+#undef GETHEX
+
+    return true;
+}
+
+bool RMSong::Song2Map(const PapaSongClientItemStruct &song, QVariantMap &arr)
+{
+    arr.clear();
+
+#define SETSTR(name) \
+    arr["m_" # name] = song.m_ ## name
+#define SETINT(name) \
+    arr["m_" # name] = QString::number(static_cast<int>(song.m_ ## name)) + QString(" ")
+#define SETHEX(name) \
+    arr["m_" # name] = QString("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QString(" ")
+
+    SETINT(ushSongID);
+    SETINT(iVersion);
+    SETSTR(szSongName);
+    SETHEX(cDifficulty);
+    SETHEX(cLevel);
+    SETSTR(szPath);
+    SETSTR(szArtist);
+    SETSTR(szSongTime);
+    SETINT(iGameTime);
+    SETSTR(szRegion);
+    SETSTR(szStyle);
+    SETSTR(szBPM);
+    SETSTR(szNoteNumber);
+    SETINT(iOrderIndex);
+    SETHEX(ucIsOpen);
+    SETHEX(ucIsFree);
+    SETHEX(ucIsHide);
+    SETHEX(ucIsReward);
+    SETHEX(ucIsLevelReward);
+    SETINT(iSongType);
+
+#undef SETSTR
+#undef SETINT
+#undef SETHEX
 
     return true;
 }

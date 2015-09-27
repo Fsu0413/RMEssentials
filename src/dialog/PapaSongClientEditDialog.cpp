@@ -173,7 +173,7 @@ bool PapaSongClientEditDialog::reloadFile()
             for (int i = 0x88; i < ba.size(); i += 0x169) {
                 QByteArray sp = ba.mid(i, 0x169);
                 PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
-                Array2Song(sp, *ss);
+                ByteArray2Song(sp, *ss);
                 songs << ss;
             }
             if (!songs.isEmpty()) {
@@ -213,7 +213,7 @@ bool PapaSongClientEditDialog::loadFile()
             for (int i = 0x88; i < ba.size(); i += 0x169) {
                 QByteArray sp = ba.mid(i, 0x169);
                 PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
-                Array2Song(sp, *ss);
+                ByteArray2Song(sp, *ss);
                 songs << ss;
             }
             if (!songs.isEmpty()) {
@@ -240,7 +240,7 @@ void PapaSongClientEditDialog::saveFile()
         f.write(fileHeader, 0x88);
         foreach (PapaSongClientItemStruct *const &s, songs) {
             QByteArray arr;
-            Song2Array(*s, arr);
+            Song2ByteArray(*s, arr);
             f.write(arr.constData(), 0x169);
         }
         f.close();

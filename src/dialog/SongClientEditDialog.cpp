@@ -242,7 +242,7 @@ bool SongClientEditDialog::reloadFile()
             for (int i = 0x88; i < ba.size(); i += 0x33e) {
                 QByteArray sp = ba.mid(i, 0x33e);
                 SongClientItemStruct *ss = new SongClientItemStruct;
-                Array2Song(sp, *ss);
+                ByteArray2Song(sp, *ss);
                 songs << ss;
             }
             if (!songs.isEmpty()) {
@@ -282,7 +282,7 @@ bool SongClientEditDialog::loadFile()
             for (int i = 0x88; i < ba.size(); i += 0x33e) {
                 QByteArray sp = ba.mid(i, 0x33e);
                 SongClientItemStruct *ss = new SongClientItemStruct;
-                Array2Song(sp, *ss);
+                ByteArray2Song(sp, *ss);
                 songs << ss;
             }
             if (!songs.isEmpty()) {
@@ -309,7 +309,7 @@ void SongClientEditDialog::saveFile()
         f.write(fileHeader, 0x88);
         foreach (SongClientItemStruct *const &s, songs) {
             QByteArray arr;
-            Song2Array(*s, arr);
+            Song2ByteArray(*s, arr);
             f.write(arr.constData(), 0x33e);
         }
         f.close();
