@@ -1,7 +1,8 @@
 #ifndef __SONGSTRUCT_H__
 #define __SONGSTRUCT_H__
 
-namespace RMSong {
+namespace RMSong
+{
     struct SongClientItemStruct
     {
         short m_ushSongID;
