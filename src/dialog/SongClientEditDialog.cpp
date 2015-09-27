@@ -43,7 +43,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QPushButton *saveCurrentBtn = new QPushButton(tr("save current"));
     connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveCurrent);
     // functions...
-    m_popup = new QMenu(tr("Functions"), this);
+    m_popup = new QMenu(tr("Functions..."), this);
     QAction *openFileBtn = m_popup->addAction(tr("open an other file"));
     connect(openFileBtn, &QAction::triggered, this, &SongClientEditDialog::reloadFile);
     QAction *saveFileBtn = m_popup->addAction(tr("save file"));
@@ -51,7 +51,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     m_popup->addSeparator();
     QAction *castf = m_popup->addAction(tr("Convert All Songs to Free"));
     connect(castf, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
-    QPushButton *funcBtn = new QPushButton(tr("Functions"));
+    QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     connect(funcBtn, &QPushButton::clicked, this, &SongClientEditDialog::popup);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);

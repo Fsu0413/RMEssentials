@@ -206,10 +206,6 @@ Are you sure?</source>
 <context>
     <name>MainDialog</name>
     <message>
-        <source>Rhythm Master Essensials</source>
-        <translation>节奏大师工具箱</translation>
-    </message>
-    <message>
         <source>Filename Changer</source>
         <translation>文件改名器</translation>
     </message>
@@ -238,16 +234,20 @@ Are you sure?</source>
         <translation>关于节奏大师工具箱</translation>
     </message>
     <message>
+        <source>Rhythm Master Essensials  </source>
+        <translation>节奏大师工具箱  </translation>
+    </message>
+    <message>
         <source>RMEssentials is a small software written by Fsu0413. 
 It is used to operate the files for a game by Tencent: Rhythm Master. 
 It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. 
 
-This Program is powered by Qt %1.</source>
+This Program is powered by Qt %1. The version of this program is: %2</source>
         <translation>节奏大师工具箱是一个由Fsu0413写的小软件。
-用来操作一款由腾讯开发的游戏：节奏大师的文件。
+用来操作一款由腾讯开发的游戏节奏大师的文件。
 现在主要拥有4个功能：文件改名，下载，客户端编辑，星动模式客户端编辑。
 
-这个程序使用 Qt %1。</translation>
+这个程序使用 Qt %1。程序版本：%2</translation>
     </message>
 </context>
 <context>
@@ -267,10 +267,6 @@ This Program is powered by Qt %1.</source>
     <message>
         <source>save current</source>
         <translation>保存当前</translation>
-    </message>
-    <message>
-        <source>Functions</source>
-        <translation>功能...</translation>
     </message>
     <message>
         <source>open an other file</source>
@@ -295,6 +291,10 @@ This Program is powered by Qt %1.</source>
     <message>
         <source>File is already exists, do you want to overwrite?</source>
         <translation>文件已存在，覆盖？</translation>
+    </message>
+    <message>
+        <source>Functions...</source>
+        <translation>功能...</translation>
     </message>
 </context>
 <context>
@@ -381,16 +381,16 @@ This Program is powered by Qt %1.</source>
         <translation>文件已存在，覆盖？</translation>
     </message>
     <message>
-        <source>Functions</source>
-        <translation>功能...</translation>
-    </message>
-    <message>
         <source>open an other file</source>
         <translation>打开一个其他文件</translation>
     </message>
     <message>
         <source>Convert All Songs to Free</source>
         <translation>将所有歌曲转为免费</translation>
+    </message>
+    <message>
+        <source>Functions...</source>
+        <translation>功能...</translation>
     </message>
 </context>
 </TS>

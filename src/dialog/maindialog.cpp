@@ -9,10 +9,12 @@
 #include <QMessageBox>
 #include <QApplication>
 
+const char *const programVersion = "20150928";
+
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(tr("Rhythm Master Essensials"));
+    setWindowTitle(tr("Rhythm Master Essensials  ") + QString(programVersion));
 
     QVBoxLayout *alllayout = new QVBoxLayout;
 
@@ -100,6 +102,6 @@ void MainDialog::about()
         "RMEssentials is a small software written by Fsu0413. \n"
         "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
         "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
-        "This Program is powered by Qt %1."
-        ).arg(QT_VERSION_STR));
+        "This Program is powered by Qt %1. The version of this program is: %2"
+        ).arg(QT_VERSION_STR).arg(programVersion));
 }

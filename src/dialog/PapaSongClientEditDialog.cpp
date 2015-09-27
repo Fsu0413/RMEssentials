@@ -43,12 +43,12 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     QPushButton *saveCurrentBtn = new QPushButton(tr("save current"));
     connect(saveCurrentBtn, &QPushButton::clicked, this, &PapaSongClientEditDialog::saveCurrent);
     // functions...
-    m_popup = new QMenu(tr("Functions"), this);
+    m_popup = new QMenu(tr("Functions..."), this);
     QAction *openFileBtn = m_popup->addAction(tr("open an other file"));
     connect(openFileBtn, &QAction::triggered, this, &PapaSongClientEditDialog::reloadFile);
     QAction *saveFileBtn = m_popup->addAction(tr("save file"));
     connect(saveFileBtn, &QAction::triggered, this, &PapaSongClientEditDialog::saveFile);
-    QPushButton *funcBtn = new QPushButton(tr("Functions"));
+    QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     connect(funcBtn, &QPushButton::clicked, this, &PapaSongClientEditDialog::popup);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);
