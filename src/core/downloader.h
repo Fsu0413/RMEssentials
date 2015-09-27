@@ -74,6 +74,7 @@ private:
     QString m_currentDownloadingFile;
     QDir m_downloadDir;
     QNetworkReply *m_currentDownloadingReply;
+    QNetworkAccessManager *m_networkAccessManager;
 
     bool m_cancelRequested;
     bool m_isAll;

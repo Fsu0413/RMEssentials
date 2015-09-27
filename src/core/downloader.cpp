@@ -4,10 +4,6 @@
 #include <QFile>
 #include <QPixmap>
 
-namespace {
-    QNetworkAccessManager mgr;
-}
-
 Downloader::Downloader()
 {
     m_isAll = false;
@@ -16,6 +12,8 @@ Downloader::Downloader()
 
 void Downloader::run()
 {
+    m_networkAccessManager = new QNetworkAccessManager;
+    connect(this, &QThread::finished, m_networkAccessManager, &QNetworkAccessManager::deleteLater);
     m_cancelRequested = false;
 #ifndef Q_OS_ANDROID
     QDir currentDir = QDir::current();
@@ -74,7 +72,7 @@ void Downloader::downloadSingleFile()
             return;
         }
     }
-    m_currentDownloadingReply = mgr.get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
+    m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
     connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
     connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
@@ -134,7 +132,7 @@ void Downloader::singleFileFinished()
             qDebug() << "redirect!!";
             qDebug() << u;
             m_currentDownloadingFile = u.toString();
-            m_currentDownloadingReply = mgr.get(QNetworkRequest(u));
+            m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(u));
             connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
             connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
             connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
