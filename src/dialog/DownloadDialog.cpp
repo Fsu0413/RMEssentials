@@ -138,7 +138,7 @@ void DownloadDialog::startDownload(DownloadMode mode)
 
     Downloader *downloader = new Downloader;
     QString songname = m_nameCombo->currentText();
-    foreach(const QString &suf, suffixs)
+    foreach (const QString &suf, suffixs)
         downloader << (prefix + songname + "/" + songname + suf);
 
     downloader->setSavePath(songname);
@@ -323,7 +323,7 @@ void DownloadDialog::loadPaths()
     }
 
     QStringList l;
-    foreach(const QString &path, paths)
+    foreach (const QString &path, paths)
         l << path;
 
     qSort(l);

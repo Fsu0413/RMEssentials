@@ -215,7 +215,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 SongClientEditDialog::~SongClientEditDialog()
 {
     if (!songs.isEmpty()) {
-        foreach(SongClientItemStruct *const &s, songs)
+        foreach (SongClientItemStruct *const &s, songs)
             delete s;
     }
 }
@@ -231,7 +231,7 @@ bool SongClientEditDialog::reloadFile()
         if (ba.size() % 0x33e == 0x88) {
 
             if (!songs.isEmpty()) {
-                foreach(SongClientItemStruct *const &s, songs)
+                foreach (SongClientItemStruct *const &s, songs)
                     delete s;
                 songs.clear();
                 isLoaded = false;
