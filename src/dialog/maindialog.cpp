@@ -53,14 +53,15 @@ MainDialog::MainDialog(QWidget *parent)
 #else
     static const QString versioninfo = "http://fsu0413.github.io/RMEssentials/versioninfotest";
 #endif
+    static const QString whatsnew = "http://fsu0413.github.io/RMEssentials/whatsnew";
 
     Downloader *downloader = new Downloader;
-    downloader << versioninfo;
+    downloader << versioninfo << whatsnew;
 
     downloader->setSavePath(QString());
 
     connect(downloader, &Downloader::finished, downloader, &Downloader::deleteLater);
-    connect(downloader, &Downloader::one_completed, this, &MainDialog::checkForUpdate);
+    connect(downloader, &Downloader::all_completed, this, &MainDialog::checkForUpdate);
     connect(this, &MainDialog::finished, downloader, &Downloader::cancel);
 
     downloader->start();
@@ -135,14 +136,23 @@ void MainDialog::checkForUpdate()
         v.close();
 
         if (QString(programVersion) < version) {
+            QFile n("downloader/whatsnew");
+            QString whatsnew;
+            if (n.open(QIODevice::ReadOnly)) {
+                whatsnew = QString::fromUtf8(n.readAll());
+                n.close();
+            } else
+                whatsnew = tr("Failed to load whatsnew from network");
+
             setWindowTitle(windowTitle() + tr(" new version %1 available").arg(version));
             if (isVisible()) {
                 static QString link = "http://pan.baidu.com/s/1eQvwPzW";
                 static QString passwd = "at7c";
                 QString contents = tr(
                     "New version avaliable!! Version number: %1<br />"
-                    "You can download the new version at <a href=\'%2\'>here</a>, the password is \"%3\""
-                ).arg(version).arg(link).arg(passwd);
+                    "You can download the new version at <a href=\'%2\'>here</a>, the password is \"%3\"<br /><br />"
+                    "What\'s new in version %1: <br /> %4"
+                ).arg(version).arg(link).arg(passwd).arg(whatsnew);
                 QMessageBox::information(this, tr("RMEssentials"), contents);
             }
         }
