@@ -47,7 +47,7 @@ bool hasSmallPng(const QDir &dir, const char * &suffix)
         l << "*.png";
 
     foreach (const QString &s, dir.entryList(l)) {
-        QString s2 = s;
+        QString s2 = s.toLower();
         s2.chop(4);
         if (s2.startsWith(dir.dirName().toLower())) {
             s2 = s2.mid(dir.dirName().length()).toLower();
