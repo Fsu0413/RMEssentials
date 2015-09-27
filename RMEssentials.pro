@@ -13,16 +13,17 @@ TEMPLATE = app
     CONFIG += quazip
 }
 
-
-CONFIG += mobility
-MOBILITY = 
+android {
+    CONFIG += mobility
+    MOBILITY =
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+}
 
 RESOURCES += \
     lang.qrc
 
 TRANSLATIONS += changename.ts
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 win32{
     RC_FILE += res/icon.rc
