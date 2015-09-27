@@ -1,7 +1,6 @@
 #include "DownloadDialog.h"
 #include "downloader.h"
 #include <QListWidget>
-//#include <QLineEdit>
 #include <QTimer>
 #include <QComboBox>
 #include <QPushButton>

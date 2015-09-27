@@ -1,10 +1,6 @@
 #ifndef __SONGSTRUCT_H__
 #define __SONGSTRUCT_H__
 
-#include <QString>
-
-class QByteArray;
-
 namespace RMSong {
     struct SongStruct
     {

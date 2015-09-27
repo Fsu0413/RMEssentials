@@ -3,8 +3,6 @@
 
 #include <QFlag>
 
-class QDir;
-
 enum ExistNote
 {
     IMD_4K_EZ = 0x1,

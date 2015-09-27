@@ -1,9 +1,5 @@
 #include "renamer.h"
 #include "utils.h"
-#include <QDir>
-#include <QString>
-#include <QMap>
-
 
 bool Renamer::run()
 {

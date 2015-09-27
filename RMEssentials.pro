@@ -9,6 +9,9 @@ QT       += core gui widgets network
 TARGET = RMEssentials
 TEMPLATE = app
 
+CONFIG += precompiled_header
+PRECOMPILED_HEADER = src/pch.h
+
 !android {
     CONFIG += quazip
 }
@@ -42,7 +45,8 @@ HEADERS += \
     src/dialog/DownloadDialog.h \
     src/dialog/maindialog.h \
     src/dialog/SongClientEditDialog.h \
-    src/dialog/PapaSongClientEditDialog.h
+    src/dialog/PapaSongClientEditDialog.h \
+    src/pch.h
 
 SOURCES += \
     src/core/downloader.cpp \

@@ -1,11 +1,8 @@
 #ifndef __CHANGENAMEDIALOG_H__
 #define __CHANGENAMEDIALOG_H__
 
-#include <QDialog>
-
 class QLineEdit;
 class QLabel;
-class QString;
 class QLayout;
 
 class ChangeNameDialog : public QDialog

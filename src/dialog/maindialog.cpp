@@ -7,7 +7,6 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include <QApplication>
 
 const char *const programVersion = "20150928";
 

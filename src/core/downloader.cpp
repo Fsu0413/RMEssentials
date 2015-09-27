@@ -1,7 +1,6 @@
 #include "downloader.h"
 
 #include <QNetworkAccessManager>
-#include <QFile>
 #include <QPixmap>
 
 Downloader::Downloader()

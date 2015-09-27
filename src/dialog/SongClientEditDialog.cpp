@@ -12,7 +12,6 @@
 
 #include <QMenu>
 
-#include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardPaths>

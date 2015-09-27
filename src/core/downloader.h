@@ -1,10 +1,7 @@
 #ifndef __DOWNLOADER_H__
 #define __DOWNLOADER_H__
 
-#include <QThread>
-#include <QStringList>
 #include <QNetworkReply>
-#include <QDir>
 
 class Downloader : public QThread
 {

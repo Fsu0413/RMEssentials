@@ -1,8 +1,6 @@
 #ifndef __SONGCLIENTEDITDIALOG_H__
 #define __SONGCLIENTEDITDIALOG_H__
 
-#include <QDialog>
-#include <QList>
 #include "songstruct.h"
 
 class QLineEdit;

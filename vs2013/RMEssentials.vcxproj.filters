@@ -191,6 +191,7 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PapaSongClientEditDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\pch.h.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\changename.ts">
@@ -290,5 +291,6 @@
     <ClInclude Include="..\src\quazip\zlib.h">
       <Filter>quazip</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\pch.h" />
   </ItemGroup>
 </Project>

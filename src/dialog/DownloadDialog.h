@@ -1,8 +1,6 @@
 #ifndef __DOWNLOADDIALOG_H__
 #define __DOWNLOADDIALOG_H__
 
-#include <QDialog>
-
 class QListWidget;
 class QComboBox;
 class QPushButton;
