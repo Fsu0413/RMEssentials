@@ -37,9 +37,6 @@ private slots:
 
     void popup();
 
-signals:
-    void enable_controls(bool enable);
-
 private:
     // controls
     QLineEdit *ushSongID; // Readonly, User Making note better > 800

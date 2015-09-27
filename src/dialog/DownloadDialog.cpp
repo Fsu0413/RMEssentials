@@ -19,8 +19,6 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QVBoxLayout *alllayout = new QVBoxLayout;
 
     QFormLayout *flayout = new QFormLayout;
-    //m_nameEdit = new QLineEdit;
-    //connect(this, &DownloadDialog::enable_controls, m_nameEdit, &QLineEdit::setEnabled);
     m_nameCombo = new QComboBox;
     m_nameCombo->setEditable(true);
     connect(this, &DownloadDialog::busy, m_nameCombo, &QComboBox::setDisabled);
