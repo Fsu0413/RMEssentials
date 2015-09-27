@@ -2,10 +2,6 @@
 #include <QApplication>
 #include <QTranslator>
 
-#ifdef Q_OS_ANDROID
-#include <QFont>
-#endif
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -24,5 +20,6 @@ int main(int argc, char *argv[])
 #else
     w.show();
 #endif
+
     return a.exec();
 }
