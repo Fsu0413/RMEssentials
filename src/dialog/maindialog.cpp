@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
+#include "downloader.h"
 
 const char *const programVersion = "20150928";
 
@@ -46,6 +47,23 @@ MainDialog::MainDialog(QWidget *parent)
     setLayout(alllayout);
 
     setMinimumWidth(200);
+
+#ifdef QT_NO_DEBUG
+    static const QString versioninfo = "http://fsu0413.github.io/RMEssentials/versioninfo";
+#else
+    static const QString versioninfo = "http://fsu0413.github.io/RMEssentials/versioninfotest";
+#endif
+
+    Downloader *downloader = new Downloader;
+    downloader << versioninfo;
+
+    downloader->setSavePath(QString());
+
+    connect(downloader, &Downloader::finished, downloader, &Downloader::deleteLater);
+    connect(downloader, &Downloader::one_completed, this, &MainDialog::checkForUpdate);
+    connect(this, &MainDialog::finished, downloader, &Downloader::cancel);
+
+    downloader->start();
 }
 
 void MainDialog::showChangeNameDialog()
@@ -103,4 +121,23 @@ void MainDialog::about()
         "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
         "This Program is powered by Qt %1. The version of this program is: %2"
         ).arg(QT_VERSION_STR).arg(programVersion));
+}
+
+void MainDialog::checkForUpdate()
+{
+#ifdef QT_NO_DEBUG
+    QFile v("downloader/versioninfo");
+#else
+    QFile v("downloader/versioninfotest");
+#endif
+    if (v.open(QIODevice::ReadOnly)) {
+        QString version = v.readAll();
+        v.close();
+
+        if (QString(programVersion) < version) {
+            setWindowTitle(windowTitle() + tr(" new version %1 available").arg(version));
+            if (isVisible())
+                QMessageBox::information(this, tr("RMEssentials"), tr("New version available: %1").arg(version));
+        }
+    }
 }

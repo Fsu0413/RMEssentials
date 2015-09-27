@@ -14,6 +14,8 @@ private slots:
     void showSongClientEditDialog();
     void showPapaSongClientEditDialog();
     void about();
+
+    void checkForUpdate();
 };
 
 #endif
