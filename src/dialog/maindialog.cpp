@@ -120,7 +120,7 @@ void MainDialog::about()
         "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
         "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
         "This Program is powered by Qt %1. The version of this program is: %2"
-        ).arg(QT_VERSION_STR).arg(programVersion));
+    ).arg(QT_VERSION_STR).arg(programVersion));
 }
 
 void MainDialog::checkForUpdate()
@@ -136,8 +136,15 @@ void MainDialog::checkForUpdate()
 
         if (QString(programVersion) < version) {
             setWindowTitle(windowTitle() + tr(" new version %1 available").arg(version));
-            if (isVisible())
-                QMessageBox::information(this, tr("RMEssentials"), tr("New version available: %1").arg(version));
+            if (isVisible()) {
+                static QString link = "http://pan.baidu.com/s/1eQvwPzW";
+                static QString passwd = "at7c";
+                QString contents = tr(
+                    "New version avaliable!! Version number: %1<br />"
+                    "You can download the new version at <a href=\'%2\'>here</a>, the password is \"%3\""
+                ).arg(version).arg(link).arg(passwd);
+                QMessageBox::information(this, tr("RMEssentials"), contents);
+            }
         }
     }
 }
