@@ -46,7 +46,8 @@ HEADERS += \
     src/dialog/maindialog.h \
     src/dialog/SongClientEditDialog.h \
     src/dialog/PapaSongClientEditDialog.h \
-    src/pch.h
+    src/pch.h \
+    src/core/songfile.h
 
 SOURCES += \
     src/core/downloader.cpp \
@@ -58,7 +59,8 @@ SOURCES += \
     src/dialog/DownloadDialog.cpp \
     src/dialog/maindialog.cpp \
     src/dialog/SongClientEditDialog.cpp \
-    src/dialog/PapaSongClientEditDialog.cpp
+    src/dialog/PapaSongClientEditDialog.cpp \
+    src/core/songfile.cpp
 
 INCLUDEPATH += src/core
 INCLUDEPATH += src/dialog

@@ -192,6 +192,9 @@
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\src\pch.h.cpp" />
+    <ClCompile Include="..\src\core\songfile.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\changename.ts">
@@ -292,5 +295,8 @@
       <Filter>quazip</Filter>
     </ClInclude>
     <ClInclude Include="..\src\pch.h" />
+    <ClInclude Include="..\src\core\songfile.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

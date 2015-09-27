@@ -19,7 +19,7 @@
 using namespace RMSong;
 
 SongClientEditDialog::SongClientEditDialog(QWidget *parent)
-    : QDialog(parent), currentIndex(-1), isLoaded(false)
+    : QDialog(parent), m_currentIndex(-1), m_isLoaded(false)
 {
     setWindowTitle(tr("Rhythm Master Song Client Editor"));
 
@@ -214,10 +214,6 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
 SongClientEditDialog::~SongClientEditDialog()
 {
-    if (!songs.isEmpty()) {
-        foreach (SongClientItemStruct *const &s, songs)
-            delete s;
-    }
 }
 
 bool SongClientEditDialog::reloadFile()
@@ -225,36 +221,16 @@ bool SongClientEditDialog::reloadFile()
     QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
 
     QFile f(filepath);
-    if (f.open(QIODevice::ReadOnly)) {
-        QByteArray ba = f.readAll();
+    if (!f.exists())
+        return false;
 
-        if (ba.size() % 0x33e == 0x88) {
-
-            if (!songs.isEmpty()) {
-                foreach (SongClientItemStruct *const &s, songs)
-                    delete s;
-                songs.clear();
-                isLoaded = false;
-                currentIndex = -1;
-            }
-
-            fileHeader = ba.mid(0, 0x88);
-            for (int i = 0x88; i < ba.size(); i += 0x33e) {
-                QByteArray sp = ba.mid(i, 0x33e);
-                SongClientItemStruct *ss = new SongClientItemStruct;
-                ByteArray2Song(sp, *ss);
-                songs << ss;
-            }
-            if (!songs.isEmpty()) {
-                isLoaded = true;
-                currentIndex = 0;
-                readCurrent();
-                f.close();
-                return true;
-            }
-        }
-        f.close();
-    }
+    if (m_file.readInfoFromDevice(&f, BinFormat)) {
+        m_isLoaded = true;
+        m_currentIndex = 0;
+        readCurrent();
+        return true;
+    } else
+        QMessageBox::critical(this, tr("RMEssentials"), tr("Read file failed"));
 
     return false;
 }
@@ -275,68 +251,61 @@ bool SongClientEditDialog::loadFile()
     }
 
     QFile f(filepath);
-    if (f.open(QIODevice::ReadOnly)) {
-        QByteArray ba = f.readAll();
-        if (ba.size() % 0x33e == 0x88) {
-            fileHeader = ba.mid(0, 0x88);
-            for (int i = 0x88; i < ba.size(); i += 0x33e) {
-                QByteArray sp = ba.mid(i, 0x33e);
-                SongClientItemStruct *ss = new SongClientItemStruct;
-                ByteArray2Song(sp, *ss);
-                songs << ss;
-            }
-            if (!songs.isEmpty()) {
-                isLoaded = true;
-                currentIndex = 0;
-                readCurrent();
-                f.close();
-                return true;
-            }
-        }
-        f.close();
-    }
+    if (!f.exists())
+        return false;
+
+    if (m_file.readInfoFromDevice(&f, BinFormat)) {
+        m_isLoaded = true;
+        m_currentIndex = 0;
+        readCurrent();
+        return true;
+    } else
+        QMessageBox::critical(this, tr("RMEssentials"), tr("Read file failed"));
+
     return false;
 }
 
 void SongClientEditDialog::saveFile()
 {
+    if (!m_isLoaded)
+        return;
+
     QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
     QFile f(filepath);
     if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
         return;
 
-    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        f.write(fileHeader, 0x88);
-        foreach (SongClientItemStruct *const &s, songs) {
-            QByteArray arr;
-            Song2ByteArray(*s, arr);
-            f.write(arr.constData(), 0x33e);
-        }
-        f.close();
-    }
+    if (!m_file.saveInfoToDevice(&f, BinFormat))
+        QMessageBox::critical(this, tr("RMEssentials"), tr("Save file failed"));
 }
 
 void SongClientEditDialog::moveNext()
 {
-    if (currentIndex + 1 == songs.length())
+    if (!m_isLoaded)
         return;
 
-    ++currentIndex;
+    if (m_currentIndex + 1 == m_file.songCount())
+        return;
+
+    ++m_currentIndex;
     readCurrent();
 }
 
 void SongClientEditDialog::movePrev()
 {
-    if (currentIndex <= 0)
+    if (!m_isLoaded)
         return;
 
-    --currentIndex;
+    if (m_currentIndex <= 0)
+        return;
+
+    --m_currentIndex;
     readCurrent();
 }
 
 void SongClientEditDialog::readCurrent()
 {
-    const SongClientItemStruct &c = *(songs.at(currentIndex));
+    const SongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
 #define RP_ST(p) p->setText(c.m_ ## p)
@@ -388,7 +357,11 @@ void SongClientEditDialog::readCurrent()
 
 void SongClientEditDialog::convertToFree()
 {
-    foreach (SongClientItemStruct *const &c, songs) {
+    if (!m_isLoaded)
+        return;
+
+    for (int i = 0; i < m_file.songCount(); ++i) {
+        SongClientItemStruct *c = m_file.song(i);
         if (!IsLevel(*c)) {
             c->m_ucIsOpen = true;
             c->m_bIsHide = false;
@@ -425,7 +398,7 @@ void SongClientEditDialog::calculateSongTime()
 
 void SongClientEditDialog::saveCurrent()
 {
-    SongClientItemStruct &c = *(songs[currentIndex]);
+    SongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
 #define SP_NS(p) c.m_ ## p = p->text().toShort()
 #define SP_NI(p) c.m_ ## p = p->text().toInt()

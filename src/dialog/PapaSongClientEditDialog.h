@@ -2,6 +2,7 @@
 #define __PAPASONGCLIENTEDITDIALOG_H__
 
 #include "songstruct.h"
+#include "songfile.h"
 
 class QLineEdit;
 class QCheckBox;
@@ -20,9 +21,10 @@ public:
     bool loadFile();
 
 private:
-    QList<RMSong::PapaSongClientItemStruct *> songs;
-    int currentIndex;
-    bool isLoaded;
+    RMSong::PapaSongClientFile m_file;
+
+    int m_currentIndex;
+    bool m_isLoaded;
 
 private slots:
     void movePrev();
@@ -61,8 +63,6 @@ private:
     QLineEdit *iSongType; // better keep empty
 
     QMenu *m_popup;
-
-    QByteArray fileHeader;
 
 };
 

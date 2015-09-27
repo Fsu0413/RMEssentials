@@ -2,6 +2,7 @@
 #define __SONGCLIENTEDITDIALOG_H__
 
 #include "songstruct.h"
+#include "songfile.h"
 
 class QLineEdit;
 class QCheckBox;
@@ -20,9 +21,10 @@ public:
     bool loadFile();
 
 private:
-    QList<RMSong::SongClientItemStruct *> songs;
-    int currentIndex;
-    bool isLoaded;
+    RMSong::SongClientFile m_file;
+
+    int m_currentIndex;
+    bool m_isLoaded;
 
 private slots:
     void movePrev();
@@ -78,8 +80,6 @@ private:
     QCheckBox *bIsLevelReward; // OBSOLETE???
 
     QMenu *m_popup;
-
-    QByteArray fileHeader;
 
 };
 

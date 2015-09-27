@@ -231,6 +231,7 @@
     <ClCompile Include="..\src\core\downloader.cpp" />
     <ClCompile Include="..\src\core\main.cpp" />
     <ClCompile Include="..\src\core\renamer.cpp" />
+    <ClCompile Include="..\src\core\songfile.cpp" />
     <ClCompile Include="..\src\core\songstruct.cpp" />
     <ClCompile Include="..\src\core\uncompresser.cpp" />
     <ClCompile Include="..\src\core\utils.cpp" />
@@ -442,6 +443,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\core\songfile.h" />
     <ClInclude Include="..\src\core\songstruct.h" />
     <ClInclude Include="..\src\core\utils.h" />
     <CustomBuild Include="..\src\dialog\PapaSongClientEditDialog.h">

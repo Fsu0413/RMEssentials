@@ -19,7 +19,7 @@
 using namespace RMSong;
 
 PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
-    : QDialog(parent), currentIndex(-1), isLoaded(false)
+    : QDialog(parent), m_currentIndex(-1), m_isLoaded(false)
 {
     setWindowTitle(tr("Rhythm Master PapaSong Client Editor"));
 
@@ -145,10 +145,6 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
 
 PapaSongClientEditDialog::~PapaSongClientEditDialog()
 {
-    if (!songs.isEmpty()) {
-        foreach(PapaSongClientItemStruct *const &s, songs)
-            delete s;
-    }
 }
 
 bool PapaSongClientEditDialog::reloadFile()
@@ -156,36 +152,16 @@ bool PapaSongClientEditDialog::reloadFile()
     QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
 
     QFile f(filepath);
-    if (f.open(QIODevice::ReadOnly)) {
-        QByteArray ba = f.readAll();
+    if (!f.exists())
+        return false;
 
-        if (ba.size() % 0x169 == 0x88) {
-
-            if (!songs.isEmpty()) {
-                foreach(PapaSongClientItemStruct *const &s, songs)
-                    delete s;
-                songs.clear();
-                isLoaded = false;
-                currentIndex = -1;
-            }
-
-            fileHeader = ba.mid(0, 0x88);
-            for (int i = 0x88; i < ba.size(); i += 0x169) {
-                QByteArray sp = ba.mid(i, 0x169);
-                PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
-                ByteArray2Song(sp, *ss);
-                songs << ss;
-            }
-            if (!songs.isEmpty()) {
-                isLoaded = true;
-                currentIndex = 0;
-                readCurrent();
-                f.close();
-                return true;
-            }
-        }
-        f.close();
-    }
+    if (m_file.readInfoFromDevice(&f, BinFormat)) {
+        m_isLoaded = true;
+        m_currentIndex = 0;
+        readCurrent();
+        return true;
+    } else
+        QMessageBox::critical(this, tr("RMEssentials"), tr("Read file failed"));
 
     return false;
 }
@@ -206,68 +182,61 @@ bool PapaSongClientEditDialog::loadFile()
     }
 
     QFile f(filepath);
-    if (f.open(QIODevice::ReadOnly)) {
-        QByteArray ba = f.readAll();
-        if (ba.size() % 0x169 == 0x88) {
-            fileHeader = ba.mid(0, 0x88);
-            for (int i = 0x88; i < ba.size(); i += 0x169) {
-                QByteArray sp = ba.mid(i, 0x169);
-                PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
-                ByteArray2Song(sp, *ss);
-                songs << ss;
-            }
-            if (!songs.isEmpty()) {
-                isLoaded = true;
-                currentIndex = 0;
-                readCurrent();
-                f.close();
-                return true;
-            }
-        }
-        f.close();
-    }
+    if (!f.exists())
+        return false;
+
+    if (m_file.readInfoFromDevice(&f, BinFormat)) {
+        m_isLoaded = true;
+        m_currentIndex = 0;
+        readCurrent();
+        return true;
+    } else
+        QMessageBox::critical(this, tr("RMEssentials"), tr("Read file failed"));
+
     return false;
 }
 
 void PapaSongClientEditDialog::saveFile()
 {
+    if (!m_isLoaded)
+        return;
+
     QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
     QFile f(filepath);
     if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
         return;
 
-    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        f.write(fileHeader, 0x88);
-        foreach (PapaSongClientItemStruct *const &s, songs) {
-            QByteArray arr;
-            Song2ByteArray(*s, arr);
-            f.write(arr.constData(), 0x169);
-        }
-        f.close();
-    }
+    if (!m_file.saveInfoToDevice(&f, BinFormat))
+        QMessageBox::critical(this, tr("RMEssentials"), tr("Save file failed"));
 }
 
 void PapaSongClientEditDialog::moveNext()
 {
-    if (currentIndex + 1 == songs.length())
+    if (!m_isLoaded)
         return;
 
-    ++currentIndex;
+    if (m_currentIndex + 1 == m_file.songCount())
+        return;
+
+    ++m_currentIndex;
     readCurrent();
 }
 
 void PapaSongClientEditDialog::movePrev()
 {
-    if (currentIndex <= 0)
+    if (!m_isLoaded)
         return;
 
-    --currentIndex;
+    if (m_currentIndex <= 0)
+        return;
+
+    --m_currentIndex;
     readCurrent();
 }
 
 void PapaSongClientEditDialog::readCurrent()
 {
-    const PapaSongClientItemStruct &c = *(songs.at(currentIndex));
+    const PapaSongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
 #define RP_ST(p) p->setText(c.m_ ## p)
@@ -323,7 +292,7 @@ void PapaSongClientEditDialog::calculateSongTime()
 
 void PapaSongClientEditDialog::saveCurrent()
 {
-    PapaSongClientItemStruct &c = *(songs[currentIndex]);
+    PapaSongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
 #define SP_NS(p) c.m_ ## p = p->text().toShort()
 #define SP_NI(p) c.m_ ## p = p->text().toInt()
