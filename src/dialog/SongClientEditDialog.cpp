@@ -215,7 +215,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 SongClientEditDialog::~SongClientEditDialog()
 {
     if (!songs.isEmpty()) {
-        foreach(SongStruct *const &s, songs)
+        foreach(SongClientItemStruct *const &s, songs)
             delete s;
     }
 }
@@ -231,7 +231,7 @@ bool SongClientEditDialog::reloadFile()
         if (ba.size() % 0x33e == 0x88) {
 
             if (!songs.isEmpty()) {
-                foreach(SongStruct *const &s, songs)
+                foreach(SongClientItemStruct *const &s, songs)
                     delete s;
                 songs.clear();
                 isLoaded = false;
@@ -241,7 +241,7 @@ bool SongClientEditDialog::reloadFile()
             fileHeader = ba.mid(0, 0x88);
             for (int i = 0x88; i < ba.size(); i += 0x33e) {
                 QByteArray sp = ba.mid(i, 0x33e);
-                SongStruct *ss = new SongStruct;
+                SongClientItemStruct *ss = new SongClientItemStruct;
                 Array2Song(sp, *ss);
                 songs << ss;
             }
@@ -281,7 +281,7 @@ bool SongClientEditDialog::loadFile()
             fileHeader = ba.mid(0, 0x88);
             for (int i = 0x88; i < ba.size(); i += 0x33e) {
                 QByteArray sp = ba.mid(i, 0x33e);
-                SongStruct *ss = new SongStruct;
+                SongClientItemStruct *ss = new SongClientItemStruct;
                 Array2Song(sp, *ss);
                 songs << ss;
             }
@@ -307,7 +307,7 @@ void SongClientEditDialog::saveFile()
 
     if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         f.write(fileHeader, 0x88);
-        foreach (SongStruct *const &s, songs) {
+        foreach (SongClientItemStruct *const &s, songs) {
             QByteArray arr;
             Song2Array(*s, arr);
             f.write(arr.constData(), 0x33e);
@@ -336,7 +336,7 @@ void SongClientEditDialog::movePrev()
 
 void SongClientEditDialog::readCurrent()
 {
-    const SongStruct &c = *(songs.at(currentIndex));
+    const SongClientItemStruct &c = *(songs.at(currentIndex));
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
 #define RP_ST(p) p->setText(c.m_ ## p)
@@ -388,7 +388,7 @@ void SongClientEditDialog::readCurrent()
 
 void SongClientEditDialog::convertToFree()
 {
-    foreach (SongStruct *const &c, songs) {
+    foreach (SongClientItemStruct *const &c, songs) {
         if (!IsLevel(*c)) {
             c->m_ucIsOpen = true;
             c->m_bIsHide = false;
@@ -425,7 +425,7 @@ void SongClientEditDialog::calculateSongTime()
 
 void SongClientEditDialog::saveCurrent()
 {
-    SongStruct &c = *(songs[currentIndex]);
+    SongClientItemStruct &c = *(songs[currentIndex]);
 
 #define SP_NS(p) c.m_ ## p = p->text().toShort()
 #define SP_NI(p) c.m_ ## p = p->text().toInt()

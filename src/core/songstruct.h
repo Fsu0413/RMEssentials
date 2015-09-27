@@ -2,7 +2,7 @@
 #define __SONGSTRUCT_H__
 
 namespace RMSong {
-    struct SongStruct
+    struct SongClientItemStruct
     {
         short m_ushSongID;
         int m_iVersion; // what's this?
@@ -43,18 +43,18 @@ namespace RMSong {
         bool m_bIsLevelReward; // obsolete?
     };
 
-    bool Array2Song(const QByteArray &arr, SongStruct &song);
-    bool Song2Array(const SongStruct &song, QByteArray &arr);
-    bool IsHidden(const SongStruct &song);
-    bool IsReward(const SongStruct &song);
-    bool IsDown(const SongStruct &song);
-    bool IsBuy(const SongStruct &song);
-    bool IsFree(const SongStruct &song);
-    bool IsLevel(const SongStruct &song);
+    bool Array2Song(const QByteArray &arr, SongClientItemStruct &song);
+    bool Song2Array(const SongClientItemStruct &song, QByteArray &arr);
+    bool IsHidden(const SongClientItemStruct &song);
+    bool IsReward(const SongClientItemStruct &song);
+    bool IsDown(const SongClientItemStruct &song);
+    bool IsBuy(const SongClientItemStruct &song);
+    bool IsFree(const SongClientItemStruct &song);
+    bool IsLevel(const SongClientItemStruct &song);
 
-    bool sortByID(const SongStruct &a, const SongStruct &b);
+    bool sortByID(const SongClientItemStruct &a, const SongClientItemStruct &b);
 
-    struct PapaSongStruct
+    struct PapaSongClientItemStruct
     {
         short m_ushSongID;
         int m_iVersion; // what's this?
@@ -78,10 +78,10 @@ namespace RMSong {
         int m_iSongType;
     };
 
-    bool Array2Song(const QByteArray &arr, PapaSongStruct &song);
-    bool Song2Array(const PapaSongStruct &song, QByteArray &arr);
+    bool Array2Song(const QByteArray &arr, PapaSongClientItemStruct &song);
+    bool Song2Array(const PapaSongClientItemStruct &song, QByteArray &arr);
 
-    bool sortByID(const PapaSongStruct &a, const PapaSongStruct &b);
+    bool sortByID(const PapaSongClientItemStruct &a, const PapaSongClientItemStruct &b);
 
 }
 

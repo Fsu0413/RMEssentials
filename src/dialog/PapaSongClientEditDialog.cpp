@@ -146,7 +146,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
 PapaSongClientEditDialog::~PapaSongClientEditDialog()
 {
     if (!songs.isEmpty()) {
-        foreach(PapaSongStruct *const &s, songs)
+        foreach(PapaSongClientItemStruct *const &s, songs)
             delete s;
     }
 }
@@ -162,7 +162,7 @@ bool PapaSongClientEditDialog::reloadFile()
         if (ba.size() % 0x169 == 0x88) {
 
             if (!songs.isEmpty()) {
-                foreach(PapaSongStruct *const &s, songs)
+                foreach(PapaSongClientItemStruct *const &s, songs)
                     delete s;
                 songs.clear();
                 isLoaded = false;
@@ -172,7 +172,7 @@ bool PapaSongClientEditDialog::reloadFile()
             fileHeader = ba.mid(0, 0x88);
             for (int i = 0x88; i < ba.size(); i += 0x169) {
                 QByteArray sp = ba.mid(i, 0x169);
-                PapaSongStruct *ss = new PapaSongStruct;
+                PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
                 Array2Song(sp, *ss);
                 songs << ss;
             }
@@ -212,7 +212,7 @@ bool PapaSongClientEditDialog::loadFile()
             fileHeader = ba.mid(0, 0x88);
             for (int i = 0x88; i < ba.size(); i += 0x169) {
                 QByteArray sp = ba.mid(i, 0x169);
-                PapaSongStruct *ss = new PapaSongStruct;
+                PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
                 Array2Song(sp, *ss);
                 songs << ss;
             }
@@ -238,7 +238,7 @@ void PapaSongClientEditDialog::saveFile()
 
     if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         f.write(fileHeader, 0x88);
-        foreach (PapaSongStruct *const &s, songs) {
+        foreach (PapaSongClientItemStruct *const &s, songs) {
             QByteArray arr;
             Song2Array(*s, arr);
             f.write(arr.constData(), 0x169);
@@ -267,7 +267,7 @@ void PapaSongClientEditDialog::movePrev()
 
 void PapaSongClientEditDialog::readCurrent()
 {
-    const PapaSongStruct &c = *(songs.at(currentIndex));
+    const PapaSongClientItemStruct &c = *(songs.at(currentIndex));
 
 #define RP_NM(p) p->setText(QString::number(c.m_ ## p))
 #define RP_ST(p) p->setText(c.m_ ## p)
@@ -323,7 +323,7 @@ void PapaSongClientEditDialog::calculateSongTime()
 
 void PapaSongClientEditDialog::saveCurrent()
 {
-    PapaSongStruct &c = *(songs[currentIndex]);
+    PapaSongClientItemStruct &c = *(songs[currentIndex]);
 
 #define SP_NS(p) c.m_ ## p = p->text().toShort()
 #define SP_NI(p) c.m_ ## p = p->text().toInt()

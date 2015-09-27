@@ -20,7 +20,7 @@ public:
     bool loadFile();
 
 private:
-    QList<RMSong::PapaSongStruct *> songs;
+    QList<RMSong::PapaSongClientItemStruct *> songs;
     int currentIndex;
     bool isLoaded;
 

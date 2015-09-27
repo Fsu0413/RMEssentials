@@ -1,6 +1,6 @@
 #include "songstruct.h"
 
-bool RMSong::Array2Song(const QByteArray &arr, SongStruct &song)
+bool RMSong::Array2Song(const QByteArray &arr, SongClientItemStruct &song)
 {
     Q_ASSERT(arr.length() == 0x33e);
     const char *data = arr.constData();
@@ -54,7 +54,7 @@ bool RMSong::Array2Song(const QByteArray &arr, SongStruct &song)
     return true;
 }
 
-bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr)
+bool RMSong::Song2Array(const SongClientItemStruct &song, QByteArray &arr)
 {
     arr.clear();
     arr.resize(0x33e);
@@ -121,45 +121,45 @@ bool RMSong::Song2Array(const SongStruct &song, QByteArray &arr)
     return true;
 }
 
-bool RMSong::IsBuy(const SongStruct &song)
+bool RMSong::IsBuy(const SongClientItemStruct &song)
 {
     return song.m_ucCanBuy;
 }
 
-bool RMSong::IsDown(const SongStruct &song)
+bool RMSong::IsDown(const SongClientItemStruct &song)
 {
     return song.m_ucIsOpen == 0;
 }
 
-bool RMSong::IsFree(const SongStruct &song)
+bool RMSong::IsFree(const SongClientItemStruct &song)
 {
     return !IsBuy(song) && !IsDown(song) && !IsHidden(song) && !IsLevel(song) && !IsReward(song);
 }
 
-bool RMSong::IsHidden(const SongStruct &song)
+bool RMSong::IsHidden(const SongClientItemStruct &song)
 {
     return song.m_bIsHide;
 }
 
-bool RMSong::IsLevel(const SongStruct &song)
+bool RMSong::IsLevel(const SongClientItemStruct &song)
 {
     // BIG IMPORTANT HACK!!!!
     // RM used No251-262 as level reward, and m_bIsLevelReward doesn't make sense anymore.
     return song.m_ushSongID >= 251 && song.m_ushSongID <= 262;
 }
 
-bool RMSong::IsReward(const SongStruct &song)
+bool RMSong::IsReward(const SongClientItemStruct &song)
 {
     // Level reward now is also reward
     return song.m_bIsReward && !IsLevel(song);
 }
 
-bool RMSong::sortByID(const SongStruct &a, const SongStruct &b)
+bool RMSong::sortByID(const SongClientItemStruct &a, const SongClientItemStruct &b)
 {
     return a.m_ushSongID < b.m_ushSongID;
 }
 
-bool RMSong::Array2Song(const QByteArray &arr, PapaSongStruct &song)
+bool RMSong::Array2Song(const QByteArray &arr, PapaSongClientItemStruct &song)
 {
     Q_ASSERT(arr.length() == 0x169);
     const char *data = arr.constData();
@@ -196,7 +196,7 @@ bool RMSong::Array2Song(const QByteArray &arr, PapaSongStruct &song)
     return true;
 }
 
-bool RMSong::Song2Array(const PapaSongStruct &song, QByteArray &arr)
+bool RMSong::Song2Array(const PapaSongClientItemStruct &song, QByteArray &arr)
 {
     arr.clear();
     arr.resize(0x169);
@@ -246,7 +246,7 @@ bool RMSong::Song2Array(const PapaSongStruct &song, QByteArray &arr)
     return true;
 }
 
-bool RMSong::sortByID(const PapaSongStruct &a, const PapaSongStruct &b)
+bool RMSong::sortByID(const PapaSongClientItemStruct &a, const PapaSongClientItemStruct &b)
 {
     return a.m_ushSongID < b.m_ushSongID;
 }
