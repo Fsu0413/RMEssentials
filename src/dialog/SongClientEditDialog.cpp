@@ -166,7 +166,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QFormLayout *hlayout10 = new QFormLayout;
     szNoteNumber = new QLineEdit;
     szNoteNumber->setPlaceholderText("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH");
-    //szNoteNumber->setInputMask("9990,9990,9990,9990,9990,9990,9990,9990,9990");
+    szNoteNumber->setInputMask("09999,09999,09999,09999,09999,09999,09999,09999,09999");
     AR(hlayout10, szNoteNumber);
 
     // 11th line...
