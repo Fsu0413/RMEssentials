@@ -1,4 +1,5 @@
 #include "maindialog.h"
+#include <QDebug>
 #include <QApplication>
 #include <QTranslator>
 
