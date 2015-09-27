@@ -135,6 +135,11 @@ void ChangeNameDialog::rename()
 
     QString originPath = QDir(m_folderName->text()).dirName().toLower();
 
+    if (m_toRename->text().toLower() == originPath) {
+        QMessageBox::information(this, windowTitle(), tr("The new name is same with the old name, please change the new name"));
+        return;
+    }
+
     if (QMessageBox::question(this, windowTitle(), tr("You are now renaming %1 to %2.\nAre you sure?").arg(originPath).arg(m_toRename->text())) == QMessageBox::Yes) {
         emit enable_widgets(false);
         Renamer renamer;
