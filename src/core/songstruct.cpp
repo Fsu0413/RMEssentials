@@ -58,6 +58,7 @@ bool RMSong::Song2ByteArray(const SongClientItemStruct &song, QByteArray &arr)
 {
     arr.clear();
     arr.resize(0x33e);
+    memset(arr.data(), 0, 0x33e);
 
 #define SETX(name, offset) do { \
         int length = sizeof(song.m_ ## name); \
@@ -128,7 +129,7 @@ bool RMSong::Map2Song(const QVariantMap &arr, SongClientItemStruct &song)
 #define GETINT(name) \
     song.m_ ## name = arr["m_" # name].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt(NULL, 16)
+    song.m_ ## name = arr["m_" # name].toString().trimmed().mid(2).toInt(NULL, 16)
 
 
     GETINT(ushSongID);
@@ -311,6 +312,7 @@ bool RMSong::Song2ByteArray(const PapaSongClientItemStruct &song, QByteArray &ar
 {
     arr.clear();
     arr.resize(0x169);
+    memset(arr.data(), 0, 0x169);
 
 #define SETX(name, offset) do { \
         int length = sizeof(song.m_ ## name); \
@@ -364,7 +366,7 @@ bool RMSong::Map2Song(const QVariantMap &arr, PapaSongClientItemStruct &song)
 #define GETINT(name) \
     song.m_ ## name = arr["m_" # name].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt(NULL, 16)
+    song.m_ ## name = arr["m_" # name].toString().trimmed().mid(2).toInt(NULL, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
