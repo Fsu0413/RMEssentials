@@ -1,5 +1,123 @@
 #include "songstruct.h"
 
+const QString RMSong::SongClientHeaderStruct::CreateTime = "   0-00-00 00:00:00";
+
+
+bool RMSong::ByteArray2Header(const QByteArray &arr, SongClientHeaderStruct &header)
+{
+    Q_ASSERT(arr.length() == 0x88);
+    const char *data = arr.constData();
+
+#define GETX(type, name, offset) \
+    header.name = *(reinterpret_cast<const type *>(data + offset))
+#define GETSTR(name, offset) \
+    header.name = QString::fromUtf8(data + offset)
+
+    GETX(int, Magic, 0x0);
+    GETX(int, Version, 0x4);
+    GETX(int, Unit, 0x8);
+    GETX(int, Count, 0xc);
+    GETSTR(MetalibHash, 0x10);
+    GETX(int, ResVersion, 0x34);
+    GETSTR(ResEncoding, 0x40);
+    GETSTR(ContentHash, 0x60);
+    GETX(int, DataOffset, 0x84);
+
+#undef GETSTR
+#undef GETX
+
+    return true;
+}
+
+bool RMSong::Header2ByteArray(const SongClientHeaderStruct &header, QByteArray &arr)
+{
+    arr.clear();
+    arr.resize(0x88);
+    memset(arr.data(), 0, 0x88);
+    
+#define SETX(name, offset) do { \
+        int length = sizeof(header.name); \
+        const char *data = reinterpret_cast<const char *>(&(header.name)); \
+        for (int i = 0; i < length; ++i) \
+            arr[offset + i] = data[i]; \
+    } while (false)
+
+#define SETSTR(name, offset, len) do { \
+        QByteArray dataArr = header.name.toUtf8(); \
+        const char *data = dataArr.constData(); \
+        for (int i = 0; i < len; ++i) { \
+            if (i < dataArr.length()) \
+                arr[offset + i] = data[i]; \
+            else \
+                arr[offset + i] = '\0'; \
+        } \
+    } while(false)
+
+    SETX(Magic, 0x0);
+    SETX(Version, 0x4);
+    SETX(Unit, 0x8);
+    SETX(Count, 0xc);
+    SETSTR(MetalibHash, 0x10, 0x24);
+    SETX(ResVersion, 0x34);
+    SETSTR(ResEncoding, 0x40, 0x20);
+    SETSTR(ContentHash, 0x60, 0x24);
+    SETX(DataOffset, 0x84);
+
+#undef SETSTR
+#undef SETX
+
+    return true;
+}
+
+bool RMSong::Map2Header(const QVariantMap &arr, SongClientHeaderStruct &header)
+{
+#define GETSTR(name) \
+    header.name = arr[#name].toString()
+#define GETINT(name) \
+    header.name = arr[#name].toString().trimmed().toInt()
+
+    GETINT(Magic);
+    GETINT(Version);
+    GETINT(Unit);
+    GETINT(Count);
+    GETSTR(MetalibHash);
+    GETINT(ResVersion);
+    GETSTR(ResEncoding);
+    GETSTR(ContentHash);
+    GETINT(DataOffset);
+
+#undef GETSTR
+#undef GETINT
+
+    return true;
+}
+
+bool RMSong::Herader2Map(const SongClientHeaderStruct &header, QVariantMap &arr)
+{
+    arr.clear();
+
+#define SETSTR(name) \
+    arr[#name] = header.name
+#define SETINT(name) \
+    arr[#name] = QString::number(static_cast<int>(header.name)) + QString(" ")
+
+    SETINT(Magic);
+    SETINT(Version);
+    SETINT(Unit);
+    SETINT(Count);
+    SETSTR(MetalibHash);
+    SETINT(ResVersion);
+    SETSTR(CreateTime); // important!!!! It don't need any convertion and can used here
+    SETSTR(ResEncoding);
+    SETSTR(ContentHash);
+    SETINT(DataOffset);
+
+#undef SETSTR
+#undef SETINT
+
+    return true;
+}
+
 bool RMSong::ByteArray2Song(const QByteArray &arr, SongClientItemStruct &song)
 {
     Q_ASSERT(arr.length() == 0x33e);

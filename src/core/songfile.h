@@ -7,6 +7,7 @@ namespace RMSong
 {
     struct SongClientItemStruct;
     struct PapaSongClientItemStruct;
+    struct SongClientHeaderStruct;
 
     enum FileFormat
     {
@@ -24,14 +25,14 @@ namespace RMSong
         bool saveInfoToDevice(QIODevice *output, FileFormat format) const;
         SongClientItemStruct *song(int n);
         const SongClientItemStruct *song(int n) const;
-        const QByteArray &fileHeader() const;
+        const SongClientHeaderStruct &fileHeader() const;
 
         int songCount() const;
 
     private:
         QList<SongClientItemStruct *> m_songsList;
 
-        QByteArray m_fileHeader; // to be re-realized as SongClientHeader
+        SongClientHeaderStruct *m_header;
 
         void cleanup();
     };
@@ -46,14 +47,15 @@ namespace RMSong
         bool saveInfoToDevice(QIODevice *output, FileFormat format) const;
         PapaSongClientItemStruct *song(int n);
         const PapaSongClientItemStruct *song(int n) const;
-        const QByteArray &fileHeader() const;
+        const SongClientHeaderStruct &fileHeader() const;
 
         int songCount() const;
 
     private:
         QList<PapaSongClientItemStruct *> m_songsList;
 
-        QByteArray m_fileHeader; // to be re-realized as PapaSongClientHeader
+        SongClientHeaderStruct *m_header;
+
         void cleanup();
     };
 

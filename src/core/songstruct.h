@@ -3,6 +3,25 @@
 
 namespace RMSong
 {
+    struct SongClientHeaderStruct
+    {
+        int Magic;
+        int Version;
+        int Unit;
+        int Count;
+        QString MetalibHash;
+        int ResVersion;
+        static const QString CreateTime; // CreateTime?? better static?
+        QString ResEncoding;
+        QString ContentHash;
+        int DataOffset;
+    };
+
+    bool ByteArray2Header(const QByteArray &arr, SongClientHeaderStruct &header);
+    bool Header2ByteArray(const SongClientHeaderStruct &header, QByteArray &arr);
+    bool Map2Header(const QVariantMap &arr, SongClientHeaderStruct &header);
+    bool Herader2Map(const SongClientHeaderStruct &header, QVariantMap &arr);
+
     struct SongClientItemStruct
     {
         short m_ushSongID;

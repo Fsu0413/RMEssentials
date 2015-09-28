@@ -2,7 +2,7 @@
 #include "songstruct.h"
 
 
-RMSong::SongClientFile::SongClientFile()
+RMSong::SongClientFile::SongClientFile() : m_header(NULL)
 {
 }
 
@@ -12,6 +12,8 @@ RMSong::SongClientFile::~SongClientFile()
         foreach (SongClientItemStruct *s, m_songsList)
             delete s;
     }
+
+    delete m_header;
 }
 
 void RMSong::SongClientFile::cleanup()
@@ -34,7 +36,10 @@ bool RMSong::SongClientFile::readInfoFromDevice(QIODevice *input, FileFormat for
             cleanup();
             QByteArray ba = input->readAll();
             if (ba.size() % 0x33e == 0x88) {
-                m_fileHeader = ba.mid(0, 0x88);
+                if (m_header == NULL)
+                    m_header = new SongClientHeaderStruct;
+                QByteArray fh = ba.mid(0, 0x88);
+                ByteArray2Header(fh, *m_header);
                 for (int i = 0x88; i < ba.size(); i += 0x33e) {
                     QByteArray sp = ba.mid(i, 0x33e);
                     SongClientItemStruct *ss = new SongClientItemStruct;
@@ -54,11 +59,13 @@ bool RMSong::SongClientFile::readInfoFromDevice(QIODevice *input, FileFormat for
 
 bool RMSong::SongClientFile::saveInfoToDevice(QIODevice *output, FileFormat format) const
 {
-    if (format == Unknown || output == NULL)
+    if (format == Unknown || output == NULL || m_header == NULL)
         return false;
     else if (format == BinFormat) {
         if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-            output->write(m_fileHeader, 0x88);
+            QByteArray fh;
+            Header2ByteArray(*m_header, fh);
+            output->write(fh, 0x88);
             foreach (SongClientItemStruct *s, m_songsList) {
                 QByteArray arr;
                 Song2ByteArray(*s, arr);
@@ -84,9 +91,9 @@ const RMSong::SongClientItemStruct *RMSong::SongClientFile::song(int n) const
     return m_songsList.value(n);
 }
 
-const QByteArray &RMSong::SongClientFile::fileHeader() const
+const RMSong::SongClientHeaderStruct &RMSong::SongClientFile::fileHeader() const
 {
-    return m_fileHeader;
+    return *m_header;
 }
 
 int RMSong::SongClientFile::songCount() const
@@ -94,7 +101,7 @@ int RMSong::SongClientFile::songCount() const
     return m_songsList.length();
 }
 
-RMSong::PapaSongClientFile::PapaSongClientFile()
+RMSong::PapaSongClientFile::PapaSongClientFile() : m_header(NULL)
 {
 }
 
@@ -104,6 +111,8 @@ RMSong::PapaSongClientFile::~PapaSongClientFile()
         foreach (PapaSongClientItemStruct *s, m_songsList)
             delete s;
     }
+
+    delete m_header;
 }
 
 void RMSong::PapaSongClientFile::cleanup()
@@ -126,7 +135,10 @@ bool RMSong::PapaSongClientFile::readInfoFromDevice(QIODevice *input, FileFormat
             cleanup();
             QByteArray ba = input->readAll();
             if (ba.size() % 0x169 == 0x88) {
-                m_fileHeader = ba.mid(0, 0x88);
+                if (m_header == NULL)
+                    m_header = new SongClientHeaderStruct;
+                QByteArray fh = ba.mid(0, 0x88);
+                ByteArray2Header(fh, *m_header);
                 for (int i = 0x88; i < ba.size(); i += 0x169) {
                     QByteArray sp = ba.mid(i, 0x33e);
                     PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
@@ -146,11 +158,13 @@ bool RMSong::PapaSongClientFile::readInfoFromDevice(QIODevice *input, FileFormat
 
 bool RMSong::PapaSongClientFile::saveInfoToDevice(QIODevice *output, FileFormat format) const
 {
-    if (format == Unknown || output == NULL)
+    if (format == Unknown || output == NULL || m_header == NULL)
         return false;
     else if (format == BinFormat) {
         if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-            output->write(m_fileHeader, 0x88);
+            QByteArray fh;
+            Header2ByteArray(*m_header, fh);
+            output->write(fh, 0x88);
             foreach (PapaSongClientItemStruct *s, m_songsList) {
                 QByteArray arr;
                 Song2ByteArray(*s, arr);
@@ -176,9 +190,9 @@ const RMSong::PapaSongClientItemStruct *RMSong::PapaSongClientFile::song(int n) 
     return m_songsList.value(n);
 }
 
-const QByteArray &RMSong::PapaSongClientFile::fileHeader() const
+const RMSong::SongClientHeaderStruct &RMSong::PapaSongClientFile::fileHeader() const
 {
-    return m_fileHeader;
+    return *m_header;
 }
 
 int RMSong::PapaSongClientFile::songCount() const
