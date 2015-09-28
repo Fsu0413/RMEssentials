@@ -143,6 +143,10 @@ Are you sure?</source>
         <translation>你正在将 %1 重命名为简单。
 确认？</translation>
     </message>
+    <message>
+        <source>The new name is same with the old name, please change the new name</source>
+        <translation>新名称和旧名称相同，请修改新名称</translation>
+    </message>
 </context>
 <context>
     <name>DownloadDialog</name>
@@ -249,6 +253,22 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
 
 这个程序使用 Qt %1。程序版本：%2</translation>
     </message>
+    <message>
+        <source>Failed to load whatsnew from network</source>
+        <translation>从网络获取更新信息失败</translation>
+    </message>
+    <message>
+        <source> new version %1 available</source>
+        <translation>新版本：%1 可用</translation>
+    </message>
+    <message>
+        <source>New version avaliable!! Version number: %1&lt;br /&gt;You can download the new version at &lt;a href=&apos;%2&apos;&gt;here&lt;/a&gt;, the password is &quot;%3&quot;&lt;br /&gt;&lt;br /&gt;What&apos;s new in version %1: &lt;br /&gt; %4</source>
+        <translation>迎接新版本！！版本号： %1 &lt;br /&gt;可以在&lt;a href=&apos;%2&apos;&gt;这里&lt;/a&gt;下载，提取码是&quot;%3&quot; &lt;br /&gt;&lt;br /&gt;%1版本更新内容：&lt;br /&gt;%4</translation>
+    </message>
+    <message>
+        <source>RMEssentials</source>
+        <translation>节奏大师工具箱</translation>
+    </message>
 </context>
 <context>
     <name>PapaSongClientEditDialog</name>
@@ -295,6 +315,14 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
     <message>
         <source>Functions...</source>
         <translation>功能...</translation>
+    </message>
+    <message>
+        <source>Read file failed</source>
+        <translation>读取文件失败</translation>
+    </message>
+    <message>
+        <source>Save file failed</source>
+        <translation>保存文件失败</translation>
     </message>
 </context>
 <context>
@@ -391,6 +419,14 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
     <message>
         <source>Functions...</source>
         <translation>功能...</translation>
+    </message>
+    <message>
+        <source>Read file failed</source>
+        <translation>读取文件失败</translation>
+    </message>
+    <message>
+        <source>Save file failed</source>
+        <translation>保存文件失败</translation>
     </message>
 </context>
 </TS>
