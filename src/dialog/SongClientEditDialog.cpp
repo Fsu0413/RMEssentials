@@ -548,4 +548,6 @@ void SongClientEditDialog::mergeSongList()
         return;
 
     m_file.mergeSongList(file2);
+    m_currentIndex = 0;
+    readCurrent();
 }
