@@ -17,7 +17,10 @@
 #include "qevent.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent)
-    : QDialog(parent), m_busy(false), m_taskbarBtn(NULL)
+    : QDialog(parent), m_busy(false)
+#ifdef Q_OS_WIN
+    , m_taskbarBtn(NULL)
+#endif
 {
     setWindowTitle(tr("Rhythm Master Downloader"));
 
