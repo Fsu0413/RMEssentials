@@ -324,6 +324,10 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
         <source>Save file failed</source>
         <translation>保存文件失败</translation>
     </message>
+    <message>
+        <source>Search</source>
+        <translation>搜索</translation>
+    </message>
 </context>
 <context>
     <name>QuaGzipFile</name>
@@ -427,6 +431,10 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
     <message>
         <source>Save file failed</source>
         <translation>保存文件失败</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>搜索</translation>
     </message>
 </context>
 </TS>
