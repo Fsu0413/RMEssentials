@@ -127,6 +127,32 @@ int RMSong::SongClientFile::songCount() const
     return m_songsList.length();
 }
 
+void RMSong::SongClientFile::mergeSongList(SongClientFile *file2)
+{
+    if (file2 == NULL)
+        return;
+
+    delete m_header;
+    m_header = file2->m_header;
+    file2->m_header = NULL;
+
+    QList<SongClientItemStruct *> s = m_songsList;
+    m_songsList = file2->m_songsList;
+    int j = 0;
+    for (int i = 0; i < m_songsList.length(); ++i) {
+        if (s.value(j)->m_ushSongID == m_songsList.value(i)->m_ushSongID) {
+            delete m_songsList.value(i);
+            m_songsList[i] = s.value(j);
+            ++j;
+            if (j >= s.length())
+                break;
+        }
+    }
+    file2->m_songsList.clear();
+    delete file2;
+}
+
+
 RMSong::PapaSongClientFile::PapaSongClientFile() : m_header(NULL)
 {
 }

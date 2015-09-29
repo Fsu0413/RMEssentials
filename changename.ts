@@ -436,5 +436,13 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
+    <message>
+        <source>Merge Song List</source>
+        <translation>合并歌单</translation>
+    </message>
+    <message>
+        <source>Are you sure to merge the current loaded file to the select file?</source>
+        <translation>你确定要将现在载入的文件合并到你选择的文件中么？</translation>
+    </message>
 </context>
 </TS>

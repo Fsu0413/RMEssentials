@@ -9,7 +9,7 @@
 #include <QMessageBox>
 #include "downloader.h"
 
-const char *const programVersion = "20150929";
+const char *const programVersion = "20150929-2";
 
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)

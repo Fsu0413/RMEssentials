@@ -28,6 +28,9 @@ namespace RMSong
         const SongClientHeaderStruct &fileHeader() const;
         QList<int> search(const QString &cond) const;
 
+        // Attention!! after merging, the file2 is not available anymore, thus been deleted, please do not get access to it after calling this function!!!
+        void mergeSongList(SongClientFile *file2);
+
         int songCount() const;
 
     private:

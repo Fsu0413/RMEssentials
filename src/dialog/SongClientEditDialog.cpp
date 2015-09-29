@@ -57,6 +57,8 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     m_popup->addSeparator();
     QAction *castf = m_popup->addAction(tr("Convert All Songs to Free"));
     connect(castf, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
+    QAction *msl = m_popup->addAction(tr("Merge Song List"));
+    connect(msl, &QAction::triggered, this, &SongClientEditDialog::mergeSongList);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
@@ -523,4 +525,27 @@ void SongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
 
     m_currentIndex = i;
     readCurrent();
+}
+
+void SongClientEditDialog::mergeSongList()
+{
+    if (!m_isLoaded)
+        return;
+
+    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+
+    QFile f(filepath);
+    if (!f.exists())
+        return;
+
+    SongClientFile *file2 = new SongClientFile;
+    if (!file2->readInfoFromDevice(&f, BinFormat)) {
+        delete file2;
+        return;
+    }
+
+    if (QMessageBox::question(this, tr("RMEssentials"), tr("Are you sure to merge the current loaded file to the select file?")) == QMessageBox::No)
+        return;
+
+    m_file.mergeSongList(file2);
 }

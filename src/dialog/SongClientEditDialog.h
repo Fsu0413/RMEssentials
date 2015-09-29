@@ -41,6 +41,8 @@ private slots:
     void search();
     void searchResultDblClicked(QListWidgetItem *index);
 
+    void mergeSongList();
+
     void popup();
 
 private:
