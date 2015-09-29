@@ -9,10 +9,15 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QProgressBar>
+#ifdef Q_OS_WIN
+#include <QWinTaskbarButton>
+#include <QWinTaskbarProgress>
+#endif
 #include "uncompresser.h"
+#include "qevent.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent)
-    : QDialog(parent), m_busy(false)
+    : QDialog(parent), m_busy(false), m_taskbarBtn(NULL)
 {
     setWindowTitle(tr("Rhythm Master Downloader"));
 
@@ -44,6 +49,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     m_list->setSortingEnabled(false);
 
     m_progressBar = new QProgressBar;
+    m_progressBar->setMinimum(0);
 
     alllayout->addLayout(flayout);
     alllayout->addLayout(layout2);
@@ -57,6 +63,22 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     m_timer->setSingleShot(true);
     m_timer->setInterval(300000);
     connect(m_timer, &QTimer::timeout, this, &DownloadDialog::timeout);
+}
+
+void DownloadDialog::showEvent(QShowEvent *e)
+{
+    QDialog::showEvent(e);
+
+#ifdef Q_OS_WIN
+    if (m_taskbarBtn == NULL) {
+        m_taskbarBtn = new QWinTaskbarButton(this);
+        m_taskbarBtn->setWindow(windowHandle());
+        QWinTaskbarProgress *prog = m_taskbarBtn->progress();
+        prog->setVisible(false);
+        prog->setMinimum(0);
+        prog->reset();
+    }
+#endif
 }
 
 void DownloadDialog::downloadClicked()
@@ -190,6 +212,9 @@ void DownloadDialog::allCompleted()
 {
     appendLog(tr("All files downloaded"));
     m_timer->stop();
+#ifdef Q_OS_WIN
+    m_taskbarBtn->progress()->hide();
+#endif
     emit busy(false);
 }
 
@@ -197,6 +222,9 @@ void DownloadDialog::errorOccurred()
 {
     appendLog(tr("Download failed"));
     m_timer->stop();
+#ifdef Q_OS_WIN
+    m_taskbarBtn->progress()->stop();
+#endif
     emit busy(false);
 }
 
@@ -204,6 +232,9 @@ void DownloadDialog::canceled()
 {
     appendLog(tr("Download canceled"));
     m_timer->stop();
+#ifdef Q_OS_WIN
+    m_taskbarBtn->progress()->stop();
+#endif
     emit busy(false);
 }
 
@@ -328,6 +359,10 @@ void DownloadDialog::loadPaths()
 
     m_nameCombo->addItems(l);
 
+#ifdef Q_OS_WIN
+    m_taskbarBtn->progress()->hide();
+#endif
+
     appendLog(tr("All files loaded"));
 
     emit busy(false);
@@ -336,9 +371,13 @@ void DownloadDialog::loadPaths()
 void DownloadDialog::setBusy(bool b)
 {
     m_busy = b;
-    if (b)
+    if (b) {
         m_downloadBtn->setText(tr("Cancel"));
-    else {
+#ifdef Q_OS_WIN
+        m_taskbarBtn->progress()->reset();
+        m_taskbarBtn->progress()->show();
+#endif
+    } else {
         m_downloadBtn->setText(tr("Download!"));
         m_downloadBtn->setEnabled(true);
     }
@@ -357,5 +396,9 @@ void DownloadDialog::downloadProgress(quint64 downloaded, quint64 total)
     if (m_busy) {
         m_progressBar->setMaximum(total);
         m_progressBar->setValue(downloaded);
+#ifdef Q_OS_WIN
+        m_taskbarBtn->progress()->setMaximum(total);
+        m_taskbarBtn->progress()->setValue(downloaded);
+#endif // Q_OS_WIN
     }
 }

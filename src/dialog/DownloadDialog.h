@@ -6,6 +6,9 @@ class QComboBox;
 class QPushButton;
 class QTimer;
 class QProgressBar;
+#ifdef Q_OS_WIN
+class QWinTaskbarButton;
+#endif
 
 class DownloadDialog : public QDialog
 {
@@ -52,6 +55,7 @@ private slots:
 
 protected:
     virtual void closeEvent(QCloseEvent *e);
+    virtual void showEvent(QShowEvent *e);
 
 private:
     QListWidget *m_list;
@@ -59,6 +63,10 @@ private:
     QPushButton *m_downloadBtn;
     QTimer *m_timer;
     QProgressBar *m_progressBar;
+
+#ifdef Q_OS_WIN
+    QWinTaskbarButton *m_taskbarBtn;
+#endif
 
     bool m_busy;
 };

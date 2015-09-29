@@ -6,6 +6,10 @@
 
 QT       += core gui widgets network
 
+win32 {
+    QT += winextras
+}
+
 TARGET = RMEssentials
 TEMPLATE = app
 
