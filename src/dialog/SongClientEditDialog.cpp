@@ -9,6 +9,7 @@
 #include <QIntValidator>
 #include <QRegExpValidator>
 #include <QLabel>
+#include <QListWidget>
 
 #include <QMenu>
 
@@ -23,7 +24,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 {
     setWindowTitle(tr("Rhythm Master Song Client Editor"));
 
-    QVBoxLayout *alllayout = new QVBoxLayout;
+    QVBoxLayout *leftLayout = new QVBoxLayout;
 
     // for QFormLayout
 #define AR(l, x) l->addRow(#x, x)
@@ -36,10 +37,16 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     AR(flayout1, ushSongID);
 
     QPushButton *prevBtn = new QPushButton(tr("prev"));
+    prevBtn->setAutoDefault(false);
+    prevBtn->setDefault(false);
     connect(prevBtn, &QPushButton::clicked, this, &SongClientEditDialog::movePrev);
     QPushButton *nextBtn = new QPushButton(tr("next"));
+    nextBtn->setAutoDefault(false);
+    nextBtn->setDefault(false);
     connect(nextBtn, &QPushButton::clicked, this, &SongClientEditDialog::moveNext);
     QPushButton *saveCurrentBtn = new QPushButton(tr("save current"));
+    saveCurrentBtn->setAutoDefault(false);
+    saveCurrentBtn->setDefault(false);
     connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveCurrent);
     // functions...
     m_popup = new QMenu(tr("Functions..."), this);
@@ -51,6 +58,8 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QAction *castf = m_popup->addAction(tr("Convert All Songs to Free"));
     connect(castf, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
+    funcBtn->setAutoDefault(false);
+    funcBtn->setDefault(false);
     connect(funcBtn, &QPushButton::clicked, this, &SongClientEditDialog::popup);
     hlayout1->addLayout(flayout1);
     hlayout1->addWidget(prevBtn);
@@ -201,13 +210,40 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     // OK, thank you
 #undef AR
 
-    alllayout->addLayout(hlayout1);
-    alllayout->addLayout(hlayout234);
-    alllayout->addLayout(hlayout5);
-    alllayout->addLayout(hlayout6789);
-    alllayout->addLayout(hlayout10);
-    alllayout->addLayout(hlayout11);
-    alllayout->addLayout(hlayout12);
+    leftLayout->addLayout(hlayout1);
+    leftLayout->addLayout(hlayout234);
+    leftLayout->addLayout(hlayout5);
+    leftLayout->addLayout(hlayout6789);
+    leftLayout->addLayout(hlayout10);
+    leftLayout->addLayout(hlayout11);
+    leftLayout->addLayout(hlayout12);
+
+    m_searchEdit = new QLineEdit;
+    m_searchEdit->setPlaceholderText(tr("Search"));
+    m_searchEdit->setMinimumWidth(80);
+    connect(m_searchEdit, &QLineEdit::returnPressed, this, &SongClientEditDialog::search);
+
+    QPushButton *searchBtn = new QPushButton(tr("Search"));
+    searchBtn->setAutoDefault(false);
+    searchBtn->setDefault(false);
+    searchBtn->setMaximumWidth(60);
+    connect(searchBtn, &QPushButton::clicked, this, &SongClientEditDialog::search);
+
+    QHBoxLayout *searchLayout = new QHBoxLayout;
+    searchLayout->addWidget(m_searchEdit);
+    searchLayout->addWidget(searchBtn);
+
+    m_searchList = new QListWidget;
+    m_searchList->setSortingEnabled(false);
+    connect(m_searchList, &QListWidget::itemDoubleClicked, this, &SongClientEditDialog::searchResultDblClicked);
+    
+    QVBoxLayout *rightLayout = new QVBoxLayout;
+    rightLayout->addLayout(searchLayout);
+    rightLayout->addWidget(m_searchList);
+
+    QHBoxLayout *alllayout = new QHBoxLayout;
+    alllayout->addLayout(leftLayout);
+    alllayout->addLayout(rightLayout);
 
     setLayout(alllayout);
 }
@@ -450,4 +486,41 @@ void SongClientEditDialog::saveCurrent()
 #undef SP_NI
 #undef SP_NS
 
+}
+
+void SongClientEditDialog::search()
+{
+    m_searchList->clear();
+
+    QList<int> searchResult = m_file.search(m_searchEdit->text());
+
+    if (searchResult.isEmpty())
+        return;
+
+    if (searchResult.length() == 1) {
+        m_currentIndex = searchResult.first();
+        readCurrent();
+    }
+
+    foreach (int n, searchResult) {
+        SongClientItemStruct *song = m_file.song(n);
+        QListWidgetItem *i = new QListWidgetItem(song->m_szSongName);
+        i->setData(Qt::UserRole + 1, n);
+        m_searchList->addItem(i);
+    }
+}
+
+void SongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
+{
+    if (index == NULL)
+        return;
+
+    bool ok = false;
+    int i = index->data(Qt::UserRole + 1).toInt(&ok);
+
+    if (!ok)
+        return;
+
+    m_currentIndex = i;
+    readCurrent();
 }

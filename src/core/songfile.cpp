@@ -96,6 +96,32 @@ const RMSong::SongClientHeaderStruct &RMSong::SongClientFile::fileHeader() const
     return *m_header;
 }
 
+QList<int> RMSong::SongClientFile::search(const QString &cond) const
+{
+    QList<int> r;
+    bool matchId = false;
+    int preferedId = cond.toInt(&matchId);
+    int i = 0;
+    foreach (const SongClientItemStruct *s, m_songsList) {
+        bool flag = false;
+        if (matchId && s->m_ushSongID == preferedId)
+            flag = true;
+        else if (s->m_szSongName.toLower().contains(cond.toLower()))
+            flag = true;
+        else if (s->m_szPath.toLower().contains(cond.toLower()))
+            flag = true;
+        else if (s->m_szArtist.toLower().contains(cond.toLower()))
+            flag = true;
+
+        if (flag)
+            r << i;
+
+        ++i;
+    }
+
+    return r;
+}
+
 int RMSong::SongClientFile::songCount() const
 {
     return m_songsList.length();
@@ -198,4 +224,30 @@ const RMSong::SongClientHeaderStruct &RMSong::PapaSongClientFile::fileHeader() c
 int RMSong::PapaSongClientFile::songCount() const
 {
     return m_songsList.length();
+}
+
+QList<int> RMSong::PapaSongClientFile::search(const QString &cond) const
+{
+    QList<int> r;
+    bool matchId = false;
+    int preferedId = cond.toInt(&matchId);
+    int i = 0;
+    foreach (const PapaSongClientItemStruct *s, m_songsList) {
+        bool flag = false;
+        if (matchId && s->m_ushSongID == preferedId)
+            flag = true;
+        else if (s->m_szSongName.toLower().contains(cond.toLower()))
+            flag = true;
+        else if (s->m_szPath.toLower().contains(cond.toLower()))
+            flag = true;
+        else if (s->m_szArtist.toLower().contains(cond.toLower()))
+            flag = true;
+
+        if (flag)
+            r << i;
+
+        ++i;
+    }
+
+    return r;
 }

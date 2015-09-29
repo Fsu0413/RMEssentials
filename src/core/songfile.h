@@ -26,6 +26,7 @@ namespace RMSong
         SongClientItemStruct *song(int n);
         const SongClientItemStruct *song(int n) const;
         const SongClientHeaderStruct &fileHeader() const;
+        QList<int> search(const QString &cond) const;
 
         int songCount() const;
 
@@ -48,6 +49,7 @@ namespace RMSong
         PapaSongClientItemStruct *song(int n);
         const PapaSongClientItemStruct *song(int n) const;
         const SongClientHeaderStruct &fileHeader() const;
+        QList<int> search(const QString &cond) const;
 
         int songCount() const;
 

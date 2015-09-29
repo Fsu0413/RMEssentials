@@ -8,7 +8,8 @@ class QLineEdit;
 class QCheckBox;
 class QLabel;
 class QMenu;
-
+class QListWidget;
+class QListWidgetItem;
 
 class SongClientEditDialog : public QDialog
 {
@@ -36,6 +37,9 @@ private slots:
     void saveFile();
     void convertToFree();
     bool reloadFile();
+
+    void search();
+    void searchResultDblClicked(QListWidgetItem *index);
 
     void popup();
 
@@ -80,7 +84,8 @@ private:
     QCheckBox *bIsLevelReward; // OBSOLETE???
 
     QMenu *m_popup;
-
+    QLineEdit *m_searchEdit;
+    QListWidget *m_searchList;
 };
 
 #endif

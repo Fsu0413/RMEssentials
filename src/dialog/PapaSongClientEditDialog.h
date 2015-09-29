@@ -8,7 +8,8 @@ class QLineEdit;
 class QCheckBox;
 class QLabel;
 class QMenu;
-
+class QListWidget;
+class QListWidgetItem;
 
 class PapaSongClientEditDialog : public QDialog
 {
@@ -37,6 +38,9 @@ private slots:
     //void convertToFree();
     bool reloadFile();
 
+    void search();
+    void searchResultDblClicked(QListWidgetItem *index);
+
     void popup();
 
 private:
@@ -63,6 +67,8 @@ private:
     QLineEdit *iSongType; // better keep empty
 
     QMenu *m_popup;
+    QLineEdit *m_searchEdit;
+    QListWidget *m_searchList;
 
 };
 
