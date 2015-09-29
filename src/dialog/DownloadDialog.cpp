@@ -9,12 +9,12 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QProgressBar>
+#include <QShowEvent>
 #ifdef Q_OS_WIN
 #include <QWinTaskbarButton>
 #include <QWinTaskbarProgress>
 #endif
 #include "uncompresser.h"
-#include "qevent.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent)
     : QDialog(parent), m_busy(false)

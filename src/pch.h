@@ -13,6 +13,7 @@
 #include <QDialog>
 #include <QList>
 #include <QMap>
+#include <QFlag>
 
 #endif
 
