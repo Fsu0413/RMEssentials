@@ -166,7 +166,7 @@ bool RMSong::PapaSongClientFile::readInfoFromDevice(QIODevice *input, FileFormat
                 QByteArray fh = ba.mid(0, 0x88);
                 ByteArray2Header(fh, *m_header);
                 for (int i = 0x88; i < ba.size(); i += 0x169) {
-                    QByteArray sp = ba.mid(i, 0x33e);
+                    QByteArray sp = ba.mid(i, 0x169);
                     PapaSongClientItemStruct *ss = new PapaSongClientItemStruct;
                     ByteArray2Song(sp, *ss);
                     m_songsList << ss;
@@ -194,7 +194,7 @@ bool RMSong::PapaSongClientFile::saveInfoToDevice(QIODevice *output, FileFormat 
             foreach (PapaSongClientItemStruct *s, m_songsList) {
                 QByteArray arr;
                 Song2ByteArray(*s, arr);
-                output->write(arr.constData(), 0x33e);
+                output->write(arr.constData(), 0x169);
             }
             output->close();
             return true;
