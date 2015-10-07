@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QIntValidator>
 #include <QRegExpValidator>
+#include <QDoubleValidator>
 #include <QLabel>
 #include <QListWidget>
 
@@ -99,7 +100,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     szArtist = new QLineEdit;
     szSongTime = new QLabel;
     szBPM = new QLineEdit;
-    QIntValidator *szBPMValidator = new QIntValidator(1, 1000, this);
+    QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
     szBPM->setValidator(szBPMValidator);
     AR(flayout4, szArtist);
     AR(flayout4, szSongTime);
