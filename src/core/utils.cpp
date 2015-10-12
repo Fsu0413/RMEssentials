@@ -1,5 +1,8 @@
 #include "utils.h"
 
+#include <QString>
+#include <QMap>
+
 namespace
 {
     const char *suffix_hd = "_title_hd";

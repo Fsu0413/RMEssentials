@@ -5,6 +5,8 @@ class QLineEdit;
 class QLabel;
 class QLayout;
 
+#include <QDialog>
+
 class ChangeNameDialog : public QDialog
 {
     Q_OBJECT

@@ -1,6 +1,7 @@
 #include "songfile.h"
 #include "songstruct.h"
 
+#include <QIODevice>
 
 RMSong::SongClientFile::SongClientFile() : m_header(NULL)
 {

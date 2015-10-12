@@ -10,6 +10,9 @@ class QProgressBar;
 class QWinTaskbarButton;
 #endif
 
+#include <QDialog>
+#include <QDir>
+
 class DownloadDialog : public QDialog
 {
     Q_OBJECT

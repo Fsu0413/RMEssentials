@@ -2,6 +2,8 @@
 #define __DOWNLOADER_H__
 
 #include <QNetworkReply>
+#include <QThread>
+#include <QDir>
 
 class Downloader : public QThread
 {

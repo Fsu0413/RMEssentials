@@ -3,11 +3,12 @@
 #include "DownloadDialog.h"
 #include "SongClientEditDialog.h"
 #include "PapaSongClientEditDialog.h"
+#include "downloader.h"
 
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include "downloader.h"
+#include <QApplication>
 
 const char *const programVersion = "20150929-2";
 

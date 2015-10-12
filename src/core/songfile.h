@@ -3,6 +3,8 @@
 
 class QIODevice;
 
+#include <QList>
+
 namespace RMSong
 {
     struct SongClientItemStruct;

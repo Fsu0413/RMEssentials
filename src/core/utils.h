@@ -1,6 +1,9 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+#include <QtGlobal>
+#include <QDir>
+
 enum ExistNote
 {
     IMD_4K_EZ = 0x1,

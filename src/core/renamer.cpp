@@ -1,6 +1,9 @@
 #include "renamer.h"
 #include "utils.h"
 
+#include <QMap>
+#include <QString>
+
 bool Renamer::run()
 {
     if (!m_d.exists())

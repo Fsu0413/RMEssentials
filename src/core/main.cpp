@@ -1,5 +1,6 @@
 #include "maindialog.h"
 #include <QTranslator>
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {

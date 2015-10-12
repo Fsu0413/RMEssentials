@@ -1,6 +1,8 @@
 #ifndef __MAINDIALOG_H__
 #define __MAINDIALOG_H__
 
+#include <QDialog>
+
 class MainDialog : public QDialog
 {
     Q_OBJECT

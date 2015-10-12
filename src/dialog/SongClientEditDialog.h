@@ -11,6 +11,8 @@ class QMenu;
 class QListWidget;
 class QListWidgetItem;
 
+#include <QDialog>
+
 class SongClientEditDialog : public QDialog
 {
     Q_OBJECT
