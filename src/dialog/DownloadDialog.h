@@ -38,6 +38,8 @@ signals:
     void timeout();
 
 private slots:
+    void downloadAndroidList();
+
     void downloadClicked();
     void startDownload(DownloadMode mode = One);
     void oneCompleted(const QString &url);

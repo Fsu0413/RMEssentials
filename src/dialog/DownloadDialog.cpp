@@ -250,8 +250,8 @@ void DownloadDialog::startUncompress()
 {
 #ifdef RME_USE_QUAZIP
     Uncompresser *unc = new Uncompresser;
-    unc->zipNames << "downloader/MD5List.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin.zip";
-    unc->fileNames << "MD5List.xml" << "mrock_song_client_android.bin" << "mrock_papasong_client.bin";
+    unc->zipNames << "downloader/MD5List.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin_IOS.zip";
+    unc->fileNames << "MD5List.xml" << "mrock_song_client_android.bin" << "mrock_papasong_client.bin" << "mrock_song_client.bin";
 
     connect(unc, &Uncompresser::finished, this, &DownloadDialog::loadPaths);
     connect(unc, &Uncompresser::finished, unc, &Uncompresser::deleteLater);
@@ -265,11 +265,42 @@ void DownloadDialog::downloadList()
 {
 #ifdef RME_USE_QUAZIP
     static const QString md5 = "http://game.ds.qq.com/Com_SongRes/MD5List.zip";
-    static const QString bin = "http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip";
+    static const QString bin = "http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip";
 
 
     Downloader *downloader = new Downloader;
     downloader << md5 << bin;
+
+    downloader->setSavePath(QString());
+
+    connect(downloader, &Downloader::finished, downloader, &Downloader::deleteLater);
+    connect(downloader, &Downloader::one_completed, this, &DownloadDialog::oneCompleted);
+    connect(downloader, &Downloader::one_failed, this, &DownloadDialog::oneFailed);
+    connect(downloader, &Downloader::all_completed, this, &DownloadDialog::downloadAndroidList);
+    connect(downloader, &Downloader::canceled, this, &DownloadDialog::canceled);
+    connect(downloader, &Downloader::error, this, &DownloadDialog::errorOccurred);
+    connect(this, &DownloadDialog::timeout, downloader, &Downloader::timeout);
+    connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
+    connect(downloader, &Downloader::download_progress, this, &DownloadDialog::downloadProgress);
+
+    emit busy(true);
+
+    downloader->start();
+#else
+    loadPaths();
+#endif
+}
+
+void DownloadDialog::downloadAndroidList()
+{
+#ifdef RME_USE_QUAZIP
+    if (QFile::exists("downloader/TableComBin.zip"))
+        QFile("downloader/TableComBin.zip").rename("downloader/TableComBin_IOS.zip");
+
+    static const QString bin = "http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip";
+
+    Downloader *downloader = new Downloader;
+    downloader << bin;
 
     downloader->setSavePath(QString());
 
@@ -283,11 +314,7 @@ void DownloadDialog::downloadList()
     connect(this, &DownloadDialog::cancel_download, downloader, &Downloader::cancel);
     connect(downloader, &Downloader::download_progress, this, &DownloadDialog::downloadProgress);
 
-    emit busy(true);
-
     downloader->start();
-#else
-    loadPaths();
 #endif
 }
 
@@ -354,9 +381,22 @@ void DownloadDialog::loadPaths()
         appendLog("mrock_papasong_client.bin" + tr(" has been loaded"));
     }
 
-    QStringList l;
-    foreach (const QString &path, paths)
-        l << path;
+    if (dir.exists("mrock_song_client.bin")) {
+        QFile f(dir.absoluteFilePath("mrock_song_client.bin"));
+        f.open(QIODevice::ReadOnly);
+        f.seek(0xcel);
+        while (f.pos() < f.size()) {
+            qDebug() << f.pos();
+            QByteArray s = f.peek(0x40l);
+            QString path = QString::fromUtf8(s);
+            paths.insert(path);
+            f.seek(f.pos() + 0x33el);
+        }
+        f.close();
+        appendLog("mrock_song_client.bin" + tr(" has been loaded"));
+    }
+
+    QStringList l = paths.toList();
 
     qSort(l);
 
