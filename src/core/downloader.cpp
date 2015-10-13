@@ -12,7 +12,7 @@ Downloader::Downloader()
 void Downloader::run()
 {
     m_networkAccessManager = new QNetworkAccessManager;
-    connect(this, &QThread::finished, m_networkAccessManager, &QNetworkAccessManager::deleteLater);
+    connect(this, &QThread::destroyed, m_networkAccessManager, &QNetworkAccessManager::deleteLater);
     m_cancelRequested = false;
 #ifndef Q_OS_ANDROID
     QDir currentDir = QDir::current();
