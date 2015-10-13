@@ -176,6 +176,7 @@
       <LinkIncremental>false</LinkIncremental>
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
@@ -217,6 +218,7 @@
       <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Midl>
       <DefaultCharType>Unsigned</DefaultCharType>
