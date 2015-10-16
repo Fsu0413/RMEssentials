@@ -58,6 +58,8 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     m_popup->addSeparator();
     QAction *castf = m_popup->addAction(tr("Convert All Songs to Free"));
     connect(castf, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
+    QAction *asul = m_popup->addAction(tr("All Song Unlock"));
+    connect(asul, &QAction::triggered, this, &SongClientEditDialog::allSongUnlock);
     QAction *msl = m_popup->addAction(tr("Merge Song List"));
     connect(msl, &QAction::triggered, this, &SongClientEditDialog::mergeSongList);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
@@ -409,6 +411,20 @@ void SongClientEditDialog::convertToFree()
             c->m_ucCanBuy = false;
             c->m_bIsFree = false;
         }
+    }
+
+    readCurrent();
+}
+
+void SongClientEditDialog::allSongUnlock()
+{
+    if (!m_isLoaded)
+        return;
+
+    for (int i = 0; i < m_file.songCount(); ++i) {
+        SongClientItemStruct *c = m_file.song(i);
+        if (!IsLevel(*c))
+            c->m_bIsFree = false;
     }
 
     readCurrent();

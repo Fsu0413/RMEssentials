@@ -444,5 +444,9 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
         <source>Are you sure to merge the current loaded file to the select file?</source>
         <translation>你确定要将现在载入的文件合并到你选择的文件中么？</translation>
     </message>
+    <message>
+        <source>All Song Unlock</source>
+        <translation>所有歌曲解锁</translation>
+    </message>
 </context>
 </TS>

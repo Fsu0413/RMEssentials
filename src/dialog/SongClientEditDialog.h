@@ -38,6 +38,7 @@ private slots:
     void saveCurrent();
     void saveFile();
     void convertToFree();
+    void allSongUnlock();
     bool reloadFile();
 
     void search();
