@@ -33,7 +33,7 @@ bool RMSong::SongClientFile::readInfoFromDevice(QIODevice *input, FileFormat for
     if (format == Unknown || input == NULL)
         return false;
     else if (format == BinFormat) {
-        if (input->open(QIODevice::ReadOnly)) {
+        if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
             cleanup();
             QByteArray ba = input->readAll();
             if (ba.size() % 0x33e == 0x88) {
@@ -184,7 +184,7 @@ bool RMSong::PapaSongClientFile::readInfoFromDevice(QIODevice *input, FileFormat
     if (format == Unknown || input == NULL)
         return false;
     else if (format == BinFormat) {
-        if (input->open(QIODevice::ReadOnly)) {
+        if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
             cleanup();
             QByteArray ba = input->readAll();
             if (ba.size() % 0x169 == 0x88) {

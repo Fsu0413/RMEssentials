@@ -23,8 +23,8 @@ namespace RMSong
     public:
         SongClientFile();
         ~SongClientFile();
-        bool readInfoFromDevice(QIODevice *input, FileFormat format);
-        bool saveInfoToDevice(QIODevice *output, FileFormat format) const;
+        bool readInfoFromDevice(QIODevice *input, FileFormat format); // the device should be opened READABLE or CLOSED when calling this func
+        bool saveInfoToDevice(QIODevice *output, FileFormat format) const; // the device must be CLOSED when calling this func
         SongClientItemStruct *song(int n);
         const SongClientItemStruct *song(int n) const;
         const SongClientHeaderStruct &fileHeader() const;
@@ -49,8 +49,8 @@ namespace RMSong
         PapaSongClientFile();
         ~PapaSongClientFile();
 
-        bool readInfoFromDevice(QIODevice *input, FileFormat format);
-        bool saveInfoToDevice(QIODevice *output, FileFormat format) const;
+        bool readInfoFromDevice(QIODevice *input, FileFormat format); // the device should be opened READABLE or CLOSED when calling this func
+        bool saveInfoToDevice(QIODevice *output, FileFormat format) const; // the device must be CLOSED when calling this func
         PapaSongClientItemStruct *song(int n);
         const PapaSongClientItemStruct *song(int n) const;
         const SongClientHeaderStruct &fileHeader() const;

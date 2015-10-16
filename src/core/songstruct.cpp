@@ -107,7 +107,7 @@ bool RMSong::Herader2Map(const SongClientHeaderStruct &header, QVariantMap &arr)
     SETINT(Count);
     SETSTR(MetalibHash);
     SETINT(ResVersion);
-    SETSTR(CreateTime); // important!!!! It don't need any convertion and can used here
+    SETSTR(CreateTime); // important!!!! It don't need any convertion and can be used here
     SETSTR(ResEncoding);
     SETSTR(ContentHash);
     SETINT(DataOffset);
