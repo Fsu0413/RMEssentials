@@ -1,4 +1,5 @@
 #include "SongClientEditDialog.h"
+#include "downloader.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -359,11 +360,8 @@ bool SongClientEditDialog::reloadFile()
 
 bool SongClientEditDialog::loadFile()
 {
-#ifndef Q_OS_ANDROID
-    QDir d("downloader");
-#else
-    QDir d("/sdcard/RM/res");
-#endif
+    QDir d(Downloader::downloadPath());
+
     QString filepath;
     if (d.exists() && d.exists("mrock_song_client_android.bin"))
         filepath = d.absoluteFilePath("mrock_song_client_android.bin");

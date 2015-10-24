@@ -1,4 +1,5 @@
 #include "PapaSongClientEditDialog.h"
+#include "downloader.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -257,11 +258,8 @@ bool PapaSongClientEditDialog::reloadFile()
 
 bool PapaSongClientEditDialog::loadFile()
 {
-#ifndef Q_OS_ANDROID
-    QDir d("downloader");
-#else
-    QDir d("/sdcard/RM/res");
-#endif
+    QDir d(Downloader::downloadPath());
+
     QString filepath;
     if (d.exists() && d.exists("mrock_papasong_client.bin"))
         filepath = d.absoluteFilePath("mrock_papasong_client.bin");

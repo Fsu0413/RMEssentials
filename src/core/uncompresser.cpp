@@ -3,13 +3,14 @@
 
 #include "uncompresser.h"
 #include "quazipfile.h"
+#include "downloader.h"
 
 #include <QDir>
 
 void Uncompresser::run()
 {
     for (int i = 0; i < zipNames.length(); ++i) {
-        const QString &zipName = zipNames.at(i);
+        QString zipName = Downloader::downloadPath() + zipNames.at(i);
         const QString &fileName = fileNames.at(i);
 
         QuaZipFile f(zipName, fileName);

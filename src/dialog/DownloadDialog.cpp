@@ -112,11 +112,7 @@ void DownloadDialog::startDownloadNext()
 void DownloadDialog::startDownloadAllMissing()
 {
     m_nameCombo->setCurrentIndex(0);
-#ifndef Q_OS_ANDROID
-    while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
-#else
-    while (QDir("/sdcard/RM/res/song/" + m_nameCombo->currentText()).exists()) {
-#endif
+    while (QDir(Downloader::downloadPath() + m_nameCombo->currentText()).exists()) {
         if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
             return;
@@ -131,11 +127,7 @@ void DownloadDialog::startDownloadAllMissing()
 void DownloadDialog::startDownloadNextMissing()
 {
     m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
-#ifndef Q_OS_ANDROID
-    while (QDir("downloader/" + m_nameCombo->currentText()).exists()) {
-#else
-    while (QDir("/sdcard/RM/res/song/" + m_nameCombo->currentText()).exists()) {
-#endif
+    while (QDir(Downloader::downloadPath() + m_nameCombo->currentText()).exists()) {
         if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
             return;
@@ -250,7 +242,7 @@ void DownloadDialog::startUncompress()
 {
 #ifdef RME_USE_QUAZIP
     Uncompresser *unc = new Uncompresser;
-    unc->zipNames << "downloader/MD5List.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin.zip" << "downloader/TableComBin_IOS.zip";
+    unc->zipNames << "MD5List.zip" << "TableComBin.zip" << "TableComBin.zip" << "TableComBin_IOS.zip";
     unc->fileNames << "MD5List.xml" << "mrock_song_client_android.bin" << "mrock_papasong_client.bin" << "mrock_song_client.bin";
 
     connect(unc, &Uncompresser::finished, this, &DownloadDialog::loadPaths);
@@ -294,8 +286,8 @@ void DownloadDialog::downloadList()
 void DownloadDialog::downloadAndroidList()
 {
 #ifdef RME_USE_QUAZIP
-    if (QFile::exists("downloader/TableComBin.zip"))
-        QFile("downloader/TableComBin.zip").rename("downloader/TableComBin_IOS.zip");
+    if (QFile::exists(Downloader::downloadPath() + "TableComBin.zip"))
+        QFile(Downloader::downloadPath() + "TableComBin.zip").rename(Downloader::downloadPath() + "TableComBin_IOS.zip");
 
     static const QString bin = "http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip";
 
@@ -327,11 +319,7 @@ void DownloadDialog::appendLog(const QString &log)
 void DownloadDialog::loadPaths()
 {
     m_timer->stop();
-#ifndef Q_OS_ANDROID
-    QDir dir("downloader");
-#else
-    QDir dir("/sdcard/RM/res");
-#endif
+    QDir dir(Downloader::downloadPath());
     if (!dir.exists())
         return;
 

@@ -1,6 +1,8 @@
 #include "ChangeNameDialog.h"
 #include "utils.h"
 #include "renamer.h"
+#include "downloader.h"
+
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -100,11 +102,7 @@ void ChangeNameDialog::selectFolder()
 {
 
     QString dir;
-#ifdef Q_OS_ANDROID
-    QDir d_detect("/sdcard/RM/res/song");
-#else
-    QDir d_detect("downloader");
-#endif
+    QDir d_detect(Downloader::downloadPath());
     if (d_detect.exists())
         dir = d_detect.absolutePath();
     else

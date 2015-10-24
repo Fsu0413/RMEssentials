@@ -3,10 +3,43 @@
 #include <QNetworkAccessManager>
 #include <QPixmap>
 
+#ifdef Q_OS_OSX
+#include <QStandardPaths>
+#endif
+
 Downloader::Downloader()
 {
     m_isAll = false;
     m_currentDownloadingReply = NULL;
+}
+
+QString Downloader::downloadPath()
+{
+#if defined(Q_OS_WIN)
+    QDir currentDir = QDir::current();
+    if (!currentDir.cd("downloader")) {
+        if (!currentDir.mkdir("downloader"))
+            return QString();
+        currentDir.cd("downloader");
+    }
+#elif defined(Q_OS_OSX)
+    QDir currentDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+    if (!currentDir.cd("RMEssentials")) {
+        if (!currentDir.mkdir("RMEssentials"))
+            return QString();
+        currentDir.cd("RMEssentials");
+    }
+#elif defined(Q_OS_ANDROID)
+    QDir currentDir( "/sdcard/RM/res/song");
+    if (!dir.exists())
+        return QString();
+#endif
+
+    QString r = currentDir.absolutePath();
+    if (!r.endsWith("/"))
+        r.append("/");
+
+    return r;
 }
 
 void Downloader::run()
@@ -14,20 +47,14 @@ void Downloader::run()
     m_networkAccessManager = new QNetworkAccessManager;
     connect(this, &QThread::destroyed, m_networkAccessManager, &QNetworkAccessManager::deleteLater);
     m_cancelRequested = false;
-#ifndef Q_OS_ANDROID
-    QDir currentDir = QDir::current();
-    if (!currentDir.cd("downloader")) {
-        if (!currentDir.mkdir("downloader")) {
-            emit error();
-            return;
-        }
-        currentDir.cd("downloader");
-    }
-#else
-    QDir currentDir( "/sdcard/RM/res/song");
-#endif
+    QString s = downloadPath();
 
-    QDir dir = currentDir;
+    if (s.isEmpty()) {
+        emit error();
+        return;
+    }
+
+    QDir dir(s);
     if (!m_savePath.isEmpty()) {
         if (!dir.cd(m_savePath)) {
             if (!dir.mkdir(m_savePath)) {

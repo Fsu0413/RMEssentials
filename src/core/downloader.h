@@ -16,6 +16,8 @@ public:
     Downloader();
     virtual void run();
 
+    static QString downloadPath();
+
     inline Downloader &operator <<(const QString &filename)
     {
         m_downloadSequence << filename;
