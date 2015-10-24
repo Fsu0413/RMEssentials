@@ -31,7 +31,7 @@ QString Downloader::downloadPath()
     }
 #elif defined(Q_OS_ANDROID)
     QDir currentDir( "/sdcard/RM/res/song");
-    if (!dir.exists())
+    if (!currentDir.exists())
         return QString();
 #endif
 
