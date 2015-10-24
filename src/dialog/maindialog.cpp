@@ -10,7 +10,7 @@
 #include <QMessageBox>
 #include <QApplication>
 
-const char *const programVersion = "20151013";
+const char *const programVersion = "20151024";
 
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
