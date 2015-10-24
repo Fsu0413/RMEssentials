@@ -41,7 +41,6 @@ win32{
 
 mac{
     ICON = res/1.icns
-    LIBS += -lz
 }
 
 HEADERS += \
@@ -115,7 +114,11 @@ CONFIG(quazip) {
     DEFINES += RME_USE_QUAZIP
     DEFINES += QUAZIP_STATIC
 
-    win32: INCLUDEPATH+= $$[QT_INSTALL_HEADERS]/QtZlib
+    exists("$$[QT_INSTALL_HEADERS]/QtZlib/zlib.h") {
+        INCLUDEPATH+= $$[QT_INSTALL_HEADERS]/QtZlib
+    } else {
+        LIBS += -lz
+    }
 }
 
 LIBS += -L.
