@@ -152,13 +152,22 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
 
     m_searchEdit = new QLineEdit;
     m_searchEdit->setPlaceholderText(tr("Search"));
+#ifndef MOBILE_DEVICES
     m_searchEdit->setMinimumWidth(80);
+#else
+    m_searchEdit->setMinimumWidth(200);
+#endif
     connect(m_searchEdit, &QLineEdit::returnPressed, this, &PapaSongClientEditDialog::search);
 
     QPushButton *searchBtn = new QPushButton(tr("Search"));
     searchBtn->setAutoDefault(false);
     searchBtn->setDefault(false);
+#ifndef MOBILE_DEVICES
     searchBtn->setMaximumWidth(60);
+#else
+    searchBtn->setMinimumWidth(120);
+    searchBtn->setMaximumWidth(120);
+#endif
     connect(searchBtn, &QPushButton::clicked, this, &PapaSongClientEditDialog::search);
 
     QHBoxLayout *searchLayout = new QHBoxLayout;

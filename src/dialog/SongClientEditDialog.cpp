@@ -18,6 +18,10 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
+#ifdef MOBILE_DEVICES
+#include <QScrollArea>
+#endif
+
 using namespace RMSong;
 
 SongClientEditDialog::SongClientEditDialog(QWidget *parent)
@@ -27,16 +31,8 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
 
-    // for QFormLayout
-#define AR(l, x) l->addRow(#x, x)
-
-    // 1st line
-    QHBoxLayout *hlayout1 = new QHBoxLayout;
-    QFormLayout *flayout1 = new QFormLayout;
     ushSongID = new QLineEdit;
     ushSongID->setReadOnly(true);
-    AR(flayout1, ushSongID);
-
     QPushButton *prevBtn = new QPushButton(tr("prev"));
     prevBtn->setAutoDefault(false);
     prevBtn->setDefault(false);
@@ -66,44 +62,110 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
     connect(funcBtn, &QPushButton::clicked, this, &SongClientEditDialog::popup);
-    hlayout1->addLayout(flayout1);
+
+    szSongName = new QLineEdit;
+    szPath = new QLineEdit;
+    QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp("[0-9a-z_]+"), this);
+    szPath->setValidator(szPathValidator);
+    szArtist = new QLineEdit;
+    szComposer = new QLineEdit;
+    iGameTime = new QLineEdit;
+    QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
+    iGameTime->setValidator(iGameTimeValidator);
+    connect(iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::calculateSongTime);
+    szSongTime = new QLabel;
+    iRegion = new QLineEdit;
+    QIntValidator *iRegionValidator = new QIntValidator(0, 11, this);
+    iRegion->setValidator(iRegionValidator);
+    iStyle = new QLineEdit;
+    QIntValidator *iStyleValidator = new QIntValidator(0, 20, this);
+    iStyle->setValidator(iStyleValidator);
+    szBPM = new QLineEdit;
+    QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
+    szBPM->setValidator(szBPMValidator);
+
+    ucIsNew = new QCheckBox("ucIsNew");
+    ucIsHot = new QCheckBox("ucIsHot");
+    ucIsRecommend = new QCheckBox("ucIsRecommend");
+    ucIsOpen = new QCheckBox("ucIsOpen");
+    ucCanBuy = new QCheckBox("ucCanBuy");
+    bIsFree = new QCheckBox("bIsFree");
+    bSongPkg = new QCheckBox("bSongPkg");
+
+    iOrderIndex = new QLineEdit;
+    QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
+    iOrderIndex->setValidator(iOrderIndexValidator);
+    szFreeBeginTime = new QLineEdit;
+    szFreeBeginTime->setPlaceholderText(tr("Better keep empty"));
+    szFreeEndTime = new QLineEdit;
+    szFreeEndTime->setPlaceholderText(tr("Better keep empty"));
+
+
+    QIntValidator *hardLevelValidator = new QIntValidator(1, 10, this);
+    ush4KeyEasy = new QLineEdit;
+    ush4KeyEasy->setValidator(hardLevelValidator);
+    ush4KeyNormal = new QLineEdit;
+    ush4KeyNormal->setValidator(hardLevelValidator);
+    ush4KeyHard = new QLineEdit;
+    ush4KeyHard->setValidator(hardLevelValidator);
+    ush5KeyEasy = new QLineEdit;
+    ush5KeyEasy->setValidator(hardLevelValidator);
+    ush5KeyNormal = new QLineEdit;
+    ush5KeyNormal->setValidator(hardLevelValidator);
+    ush5KeyHard = new QLineEdit;
+    ush5KeyHard->setValidator(hardLevelValidator);
+    ush6KeyEasy = new QLineEdit;
+    ush6KeyEasy->setValidator(hardLevelValidator);
+    ush6KeyNormal = new QLineEdit;
+    ush6KeyNormal->setValidator(hardLevelValidator);
+    ush6KeyHard = new QLineEdit;
+    ush6KeyHard->setValidator(hardLevelValidator);
+
+    szNoteNumber = new QLineEdit;
+    szNoteNumber->setPlaceholderText("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH");
+    szNoteNumber->setInputMask("09999,09999,09999,09999,09999,09999,09999,09999,09999");
+
+    iPrice = new QLineEdit;
+    iPrice->setPlaceholderText(tr("Number only, Better keep empty"));
+    szProductID = new QLineEdit;
+    szProductID->setPlaceholderText(tr("Better keep empty"));
+    iVipFlag = new QCheckBox("iVipFlag");
+
+    bIsHide = new QCheckBox("bIsHide");
+    bIsReward = new QCheckBox("bIsReward");
+    bIsLevelReward = new QCheckBox("bIsLevelReward");
+    iVersion = new QLineEdit;
+    QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
+    iVersion->setValidator(iVersionValidator);
+
+    // for QFormLayout
+#define AR(l, x) l->addRow(#x, x)
+
+    // 1st line
+    QHBoxLayout *hlayout1 = new QHBoxLayout;
+    QFormLayout *flayout0 = new QFormLayout;
+    AR(flayout0, ushSongID);
+    hlayout1->addLayout(flayout0);
     hlayout1->addWidget(prevBtn);
     hlayout1->addWidget(nextBtn);
     hlayout1->addWidget(saveCurrentBtn);
     hlayout1->addWidget(funcBtn);
 
+    leftLayout->addLayout(hlayout1);
+
+#ifndef MOBILE_DEVICES
 
     // 2nd, 3rd, 4th lines...
     QHBoxLayout *hlayout234 = new QHBoxLayout;
     QFormLayout *flayout2 = new QFormLayout;
-    szSongName = new QLineEdit;
-    szComposer = new QLineEdit;
-    iRegion = new QLineEdit;
-    QIntValidator *iRegionValidator = new QIntValidator(0, 11, this);
-    iRegion->setValidator(iRegionValidator);
     AR(flayout2, szSongName);
     AR(flayout2, szComposer);
     AR(flayout2, iRegion);
     QFormLayout *flayout3 = new QFormLayout;
-    szPath = new QLineEdit;
-    QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp("[0-9a-z_]+"), this);
-    szPath->setValidator(szPathValidator);
-    iGameTime = new QLineEdit;
-    QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
-    iGameTime->setValidator(iGameTimeValidator);
-    connect(iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::calculateSongTime);
-    iStyle = new QLineEdit;
-    QIntValidator *iStyleValidator = new QIntValidator(0, 20, this);
-    iStyle->setValidator(iStyleValidator);
     AR(flayout3, szPath);
     AR(flayout3, iGameTime);
     AR(flayout3, iStyle);
     QFormLayout *flayout4 = new QFormLayout;
-    szArtist = new QLineEdit;
-    szSongTime = new QLabel;
-    szBPM = new QLineEdit;
-    QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
-    szBPM->setValidator(szBPMValidator);
     AR(flayout4, szArtist);
     AR(flayout4, szSongTime);
     AR(flayout4, szBPM);
@@ -113,13 +175,6 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     // 5th line...
     QHBoxLayout *hlayout5 = new QHBoxLayout;
-    ucIsNew = new QCheckBox("ucIsNew");
-    ucIsHot = new QCheckBox("ucIsHot");
-    ucIsRecommend = new QCheckBox("ucIsRecommend");
-    ucIsOpen = new QCheckBox("ucIsOpen");
-    ucCanBuy = new QCheckBox("ucCanBuy");
-    bIsFree = new QCheckBox("bIsFree");
-    bSongPkg = new QCheckBox("bSongPkg");
     hlayout5->addWidget(ucIsNew);
     hlayout5->addWidget(ucIsHot);
     hlayout5->addWidget(ucIsRecommend);
@@ -131,42 +186,16 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     // 6th, 7th, 8th, 9th lines...
     QHBoxLayout *hlayout6789 = new QHBoxLayout;
     QFormLayout *flayout5 = new QFormLayout;
-    iOrderIndex = new QLineEdit;
-    QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
-    iOrderIndex->setValidator(iOrderIndexValidator);
-    QIntValidator *hardLevelValidater = new QIntValidator(1, 10, this);
-    ush4KeyEasy = new QLineEdit;
-    ush4KeyEasy->setValidator(hardLevelValidater);
-    ush5KeyEasy = new QLineEdit;
-    ush5KeyEasy->setValidator(hardLevelValidater);
-    ush6KeyEasy = new QLineEdit;
-    ush6KeyEasy->setValidator(hardLevelValidater);
     AR(flayout5, iOrderIndex);
     AR(flayout5, ush4KeyEasy);
     AR(flayout5, ush5KeyEasy);
     AR(flayout5, ush6KeyEasy);
     QFormLayout *flayout6 = new QFormLayout;
-    szFreeBeginTime = new QLineEdit;
-    szFreeBeginTime->setPlaceholderText(tr("Better keep empty"));
-    ush4KeyNormal = new QLineEdit;
-    ush4KeyNormal->setValidator(hardLevelValidater);
-    ush5KeyNormal = new QLineEdit;
-    ush5KeyNormal->setValidator(hardLevelValidater);
-    ush6KeyNormal = new QLineEdit;
-    ush6KeyNormal->setValidator(hardLevelValidater);
     AR(flayout6, szFreeBeginTime);
     AR(flayout6, ush4KeyNormal);
     AR(flayout6, ush5KeyNormal);
     AR(flayout6, ush6KeyNormal);
     QFormLayout *flayout7 = new QFormLayout;
-    szFreeEndTime = new QLineEdit;
-    szFreeEndTime->setPlaceholderText(tr("Better keep empty"));
-    ush4KeyHard = new QLineEdit;
-    ush4KeyHard->setValidator(hardLevelValidater);
-    ush5KeyHard = new QLineEdit;
-    ush5KeyHard->setValidator(hardLevelValidater);
-    ush6KeyHard = new QLineEdit;
-    ush6KeyHard->setValidator(hardLevelValidater);
     AR(flayout7, szFreeEndTime);
     AR(flayout7, ush4KeyHard);
     AR(flayout7, ush5KeyHard);
@@ -177,71 +206,123 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     // 10th line...
     QFormLayout *hlayout10 = new QFormLayout;
-    szNoteNumber = new QLineEdit;
-    szNoteNumber->setPlaceholderText("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH");
-    szNoteNumber->setInputMask("09999,09999,09999,09999,09999,09999,09999,09999,09999");
     AR(hlayout10, szNoteNumber);
 
     // 11th line...
     QHBoxLayout *hlayout11 = new QHBoxLayout;
     QFormLayout *flayout8 = new QFormLayout;
-    iPrice = new QLineEdit;
-    iPrice->setPlaceholderText(tr("Number only, Better keep empty"));
     AR(flayout8, iPrice);
     QFormLayout *flayout9 = new QFormLayout;
-    szProductID = new QLineEdit;
-    szProductID->setPlaceholderText(tr("Better keep empty"));
     AR(flayout9, szProductID);
-    iVipFlag = new QCheckBox("iVipFlag");
     hlayout11->addLayout(flayout8);
     hlayout11->addLayout(flayout9);
     hlayout11->addWidget(iVipFlag);
 
     // 12th line...
     QHBoxLayout *hlayout12 = new QHBoxLayout;
-    bIsHide = new QCheckBox("bIsHide");
-    bIsReward = new QCheckBox("bIsReward");
-    bIsLevelReward = new QCheckBox("bIsLevelReward");
     QFormLayout *flayout10 = new QFormLayout;
-    iVersion = new QLineEdit;
-    QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
-    iVersion->setValidator(iVersionValidator);
     AR(flayout10, iVersion);
     hlayout12->addWidget(bIsHide);
     hlayout12->addWidget(bIsReward);
     hlayout12->addWidget(bIsLevelReward);
     hlayout12->addLayout(flayout10);
 
-    // OK, thank you
-#undef AR
-
-    leftLayout->addLayout(hlayout1);
     leftLayout->addLayout(hlayout234);
     leftLayout->addLayout(hlayout5);
     leftLayout->addLayout(hlayout6789);
     leftLayout->addLayout(hlayout10);
     leftLayout->addLayout(hlayout11);
     leftLayout->addLayout(hlayout12);
+#else
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    QFormLayout *flayout1 = new QFormLayout;
+    AR(flayout1, szSongName);
+    AR(flayout1, szPath);
+    AR(flayout1, szArtist);
+    AR(flayout1, szComposer);
+    AR(flayout1, iGameTime);
+    AR(flayout1, szSongTime);
+    AR(flayout1, iRegion);
+    AR(flayout1, iStyle);
+    AR(flayout1, szBPM);
+    vlayout->addLayout(flayout1);
+
+    vlayout->addWidget(ucIsNew);
+    vlayout->addWidget(ucIsHot);
+    vlayout->addWidget(ucIsRecommend);
+    vlayout->addWidget(ucIsOpen);
+    vlayout->addWidget(ucCanBuy);
+    vlayout->addWidget(bIsFree);
+    vlayout->addWidget(bSongPkg);
+
+    QFormLayout *flayout2 = new QFormLayout;
+    AR(flayout2, iOrderIndex);
+    AR(flayout2, szFreeBeginTime);
+    AR(flayout2, szFreeEndTime);
+    AR(flayout2, ush4KeyEasy);
+    AR(flayout2, ush4KeyNormal);
+    AR(flayout2, ush4KeyHard);
+    AR(flayout2, ush5KeyEasy);
+    AR(flayout2, ush5KeyNormal);
+    AR(flayout2, ush5KeyHard);
+    AR(flayout2, ush6KeyEasy);
+    AR(flayout2, ush6KeyNormal);
+    AR(flayout2, ush6KeyHard);
+    AR(flayout2, szNoteNumber);
+    AR(flayout2, iPrice);
+    AR(flayout2, szProductID);
+    vlayout->addLayout(flayout2);
+
+    vlayout->addWidget(iVipFlag);
+    vlayout->addWidget(bIsHide);
+    vlayout->addWidget(bIsReward);
+    vlayout->addWidget(bIsLevelReward);
+
+    QFormLayout *flayout3 = new QFormLayout;
+    AR(flayout3, iVersion);
+
+    vlayout->addLayout(flayout3);
+
+    QWidget *widget = new QWidget;
+    widget->setLayout(vlayout);
+
+    QScrollArea *area = new QScrollArea;
+    area->setWidgetResizable(true);
+    area->setWidget(widget);
+
+    leftLayout->addWidget(area);
+#endif
+
+    // OK, thank you
+#undef AR
 
     m_searchEdit = new QLineEdit;
     m_searchEdit->setPlaceholderText(tr("Search"));
+#ifndef MOBILE_DEVICES
     m_searchEdit->setMinimumWidth(80);
+#else
+    m_searchEdit->setMinimumWidth(200);
+#endif
     connect(m_searchEdit, &QLineEdit::returnPressed, this, &SongClientEditDialog::search);
 
     QPushButton *searchBtn = new QPushButton(tr("Search"));
     searchBtn->setAutoDefault(false);
     searchBtn->setDefault(false);
+#ifndef MOBILE_DEVICES
     searchBtn->setMaximumWidth(60);
+#else
+    searchBtn->setMinimumWidth(120);
+    searchBtn->setMaximumWidth(120);
+#endif
     connect(searchBtn, &QPushButton::clicked, this, &SongClientEditDialog::search);
-
-    QHBoxLayout *searchLayout = new QHBoxLayout;
-    searchLayout->addWidget(m_searchEdit);
-    searchLayout->addWidget(searchBtn);
 
     m_searchList = new QListWidget;
     m_searchList->setSortingEnabled(false);
     connect(m_searchList, &QListWidget::itemDoubleClicked, this, &SongClientEditDialog::searchResultDblClicked);
-    
+
+    QHBoxLayout *searchLayout = new QHBoxLayout;
+    searchLayout->addWidget(m_searchEdit);
+    searchLayout->addWidget(searchBtn);
     QVBoxLayout *rightLayout = new QVBoxLayout;
     rightLayout->addLayout(searchLayout);
     rightLayout->addWidget(m_searchList);

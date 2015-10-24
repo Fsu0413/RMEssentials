@@ -4,6 +4,8 @@
 #include "uncompresser.h"
 #include "quazipfile.h"
 
+#include <QDir>
+
 void Uncompresser::run()
 {
     for (int i = 0; i < zipNames.length(); ++i) {

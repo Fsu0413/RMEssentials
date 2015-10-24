@@ -1,6 +1,8 @@
 #include "maindialog.h"
 #include <QTranslator>
 #include <QApplication>
+#include <QFile>
+#include <QTextStream>
 
 int main(int argc, char *argv[])
 {
@@ -14,8 +16,17 @@ int main(int argc, char *argv[])
     translator.load(":/changename.qm");
     qApp->installTranslator(&translator);
 
+#ifdef MOBILE_DEVICES
+    QFile qss(":/RMEssentialsAndroid.qss");
+    if (qss.open(QIODevice::ReadOnly)) {
+        QTextStream qssStream(&qss);
+        qApp->setStyleSheet(qssStream.readAll());
+        qss.close();
+    }
+#endif
+
     MainDialog w;
-#ifdef Q_OS_ANDROID
+#ifdef MOBILE_DEVICES
     w.showMaximized();
 #else
     w.show();

@@ -16,14 +16,17 @@ TEMPLATE = app
 CONFIG += precompiled_header
 PRECOMPILED_HEADER = src/pch.h
 
-!android {
-    CONFIG += quazip
-}
-
 android {
     CONFIG += mobility
     MOBILITY =
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+    RESOURCES += androidqss.qrc
+} else {
+    CONFIG += quazip
+}
+
+android || ios {
+    DEFINES += MOBILE_DEVICES
 }
 
 RESOURCES += \

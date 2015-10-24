@@ -72,7 +72,7 @@ void MainDialog::showChangeNameDialog()
 {
     ChangeNameDialog *dl = new ChangeNameDialog;
     connect(dl, &ChangeNameDialog::finished, dl, &ChangeNameDialog::deleteLater);
-#ifndef Q_OS_ANDROID
+#ifndef MOBILE_DEVICES
     dl->show();
 #else
     dl->showMaximized();
@@ -83,7 +83,7 @@ void MainDialog::showDownloadDialog()
 {
     DownloadDialog *dl = new DownloadDialog;
     connect(dl, &DownloadDialog::finished, dl, &DownloadDialog::deleteLater);
-#ifndef Q_OS_ANDROID
+#ifndef MOBILE_DEVICES
     dl->show();
 #else
     dl->showMaximized();
@@ -95,7 +95,7 @@ void MainDialog::showSongClientEditDialog()
 {
     SongClientEditDialog *dl = new SongClientEditDialog;
     connect(dl, &SongClientEditDialog::finished, dl, &SongClientEditDialog::deleteLater);
-#ifndef Q_OS_ANDROID
+#ifndef MOBILE_DEVICES
     dl->show();
 #else
     dl->showMaximized();
@@ -107,7 +107,7 @@ void MainDialog::showPapaSongClientEditDialog()
 {
     PapaSongClientEditDialog *dl = new PapaSongClientEditDialog;
     connect(dl, &PapaSongClientEditDialog::finished, dl, &PapaSongClientEditDialog::deleteLater);
-#ifndef Q_OS_ANDROID
+#ifndef MOBILE_DEVICES
     dl->show();
 #else
     dl->showMaximized();
