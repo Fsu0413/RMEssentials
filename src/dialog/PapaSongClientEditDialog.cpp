@@ -18,6 +18,10 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
+#ifdef MOBILE_DEVICES
+#include <QScrollArea>
+#endif
+
 using namespace RMSong;
 
 PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
@@ -25,18 +29,9 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
 {
     setWindowTitle(tr("Rhythm Master PapaSong Client Editor"));
 
-    QVBoxLayout *leftLayout = new QVBoxLayout;
 
-    // for QFormLayout
-#define AR(l, x) l->addRow(#x, x)
-
-    // 1st line
-    QHBoxLayout *hlayout1 = new QHBoxLayout;
-    QFormLayout *flayout1 = new QFormLayout;
     ushSongID = new QLineEdit;
     ushSongID->setReadOnly(true);
-    AR(flayout1, ushSongID);
-
     QPushButton *prevBtn = new QPushButton(tr("prev"));
     prevBtn->setAutoDefault(false);
     prevBtn->setDefault(false);
@@ -59,27 +54,17 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
     connect(funcBtn, &QPushButton::clicked, this, &PapaSongClientEditDialog::popup);
-    hlayout1->addLayout(flayout1);
-    hlayout1->addWidget(prevBtn);
-    hlayout1->addWidget(nextBtn);
-    hlayout1->addWidget(saveCurrentBtn);
-    hlayout1->addWidget(funcBtn);
 
 
-    // 2nd, 3rd, 4th lines...
-    QHBoxLayout *hlayout234 = new QHBoxLayout;
-    QFormLayout *flayout2 = new QFormLayout;
+    QVBoxLayout *leftLayout = new QVBoxLayout;
+
+
     szSongName = new QLineEdit;
     szNoteNumber = new QLineEdit;
     szRegion = new QLineEdit;
     iOrderIndex = new QLineEdit;
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
     iOrderIndex->setValidator(iOrderIndexValidator);
-    AR(flayout2, szSongName);
-    AR(flayout2, szNoteNumber);
-    AR(flayout2, szRegion);
-    AR(flayout2, iOrderIndex);
-    QFormLayout *flayout3 = new QFormLayout;
     szPath = new QLineEdit;
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp("[0-9a-z_]+"), this);
     szPath->setValidator(szPathValidator);
@@ -90,11 +75,6 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     szStyle = new QLineEdit;
     iSongType = new QLineEdit;
     iSongType->setValidator(iGameTimeValidator);
-    AR(flayout3, szPath);
-    AR(flayout3, iGameTime);
-    AR(flayout3, szStyle);
-    AR(flayout3, iSongType);
-    QFormLayout *flayout4 = new QFormLayout;
     szArtist = new QLineEdit;
     szSongTime = new QLabel;
     szBPM = new QLineEdit;
@@ -103,6 +83,46 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     iVersion = new QLineEdit;
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
     iVersion->setValidator(iVersionValidator);
+    cDifficulty = new QLineEdit;
+    QIntValidator *cDifficultyValidator = new QIntValidator(1, 3, this);
+    cDifficulty->setValidator(cDifficultyValidator);
+    cLevel = new QLineEdit;
+    QIntValidator *cLevelValidator = new QIntValidator(1, 10, this);
+    cLevel->setValidator(cLevelValidator);
+    ucIsHide = new QCheckBox("ucIsHide");
+    ucIsReward = new QCheckBox("ucIsReward");
+    ucIsLevelReward = new QCheckBox("ucIsLevelReward");
+    ucIsOpen = new QCheckBox("ucIsOpen");
+    ucIsFree = new QCheckBox("ucIsFree");
+
+    // for QFormLayout
+#define AR(l, x) l->addRow(#x, x)
+
+    // 1st line
+    QHBoxLayout *hlayout1 = new QHBoxLayout;
+    QFormLayout *flayout0 = new QFormLayout;
+    AR(flayout0, ushSongID);
+    hlayout1->addLayout(flayout0);
+    hlayout1->addWidget(prevBtn);
+    hlayout1->addWidget(nextBtn);
+    hlayout1->addWidget(saveCurrentBtn);
+    hlayout1->addWidget(funcBtn);
+
+    leftLayout->addLayout(hlayout1);
+#ifndef MOBILE_DEVICES
+    // 2nd, 3rd, 4th lines...
+    QHBoxLayout *hlayout234 = new QHBoxLayout;
+    QFormLayout *flayout2 = new QFormLayout;
+    AR(flayout2, szSongName);
+    AR(flayout2, szNoteNumber);
+    AR(flayout2, szRegion);
+    AR(flayout2, iOrderIndex);
+    QFormLayout *flayout3 = new QFormLayout;
+    AR(flayout3, szPath);
+    AR(flayout3, iGameTime);
+    AR(flayout3, szStyle);
+    AR(flayout3, iSongType);
+    QFormLayout *flayout4 = new QFormLayout;
     AR(flayout4, szArtist);
     AR(flayout4, szSongTime);
     AR(flayout4, szBPM);
@@ -115,26 +135,15 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     QHBoxLayout *hlayout5 = new QHBoxLayout;
 
     QFormLayout *flayout5 = new QFormLayout;
-    cDifficulty = new QLineEdit;
-    QIntValidator *cDifficultyValidator = new QIntValidator(1, 3, this);
-    cDifficulty->setValidator(cDifficultyValidator);
     AR(flayout5, cDifficulty);
     hlayout5->addLayout(flayout5);
 
     QFormLayout *flayout6 = new QFormLayout;
-    cLevel = new QLineEdit;
-    QIntValidator *cLevelValidator = new QIntValidator(1, 10, this);
-    cLevel->setValidator(cLevelValidator);
     AR(flayout6, cLevel);
     hlayout5->addLayout(flayout6);
 
     // 6th line...
     QHBoxLayout *hlayout12 = new QHBoxLayout;
-    ucIsHide = new QCheckBox("ucIsHide");
-    ucIsReward = new QCheckBox("ucIsReward");
-    ucIsLevelReward = new QCheckBox("ucIsLevelReward");
-    ucIsOpen = new QCheckBox("ucIsOpen");
-    ucIsFree = new QCheckBox("ucIsFree");
 
     hlayout12->addWidget(ucIsOpen);
     hlayout12->addWidget(ucIsFree);
@@ -142,13 +151,47 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     hlayout12->addWidget(ucIsReward);
     hlayout12->addWidget(ucIsLevelReward);
 
-    // OK, thank you
-#undef AR
 
-    leftLayout->addLayout(hlayout1);
     leftLayout->addLayout(hlayout234);
     leftLayout->addLayout(hlayout5);
     leftLayout->addLayout(hlayout12);
+#else
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    QFormLayout *flayout1 = new QFormLayout;
+    AR(flayout1, szSongName);
+    AR(flayout1, szPath);
+    AR(flayout1, szArtist);
+    AR(flayout1, szNoteNumber);
+    AR(flayout1, iGameTime);
+    AR(flayout1, szSongTime);
+    AR(flayout1, szRegion);
+    AR(flayout1, szStyle);
+    AR(flayout1, szBPM);
+    AR(flayout1, iOrderIndex);
+    AR(flayout1, iSongType);
+    AR(flayout1, iVersion);
+    AR(flayout1, cDifficulty);
+    AR(flayout1, cLevel);
+    vlayout->addLayout(flayout1);
+
+    vlayout->addWidget(ucIsOpen);
+    vlayout->addWidget(ucIsFree);
+    vlayout->addWidget(ucIsHide);
+    vlayout->addWidget(ucIsReward);
+    vlayout->addWidget(ucIsLevelReward);
+
+    QWidget *widget = new QWidget;
+    widget->setLayout(vlayout);
+
+    QScrollArea *area = new QScrollArea;
+    area->setWidgetResizable(true);
+    area->setWidget(widget);
+
+    leftLayout->addWidget(area);
+#endif
+
+    // OK, thank you
+#undef AR
 
     m_searchEdit = new QLineEdit;
     m_searchEdit->setPlaceholderText(tr("Search"));
