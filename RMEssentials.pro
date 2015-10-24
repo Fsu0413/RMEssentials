@@ -41,6 +41,7 @@ win32{
 
 mac{
     ICON = res/1.icns
+    LIBS += -lz
 }
 
 HEADERS += \
@@ -108,14 +109,13 @@ CONFIG(quazip) {
         src/quazip/quazipfileinfo.h \
         src/quazip/quazipnewinfo.h \
         src/quazip/unzip.h \
-        src/quazip/zconf.h \
         src/quazip/zip.h \
-        src/quazip/zlib.h \
         src/core/uncompresser.h \
 
     DEFINES += RME_USE_QUAZIP
     DEFINES += QUAZIP_STATIC
 
+    win32: INCLUDEPATH+= $$[QT_INSTALL_HEADERS]/QtZlib
 }
 
 LIBS += -L.
