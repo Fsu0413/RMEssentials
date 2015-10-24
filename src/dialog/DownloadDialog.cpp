@@ -279,6 +279,11 @@ void DownloadDialog::downloadList()
 
     downloader->start();
 #else
+#ifdef Q_OS_ANDROID
+    QFile::copy(Downloader::downloadPath() + "../MD5List.xml", Downloader::downloadPath() + "MD5List.xml");
+    QFile::copy(Downloader::downloadPath() + "../mrock_song_client_android.bin", Downloader::downloadPath() + "mrock_song_client_android.bin");
+    QFile::copy(Downloader::downloadPath() + "../mrock_papasong_client.bin", Downloader::downloadPath() + "mrock_papasong_client.bin");
+#endif
     loadPaths();
 #endif
 }
