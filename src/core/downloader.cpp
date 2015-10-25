@@ -174,11 +174,11 @@ Downloader *operator <<(Downloader *downloader, const QString &filename)
 
 void Downloader::cancel()
 {
-    m_currentDownloadingReply->abort();
-
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
     disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
+
+    m_currentDownloadingReply->abort();
 
     m_failedList << m_currentDownloadingFile;
     qDebug() << m_currentDownloadingFile << "abort";
@@ -190,11 +190,11 @@ void Downloader::cancel()
 
 void Downloader::timeout()
 {
-    m_currentDownloadingReply->abort();
-
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
     disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
+
+    m_currentDownloadingReply->abort();
 
     m_failedList << m_currentDownloadingFile;
     qDebug() << m_currentDownloadingFile << "timeout";
