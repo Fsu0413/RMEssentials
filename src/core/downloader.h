@@ -77,7 +77,7 @@ private:
     QNetworkReply *m_currentDownloadingReply;
     QNetworkAccessManager *m_networkAccessManager;
 
-    bool m_cancelRequested;
+    volatile bool m_cancelRequested;
     bool m_isAll;
 };
 
