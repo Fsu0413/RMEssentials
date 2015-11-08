@@ -69,11 +69,11 @@ private:
     QTimer *m_timer;
     QProgressBar *m_progressBar;
 
+    bool m_busy;
+
 #ifdef Q_OS_WIN
     QWinTaskbarButton *m_taskbarBtn;
 #endif
-
-    bool m_busy;
 };
 
 #endif
