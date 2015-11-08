@@ -1,4 +1,4 @@
-#include "SongClientEditDialog.h"
+﻿#include "SongClientEditDialog.h"
 #include "downloader.h"
 
 #include <QVBoxLayout>
@@ -59,6 +59,8 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(asul, &QAction::triggered, this, &SongClientEditDialog::allSongUnlock);
     QAction *msl = m_popup->addAction(tr("Merge Song List"));
     connect(msl, &QAction::triggered, this, &SongClientEditDialog::mergeSongList);
+    QAction *pfumn = m_popup->addAction(tr("Prepare for User Making Notes"));
+    connect(pfumn, &QAction::triggered, this, &SongClientEditDialog::prepareForUserMakingNotes);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
@@ -645,5 +647,28 @@ void SongClientEditDialog::mergeSongList()
 
     m_file.mergeSongList(file2);
     m_currentIndex = 0;
+    readCurrent();
+}
+
+void SongClientEditDialog::prepareForUserMakingNotes()
+{
+    if (!m_isLoaded)
+        return;
+
+    if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?")) == QMessageBox::No)
+        return;
+
+    for (int i = 0; i < m_file.songCount(); ++i) {
+        SongClientItemStruct *c = m_file.song(i);
+        if (c->m_ucIsOpen && !c->m_bIsReward && !c->m_bIsHide && !c->m_bIsLevelReward && !c->m_ucCanBuy && !c->m_szSongName.startsWith(QStringLiteral("【限时】"))) {
+                // I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
+            c->m_szComposer = "Offical Free Song";
+            c->m_iOrderIndex = 1;
+        } else {
+            c->m_szComposer = "Offical Non-free Song";
+            c->m_iOrderIndex = 0;
+        }
+    }
+
     readCurrent();
 }

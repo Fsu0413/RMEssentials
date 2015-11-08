@@ -8,12 +8,10 @@ QDialog {
 
 QLabel {
 	background: rgb(128, 128, 128);
-	text: black;
 }
 
 QCheckBox {
 	background: rgb(128, 128, 128);
-	text: black;
 }
 
 QComboBox {

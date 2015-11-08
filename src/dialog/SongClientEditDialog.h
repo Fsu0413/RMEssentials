@@ -33,19 +33,16 @@ private slots:
     void movePrev();
     void moveNext();
     void readCurrent();
-    //void addNew();
     void calculateSongTime();
     void saveCurrent();
     void saveFile();
     void convertToFree();
     void allSongUnlock();
     bool reloadFile();
-
     void search();
     void searchResultDblClicked(QListWidgetItem *index);
-
     void mergeSongList();
-
+    void prepareForUserMakingNotes();
     void popup();
 
 private:
