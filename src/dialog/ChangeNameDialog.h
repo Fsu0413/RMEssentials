@@ -32,7 +32,6 @@ private slots:
 
 signals:
     void folder_selected(const QString &folder);
-    void enable_widgets(bool enable);
 
 private:
     // 0 :mp3    1 :Bigpng 2 :SmallPng
