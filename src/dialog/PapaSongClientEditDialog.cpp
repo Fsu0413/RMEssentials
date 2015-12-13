@@ -233,10 +233,6 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     setLayout(alllayout);
 }
 
-PapaSongClientEditDialog::~PapaSongClientEditDialog()
-{
-}
-
 bool PapaSongClientEditDialog::reloadFile()
 {
     QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");

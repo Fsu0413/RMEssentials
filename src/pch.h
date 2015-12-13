@@ -5,12 +5,13 @@
 
 #ifdef __cplusplus
 
+#include "utils.h"
+
 #include <QObject>
 #include <QApplication>
 #include <QThread>
 #include <QString>
 #include <QStringList>
-#include <QDir>
 #include <QFile>
 #include <QDialog>
 #include <QList>

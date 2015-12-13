@@ -337,10 +337,6 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     setLayout(alllayout);
 }
 
-SongClientEditDialog::~SongClientEditDialog()
-{
-}
-
 bool SongClientEditDialog::reloadFile()
 {
     QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
