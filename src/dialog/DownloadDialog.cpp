@@ -352,7 +352,6 @@ void DownloadDialog::loadPaths()
         f.open(QIODevice::ReadOnly);
         f.seek(0xcel);
         while (f.pos() < f.size()) {
-            qDebug() << f.pos();
             QByteArray s = f.peek(0x40l);
             QString path = QString::fromUtf8(s);
             paths.insert(path);
@@ -367,7 +366,6 @@ void DownloadDialog::loadPaths()
         f.open(QIODevice::ReadOnly);
         f.seek(0xd0l);
         while (f.pos() < f.size()) {
-            qDebug() << f.pos();
             QByteArray s = f.peek(0x40l);
             QString path = QString::fromUtf8(s);
             paths.insert(path);
@@ -382,7 +380,6 @@ void DownloadDialog::loadPaths()
         f.open(QIODevice::ReadOnly);
         f.seek(0xcel);
         while (f.pos() < f.size()) {
-            qDebug() << f.pos();
             QByteArray s = f.peek(0x40l);
             QString path = QString::fromUtf8(s);
             paths.insert(path);
