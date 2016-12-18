@@ -47,7 +47,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     saveCurrentBtn->setDefault(false);
     connect(saveCurrentBtn, &QPushButton::clicked, this, &SongClientEditDialog::saveCurrent);
     // functions...
-    m_popup = new QMenu(tr("Functions..."), this);
+    m_popup = new QMenu(this);
     QAction *openFileBtn = m_popup->addAction(tr("open an other file"));
     connect(openFileBtn, &QAction::triggered, this, &SongClientEditDialog::reloadFile);
     QAction *saveFileBtn = m_popup->addAction(tr("save file"));
