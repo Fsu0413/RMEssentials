@@ -4,20 +4,26 @@
 #include <QFile>
 #include <QTextStream>
 
+#ifdef Q_OS_ANDROID
+#define CURRENTDIRPREFIX "" "assets:/" ""
+#else
+#define CURRENTDIRPREFIX "" "assets/" ""
+#endif
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     QTranslator qt_translator;
-    qt_translator.load(":/qt_zh_CN.qm");
+    qt_translator.load(CURRENTDIRPREFIX "qt_zh_CN.qm");
     qApp->installTranslator(&qt_translator);
 
     QTranslator translator;
-    translator.load(":/changename.qm");
+    translator.load(CURRENTDIRPREFIX "changename.qm");
     qApp->installTranslator(&translator);
 
 #ifdef MOBILE_DEVICES
-    QFile qss(":/RMEssentialsAndroid.qss");
+    QFile qss(CURRENTDIRPREFIX "RMEssentialsAndroid.qss");
     if (qss.open(QIODevice::ReadOnly)) {
         QTextStream qssStream(&qss);
         qApp->setStyleSheet(qssStream.readAll());

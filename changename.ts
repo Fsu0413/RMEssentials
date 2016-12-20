@@ -242,18 +242,6 @@ Are you sure?</source>
         <translation>节奏大师工具箱  </translation>
     </message>
     <message>
-        <source>RMEssentials is a small software written by Fsu0413. 
-It is used to operate the files for a game by Tencent: Rhythm Master. 
-It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. 
-
-This Program is powered by Qt %1. The version of this program is: %2</source>
-        <translation>节奏大师工具箱是一个由Fsu0413写的小软件。
-用来操作一款由腾讯开发的游戏节奏大师的文件。
-现在主要拥有4个功能：文件改名，下载，客户端编辑，星动模式客户端编辑。
-
-这个程序使用 Qt %1。程序版本：%2</translation>
-    </message>
-    <message>
         <source>Failed to load whatsnew from network</source>
         <translation>从网络获取更新信息失败</translation>
     </message>
@@ -268,6 +256,28 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
     <message>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
+    </message>
+    <message>
+        <source>The version of RMEssentials is: %1.
+
+RMEssentials is a small software written by Fsu0413. 
+It is used to operate the files for a game by Tencent: Rhythm Master. 
+It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. 
+
+This Program is using Qt %2.</source>
+        <translation>节奏大师工具箱的当前版本为：%1。
+
+节奏大师工具箱是一个由Fsu0413写的小软件。
+用途为操作节奏大师（一款腾讯游戏）的文件。
+现在主要拥有4个功能：文件改名，下载，经典模式客户端编辑，星动模式客户端编辑。
+
+这个程序使用 Qt %2。</translation>
+    </message>
+    <message>
+        <source>
+This Program is using QuaZip %1.</source>
+        <translation>
+这个程序使用 QuaZip %1。</translation>
     </message>
 </context>
 <context>
@@ -447,6 +457,14 @@ This Program is powered by Qt %1. The version of this program is: %2</source>
     <message>
         <source>All Song Unlock</source>
         <translation>所有歌曲解锁</translation>
+    </message>
+    <message>
+        <source>Prepare for User Making Notes</source>
+        <translation>为自制谱做准备</translation>
+    </message>
+    <message>
+        <source>Please be sure that the current open file is the offical one from the server of RM!!!!&lt;br /&gt;Are you sure to proceed?</source>
+        <translation>请确认当前打开的文件是从节奏大师官方服务器下载下来的！！！！&lt;br /&gt;确认执行么？</translation>
     </message>
 </context>
 </TS>

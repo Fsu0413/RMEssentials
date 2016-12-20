@@ -10,12 +10,10 @@
 #include <QMessageBox>
 #include <QApplication>
 
-const char *const programVersion = "20151024";
-
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(tr("Rhythm Master Essensials  ") + QString(programVersion));
+    setWindowTitle(tr("Rhythm Master Essensials  ") + QStringLiteral(RMEVERSION));
 
     QVBoxLayout *alllayout = new QVBoxLayout;
 
@@ -117,12 +115,17 @@ void MainDialog::showPapaSongClientEditDialog()
 
 void MainDialog::about()
 {
-    QMessageBox::about(this, tr("About RMEssentials"), tr(
-        "RMEssentials is a small software written by Fsu0413. \n"
-        "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
-        "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
-        "This Program is powered by Qt %1. The version of this program is: %2"
-    ).arg(QT_VERSION_STR).arg(programVersion));
+    QString aboutContent = tr(
+                "The version of RMEssentials is: %1.\n\n"
+                "RMEssentials is a small software written by Fsu0413. \n"
+                "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
+                "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
+                "This Program is using Qt %2."
+            ).arg(RMEVERSION).arg(QT_VERSION_STR);
+#ifdef RME_USE_QUAZIP
+    aboutContent += tr("\nThis Program is using QuaZip %1.").arg(RME_USE_QUAZIP);
+#endif
+    QMessageBox::about(this, tr("About RMEssentials"), aboutContent);
 }
 
 void MainDialog::checkForUpdate()
@@ -136,7 +139,7 @@ void MainDialog::checkForUpdate()
         QString version = v.readAll();
         v.close();
 
-        if (QString(programVersion) < version) {
+        if (QStringLiteral(RMEVERSION) < version) {
             QFile n("downloader/whatsnew");
             QString whatsnew;
             if (n.open(QIODevice::ReadOnly)) {

@@ -6,6 +6,10 @@
 
 QT       += core gui widgets network
 
+VERSION = 6.12.21
+RMEVERSION = 20161221
+DEFINES += "RMEVERSION=\\\"$$RMEVERSION\\\""
+
 win32 {
     QT += winextras
 }
@@ -20,7 +24,6 @@ android {
     CONFIG += mobility
     MOBILITY =
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-    RESOURCES += androidqss.qrc
 } else {
     CONFIG += quazip
 }
@@ -29,14 +32,11 @@ android || ios {
     DEFINES += MOBILE_DEVICES
 }
 
-RESOURCES += \
-    lang.qrc
-
 TRANSLATIONS += changename.ts
 
 
-win32{
-    RC_FILE += res/icon.rc
+win32 {
+    RC_ICONS = $$_PRO_FILE_PWD_/res/1.ico
 }
 
 mac{
@@ -74,6 +74,7 @@ INCLUDEPATH += src/dialog
 
 
 CONFIG(quazip) {
+    DEFINES += "RME_USE_QUAZIP=\\\"0.7.2\\\"" QUAZIP_STATIC
     INCLUDEPATH += src/quazip
 
     SOURCES += \
@@ -111,11 +112,8 @@ CONFIG(quazip) {
         src/quazip/zip.h \
         src/core/uncompresser.h \
 
-    DEFINES += RME_USE_QUAZIP
-    DEFINES += QUAZIP_STATIC
-
-    exists("$$[QT_INSTALL_HEADERS]/QtZlib/zlib.h") {
-        INCLUDEPATH+= $$[QT_INSTALL_HEADERS]/QtZlib
+    qtHaveModule("zlib-private") {
+        QT += zlib-private
     } else {
         LIBS += -lz
     }
