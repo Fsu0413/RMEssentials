@@ -3,6 +3,9 @@
 #include <QApplication>
 #include <QFile>
 #include <QTextStream>
+#ifdef Q_OS_OSX
+#include <QDir>
+#endif
 
 #ifdef Q_OS_ANDROID
 #define CURRENTDIRPREFIX "" "assets:/" ""
