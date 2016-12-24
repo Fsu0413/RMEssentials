@@ -5,15 +5,15 @@
 
 namespace
 {
-    const char *suffix_hd = "_title_hd";
-    const char *suffix_ipad = "_title_ipad";
+    const QString suffix_hd = QStringLiteral("_title_hd");
+    const QString suffix_ipad = QStringLiteral("_title_ipad");
 }
 
 bool hasMp3(const QDir &dir)
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.mp3";
+        l << QStringLiteral("*.mp3");
 
     foreach (const QString &s, dir.entryList(l)) {
         QString s2 = s;
@@ -29,7 +29,7 @@ bool hasBigPng(const QDir &dir)
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.png";
+        l << QStringLiteral("*.png");
 
     foreach (const QString &s, dir.entryList(l)) {
         QString s2 = s;
@@ -41,11 +41,11 @@ bool hasBigPng(const QDir &dir)
     return false;
 }
 
-bool hasSmallPng(const QDir &dir, const char * &suffix)
+bool hasSmallPng(const QDir &dir, QString &suffix)
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.png";
+        l << QStringLiteral("*.png");
 
     foreach (const QString &s, dir.entryList(l)) {
         QString s2 = s.toLower();
@@ -69,12 +69,12 @@ bool hasPapaBigPng(const QDir &dir)
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.png";
+        l << QStringLiteral("*.png");
 
     foreach (const QString &s, dir.entryList(l)) {
         QString s2 = s;
         s2.chop(4);
-        if (s2.endsWith("_ipad")) {
+        if (s2.endsWith(QStringLiteral("_ipad"))) {
             s2.chop(5);
             if (s2.toLower() == dir.dirName().toLower())
                 return true;
@@ -88,12 +88,12 @@ bool hasPapaSmallPng(const QDir &dir)
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.png";
+        l << QStringLiteral("*.png");
 
     foreach (const QString &s, dir.entryList(l)) {
         QString s2 = s;
         s2.chop(4);
-        if (s2.endsWith("_title_140_90")) {
+        if (s2.endsWith(QStringLiteral("_title_140_90"))) {
             s2.chop(13);
             if (s2.toLower() == dir.dirName().toLower())
                 return true;
@@ -107,18 +107,18 @@ ExistNotes existNotes(const QDir &dir)
 {
     static QMap<ExistNote, QString> suffixs;
     if (suffixs.isEmpty()) {
-        suffixs[IMD_4K_EZ] = "_4k_ez.imd";
-        suffixs[IMD_4K_NM] = "_4k_nm.imd";
-        suffixs[IMD_4K_HD] = "_4k_hd.imd";
-        suffixs[IMD_5K_EZ] = "_5k_ez.imd";
-        suffixs[IMD_5K_NM] = "_5k_nm.imd";
-        suffixs[IMD_5K_HD] = "_5k_hd.imd";
-        suffixs[IMD_6K_EZ] = "_6k_ez.imd";
-        suffixs[IMD_6K_NM] = "_6k_nm.imd";
-        suffixs[IMD_6K_HD] = "_6k_hd.imd";
-        suffixs[MDE_EZ] = "_Papa_Easy.mde";
-        suffixs[MDE_NM] = "_Papa_Normal.mde";
-        suffixs[MDE_HD] = "_Papa_Hard.mde";
+        suffixs[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
+        suffixs[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
+        suffixs[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
+        suffixs[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
+        suffixs[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
+        suffixs[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
+        suffixs[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
+        suffixs[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
+        suffixs[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
+        suffixs[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
+        suffixs[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
+        suffixs[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
     }
 
     ExistNotes result;

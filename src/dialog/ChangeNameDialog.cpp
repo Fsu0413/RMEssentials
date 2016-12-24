@@ -64,7 +64,7 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 
     QFontMetrics fm(font());
     int width = fm.width(tr("Missing"));
-    int titleWidth = fm.width("_title_ipad");
+    int titleWidth = fm.width(QStringLiteral("_title_ipad"));
 
     for (int i = 0; i < 18; ++i) {
         m_filesLabels[i] = new QLabel;
@@ -176,7 +176,7 @@ void ChangeNameDialog::checkFiles(const QString &folder)
     bool exists[18] = {false};
     exists[0] = hasMp3(d);
     exists[1] = hasBigPng(d);
-    const char *smallPngSuffix = NULL;
+    QString smallPngSuffix;
     exists[2] = hasSmallPng(d, smallPngSuffix);
     exists[3] = hasPapaBigPng(d);
     exists[4] = hasPapaSmallPng(d);

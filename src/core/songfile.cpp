@@ -9,21 +9,13 @@ RMSong::SongClientFile::SongClientFile() : m_header(NULL)
 
 RMSong::SongClientFile::~SongClientFile()
 {
-    if (!m_songsList.isEmpty()) {
-        foreach (SongClientItemStruct *s, m_songsList)
-            delete s;
-    }
-
+    qDeleteAll(m_songsList);
     delete m_header;
 }
 
 void RMSong::SongClientFile::cleanup()
 {
-    if (!m_songsList.isEmpty()) {
-        foreach (SongClientItemStruct *s, m_songsList)
-            delete s;
-    }
-
+    qDeleteAll(m_songsList);
     m_songsList.clear();
 }
 
@@ -139,18 +131,22 @@ void RMSong::SongClientFile::mergeSongList(SongClientFile *file2)
 
     QList<SongClientItemStruct *> s = m_songsList;
     m_songsList = file2->m_songsList;
+    file2->m_songsList.clear();
+    delete file2;
+
     int j = 0;
     for (int i = 0; i < m_songsList.length(); ++i) {
         if (s.value(j)->m_ushSongID == m_songsList.value(i)->m_ushSongID) {
             delete m_songsList.value(i);
             m_songsList[i] = s.value(j);
+            s[j] = NULL;
             ++j;
             if (j >= s.length())
                 break;
         }
     }
-    file2->m_songsList.clear();
-    delete file2;
+
+    qDeleteAll(s);
 }
 
 
@@ -160,21 +156,13 @@ RMSong::PapaSongClientFile::PapaSongClientFile() : m_header(NULL)
 
 RMSong::PapaSongClientFile::~PapaSongClientFile()
 {
-    if (!m_songsList.isEmpty()) {
-        foreach (PapaSongClientItemStruct *s, m_songsList)
-            delete s;
-    }
-
+    qDeleteAll(m_songsList);
     delete m_header;
 }
 
 void RMSong::PapaSongClientFile::cleanup()
 {
-    if (!m_songsList.isEmpty()) {
-        foreach (PapaSongClientItemStruct *s, m_songsList)
-            delete s;
-    }
-
+    qDeleteAll(m_songsList);
     m_songsList.clear();
 }
 

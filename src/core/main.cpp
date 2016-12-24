@@ -15,15 +15,15 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QTranslator qt_translator;
-    qt_translator.load(CURRENTDIRPREFIX "qt_zh_CN.qm");
+    qt_translator.load(QStringLiteral(CURRENTDIRPREFIX "qt_zh_CN.qm"));
     qApp->installTranslator(&qt_translator);
 
     QTranslator translator;
-    translator.load(CURRENTDIRPREFIX "changename.qm");
+    translator.load(QStringLiteral(CURRENTDIRPREFIX "changename.qm"));
     qApp->installTranslator(&translator);
 
 #ifdef MOBILE_DEVICES
-    QFile qss(CURRENTDIRPREFIX "RMEssentialsAndroid.qss");
+    QFile qss(QStringLiteral(CURRENTDIRPREFIX "RMEssentialsAndroid.qss"));
     if (qss.open(QIODevice::ReadOnly)) {
         QTextStream qssStream(&qss);
         qApp->setStyleSheet(qssStream.readAll());

@@ -1,5 +1,6 @@
 #include "DownloadDialog.h"
 #include "downloader.h"
+#include "uncompresser.h"
 #include <QListWidget>
 #include <QTimer>
 #include <QComboBox>
@@ -14,10 +15,9 @@
 #include <QWinTaskbarButton>
 #include <QWinTaskbarProgress>
 #endif
-#include "uncompresser.h"
 
 DownloadDialog::DownloadDialog(QWidget *parent)
-    : QDialog(parent), m_busy(false)
+    : QDialog(parent), m_busy(false), m_exitRequested(false)
 #ifdef Q_OS_WIN
     , m_taskbarBtn(NULL)
 #endif
@@ -142,19 +142,35 @@ void DownloadDialog::startDownloadNextMissing()
 void DownloadDialog::startDownload(DownloadMode mode)
 {
     static QStringList suffixs;
-    static QString prefix = "http://game.ds.qq.com/Com_SongRes/song/";
+    static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/song/");
     if (suffixs.isEmpty())
-        suffixs << ".mp3" << ".jpg" << "_title_ipad.jpg" << "_ipad.jpg" << "_title_140_90.jpg" /*<< "_title_hd.jpg"*/ // do not use .png here
-        << "_4k_ez.imd" << "_4k_nm.imd" << "_4k_hd.imd"
-        << "_5k_ez.imd" << "_5k_nm.imd" << "_5k_hd.imd"
-        << "_6k_ez.imd" << "_6k_nm.imd" << "_6k_hd.imd"
-        << "_Papa_Easy.mde" << "_Papa_Normal.mde" << "_Papa_Hard.mde";
+        suffixs
+                << QStringLiteral(".mp3")
+                << QStringLiteral(".jpg")
+                << QStringLiteral("_title_ipad.jpg")
+                << QStringLiteral("_ipad.jpg")
+                << QStringLiteral("_title_140_90.jpg")  // do not use .png here
 
+                << QStringLiteral("_4k_ez.imd")
+                << QStringLiteral("_4k_nm.imd")
+                << QStringLiteral("_4k_hd.imd")
+
+                << QStringLiteral("_5k_ez.imd")
+                << QStringLiteral("_5k_nm.imd")
+                << QStringLiteral("_5k_hd.imd")
+
+                << QStringLiteral("_6k_ez.imd")
+                << QStringLiteral("_6k_nm.imd")
+                << QStringLiteral("_6k_hd.imd")
+
+                << QStringLiteral("_Papa_Easy.mde")
+                << QStringLiteral("_Papa_Normal.mde")
+                << QStringLiteral("_Papa_Hard.mde");
 
     Downloader *downloader = new Downloader;
     QString songname = m_nameCombo->currentText();
     foreach (const QString &suf, suffixs)
-        downloader << (prefix + songname + "/" + songname + suf);
+        downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
 
     downloader->setSavePath(songname);
 
@@ -242,8 +258,17 @@ void DownloadDialog::startUncompress()
 {
 #ifdef RME_USE_QUAZIP
     Uncompresser *unc = new Uncompresser;
-    unc->zipNames << "MD5List.zip" << "TableComBin.zip" << "TableComBin.zip" << "TableComBin_IOS.zip";
-    unc->fileNames << "MD5List.xml" << "mrock_song_client_android.bin" << "mrock_papasong_client.bin" << "mrock_song_client.bin";
+    unc->zipNames
+            << QStringLiteral("MD5List.zip")
+            << QStringLiteral("TableComBin.zip")
+            << QStringLiteral("TableComBin.zip")
+            << QStringLiteral("TableComBin_IOS.zip");
+
+    unc->fileNames
+            << QStringLiteral("MD5List.xml")
+            << QStringLiteral("mrock_song_client_android.bin")
+            << QStringLiteral("mrock_papasong_client.bin")
+            << QStringLiteral("mrock_song_client.bin");
 
     connect(unc, &Uncompresser::finished, this, &DownloadDialog::loadPaths);
     connect(unc, &Uncompresser::finished, unc, &Uncompresser::deleteLater);
@@ -256,8 +281,8 @@ void DownloadDialog::startUncompress()
 void DownloadDialog::downloadList()
 {
 #ifdef RME_USE_QUAZIP
-    static const QString md5 = "http://game.ds.qq.com/Com_SongRes/MD5List.zip";
-    static const QString bin = "http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip";
+    static const QString md5 = QStringLiteral("http://game.ds.qq.com/Com_SongRes/MD5List.zip");
+    static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip");
 
 
     Downloader *downloader = new Downloader;
@@ -294,10 +319,10 @@ void DownloadDialog::downloadList()
 void DownloadDialog::downloadAndroidList()
 {
 #ifdef RME_USE_QUAZIP
-    if (QFile::exists(Downloader::downloadPath() + "TableComBin.zip"))
-        QFile(Downloader::downloadPath() + "TableComBin.zip").rename(Downloader::downloadPath() + "TableComBin_IOS.zip");
+    if (QFile::exists(Downloader::downloadPath() + QStringLiteral("TableComBin.zip")))
+        QFile(Downloader::downloadPath() + QStringLiteral("TableComBin.zip")).rename(Downloader::downloadPath() + QStringLiteral("TableComBin_IOS.zip"));
 
-    static const QString bin = "http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip";
+    static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip");
 
     Downloader *downloader = new Downloader;
     downloader << bin;
@@ -333,22 +358,22 @@ void DownloadDialog::loadPaths()
 
     QSet<QString> paths;
 
-    if (dir.exists("MD5List.xml")) {
-        QFile f(dir.absoluteFilePath("MD5List.xml"));
+    if (dir.exists(QStringLiteral("MD5List.xml"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("MD5List.xml")));
         f.open(QIODevice::ReadOnly);
         while (!f.atEnd()) {
-            QString s = f.readLine();
+            QString s = QString::fromUtf8(f.readLine());
             s = s.trimmed();
-            QRegExp rx("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>");
+            QRegExp rx(QStringLiteral("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>"));
             if (rx.exactMatch(s))
                 paths.insert(rx.capturedTexts()[1]);
         }
         f.close();
-        appendLog("MD5List.xml" + tr(" has been loaded"));
+        appendLog(QStringLiteral("MD5List.xml") + tr(" has been loaded"));
     }
 
-    if (dir.exists("mrock_song_client_android.bin")) {
-        QFile f(dir.absoluteFilePath("mrock_song_client_android.bin"));
+    if (dir.exists(QStringLiteral("mrock_song_client_android.bin"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_song_client_android.bin")));
         f.open(QIODevice::ReadOnly);
         f.seek(0xcel);
         while (f.pos() < f.size()) {
@@ -358,11 +383,11 @@ void DownloadDialog::loadPaths()
             f.seek(f.pos() + 0x33el);
         }
         f.close();
-        appendLog("mrock_song_client_android.bin" + tr(" has been loaded"));
+        appendLog(QStringLiteral("mrock_song_client_android.bin") + tr(" has been loaded"));
     }
 
-    if (dir.exists("mrock_papasong_client.bin")) {
-        QFile f(dir.absoluteFilePath("mrock_papasong_client.bin"));
+    if (dir.exists(QStringLiteral("mrock_papasong_client.bin"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_papasong_client.bin")));
         f.open(QIODevice::ReadOnly);
         f.seek(0xd0l);
         while (f.pos() < f.size()) {
@@ -372,11 +397,11 @@ void DownloadDialog::loadPaths()
             f.seek(f.pos() + 0x169l);
         }
         f.close();
-        appendLog("mrock_papasong_client.bin" + tr(" has been loaded"));
+        appendLog(QStringLiteral("mrock_papasong_client.bin") + tr(" has been loaded"));
     }
 
-    if (dir.exists("mrock_song_client.bin")) {
-        QFile f(dir.absoluteFilePath("mrock_song_client.bin"));
+    if (dir.exists(QStringLiteral("mrock_song_client.bin"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_song_client.bin")));
         f.open(QIODevice::ReadOnly);
         f.seek(0xcel);
         while (f.pos() < f.size()) {
@@ -386,7 +411,7 @@ void DownloadDialog::loadPaths()
             f.seek(f.pos() + 0x33el);
         }
         f.close();
-        appendLog("mrock_song_client.bin" + tr(" has been loaded"));
+        appendLog(QStringLiteral("mrock_song_client.bin") + tr(" has been loaded"));
     }
 
     QStringList l = paths.toList();
@@ -414,16 +439,22 @@ void DownloadDialog::setBusy(bool b)
         m_taskbarBtn->progress()->show();
 #endif
     } else {
-        m_downloadBtn->setText(tr("Download!"));
-        m_downloadBtn->setEnabled(true);
+        if (m_exitRequested)
+            reject();
+        else {
+            m_downloadBtn->setText(tr("Download!"));
+            m_downloadBtn->setEnabled(true);
+        }
     }
 }
 
 void DownloadDialog::closeEvent(QCloseEvent *e)
 {
-    if (m_busy)
+    if (m_busy) {
         e->ignore();
-    else
+        m_exitRequested = true;
+        emit cancel_download();
+    } else
         QDialog::closeEvent(e);
 }
 

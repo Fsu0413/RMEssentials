@@ -48,16 +48,18 @@ MainDialog::MainDialog(QWidget *parent)
     setMinimumWidth(200);
 
 #ifdef QT_NO_DEBUG
-    static const QString versioninfo = "http://fsu0413.github.io/RMEssentials/versioninfo";
+    static const QString versioninfo = QStringLiteral("http://fsu0413.github.io/RMEssentials/versioninfo");
 #else
-    static const QString versioninfo = "http://fsu0413.github.io/RMEssentials/versioninfotest";
+    static const QString versioninfo = QStringLiteral("http://fsu0413.github.io/RMEssentials/versioninfotest");
 #endif
-    static const QString whatsnew = "http://fsu0413.github.io/RMEssentials/whatsnew";
+    static const QString whatsnew = QStringLiteral("http://fsu0413.github.io/RMEssentials/whatsnew");
+    static const QString dlurl = QStringLiteral("http://fsu0413.github.io/RMEssentials/dlurl");
+    static const QString dlpasswd = QStringLiteral("http://fsu0413.github.io/RMEssentials/dlpasswd");
 
     Downloader *downloader = new Downloader;
     downloader << versioninfo << whatsnew;
 
-    downloader->setSavePath(QString());
+    downloader->setSavePath(QStringLiteral("RMESSENTIALS"));
 
     connect(downloader, &Downloader::finished, downloader, &Downloader::deleteLater);
     connect(downloader, &Downloader::all_completed, this, &MainDialog::checkForUpdate);
@@ -121,9 +123,9 @@ void MainDialog::about()
                 "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
                 "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
                 "This Program is using Qt %2."
-            ).arg(RMEVERSION).arg(QT_VERSION_STR);
+            ).arg(QStringLiteral(RMEVERSION)).arg(QStringLiteral(QT_VERSION_STR));
 #ifdef RME_USE_QUAZIP
-    aboutContent += tr("\nThis Program is using QuaZip %1.").arg(RME_USE_QUAZIP);
+    aboutContent += tr("\nThis Program is using QuaZip %1.").arg(QStringLiteral(RME_USE_QUAZIP));
 #endif
     QMessageBox::about(this, tr("About RMEssentials"), aboutContent);
 }
@@ -131,27 +133,38 @@ void MainDialog::about()
 void MainDialog::checkForUpdate()
 {
 #ifdef QT_NO_DEBUG
-    QFile v("downloader/versioninfo");
+    QFile v(QStringLiteral("downloader/RMESSENTIALS/versioninfo"));
 #else
-    QFile v("downloader/versioninfotest");
+    QFile v(QStringLiteral("downloader/RMESSENTIALS/versioninfotest"));
 #endif
     if (v.open(QIODevice::ReadOnly)) {
-        QString version = v.readAll();
+        QString version = QString::fromUtf8(v.readAll());
         v.close();
 
         if (QStringLiteral(RMEVERSION) < version) {
-            QFile n("downloader/whatsnew");
-            QString whatsnew;
+            QFile n(QStringLiteral("downloader/RMESSENTIALS/whatsnew"));
+            QString whatsnew = tr("Failed to load whatsnew from network");
             if (n.open(QIODevice::ReadOnly)) {
                 whatsnew = QString::fromUtf8(n.readAll());
                 n.close();
-            } else
-                whatsnew = tr("Failed to load whatsnew from network");
+            }
 
-            setWindowTitle(windowTitle() + tr(" new version %1 available").arg(version));
+            QFile l(QStringLiteral("downloader/RMESSENTIALS/dlurl"));
+            QString link = QStringLiteral("http://pan.baidu.com/s/1eQvwPzW");
+            if (l.open(QIODevice::ReadOnly)) {
+                link = QString::fromUtf8(l.readAll());
+                l.close();
+            }
+
+            QFile p(QStringLiteral("downloader/RMESSENTIALS/dlpasswd"));
+            QString passwd = QStringLiteral("at7c");
+            if (p.open(QIODevice::ReadOnly)) {
+                passwd = QString::fromUtf8(p.readAll());
+                p.close();
+            }
+
+            setWindowTitle(windowTitle() + tr("  new version %1 available").arg(version));
             if (isVisible()) {
-                static QString link = "http://pan.baidu.com/s/1eQvwPzW";
-                static QString passwd = "at7c";
                 QString contents = tr(
                     "New version avaliable!! Version number: %1<br />"
                     "You can download the new version at <a href=\'%2\'>here</a>, the password is \"%3\"<br /><br />"

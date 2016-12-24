@@ -67,7 +67,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
     iOrderIndex->setValidator(iOrderIndexValidator);
     szPath = new QLineEdit;
-    QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp("[0-9a-z_]+"), this);
+    QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     szPath->setValidator(szPathValidator);
     iGameTime = new QLineEdit;
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
@@ -90,14 +90,14 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     cLevel = new QLineEdit;
     QIntValidator *cLevelValidator = new QIntValidator(1, 10, this);
     cLevel->setValidator(cLevelValidator);
-    ucIsHide = new QCheckBox("ucIsHide");
-    ucIsReward = new QCheckBox("ucIsReward");
-    ucIsLevelReward = new QCheckBox("ucIsLevelReward");
-    ucIsOpen = new QCheckBox("ucIsOpen");
-    ucIsFree = new QCheckBox("ucIsFree");
+    ucIsHide = new QCheckBox(QStringLiteral("ucIsHide"));
+    ucIsReward = new QCheckBox(QStringLiteral("ucIsReward"));
+    ucIsLevelReward = new QCheckBox(QStringLiteral("ucIsLevelReward"));
+    ucIsOpen = new QCheckBox(QStringLiteral("ucIsOpen"));
+    ucIsFree = new QCheckBox(QStringLiteral("ucIsFree"));
 
     // for QFormLayout
-#define AR(l, x) l->addRow(#x, x)
+#define AR(l, x) l->addRow(QStringLiteral(#x), x)
 
     // 1st line
     QHBoxLayout *hlayout1 = new QHBoxLayout;
@@ -235,7 +235,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
 
 bool PapaSongClientEditDialog::reloadFile()
 {
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
 
     QFile f(filepath);
     if (!f.exists())
@@ -257,11 +257,11 @@ bool PapaSongClientEditDialog::loadFile()
     QDir d(Downloader::downloadPath());
 
     QString filepath;
-    if (d.exists() && d.exists("mrock_papasong_client.bin"))
-        filepath = d.absoluteFilePath("mrock_papasong_client.bin");
+    if (d.exists() && d.exists(QStringLiteral("mrock_papasong_client.bin")))
+        filepath = d.absoluteFilePath(QStringLiteral("mrock_papasong_client.bin"));
     else {
         QMessageBox::information(this, tr("RMEssentials"), tr("mrock_papasong_client.bin doesn't exist, please select the file to open."));
-        filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+        filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
     }
 
     QFile f(filepath);
@@ -284,7 +284,7 @@ void PapaSongClientEditDialog::saveFile()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+    QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
     QFile f(filepath);
     if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
         return;

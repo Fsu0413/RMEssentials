@@ -15,7 +15,7 @@ bool Renamer::run()
     if (m_d.dirName() == m_toRename)
         return false;
 
-    QDir dotdotToRename(m_d.absolutePath() + "/../" + m_toRename);
+    QDir dotdotToRename(m_d.absolutePath() + QStringLiteral("/../") + m_toRename);
     if (dotdotToRename.exists())
         return false;
 
@@ -49,18 +49,18 @@ bool Renamer::renameImdsToEasy()
 {
     static QMap<ExistNote, QString> suffixs;
     if (suffixs.isEmpty()) {
-        suffixs[IMD_4K_EZ] = "_4k_ez.imd";
-        suffixs[IMD_4K_NM] = "_4k_nm.imd";
-        suffixs[IMD_4K_HD] = "_4k_hd.imd";
-        suffixs[IMD_5K_EZ] = "_5k_ez.imd";
-        suffixs[IMD_5K_NM] = "_5k_nm.imd";
-        suffixs[IMD_5K_HD] = "_5k_hd.imd";
-        suffixs[IMD_6K_EZ] = "_6k_ez.imd";
-        suffixs[IMD_6K_NM] = "_6k_nm.imd";
-        suffixs[IMD_6K_HD] = "_6k_hd.imd";
-        suffixs[MDE_EZ] = "_Papa_Easy.mde";
-        suffixs[MDE_NM] = "_Papa_Normal.mde";
-        suffixs[MDE_HD] = "_Papa_Hard.mde";
+        suffixs[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
+        suffixs[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
+        suffixs[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
+        suffixs[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
+        suffixs[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
+        suffixs[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
+        suffixs[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
+        suffixs[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
+        suffixs[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
+        suffixs[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
+        suffixs[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
+        suffixs[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
     }
 
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
@@ -68,7 +68,7 @@ bool Renamer::renameImdsToEasy()
         file_name.append(m_d.dirName()).append(suffixs[i]);
         if (m_d.exists(file_name)) {
             ExistNote i_easiest = i;
-            while (!suffixs[i_easiest].contains("ez") && !suffixs[i_easiest].contains("Easy"))
+            while (!suffixs[i_easiest].contains(QStringLiteral("ez")) && !suffixs[i_easiest].contains(QStringLiteral("Easy")))
                 i_easiest = static_cast<ExistNote>(i_easiest >> 1);
 
             while (m_d.exists(m_d.dirName() + suffixs[i_easiest]) && (m_d.dirName() + suffixs[i_easiest]) != file_name)
@@ -86,11 +86,11 @@ bool Renamer::renameMp3()
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.mp3";
+        l << QStringLiteral("*.mp3");
 
     QString origname;
     foreach (const QString &s, m_d.entryList(l)) {
-        if (s.toLower() == (m_d.dirName() + ".mp3").toLower()) {
+        if (s.toLower() == (m_d.dirName() + QStringLiteral(".mp3")).toLower()) {
             origname = s;
             break;
         }
@@ -99,7 +99,7 @@ bool Renamer::renameMp3()
     if (origname.isEmpty())
         return false;
 
-    m_d.rename(origname, m_toRename + ".mp3");
+    m_d.rename(origname, m_toRename + QStringLiteral(".mp3"));
     return true;
 }
 
@@ -107,11 +107,11 @@ bool Renamer::renameBigPng()
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.png";
+        l << QStringLiteral("*.png");
 
     QString origname;
     foreach (const QString &s, m_d.entryList(l)) {
-        if (s.toLower() == (m_d.dirName() + ".png").toLower()) {
+        if (s.toLower() == (m_d.dirName() + QStringLiteral(".png")).toLower()) {
             origname = s;
             break;
         }
@@ -120,7 +120,7 @@ bool Renamer::renameBigPng()
     if (origname.isEmpty())
         return true; // in fact the Bluecat 3 version 2.1 can play imds without big pngs, so ignore this
 
-    m_d.rename(origname, m_toRename + ".png");
+    m_d.rename(origname, m_toRename + QStringLiteral(".png"));
     return true;
 }
 
@@ -128,15 +128,15 @@ bool Renamer::renameSmallPng()
 {
     static QStringList l;
     if (l.isEmpty())
-        l << "*.png";
+        l << QStringLiteral("*.png");
 
-    const char *suffix = NULL;
+    QString suffix;
     if (!hasSmallPng(m_d, suffix))
         return true; // in fact we can play this imd without small pngs in Bluecat 3, so temporily ignore this, I will make a setting later to set this
 
     QString origname;
     foreach (const QString &s, m_d.entryList(l)) {
-        if (s.toLower() == (m_d.dirName() + QString(suffix) + ".png").toLower()) {
+        if (s.toLower() == (m_d.dirName() + suffix + QStringLiteral(".png")).toLower()) {
             origname = s;
             break;
         }
@@ -145,7 +145,7 @@ bool Renamer::renameSmallPng()
     if (origname.isEmpty())
         return true; // also ignore
 
-    m_d.rename(origname, m_toRename + "_title_ipad.png");
+    m_d.rename(origname, m_toRename + QStringLiteral("_title_ipad.png"));
     // QFile::copy(m_d.absoluteFilePath(m_toRename + "_title_ipad.png"), m_d.absoluteFilePath(m_toRename + "_title_hd.png")); // I don't know whether the small pngs is in this style of name in iOS version
     return true;
 }
@@ -155,23 +155,23 @@ bool Renamer::renamePapaPngs()
     // in fact, not all notes has Papa mode, so ignore the result here
     static QStringList l;
     if (l.isEmpty())
-        l << "*.png";
+        l << QStringLiteral("*.png");
 
     QString origname_small;
     QString origname_big;
     foreach (const QString &s, m_d.entryList(l)) {
-        if (s.toLower() == (m_d.dirName() + "_title_140_90.png").toLower()) {
+        if (s.toLower() == (m_d.dirName() + QStringLiteral("_title_140_90.png")).toLower()) {
             origname_small = s;
             break;
-        } else if (s.toLower() == (m_d.dirName() + "_ipad.png").toLower()) {
+        } else if (s.toLower() == (m_d.dirName() + QStringLiteral("_ipad.png")).toLower()) {
             origname_big = s;
         }
     }
 
     if (!origname_small.isEmpty())
-        m_d.rename(origname_small, m_toRename + "_title_140_90.png");
+        m_d.rename(origname_small, m_toRename + QStringLiteral("_title_140_90.png"));
     if (!origname_big.isEmpty())
-        m_d.rename(origname_big, m_toRename + "_ipad.png");
+        m_d.rename(origname_big, m_toRename + QStringLiteral("_ipad.png"));
 
     return true;
 }
@@ -180,18 +180,18 @@ bool Renamer::renameImds()
 {
     static QMap<ExistNote, QString> suffixs;
     if (suffixs.isEmpty()) {
-        suffixs[IMD_4K_EZ] = "_4k_ez.imd";
-        suffixs[IMD_4K_NM] = "_4k_nm.imd";
-        suffixs[IMD_4K_HD] = "_4k_hd.imd";
-        suffixs[IMD_5K_EZ] = "_5k_ez.imd";
-        suffixs[IMD_5K_NM] = "_5k_nm.imd";
-        suffixs[IMD_5K_HD] = "_5k_hd.imd";
-        suffixs[IMD_6K_EZ] = "_6k_ez.imd";
-        suffixs[IMD_6K_NM] = "_6k_nm.imd";
-        suffixs[IMD_6K_HD] = "_6k_hd.imd";
-        suffixs[MDE_EZ] = "_Papa_Easy.mde";
-        suffixs[MDE_NM] = "_Papa_Normal.mde";
-        suffixs[MDE_HD] = "_Papa_Hard.mde";
+        suffixs[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
+        suffixs[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
+        suffixs[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
+        suffixs[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
+        suffixs[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
+        suffixs[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
+        suffixs[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
+        suffixs[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
+        suffixs[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
+        suffixs[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
+        suffixs[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
+        suffixs[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
     }
 
 

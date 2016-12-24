@@ -23,7 +23,7 @@ Q_DECLARE_FLAGS(ExistNotes, ExistNote)
 
 bool hasMp3(const QDir &dir);
 bool hasBigPng(const QDir &dir);
-bool hasSmallPng(const QDir &dir, const char * &suffix);
+bool hasSmallPng(const QDir &dir, QString &suffix);
 bool hasPapaBigPng(const QDir &dir);
 bool hasPapaSmallPng(const QDir &dir);
 ExistNotes existNotes(const QDir &dir);

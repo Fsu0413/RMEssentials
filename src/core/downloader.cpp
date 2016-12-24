@@ -17,10 +17,10 @@ QString Downloader::downloadPath()
 {
 #if defined(Q_OS_WIN)
     QDir currentDir = QDir::current();
-    if (!currentDir.cd("downloader")) {
-        if (!currentDir.mkdir("downloader"))
+    if (!currentDir.cd(QStringLiteral("downloader"))) {
+        if (!currentDir.mkdir(QStringLiteral("downloader")))
             return QString();
-        currentDir.cd("downloader");
+        currentDir.cd(QStringLiteral("downloader"));
     }
 #elif defined(Q_OS_OSX)
     QDir currentDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
@@ -36,8 +36,8 @@ QString Downloader::downloadPath()
 #endif
 
     QString r = currentDir.absolutePath();
-    if (!r.endsWith("/"))
-        r.append("/");
+    if (!r.endsWith(QStringLiteral("/")))
+        r.append(QStringLiteral("/"));
 
     return r;
 }
@@ -87,9 +87,9 @@ void Downloader::downloadSingleFile()
     m_currentDownloadingFile = m_downloadSequence.takeFirst();
     if (m_isAll) {
         QString filename = QUrl(m_currentDownloadingFile).fileName();
-        if (filename.endsWith(".jpg")) { // important hack!!
+        if (filename.endsWith(QStringLiteral(".jpg"))) { // important hack!!
             filename.chop(4);
-            filename.append(".png");
+            filename.append(QStringLiteral(".png"));
         }
 
         if (m_downloadDir.exists(filename)) {
@@ -124,10 +124,10 @@ void Downloader::singleFileFinished()
             file.write(m_currentDownloadingReply->readAll());
             file.close();
 
-            if (filename.endsWith(".jpg")) { // important hack!!
+            if (filename.endsWith(QStringLiteral(".jpg"))) { // important hack!!
                 QString new_filename = filename;
                 new_filename.chop(4);
-                new_filename.append(".png");
+                new_filename.append(QStringLiteral(".png"));
                 //m_downloadDir.rename(filename, new_filename);
                 QPixmap pm;
                 if (pm.load(m_downloadDir.absoluteFilePath(filename))) {

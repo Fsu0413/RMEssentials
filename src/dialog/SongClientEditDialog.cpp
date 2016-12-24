@@ -68,7 +68,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     szSongName = new QLineEdit;
     szPath = new QLineEdit;
-    QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp("[0-9a-z_]+"), this);
+    QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     szPath->setValidator(szPathValidator);
     szArtist = new QLineEdit;
     szComposer = new QLineEdit;
@@ -87,13 +87,13 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
     szBPM->setValidator(szBPMValidator);
 
-    ucIsNew = new QCheckBox("ucIsNew");
-    ucIsHot = new QCheckBox("ucIsHot");
-    ucIsRecommend = new QCheckBox("ucIsRecommend");
-    ucIsOpen = new QCheckBox("ucIsOpen");
-    ucCanBuy = new QCheckBox("ucCanBuy");
-    bIsFree = new QCheckBox("bIsFree");
-    bSongPkg = new QCheckBox("bSongPkg");
+    ucIsNew = new QCheckBox(QStringLiteral("ucIsNew"));
+    ucIsHot = new QCheckBox(QStringLiteral("ucIsHot"));
+    ucIsRecommend = new QCheckBox(QStringLiteral("ucIsRecommend"));
+    ucIsOpen = new QCheckBox(QStringLiteral("ucIsOpen"));
+    ucCanBuy = new QCheckBox(QStringLiteral("ucCanBuy"));
+    bIsFree = new QCheckBox(QStringLiteral("bIsFree"));
+    bSongPkg = new QCheckBox(QStringLiteral("bSongPkg"));
 
     iOrderIndex = new QLineEdit;
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
@@ -125,24 +125,24 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     ush6KeyHard->setValidator(hardLevelValidator);
 
     szNoteNumber = new QLineEdit;
-    szNoteNumber->setPlaceholderText("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH");
-    szNoteNumber->setInputMask("09999,09999,09999,09999,09999,09999,09999,09999,09999");
+    szNoteNumber->setPlaceholderText(QStringLiteral("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH"));
+    szNoteNumber->setInputMask(QStringLiteral("09999,09999,09999,09999,09999,09999,09999,09999,09999"));
 
     iPrice = new QLineEdit;
     iPrice->setPlaceholderText(tr("Number only, Better keep empty"));
     szProductID = new QLineEdit;
     szProductID->setPlaceholderText(tr("Better keep empty"));
-    iVipFlag = new QCheckBox("iVipFlag");
+    iVipFlag = new QCheckBox(QStringLiteral("iVipFlag"));
 
-    bIsHide = new QCheckBox("bIsHide");
-    bIsReward = new QCheckBox("bIsReward");
-    bIsLevelReward = new QCheckBox("bIsLevelReward");
+    bIsHide = new QCheckBox(QStringLiteral("bIsHide"));
+    bIsReward = new QCheckBox(QStringLiteral("bIsReward"));
+    bIsLevelReward = new QCheckBox(QStringLiteral("bIsLevelReward"));
     iVersion = new QLineEdit;
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
     iVersion->setValidator(iVersionValidator);
 
     // for QFormLayout
-#define AR(l, x) l->addRow(#x, x)
+#define AR(l, x) l->addRow(QStringLiteral(#x), x)
 
     // 1st line
     QHBoxLayout *hlayout1 = new QHBoxLayout;
@@ -339,7 +339,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
 bool SongClientEditDialog::reloadFile()
 {
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
 
     QFile f(filepath);
     if (!f.exists())
@@ -361,11 +361,11 @@ bool SongClientEditDialog::loadFile()
     QDir d(Downloader::downloadPath());
 
     QString filepath;
-    if (d.exists() && d.exists("mrock_song_client_android.bin"))
-        filepath = d.absoluteFilePath("mrock_song_client_android.bin");
+    if (d.exists() && d.exists(QStringLiteral("mrock_song_client_android.bin")))
+        filepath = d.absoluteFilePath(QStringLiteral("mrock_song_client_android.bin"));
     else {
         QMessageBox::information(this, tr("RMEssentials"), tr("mrock_song_client_android.bin doesn't exist, please select the file to open."));
-        filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+        filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
     }
 
     QFile f(filepath);
@@ -388,7 +388,7 @@ void SongClientEditDialog::saveFile()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+    QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
     QFile f(filepath);
     if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
         return;
@@ -626,7 +626,7 @@ void SongClientEditDialog::mergeSongList()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + " (*.bin)");
+    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
 
     QFile f(filepath);
     if (!f.exists())
@@ -658,10 +658,10 @@ void SongClientEditDialog::prepareForUserMakingNotes()
         SongClientItemStruct *c = m_file.song(i);
         if (c->m_ucIsOpen && !c->m_bIsReward && !c->m_bIsHide && !c->m_bIsLevelReward && !c->m_ucCanBuy && !c->m_szSongName.startsWith(QStringLiteral("【限时】"))) {
                 // I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
-            c->m_szComposer = "Offical Free Song";
+            c->m_szComposer = QStringLiteral("Offical Free Song");
             c->m_iOrderIndex = 1;
         } else {
-            c->m_szComposer = "Offical Non-free Song";
+            c->m_szComposer = QStringLiteral("Offical Non-free Song");
             c->m_iOrderIndex = 0;
         }
     }

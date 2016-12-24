@@ -70,6 +70,7 @@ private:
     QProgressBar *m_progressBar;
 
     bool m_busy;
+    bool m_exitRequested;
 
 #ifdef Q_OS_WIN
     QWinTaskbarButton *m_taskbarBtn;

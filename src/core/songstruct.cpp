@@ -1,6 +1,6 @@
 #include "songstruct.h"
 
-const QString RMSong::SongClientHeaderStruct::CreateTime = "   0-00-00 00:00:00";
+const QString RMSong::SongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
 
 bool RMSong::ByteArray2Header(const QByteArray &arr, SongClientHeaderStruct &header)
@@ -72,9 +72,9 @@ bool RMSong::Header2ByteArray(const SongClientHeaderStruct &header, QByteArray &
 bool RMSong::Map2Header(const QVariantMap &arr, SongClientHeaderStruct &header)
 {
 #define GETSTR(name) \
-    header.name = arr[#name].toString()
+    header.name = arr[QStringLiteral(#name)].toString()
 #define GETINT(name) \
-    header.name = arr[#name].toString().trimmed().toInt()
+    header.name = arr[QStringLiteral(#name)].toString().trimmed().toInt()
 
     GETINT(Magic);
     GETINT(Version);
@@ -97,9 +97,9 @@ bool RMSong::Herader2Map(const SongClientHeaderStruct &header, QVariantMap &arr)
     arr.clear();
 
 #define SETSTR(name) \
-    arr[#name] = header.name
+    arr[QStringLiteral(#name)] = header.name
 #define SETINT(name) \
-    arr[#name] = QString::number(static_cast<int>(header.name)) + QString(" ")
+    arr[QStringLiteral(#name)] = QString::number(static_cast<int>(header.name)) + QStringLiteral(" ")
 
     SETINT(Magic);
     SETINT(Version);
@@ -243,11 +243,11 @@ bool RMSong::Song2ByteArray(const SongClientItemStruct &song, QByteArray &arr)
 bool RMSong::Map2Song(const QVariantMap &arr, SongClientItemStruct &song)
 {
 #define GETSTR(name) \
-    song.m_ ## name = arr["m_" # name].toString()
+    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString()
 #define GETINT(name) \
-    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt()
+    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_ ## name = arr["m_" # name].toString().trimmed().mid(2).toInt(NULL, 16)
+    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
 
 
     GETINT(ushSongID);
@@ -300,11 +300,11 @@ bool RMSong::Song2Map(const SongClientItemStruct &song, QVariantMap &arr)
     arr.clear();
 
 #define SETSTR(name) \
-    arr["m_" # name] = song.m_ ## name
+    arr[QStringLiteral("m_" #name)] = song.m_ ## name
 #define SETINT(name) \
-    arr["m_" # name] = QString::number(static_cast<int>(song.m_ ## name)) + QString(" ")
+    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_ ## name)) + QStringLiteral(" ")
 #define SETHEX(name) \
-    arr["m_" # name] = QString("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QString(" ")
+    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);
@@ -480,11 +480,11 @@ bool RMSong::Song2ByteArray(const PapaSongClientItemStruct &song, QByteArray &ar
 bool RMSong::Map2Song(const QVariantMap &arr, PapaSongClientItemStruct &song)
 {
 #define GETSTR(name) \
-    song.m_ ## name = arr["m_" # name].toString()
+    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString()
 #define GETINT(name) \
-    song.m_ ## name = arr["m_" # name].toString().trimmed().toInt()
+    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_ ## name = arr["m_" # name].toString().trimmed().mid(2).toInt(NULL, 16)
+    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -519,11 +519,11 @@ bool RMSong::Song2Map(const PapaSongClientItemStruct &song, QVariantMap &arr)
     arr.clear();
 
 #define SETSTR(name) \
-    arr["m_" # name] = song.m_ ## name
+    arr[QStringLiteral("m_" #name)] = song.m_ ## name
 #define SETINT(name) \
-    arr["m_" # name] = QString::number(static_cast<int>(song.m_ ## name)) + QString(" ")
+    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_ ## name)) + QStringLiteral(" ")
 #define SETHEX(name) \
-    arr["m_" # name] = QString("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QString(" ")
+    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);

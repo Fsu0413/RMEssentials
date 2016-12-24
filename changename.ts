@@ -246,10 +246,6 @@ Are you sure?</source>
         <translation>从网络获取更新信息失败</translation>
     </message>
     <message>
-        <source> new version %1 available</source>
-        <translation>新版本：%1 可用</translation>
-    </message>
-    <message>
         <source>New version avaliable!! Version number: %1&lt;br /&gt;You can download the new version at &lt;a href=&apos;%2&apos;&gt;here&lt;/a&gt;, the password is &quot;%3&quot;&lt;br /&gt;&lt;br /&gt;What&apos;s new in version %1: &lt;br /&gt; %4</source>
         <translation>迎接新版本！！版本号： %1 &lt;br /&gt;可以在&lt;a href=&apos;%2&apos;&gt;这里&lt;/a&gt;下载，提取码是&quot;%3&quot; &lt;br /&gt;&lt;br /&gt;%1版本更新内容：&lt;br /&gt;%4</translation>
     </message>
@@ -278,6 +274,10 @@ This Program is using Qt %2.</source>
 This Program is using QuaZip %1.</source>
         <translation>
 这个程序使用 QuaZip %1。</translation>
+    </message>
+    <message>
+        <source>  new version %1 available</source>
+        <translation>  新版本 %1 可用</translation>
     </message>
 </context>
 <context>
@@ -373,7 +373,7 @@ This Program is using QuaZip %1.</source>
     <name>QuaZipFile</name>
     <message>
         <source>ZIP/UNZIP API error %1</source>
-        <translation>ZIP/UNZIP AP 错误 %1</translation>
+        <translation>ZIP/UNZIP API 错误 %1</translation>
     </message>
 </context>
 <context>
