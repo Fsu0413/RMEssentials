@@ -6,8 +6,8 @@
 
 QT       += core gui widgets network
 
-VERSION = 6.12.21
-RMEVERSION = 20161221
+VERSION = 6.12.24
+RMEVERSION = 20161224
 DEFINES += "RMEVERSION=\\\"$$RMEVERSION\\\""
 
 win32 {
