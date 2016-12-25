@@ -12,9 +12,7 @@
 #include <QDoubleValidator>
 #include <QLabel>
 #include <QListWidget>
-
 #include <QMenu>
-
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardPaths>

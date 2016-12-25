@@ -5,8 +5,8 @@
 
 namespace
 {
-    const QString suffix_hd = QStringLiteral("_title_hd");
-    const QString suffix_ipad = QStringLiteral("_title_ipad");
+const QString suffix_hd = QStringLiteral("_title_hd");
+const QString suffix_ipad = QStringLiteral("_title_ipad");
 }
 
 bool hasMp3(const QDir &dir)

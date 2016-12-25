@@ -1,6 +1,7 @@
 #include "DownloadDialog.h"
 #include "downloader.h"
 #include "uncompresser.h"
+
 #include <QListWidget>
 #include <QTimer>
 #include <QComboBox>
@@ -11,6 +12,7 @@
 #include <QVBoxLayout>
 #include <QProgressBar>
 #include <QShowEvent>
+
 #ifdef Q_OS_WIN
 #include <QWinTaskbarButton>
 #include <QWinTaskbarProgress>
@@ -184,17 +186,17 @@ void DownloadDialog::startDownload(DownloadMode mode)
     connect(downloader, &Downloader::download_progress, this, &DownloadDialog::downloadProgress);
 
     switch (mode) {
-        case All:
-            connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNext);
-            downloader->setIsAll(true);
-            break;
-        case One:
-            connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
-            break;
-        case Mis:
-            connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNextMissing);
-            downloader->setIsAll(true);
-            break;
+    case All:
+        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNext);
+        downloader->setIsAll(true);
+        break;
+    case One:
+        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::allCompleted);
+        break;
+    case Mis:
+        connect(downloader, &Downloader::all_completed, this, &DownloadDialog::startDownloadNextMissing);
+        downloader->setIsAll(true);
+        break;
     }
 
     emit busy(true);

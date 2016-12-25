@@ -1,8 +1,10 @@
 #include "maindialog.h"
+
 #include <QTranslator>
 #include <QApplication>
 #include <QFile>
 #include <QTextStream>
+
 #ifdef Q_OS_OSX
 #include <QDir>
 #endif

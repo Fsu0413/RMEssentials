@@ -34,7 +34,7 @@ bool RMSong::Header2ByteArray(const SongClientHeaderStruct &header, QByteArray &
     arr.clear();
     arr.resize(0x88);
     memset(arr.data(), 0, 0x88);
-    
+
 #define SETX(name, offset) do { \
         int length = sizeof(header.name); \
         const char *data = reinterpret_cast<const char *>(&(header.name)); \

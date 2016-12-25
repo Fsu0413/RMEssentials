@@ -12,9 +12,7 @@
 #include <QDoubleValidator>
 #include <QLabel>
 #include <QListWidget>
-
 #include <QMenu>
-
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardPaths>
@@ -657,7 +655,7 @@ void SongClientEditDialog::prepareForUserMakingNotes()
     for (int i = 0; i < m_file.songCount(); ++i) {
         SongClientItemStruct *c = m_file.song(i);
         if (c->m_ucIsOpen && !c->m_bIsReward && !c->m_bIsHide && !c->m_bIsLevelReward && !c->m_ucCanBuy && !c->m_szSongName.startsWith(QStringLiteral("【限时】"))) {
-                // I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
+            // I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
             c->m_szComposer = QStringLiteral("Offical Free Song");
             c->m_iOrderIndex = 1;
         } else {
