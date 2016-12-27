@@ -1,17 +1,16 @@
 #ifndef __DOWNLOADDIALOG_H__
 #define __DOWNLOADDIALOG_H__
 
+#include <QDialog>
+#include <QDir>
+
 class QListWidget;
 class QComboBox;
 class QPushButton;
-class QTimer;
 class QProgressBar;
 #ifdef Q_OS_WIN
 class QWinTaskbarButton;
 #endif
-
-#include <QDialog>
-#include <QDir>
 
 class DownloadDialog : public QDialog
 {
@@ -35,7 +34,6 @@ private:
 signals:
     void busy(bool);
     void cancel_download();
-    void timeout();
 
 private slots:
     void downloadAndroidList();
@@ -66,7 +64,6 @@ private:
     QListWidget *m_list;
     QComboBox *m_nameCombo;
     QPushButton *m_downloadBtn;
-    QTimer *m_timer;
     QProgressBar *m_progressBar;
 
     bool m_busy;

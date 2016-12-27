@@ -5,6 +5,8 @@
 #include <QThread>
 #include <QDir>
 
+class QTimer;
+
 class Downloader : public QThread
 {
     Q_OBJECT
@@ -55,6 +57,7 @@ private:
 private slots:
     void singleFileFinished();
     void singleFileError(QNetworkReply::NetworkError e);
+    void downloadProgress(quint64 downloaded, quint64 total);
 
 public slots:
     void cancel();
@@ -76,9 +79,11 @@ private:
     QDir m_downloadDir;
     QNetworkReply *m_currentDownloadingReply;
     QNetworkAccessManager *m_networkAccessManager;
+    QTimer *m_timer;
 
     volatile bool m_cancelRequested;
     bool m_isAll;
+    quint64 m_lastRecordedDownloadProgress;
 };
 
 Downloader *operator <<(Downloader *downloader, const QString &filename);

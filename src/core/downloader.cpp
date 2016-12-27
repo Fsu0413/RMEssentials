@@ -2,15 +2,15 @@
 
 #include <QNetworkAccessManager>
 #include <QPixmap>
+#include <QTimer>
 
 #ifdef Q_OS_OSX
 #include <QStandardPaths>
 #endif
 
 Downloader::Downloader()
+    : m_currentDownloadingReply(NULL), m_networkAccessManager(NULL), m_timer(NULL), m_cancelRequested(false), m_isAll(false)
 {
-    m_isAll = false;
-    m_currentDownloadingReply = NULL;
 }
 
 QString Downloader::downloadPath()
@@ -46,6 +46,13 @@ void Downloader::run()
 {
     m_networkAccessManager = new QNetworkAccessManager;
     connect(this, &QThread::destroyed, m_networkAccessManager, &QNetworkAccessManager::deleteLater);
+
+    m_timer = new QTimer;
+    connect(this, &QThread::destroyed, m_timer, &QTimer::deleteLater);
+    m_timer->setInterval(10000);
+    m_timer->setSingleShot(true);
+    connect(m_timer, &QTimer::timeout, this, &Downloader::timeout);
+
     m_cancelRequested = false;
     QString s = downloadPath();
 
@@ -101,7 +108,10 @@ void Downloader::downloadSingleFile()
     m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
     connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-    connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
+    connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
+
+    m_lastRecordedDownloadProgress = 0;
+    m_timer->start();
 }
 
 void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/)
@@ -111,8 +121,18 @@ void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/)
         qDebug() << m_currentDownloadingReply->errorString();
 }
 
+void Downloader::downloadProgress(quint64 downloaded, quint64 total)
+{
+    if (downloaded - m_lastRecordedDownloadProgress > 10000) {
+        m_lastRecordedDownloadProgress = downloaded;
+        m_timer->start();
+    }
+    emit download_progress(downloaded, total);
+}
+
 void Downloader::singleFileFinished()
 {
+    m_timer->stop();
     if (m_failedList.contains(m_currentDownloadingFile)) {
         emit one_failed(m_currentDownloadingFile);
         downloadSingleFile();
@@ -161,7 +181,7 @@ void Downloader::singleFileFinished()
             m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(u));
             connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
             connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-            connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
+            connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
         }
     }
 }
@@ -176,7 +196,7 @@ void Downloader::cancel()
 {
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
 
     m_currentDownloadingReply->abort();
 
@@ -192,7 +212,7 @@ void Downloader::timeout()
 {
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::download_progress);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
 
     m_currentDownloadingReply->abort();
 
