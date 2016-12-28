@@ -1,8 +1,8 @@
 #ifndef __RENAMER_H__
 #define __RENAMER_H__
 
-#include <QObject>
 #include <QDir>
+#include <QObject>
 
 class Renamer : public QObject
 {

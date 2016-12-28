@@ -1,10 +1,9 @@
 #include "utils.h"
 
-#include <QString>
 #include <QMap>
+#include <QString>
 
-namespace
-{
+namespace {
 const QString suffix_hd = QStringLiteral("_title_hd");
 const QString suffix_ipad = QStringLiteral("_title_ipad");
 }
@@ -130,4 +129,3 @@ ExistNotes existNotes(const QDir &dir)
     }
     return result;
 }
-

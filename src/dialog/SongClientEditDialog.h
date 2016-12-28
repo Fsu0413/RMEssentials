@@ -1,8 +1,9 @@
 #ifndef __SONGCLIENTEDITDIALOG_H__
 #define __SONGCLIENTEDITDIALOG_H__
 
-#include "songstruct.h"
 #include "songfile.h"
+
+#include <QDialog>
 
 class QLineEdit;
 class QCheckBox;
@@ -10,8 +11,6 @@ class QLabel;
 class QMenu;
 class QListWidget;
 class QListWidgetItem;
-
-#include <QDialog>
 
 class SongClientEditDialog : public QDialog
 {
@@ -67,7 +66,7 @@ private:
     QCheckBox *bSongPkg;
     QLineEdit *szFreeBeginTime; // better keep empty
     QLineEdit *szFreeEndTime; // better keep empty
-    QLineEdit *ush4KeyEasy;  // Number only
+    QLineEdit *ush4KeyEasy; // Number only
     QLineEdit *ush4KeyNormal; // Number only
     QLineEdit *ush4KeyHard; // Number only
     QLineEdit *ush5KeyEasy; // Number only

@@ -7,16 +7,16 @@
 
 #include "utils.h"
 
-#include <QObject>
 #include <QApplication>
-#include <QThread>
-#include <QString>
-#include <QStringList>
-#include <QFile>
 #include <QDialog>
+#include <QFile>
+#include <QFlag>
 #include <QList>
 #include <QMap>
-#include <QFlag>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <QThread>
 
 #endif
 

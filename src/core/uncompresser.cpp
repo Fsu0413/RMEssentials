@@ -2,8 +2,8 @@
 #ifdef RME_USE_QUAZIP
 
 #include "uncompresser.h"
-#include "quazipfile.h"
 #include "downloader.h"
+#include "quazipfile.h"
 
 #include <QDir>
 

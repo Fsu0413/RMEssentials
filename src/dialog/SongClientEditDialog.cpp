@@ -1,21 +1,22 @@
 ﻿#include "SongClientEditDialog.h"
 #include "downloader.h"
+#include "songstruct.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QFormLayout>
 #include <QCheckBox>
-#include <QPushButton>
-#include <QIntValidator>
-#include <QRegExpValidator>
 #include <QDoubleValidator>
+#include <QFileDialog>
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QIntValidator>
 #include <QLabel>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QMenu>
-#include <QFileDialog>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRegExpValidator>
 #include <QStandardPaths>
+#include <QVBoxLayout>
 
 #ifdef MOBILE_DEVICES
 #include <QScrollArea>
@@ -24,7 +25,9 @@
 using namespace RMSong;
 
 SongClientEditDialog::SongClientEditDialog(QWidget *parent)
-    : QDialog(parent), m_currentIndex(-1), m_isLoaded(false)
+    : QDialog(parent)
+    , m_currentIndex(-1)
+    , m_isLoaded(false)
 {
     setWindowTitle(tr("Rhythm Master Song Client Editor"));
 
@@ -101,7 +104,6 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     szFreeEndTime = new QLineEdit;
     szFreeEndTime->setPlaceholderText(tr("Better keep empty"));
 
-
     QIntValidator *hardLevelValidator = new QIntValidator(1, 10, this);
     ush4KeyEasy = new QLineEdit;
     ush4KeyEasy->setValidator(hardLevelValidator);
@@ -139,7 +141,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
     iVersion->setValidator(iVersionValidator);
 
-    // for QFormLayout
+// for QFormLayout
 #define AR(l, x) l->addRow(QStringLiteral(#x), x)
 
     // 1st line
@@ -294,7 +296,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     leftLayout->addWidget(area);
 #endif
 
-    // OK, thank you
+// OK, thank you
 #undef AR
 
     m_searchEdit = new QLineEdit;
@@ -423,9 +425,9 @@ void SongClientEditDialog::readCurrent()
 {
     const SongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
-#define RP_NM(p) p->setText(QString::number(c.m_ ## p))
-#define RP_ST(p) p->setText(c.m_ ## p)
-#define RP_BL(p) p->setChecked(c.m_ ## p)
+#define RP_NM(p) p->setText(QString::number(c.m_##p))
+#define RP_ST(p) p->setText(c.m_##p)
+#define RP_BL(p) p->setChecked(c.m_##p)
 
     RP_NM(ushSongID);
     RP_NM(iVersion);
@@ -468,7 +470,6 @@ void SongClientEditDialog::readCurrent()
 #undef RP_BL
 #undef RP_ST
 #undef RP_NM
-
 }
 
 void SongClientEditDialog::convertToFree()
@@ -530,11 +531,11 @@ void SongClientEditDialog::saveCurrent()
 {
     SongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
-#define SP_NS(p) c.m_ ## p = p->text().toShort()
-#define SP_NI(p) c.m_ ## p = p->text().toInt()
-#define SP_ST(p) c.m_ ## p = p->text()
-#define SP_BN(p) c.m_ ## p = (p->isChecked() ? 1 : 0)
-#define SP_BL(p) c.m_ ## p = p->isChecked()
+#define SP_NS(p) c.m_##p = p->text().toShort()
+#define SP_NI(p) c.m_##p = p->text().toInt()
+#define SP_ST(p) c.m_##p = p->text()
+#define SP_BN(p) c.m_##p = (p->isChecked() ? 1 : 0)
+#define SP_BL(p) c.m_##p = p->isChecked()
 
     SP_NS(ushSongID);
     SP_NI(iVersion);
@@ -579,7 +580,6 @@ void SongClientEditDialog::saveCurrent()
 #undef SP_ST
 #undef SP_NI
 #undef SP_NS
-
 }
 
 void SongClientEditDialog::search()

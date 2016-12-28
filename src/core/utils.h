@@ -1,8 +1,8 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-#include <QtGlobal>
 #include <QDir>
+#include <QtGlobal>
 
 enum ExistNote
 {
@@ -27,6 +27,5 @@ bool hasSmallPng(const QDir &dir, QString &suffix);
 bool hasPapaBigPng(const QDir &dir);
 bool hasPapaSmallPng(const QDir &dir);
 ExistNotes existNotes(const QDir &dir);
-
 
 #endif // __UTILS_H__

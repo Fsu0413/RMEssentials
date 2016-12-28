@@ -1,18 +1,22 @@
 #include "maindialog.h"
 
-#include <QTranslator>
 #include <QApplication>
 #include <QFile>
 #include <QTextStream>
+#include <QTranslator>
 
 #ifdef Q_OS_OSX
 #include <QDir>
 #endif
 
 #ifdef Q_OS_ANDROID
-#define CURRENTDIRPREFIX "" "assets:/" ""
+#define CURRENTDIRPREFIX ""         \
+                         "assets:/" \
+                         ""
 #else
-#define CURRENTDIRPREFIX "" "assets/" ""
+#define CURRENTDIRPREFIX ""        \
+                         "assets/" \
+                         ""
 #endif
 
 int main(int argc, char *argv[])

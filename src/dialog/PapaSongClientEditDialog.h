@@ -1,8 +1,9 @@
 #ifndef __PAPASONGCLIENTEDITDIALOG_H__
 #define __PAPASONGCLIENTEDITDIALOG_H__
 
-#include "songstruct.h"
 #include "songfile.h"
+
+#include <QDialog>
 
 class QLineEdit;
 class QCheckBox;
@@ -10,8 +11,6 @@ class QLabel;
 class QMenu;
 class QListWidget;
 class QListWidgetItem;
-
-#include <QDialog>
 
 class PapaSongClientEditDialog : public QDialog
 {
@@ -32,11 +31,9 @@ private slots:
     void movePrev();
     void moveNext();
     void readCurrent();
-    //void addNew();
     void calculateSongTime();
     void saveCurrent();
     void saveFile();
-    //void convertToFree();
     bool reloadFile();
 
     void search();
@@ -70,8 +67,6 @@ private:
     QMenu *m_popup;
     QLineEdit *m_searchEdit;
     QListWidget *m_searchList;
-
 };
-
 
 #endif

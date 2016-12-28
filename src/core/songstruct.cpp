@@ -2,7 +2,6 @@
 
 const QString RMSong::SongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
-
 bool RMSong::ByteArray2Header(const QByteArray &arr, SongClientHeaderStruct &header)
 {
     Q_ASSERT(arr.length() == 0x88);
@@ -35,23 +34,25 @@ bool RMSong::Header2ByteArray(const SongClientHeaderStruct &header, QByteArray &
     arr.resize(0x88);
     memset(arr.data(), 0, 0x88);
 
-#define SETX(name, offset) do { \
-        int length = sizeof(header.name); \
+#define SETX(name, offset)                                                 \
+    do {                                                                   \
+        int length = sizeof(header.name);                                  \
         const char *data = reinterpret_cast<const char *>(&(header.name)); \
-        for (int i = 0; i < length; ++i) \
-            arr[offset + i] = data[i]; \
+        for (int i = 0; i < length; ++i)                                   \
+            arr[offset + i] = data[i];                                     \
     } while (false)
 
-#define SETSTR(name, offset, len) do { \
+#define SETSTR(name, offset, len)                  \
+    do {                                           \
         QByteArray dataArr = header.name.toUtf8(); \
-        const char *data = dataArr.constData(); \
-        for (int i = 0; i < len; ++i) { \
-            if (i < dataArr.length()) \
-                arr[offset + i] = data[i]; \
-            else \
-                arr[offset + i] = '\0'; \
-        } \
-    } while(false)
+        const char *data = dataArr.constData();    \
+        for (int i = 0; i < len; ++i) {            \
+            if (i < dataArr.length())              \
+                arr[offset + i] = data[i];         \
+            else                                   \
+                arr[offset + i] = '\0';            \
+        }                                          \
+    } while (false)
 
     SETX(Magic, 0x0);
     SETX(Version, 0x4);
@@ -124,9 +125,9 @@ bool RMSong::ByteArray2Song(const QByteArray &arr, SongClientItemStruct &song)
     const char *data = arr.constData();
 
 #define GETX(type, name, offset) \
-    song.m_ ## name = *(reinterpret_cast<const type *>(data + offset))
+    song.m_##name = *(reinterpret_cast<const type *>(data + offset))
 #define GETSTR(name, offset) \
-    song.m_ ## name = QString::fromUtf8(data + offset)
+    song.m_##name = QString::fromUtf8(data + offset)
 
     GETX(short, ushSongID, 0x0);
     GETX(int, iVersion, 0x2);
@@ -178,23 +179,25 @@ bool RMSong::Song2ByteArray(const SongClientItemStruct &song, QByteArray &arr)
     arr.resize(0x33e);
     memset(arr.data(), 0, 0x33e);
 
-#define SETX(name, offset) do { \
-        int length = sizeof(song.m_ ## name); \
-        const char *data = reinterpret_cast<const char *>(&(song.m_ ## name)); \
-        for (int i = 0; i < length; ++i) \
-            arr[offset + i] = data[i]; \
+#define SETX(name, offset)                                                   \
+    do {                                                                     \
+        int length = sizeof(song.m_##name);                                  \
+        const char *data = reinterpret_cast<const char *>(&(song.m_##name)); \
+        for (int i = 0; i < length; ++i)                                     \
+            arr[offset + i] = data[i];                                       \
     } while (false)
 
-#define SETSTR(name, offset, len) do { \
-        QByteArray dataArr = song.m_ ## name.toUtf8(); \
-        const char *data = dataArr.constData(); \
-        for (int i = 0; i < len; ++i) { \
-            if (i < dataArr.length()) \
-                arr[offset + i] = data[i]; \
-            else \
-                arr[offset + i] = '\0'; \
-        } \
-    } while(false)
+#define SETSTR(name, offset, len)                    \
+    do {                                             \
+        QByteArray dataArr = song.m_##name.toUtf8(); \
+        const char *data = dataArr.constData();      \
+        for (int i = 0; i < len; ++i) {              \
+            if (i < dataArr.length())                \
+                arr[offset + i] = data[i];           \
+            else                                     \
+                arr[offset + i] = '\0';              \
+        }                                            \
+    } while (false)
 
     SETX(ushSongID, 0x0);
     SETX(iVersion, 0x2);
@@ -243,12 +246,11 @@ bool RMSong::Song2ByteArray(const SongClientItemStruct &song, QByteArray &arr)
 bool RMSong::Map2Song(const QVariantMap &arr, SongClientItemStruct &song)
 {
 #define GETSTR(name) \
-    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString()
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString()
 #define GETINT(name) \
-    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
-
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -300,11 +302,11 @@ bool RMSong::Song2Map(const SongClientItemStruct &song, QVariantMap &arr)
     arr.clear();
 
 #define SETSTR(name) \
-    arr[QStringLiteral("m_" #name)] = song.m_ ## name
+    arr[QStringLiteral("m_" #name)] = song.m_##name
 #define SETINT(name) \
-    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_ ## name)) + QStringLiteral(" ")
+    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_##name)) + QStringLiteral(" ")
 #define SETHEX(name) \
-    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QStringLiteral(" ")
+    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_##name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);
@@ -395,9 +397,9 @@ bool RMSong::ByteArray2Song(const QByteArray &arr, PapaSongClientItemStruct &son
     const char *data = arr.constData();
 
 #define GETX(type, name, offset) \
-    song.m_ ## name = *(reinterpret_cast<const type *>(data + offset))
+    song.m_##name = *(reinterpret_cast<const type *>(data + offset))
 #define GETSTR(name, offset) \
-    song.m_ ## name = QString::fromUtf8(data + offset)
+    song.m_##name = QString::fromUtf8(data + offset)
 
     GETX(short, ushSongID, 0x0);
     GETX(int, iVersion, 0x2);
@@ -432,23 +434,25 @@ bool RMSong::Song2ByteArray(const PapaSongClientItemStruct &song, QByteArray &ar
     arr.resize(0x169);
     memset(arr.data(), 0, 0x169);
 
-#define SETX(name, offset) do { \
-        int length = sizeof(song.m_ ## name); \
-        const char *data = reinterpret_cast<const char *>(&(song.m_ ## name)); \
-        for (int i = 0; i < length; ++i) \
-            arr[offset + i] = data[i]; \
+#define SETX(name, offset)                                                   \
+    do {                                                                     \
+        int length = sizeof(song.m_##name);                                  \
+        const char *data = reinterpret_cast<const char *>(&(song.m_##name)); \
+        for (int i = 0; i < length; ++i)                                     \
+            arr[offset + i] = data[i];                                       \
     } while (false)
 
-#define SETSTR(name, offset, len) do { \
-        QByteArray dataArr = song.m_ ## name.toUtf8(); \
-        const char *data = dataArr.constData(); \
-        for (int i = 0; i < len; ++i) { \
-            if (i < dataArr.length()) \
-                arr[offset + i] = data[i]; \
-            else \
-                arr[offset + i] = '\0'; \
-        } \
-    } while(false)
+#define SETSTR(name, offset, len)                    \
+    do {                                             \
+        QByteArray dataArr = song.m_##name.toUtf8(); \
+        const char *data = dataArr.constData();      \
+        for (int i = 0; i < len; ++i) {              \
+            if (i < dataArr.length())                \
+                arr[offset + i] = data[i];           \
+            else                                     \
+                arr[offset + i] = '\0';              \
+        }                                            \
+    } while (false)
 
     SETX(ushSongID, 0x0);
     SETX(iVersion, 0x2);
@@ -480,11 +484,11 @@ bool RMSong::Song2ByteArray(const PapaSongClientItemStruct &song, QByteArray &ar
 bool RMSong::Map2Song(const QVariantMap &arr, PapaSongClientItemStruct &song)
 {
 #define GETSTR(name) \
-    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString()
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString()
 #define GETINT(name) \
-    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_ ## name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -519,11 +523,11 @@ bool RMSong::Song2Map(const PapaSongClientItemStruct &song, QVariantMap &arr)
     arr.clear();
 
 #define SETSTR(name) \
-    arr[QStringLiteral("m_" #name)] = song.m_ ## name
+    arr[QStringLiteral("m_" #name)] = song.m_##name
 #define SETINT(name) \
-    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_ ## name)) + QStringLiteral(" ")
+    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_##name)) + QStringLiteral(" ")
 #define SETHEX(name) \
-    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_ ## name), 16) + QStringLiteral(" ")
+    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_##name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);

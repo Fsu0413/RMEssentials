@@ -3,7 +3,8 @@
 
 #include <QIODevice>
 
-RMSong::SongClientFile::SongClientFile() : m_header(NULL)
+RMSong::SongClientFile::SongClientFile()
+    : m_header(NULL)
 {
 }
 
@@ -149,8 +150,8 @@ void RMSong::SongClientFile::mergeSongList(SongClientFile *file2)
     qDeleteAll(s);
 }
 
-
-RMSong::PapaSongClientFile::PapaSongClientFile() : m_header(NULL)
+RMSong::PapaSongClientFile::PapaSongClientFile()
+    : m_header(NULL)
 {
 }
 

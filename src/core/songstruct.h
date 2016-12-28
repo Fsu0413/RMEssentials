@@ -4,8 +4,7 @@
 #include <QString>
 #include <QVariantMap>
 
-namespace RMSong
-{
+namespace RMSong {
 struct SongClientHeaderStruct
 {
     int Magic;
@@ -109,7 +108,6 @@ bool Map2Song(const QVariantMap &arr, PapaSongClientItemStruct &song);
 bool Song2Map(const PapaSongClientItemStruct &song, QVariantMap &arr);
 
 bool sortByID(const PapaSongClientItemStruct &a, const PapaSongClientItemStruct &b);
-
 }
 
 #endif

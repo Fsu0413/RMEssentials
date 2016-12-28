@@ -1,9 +1,9 @@
 #ifndef __DOWNLOADER_H__
 #define __DOWNLOADER_H__
 
+#include <QDir>
 #include <QNetworkReply>
 #include <QThread>
-#include <QDir>
 
 class QTimer;
 
@@ -20,7 +20,7 @@ public:
 
     static QString downloadPath();
 
-    inline Downloader &operator <<(const QString &filename)
+    inline Downloader &operator<<(const QString &filename)
     {
         m_downloadSequence << filename;
         return *this;
@@ -86,6 +86,6 @@ private:
     quint64 m_lastRecordedDownloadProgress;
 };
 
-Downloader *operator <<(Downloader *downloader, const QString &filename);
+Downloader *operator<<(Downloader *downloader, const QString &filename);
 
 #endif

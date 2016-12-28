@@ -2,15 +2,15 @@
 #include "downloader.h"
 #include "uncompresser.h"
 
-#include <QListWidget>
-#include <QComboBox>
-#include <QPushButton>
 #include <QCloseEvent>
+#include <QComboBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
+#include <QListWidget>
 #include <QProgressBar>
+#include <QPushButton>
 #include <QShowEvent>
+#include <QVBoxLayout>
 
 #ifdef Q_OS_WIN
 #include <QWinTaskbarButton>
@@ -18,7 +18,9 @@
 #endif
 
 DownloadDialog::DownloadDialog(QWidget *parent)
-    : QDialog(parent), m_busy(false), m_exitRequested(false)
+    : QDialog(parent)
+    , m_busy(false)
+    , m_exitRequested(false)
 #ifdef Q_OS_WIN
     , m_taskbarBtn(NULL)
 #endif
@@ -141,27 +143,27 @@ void DownloadDialog::startDownload(DownloadMode mode)
     static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/song/");
     if (suffixs.isEmpty())
         suffixs
-                << QStringLiteral(".mp3")
-                << QStringLiteral(".jpg")
-                << QStringLiteral("_title_ipad.jpg")
-                << QStringLiteral("_ipad.jpg")
-                << QStringLiteral("_title_140_90.jpg")  // do not use .png here
+            << QStringLiteral(".mp3")
+            << QStringLiteral(".jpg")
+            << QStringLiteral("_title_ipad.jpg")
+            << QStringLiteral("_ipad.jpg")
+            << QStringLiteral("_title_140_90.jpg") // do not use .png here
 
-                << QStringLiteral("_4k_ez.imd")
-                << QStringLiteral("_4k_nm.imd")
-                << QStringLiteral("_4k_hd.imd")
+            << QStringLiteral("_4k_ez.imd")
+            << QStringLiteral("_4k_nm.imd")
+            << QStringLiteral("_4k_hd.imd")
 
-                << QStringLiteral("_5k_ez.imd")
-                << QStringLiteral("_5k_nm.imd")
-                << QStringLiteral("_5k_hd.imd")
+            << QStringLiteral("_5k_ez.imd")
+            << QStringLiteral("_5k_nm.imd")
+            << QStringLiteral("_5k_hd.imd")
 
-                << QStringLiteral("_6k_ez.imd")
-                << QStringLiteral("_6k_nm.imd")
-                << QStringLiteral("_6k_hd.imd")
+            << QStringLiteral("_6k_ez.imd")
+            << QStringLiteral("_6k_nm.imd")
+            << QStringLiteral("_6k_hd.imd")
 
-                << QStringLiteral("_Papa_Easy.mde")
-                << QStringLiteral("_Papa_Normal.mde")
-                << QStringLiteral("_Papa_Hard.mde");
+            << QStringLiteral("_Papa_Easy.mde")
+            << QStringLiteral("_Papa_Normal.mde")
+            << QStringLiteral("_Papa_Hard.mde");
 
     Downloader *downloader = new Downloader;
     QString songname = m_nameCombo->currentText();
@@ -246,16 +248,16 @@ void DownloadDialog::startUncompress()
 #ifdef RME_USE_QUAZIP
     Uncompresser *unc = new Uncompresser;
     unc->zipNames
-            << QStringLiteral("MD5List.zip")
-            << QStringLiteral("TableComBin.zip")
-            << QStringLiteral("TableComBin.zip")
-            << QStringLiteral("TableComBin_IOS.zip");
+        << QStringLiteral("MD5List.zip")
+        << QStringLiteral("TableComBin.zip")
+        << QStringLiteral("TableComBin.zip")
+        << QStringLiteral("TableComBin_IOS.zip");
 
     unc->fileNames
-            << QStringLiteral("MD5List.xml")
-            << QStringLiteral("mrock_song_client_android.bin")
-            << QStringLiteral("mrock_papasong_client.bin")
-            << QStringLiteral("mrock_song_client.bin");
+        << QStringLiteral("MD5List.xml")
+        << QStringLiteral("mrock_song_client_android.bin")
+        << QStringLiteral("mrock_papasong_client.bin")
+        << QStringLiteral("mrock_song_client.bin");
 
     connect(unc, &Uncompresser::finished, this, &DownloadDialog::loadPaths);
     connect(unc, &Uncompresser::finished, unc, &Uncompresser::deleteLater);
@@ -270,7 +272,6 @@ void DownloadDialog::downloadList()
 #ifdef RME_USE_QUAZIP
     static const QString md5 = QStringLiteral("http://game.ds.qq.com/Com_SongRes/MD5List.zip");
     static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip");
-
 
     Downloader *downloader = new Downloader;
     downloader << md5 << bin;

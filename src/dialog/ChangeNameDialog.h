@@ -1,11 +1,11 @@
 #ifndef __CHANGENAMEDIALOG_H__
 #define __CHANGENAMEDIALOG_H__
 
+#include <QDialog>
+
 class QLineEdit;
 class QLabel;
 class QLayout;
-
-#include <QDialog>
 
 class ChangeNameDialog : public QDialog
 {
@@ -39,7 +39,6 @@ private:
     // 6 :5KEZ   7 :5KNM   8 :5KHD
     // 9 :6KEZ   10:6KNM   11:6KHD
     static QLayout *layFiles(QLabel *labels[18]);
-
 };
 
 #endif // __MAINDIALOG_H__

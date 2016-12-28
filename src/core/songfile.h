@@ -5,8 +5,7 @@
 
 class QIODevice;
 
-namespace RMSong
-{
+namespace RMSong {
 struct SongClientItemStruct;
 struct PapaSongClientItemStruct;
 struct SongClientHeaderStruct;
@@ -65,7 +64,6 @@ private:
 
     void cleanup();
 };
-
 }
 
 #endif

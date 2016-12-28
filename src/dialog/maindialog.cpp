@@ -1,14 +1,14 @@
 #include "maindialog.h"
 #include "ChangeNameDialog.h"
 #include "DownloadDialog.h"
-#include "SongClientEditDialog.h"
 #include "PapaSongClientEditDialog.h"
+#include "SongClientEditDialog.h"
 #include "downloader.h"
 
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QMessageBox>
 #include <QApplication>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
@@ -118,12 +118,13 @@ void MainDialog::showPapaSongClientEditDialog()
 void MainDialog::about()
 {
     QString aboutContent = tr(
-                "The version of RMEssentials is: %1.\n\n"
-                "RMEssentials is a small software written by Fsu0413. \n"
-                "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
-                "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
-                "This Program is using Qt %2."
-                ).arg(QStringLiteral(RMEVERSION)).arg(QStringLiteral(QT_VERSION_STR));
+                               "The version of RMEssentials is: %1.\n\n"
+                               "RMEssentials is a small software written by Fsu0413. \n"
+                               "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
+                               "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
+                               "This Program is using Qt %2.")
+                               .arg(QStringLiteral(RMEVERSION))
+                               .arg(QStringLiteral(QT_VERSION_STR));
 #ifdef RME_USE_QUAZIP
     aboutContent += tr("\nThis Program is using QuaZip %1.").arg(QStringLiteral(RME_USE_QUAZIP));
 #endif
@@ -166,10 +167,13 @@ void MainDialog::checkForUpdate()
             setWindowTitle(windowTitle() + tr("  new version %1 available").arg(version));
             if (isVisible()) {
                 QString contents = tr(
-                            "New version avaliable!! Version number: %1<br />"
-                            "You can download the new version at <a href=\'%2\'>here</a>, the password is \"%3\"<br /><br />"
-                            "What\'s new in version %1: <br /> %4"
-                            ).arg(version).arg(link).arg(passwd).arg(whatsnew);
+                                       "New version avaliable!! Version number: %1<br />"
+                                       "You can download the new version at <a href=\'%2\'>here</a>, the password is \"%3\"<br /><br />"
+                                       "What\'s new in version %1: <br /> %4")
+                                       .arg(version)
+                                       .arg(link)
+                                       .arg(passwd)
+                                       .arg(whatsnew);
                 QMessageBox::information(this, tr("RMEssentials"), contents);
             }
         }

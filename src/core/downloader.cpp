@@ -9,7 +9,11 @@
 #endif
 
 Downloader::Downloader()
-    : m_currentDownloadingReply(NULL), m_networkAccessManager(NULL), m_timer(NULL), m_cancelRequested(false), m_isAll(false)
+    : m_currentDownloadingReply(NULL)
+    , m_networkAccessManager(NULL)
+    , m_timer(NULL)
+    , m_cancelRequested(false)
+    , m_isAll(false)
 {
 }
 
@@ -30,7 +34,7 @@ QString Downloader::downloadPath()
         currentDir.cd("RMEssentials");
     }
 #elif defined(Q_OS_ANDROID)
-    QDir currentDir( "/sdcard/RM/res/song");
+    QDir currentDir("/sdcard/RM/res/song");
     if (!currentDir.exists())
         return QString();
 #endif
@@ -186,7 +190,7 @@ void Downloader::singleFileFinished()
     }
 }
 
-Downloader *operator <<(Downloader *downloader, const QString &filename)
+Downloader *operator<<(Downloader *downloader, const QString &filename)
 {
     (*downloader) << filename;
     return downloader;

@@ -1,18 +1,18 @@
 #include "ChangeNameDialog.h"
-#include "utils.h"
-#include "renamer.h"
 #include "downloader.h"
+#include "renamer.h"
+#include "utils.h"
 
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
+#include <QFileDialog>
+#include <QFontMetrics>
 #include <QFormLayout>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QFontMetrics>
-#include <QFileDialog>
-#include <QStandardPaths>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QStandardPaths>
+#include <QVBoxLayout>
 
 QLayout *ChangeNameDialog::layFiles(QLabel *labels[18])
 {
@@ -24,7 +24,6 @@ QLayout *ChangeNameDialog::layFiles(QLabel *labels[18])
                        << tr("5K Easy IMD:") << tr("5K Normal IMD:") << tr("5K Hard IMD:")
                        << tr("6K Easy IMD:") << tr("6K Normal IMD:") << tr("6K Hard IMD:")
                        << tr("Easy MDE:") << tr("Normal MDE:") << tr("Hard MDE:");
-
 
     QHBoxLayout *totalLayout = new QHBoxLayout;
     for (int i = 0; i < 3; ++i) {
@@ -95,7 +94,6 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 
 void ChangeNameDialog::selectFolder()
 {
-
     QString dir;
     QDir d_detect(Downloader::downloadPath());
     if (d_detect.exists())
@@ -103,7 +101,7 @@ void ChangeNameDialog::selectFolder()
     else
         dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    QString selected = QFileDialog::getExistingDirectory(this, QString(), dir/*, QFileDialog::DontUseNativeDialog*/);
+    QString selected = QFileDialog::getExistingDirectory(this, QString(), dir);
 
     QDir d(selected);
     bool bhasMp3 = hasMp3(d);
@@ -173,7 +171,7 @@ void ChangeNameDialog::checkFiles(const QString &folder)
     static const QString strMissing = tr("Missing");
 
     QDir d(folder);
-    bool exists[18] = {false};
+    bool exists[18] = { false };
     exists[0] = hasMp3(d);
     exists[1] = hasBigPng(d);
     QString smallPngSuffix;

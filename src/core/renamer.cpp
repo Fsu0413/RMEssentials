@@ -194,7 +194,6 @@ bool Renamer::renameImds()
         suffixs[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
     }
 
-
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
         file_name.append(m_d.dirName()).append(suffixs[i]);

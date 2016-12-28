@@ -1,21 +1,22 @@
 #include "PapaSongClientEditDialog.h"
 #include "downloader.h"
+#include "songstruct.h"
 
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLineEdit>
-#include <QFormLayout>
 #include <QCheckBox>
-#include <QPushButton>
-#include <QIntValidator>
-#include <QRegExpValidator>
 #include <QDoubleValidator>
+#include <QFileDialog>
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QIntValidator>
 #include <QLabel>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QMenu>
-#include <QFileDialog>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRegExpValidator>
 #include <QStandardPaths>
+#include <QVBoxLayout>
 
 #ifdef MOBILE_DEVICES
 #include <QScrollArea>
@@ -24,10 +25,11 @@
 using namespace RMSong;
 
 PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
-    : QDialog(parent), m_currentIndex(-1), m_isLoaded(false)
+    : QDialog(parent)
+    , m_currentIndex(-1)
+    , m_isLoaded(false)
 {
     setWindowTitle(tr("Rhythm Master PapaSong Client Editor"));
-
 
     ushSongID = new QLineEdit;
     ushSongID->setReadOnly(true);
@@ -54,9 +56,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     funcBtn->setDefault(false);
     connect(funcBtn, &QPushButton::clicked, this, &PapaSongClientEditDialog::popup);
 
-
     QVBoxLayout *leftLayout = new QVBoxLayout;
-
 
     szSongName = new QLineEdit;
     szNoteNumber = new QLineEdit;
@@ -94,7 +94,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     ucIsOpen = new QCheckBox(QStringLiteral("ucIsOpen"));
     ucIsFree = new QCheckBox(QStringLiteral("ucIsFree"));
 
-    // for QFormLayout
+// for QFormLayout
 #define AR(l, x) l->addRow(QStringLiteral(#x), x)
 
     // 1st line
@@ -150,7 +150,6 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     hlayout12->addWidget(ucIsReward);
     hlayout12->addWidget(ucIsLevelReward);
 
-
     leftLayout->addLayout(hlayout234);
     leftLayout->addLayout(hlayout5);
     leftLayout->addLayout(hlayout12);
@@ -189,7 +188,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     leftLayout->addWidget(area);
 #endif
 
-    // OK, thank you
+// OK, thank you
 #undef AR
 
     m_searchEdit = new QLineEdit;
@@ -319,9 +318,9 @@ void PapaSongClientEditDialog::readCurrent()
 {
     const PapaSongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
-#define RP_NM(p) p->setText(QString::number(c.m_ ## p))
-#define RP_ST(p) p->setText(c.m_ ## p)
-#define RP_BL(p) p->setChecked(c.m_ ## p)
+#define RP_NM(p) p->setText(QString::number(c.m_##p))
+#define RP_ST(p) p->setText(c.m_##p)
+#define RP_BL(p) p->setChecked(c.m_##p)
 
     RP_NM(ushSongID);
     RP_NM(iVersion);
@@ -347,7 +346,6 @@ void PapaSongClientEditDialog::readCurrent()
 #undef RP_BL
 #undef RP_ST
 #undef RP_NM
-
 }
 
 void PapaSongClientEditDialog::popup()
@@ -375,11 +373,11 @@ void PapaSongClientEditDialog::saveCurrent()
 {
     PapaSongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
-#define SP_NS(p) c.m_ ## p = p->text().toShort()
-#define SP_NI(p) c.m_ ## p = p->text().toInt()
-#define SP_ST(p) c.m_ ## p = p->text()
-#define SP_BN(p) c.m_ ## p = (p->isChecked() ? 1 : 0)
-#define SP_BL(p) c.m_ ## p = p->isChecked()
+#define SP_NS(p) c.m_##p = p->text().toShort()
+#define SP_NI(p) c.m_##p = p->text().toInt()
+#define SP_ST(p) c.m_##p = p->text()
+#define SP_BN(p) c.m_##p = (p->isChecked() ? 1 : 0)
+#define SP_BL(p) c.m_##p = p->isChecked()
 
     SP_NS(ushSongID);
     SP_NI(iVersion);
@@ -407,7 +405,6 @@ void PapaSongClientEditDialog::saveCurrent()
 #undef SP_ST
 #undef SP_NI
 #undef SP_NS
-
 }
 
 void PapaSongClientEditDialog::search()
