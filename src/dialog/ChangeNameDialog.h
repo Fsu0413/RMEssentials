@@ -12,7 +12,7 @@ class ChangeNameDialog : public QDialog
     Q_OBJECT
 
 public:
-    ChangeNameDialog(QWidget *parent = NULL);
+    ChangeNameDialog(QWidget *parent = nullptr);
 
 private:
     QLineEdit *m_folderName;

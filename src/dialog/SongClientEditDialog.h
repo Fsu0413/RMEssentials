@@ -17,7 +17,7 @@ class SongClientEditDialog : public QDialog
     Q_OBJECT
 
 public:
-    SongClientEditDialog(QWidget *parent = NULL);
+    SongClientEditDialog(QWidget *parent = nullptr);
 
     bool loadFile();
 

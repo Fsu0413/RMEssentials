@@ -17,7 +17,7 @@ win32 {
 TARGET = RMEssentials
 TEMPLATE = app
 
-CONFIG += precompiled_header
+CONFIG += precompiled_header c++11 warn_on
 PRECOMPILED_HEADER = src/pch.h
 
 android {

@@ -250,7 +250,7 @@ bool RMSong::Map2Song(const QVariantMap &arr, SongClientItemStruct &song)
 #define GETINT(name) \
     song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -488,7 +488,7 @@ bool RMSong::Map2Song(const QVariantMap &arr, PapaSongClientItemStruct &song)
 #define GETINT(name) \
     song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(NULL, 16)
+    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);

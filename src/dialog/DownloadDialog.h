@@ -24,7 +24,7 @@ public:
         Mis
     };
 
-    DownloadDialog(QWidget *parent = NULL);
+    DownloadDialog(QWidget *parent = nullptr);
 
     void downloadList();
 
@@ -57,8 +57,8 @@ private slots:
     void downloadProgress(quint64 downloaded, quint64 total);
 
 protected:
-    virtual void closeEvent(QCloseEvent *e);
-    virtual void showEvent(QShowEvent *e);
+    void closeEvent(QCloseEvent *e) override;
+    void showEvent(QShowEvent *e) override;
 
 private:
     QListWidget *m_list;

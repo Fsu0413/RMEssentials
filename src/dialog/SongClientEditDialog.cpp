@@ -1,4 +1,4 @@
-﻿#include "SongClientEditDialog.h"
+#include "SongClientEditDialog.h"
 #include "downloader.h"
 #include "songstruct.h"
 
@@ -606,7 +606,7 @@ void SongClientEditDialog::search()
 
 void SongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
 {
-    if (index == NULL)
+    if (index == nullptr)
         return;
 
     bool ok = false;

@@ -4,7 +4,7 @@
 #include <QIODevice>
 
 RMSong::SongClientFile::SongClientFile()
-    : m_header(NULL)
+    : m_header(nullptr)
 {
 }
 
@@ -23,14 +23,14 @@ void RMSong::SongClientFile::cleanup()
 bool RMSong::SongClientFile::readInfoFromDevice(QIODevice *input, FileFormat format)
 {
     // treat the unknown format
-    if (format == Unknown || input == NULL)
+    if (format == Unknown || input == nullptr)
         return false;
     else if (format == BinFormat) {
         if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
             cleanup();
             QByteArray ba = input->readAll();
             if (ba.size() % 0x33e == 0x88) {
-                if (m_header == NULL)
+                if (m_header == nullptr)
                     m_header = new SongClientHeaderStruct;
                 QByteArray fh = ba.mid(0, 0x88);
                 ByteArray2Header(fh, *m_header);
@@ -53,7 +53,7 @@ bool RMSong::SongClientFile::readInfoFromDevice(QIODevice *input, FileFormat for
 
 bool RMSong::SongClientFile::saveInfoToDevice(QIODevice *output, FileFormat format) const
 {
-    if (format == Unknown || output == NULL || m_header == NULL)
+    if (format == Unknown || output == nullptr || m_header == nullptr)
         return false;
     else if (format == BinFormat) {
         if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -123,12 +123,12 @@ int RMSong::SongClientFile::songCount() const
 
 void RMSong::SongClientFile::mergeSongList(SongClientFile *file2)
 {
-    if (file2 == NULL)
+    if (file2 == nullptr)
         return;
 
     delete m_header;
     m_header = file2->m_header;
-    file2->m_header = NULL;
+    file2->m_header = nullptr;
 
     QList<SongClientItemStruct *> s = m_songsList;
     m_songsList = file2->m_songsList;
@@ -140,7 +140,7 @@ void RMSong::SongClientFile::mergeSongList(SongClientFile *file2)
         if (s.value(j)->m_ushSongID == m_songsList.value(i)->m_ushSongID) {
             delete m_songsList.value(i);
             m_songsList[i] = s.value(j);
-            s[j] = NULL;
+            s[j] = nullptr;
             ++j;
             if (j >= s.length())
                 break;
@@ -151,7 +151,7 @@ void RMSong::SongClientFile::mergeSongList(SongClientFile *file2)
 }
 
 RMSong::PapaSongClientFile::PapaSongClientFile()
-    : m_header(NULL)
+    : m_header(nullptr)
 {
 }
 
@@ -170,14 +170,14 @@ void RMSong::PapaSongClientFile::cleanup()
 bool RMSong::PapaSongClientFile::readInfoFromDevice(QIODevice *input, FileFormat format)
 {
     // treat the unknown format
-    if (format == Unknown || input == NULL)
+    if (format == Unknown || input == nullptr)
         return false;
     else if (format == BinFormat) {
         if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
             cleanup();
             QByteArray ba = input->readAll();
             if (ba.size() % 0x169 == 0x88) {
-                if (m_header == NULL)
+                if (m_header == nullptr)
                     m_header = new SongClientHeaderStruct;
                 QByteArray fh = ba.mid(0, 0x88);
                 ByteArray2Header(fh, *m_header);
@@ -200,7 +200,7 @@ bool RMSong::PapaSongClientFile::readInfoFromDevice(QIODevice *input, FileFormat
 
 bool RMSong::PapaSongClientFile::saveInfoToDevice(QIODevice *output, FileFormat format) const
 {
-    if (format == Unknown || output == NULL || m_header == NULL)
+    if (format == Unknown || output == nullptr || m_header == nullptr)
         return false;
     else if (format == BinFormat) {
         if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {

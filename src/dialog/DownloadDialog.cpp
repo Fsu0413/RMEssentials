@@ -22,7 +22,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     , m_busy(false)
     , m_exitRequested(false)
 #ifdef Q_OS_WIN
-    , m_taskbarBtn(NULL)
+    , m_taskbarBtn(nullptr)
 #endif
 {
     setWindowTitle(tr("Rhythm Master Downloader"));
@@ -71,7 +71,7 @@ void DownloadDialog::showEvent(QShowEvent *e)
     QDialog::showEvent(e);
 
 #ifdef Q_OS_WIN
-    if (m_taskbarBtn == NULL) {
+    if (m_taskbarBtn == nullptr) {
         m_taskbarBtn = new QWinTaskbarButton(this);
         m_taskbarBtn->setWindow(windowHandle());
         QWinTaskbarProgress *prog = m_taskbarBtn->progress();

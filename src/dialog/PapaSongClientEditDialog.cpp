@@ -431,7 +431,7 @@ void PapaSongClientEditDialog::search()
 
 void PapaSongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
 {
-    if (index == NULL)
+    if (index == nullptr)
         return;
 
     bool ok = false;

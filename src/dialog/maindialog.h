@@ -8,7 +8,7 @@ class MainDialog : public QDialog
     Q_OBJECT
 
 public:
-    MainDialog(QWidget *parent = NULL);
+    MainDialog(QWidget *parent = nullptr);
 
 private slots:
     void showDownloadDialog();

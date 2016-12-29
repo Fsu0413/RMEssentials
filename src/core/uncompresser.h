@@ -9,7 +9,7 @@ class Uncompresser : public QThread
     Q_OBJECT
 
 public:
-    virtual void run();
+    void run() override;
 
     QStringList zipNames;
     QStringList fileNames;
