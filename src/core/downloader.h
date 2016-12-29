@@ -3,65 +3,38 @@
 
 #include <QDir>
 #include <QNetworkReply>
-#include <QThread>
 
 class QTimer;
 
-class Downloader : public QThread
+class DownloaderPrivate;
+
+class Downloader : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QStringList downloadSequence READ downloadSequence)
     Q_PROPERTY(QStringList failedList READ failedList)
     Q_PROPERTY(QString savePath READ savePath WRITE setSavePath)
+    Q_PROPERTY(bool isAll READ isAll WRITE setIsAll)
 
 public:
     Downloader();
-    virtual void run();
+    ~Downloader();
 
     static QString downloadPath();
 
-    inline Downloader &operator<<(const QString &filename)
-    {
-        m_downloadSequence << filename;
-        return *this;
-    }
+    Downloader &operator<<(const QString &filename);
+    const QStringList &downloadSequence() const;
+    const QStringList &failedList() const;
 
-    inline const QStringList &downloadSequence() const
-    {
-        return m_downloadSequence;
-    }
+    const QString &savePath() const;
+    void setSavePath(const QString &sp);
 
-    inline const QStringList &failedList() const
-    {
-        return m_failedList;
-    }
-
-    inline const QString &savePath() const
-    {
-        return m_savePath;
-    }
-
-    inline void setSavePath(const QString &sp)
-    {
-        m_savePath = sp;
-    }
-
-    inline void setIsAll(bool all)
-    {
-        m_isAll = all;
-    }
-
-private:
-    void downloadSingleFile();
-
-private slots:
-    void singleFileFinished();
-    void singleFileError(QNetworkReply::NetworkError e);
-    void downloadProgress(quint64 downloaded, quint64 total);
+    void setIsAll(bool all);
+    bool isAll() const;
 
 public slots:
+    void start();
     void cancel();
-    void timeout();
 
 signals:
     void all_completed();
@@ -70,20 +43,11 @@ signals:
     void one_failed(const QString &url);
     void error();
     void download_progress(quint64, quint64);
+    void finished();
 
 private:
-    QStringList m_downloadSequence;
-    QStringList m_failedList;
-    QString m_savePath;
-    QString m_currentDownloadingFile;
-    QDir m_downloadDir;
-    QNetworkReply *m_currentDownloadingReply;
-    QNetworkAccessManager *m_networkAccessManager;
-    QTimer *m_timer;
-
-    volatile bool m_cancelRequested;
-    bool m_isAll;
-    quint64 m_lastRecordedDownloadProgress;
+    Q_DECLARE_PRIVATE(Downloader)
+    DownloaderPrivate *d_ptr;
 };
 
 Downloader *operator<<(Downloader *downloader, const QString &filename);

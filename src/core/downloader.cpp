@@ -2,19 +2,146 @@
 
 #include <QNetworkAccessManager>
 #include <QPixmap>
+#include <QReadWriteLock>
+#include <QThread>
 #include <QTimer>
 
 #ifdef Q_OS_OSX
 #include <QStandardPaths>
 #endif
 
-Downloader::Downloader()
-    : m_currentDownloadingReply(NULL)
-    , m_networkAccessManager(NULL)
-    , m_timer(NULL)
-    , m_cancelRequested(false)
-    , m_isAll(false)
+// This class is to be put in the downloader thread
+class DownloaderPrivate : public QObject
 {
+    Q_OBJECT
+
+public:
+    explicit DownloaderPrivate(Downloader *downloader);
+
+private:
+    void downloadSingleFile();
+
+private slots:
+    void singleFileFinished();
+    void singleFileError(QNetworkReply::NetworkError e);
+    void downloadProgress(quint64 downloaded, quint64 total);
+
+    void run();
+    void canceled();
+
+signals:
+    void cancel();
+
+public: // public to Downloader only since this is not interface of Downloader
+    Downloader *m_downloader;
+
+    QThread *m_thread;
+    mutable QReadWriteLock m_dataLock;
+
+    QStringList m_downloadSequence;
+    QStringList m_failedList;
+    QString m_savePath;
+    QString m_currentDownloadingFile;
+    QDir m_downloadDir;
+    QNetworkReply *m_currentDownloadingReply;
+    QNetworkAccessManager *m_networkAccessManager;
+    QTimer *m_timer;
+
+    bool m_isAll;
+    quint64 m_lastRecordedDownloadProgress;
+};
+
+DownloaderPrivate::DownloaderPrivate(Downloader *downloader)
+    : m_downloader(downloader)
+    , m_thread(new QThread(downloader))
+    , m_currentDownloadingReply(nullptr)
+    , m_networkAccessManager(nullptr)
+    , m_timer(nullptr)
+    , m_isAll(false)
+    , m_lastRecordedDownloadProgress(0u)
+{
+    connect(m_thread, &QThread::finished, m_downloader, &Downloader::finished);
+    connect(m_thread, &QThread::finished, [this]() -> void { moveToThread(m_downloader->thread()); });
+    connect(m_thread, &QThread::started, this, &DownloaderPrivate::run);
+    connect(this, &DownloaderPrivate::cancel, this, &DownloaderPrivate::canceled);
+}
+
+void DownloaderPrivate::run()
+{
+    m_networkAccessManager = new QNetworkAccessManager(this);
+
+    m_timer = new QTimer(this);
+    m_timer->setInterval(10000);
+    m_timer->setSingleShot(true);
+    connect(m_timer, &QTimer::timeout, this, &DownloaderPrivate::canceled);
+
+    m_dataLock.lockForWrite();
+    m_isAll = false;
+    m_currentDownloadingReply = nullptr;
+
+    QString s = Downloader::downloadPath();
+    if (s.isEmpty()) {
+        // emit error();
+        return;
+    }
+
+    QDir dir(s);
+    if (!m_savePath.isEmpty()) {
+        if (!dir.cd(m_savePath)) {
+            if (!dir.mkdir(m_savePath)) {
+                //emit error();
+                return;
+            }
+            dir.cd(m_savePath);
+        }
+    }
+    m_downloadDir = dir;
+    m_dataLock.unlock();
+
+    downloadSingleFile();
+}
+
+void DownloaderPrivate::canceled()
+{
+    disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &DownloaderPrivate::singleFileError);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &DownloaderPrivate::singleFileFinished);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &DownloaderPrivate::downloadProgress);
+
+    m_currentDownloadingReply->abort();
+
+    m_failedList << m_currentDownloadingFile;
+
+    QTimer *timer = qobject_cast<QTimer *>(sender());
+    if (timer != nullptr)
+        qDebug() << m_currentDownloadingFile << "timeout";
+    else
+        qDebug() << m_currentDownloadingFile << "abort";
+
+    singleFileFinished();
+}
+
+Downloader::Downloader()
+    : d_ptr(new DownloaderPrivate(this))
+{
+    Q_D(Downloader);
+    connect(this, &Downloader::destroyed, d, &DownloaderPrivate::deleteLater);
+}
+
+Downloader::~Downloader()
+{
+    Q_D(Downloader);
+    if (d->m_thread == d->thread())
+        cancel();
+
+    if (!d->m_thread->wait(3000UL))
+        d->m_thread->terminate();
+}
+
+void Downloader::start()
+{
+    Q_D(Downloader);
+    d->moveToThread(d->m_thread);
+    d->m_thread->start();
 }
 
 QString Downloader::downloadPath()
@@ -46,52 +173,72 @@ QString Downloader::downloadPath()
     return r;
 }
 
-void Downloader::run()
+Downloader &Downloader::operator<<(const QString &filename)
 {
-    m_networkAccessManager = new QNetworkAccessManager;
-    connect(this, &QThread::destroyed, m_networkAccessManager, &QNetworkAccessManager::deleteLater);
-
-    m_timer = new QTimer;
-    connect(this, &QThread::destroyed, m_timer, &QTimer::deleteLater);
-    m_timer->setInterval(10000);
-    m_timer->setSingleShot(true);
-    connect(m_timer, &QTimer::timeout, this, &Downloader::timeout);
-
-    m_cancelRequested = false;
-    QString s = downloadPath();
-
-    if (s.isEmpty()) {
-        emit error();
-        return;
-    }
-
-    QDir dir(s);
-    if (!m_savePath.isEmpty()) {
-        if (!dir.cd(m_savePath)) {
-            if (!dir.mkdir(m_savePath)) {
-                emit error();
-                return;
-            }
-            dir.cd(m_savePath);
-        }
-    }
-
-    m_downloadDir = dir;
-
-    downloadSingleFile();
-
-    exec();
+    Q_D(Downloader);
+    QWriteLocker wl(&d->m_dataLock);
+    Q_UNUSED(wl);
+    d->m_downloadSequence << filename;
+    return *this;
 }
 
-void Downloader::downloadSingleFile()
+const QStringList &Downloader::downloadSequence() const
+{
+    Q_D(const Downloader);
+    QReadLocker rl(&d->m_dataLock);
+    Q_UNUSED(rl);
+    return d->m_downloadSequence;
+}
+
+const QStringList &Downloader::failedList() const
+{
+    Q_D(const Downloader);
+    QReadLocker rl(&d->m_dataLock);
+    Q_UNUSED(rl);
+    return d->m_failedList;
+}
+
+const QString &Downloader::savePath() const
+{
+    Q_D(const Downloader);
+    QReadLocker rl(&d->m_dataLock);
+    Q_UNUSED(rl);
+    return d->m_savePath;
+}
+
+void Downloader::setSavePath(const QString &sp)
+{
+    Q_D(Downloader);
+    QWriteLocker wl(&d->m_dataLock);
+    Q_UNUSED(wl);
+    d->m_savePath = sp;
+}
+
+void Downloader::setIsAll(bool all)
+{
+    Q_D(Downloader);
+    QWriteLocker wl(&d->m_dataLock);
+    Q_UNUSED(wl);
+    d->m_isAll = all;
+}
+
+bool Downloader::isAll() const
+{
+    Q_D(const Downloader);
+    QReadLocker rl(&d->m_dataLock);
+    Q_UNUSED(rl);
+    return d->m_isAll;
+}
+
+void DownloaderPrivate::downloadSingleFile()
 {
     if (m_downloadSequence.isEmpty()) {
-        emit all_completed();
-        quit();
+        emit m_downloader->all_completed();
+        m_thread->quit();
         return;
-    } else if (m_cancelRequested) {
-        emit canceled();
-        quit();
+    } else if (m_thread->isInterruptionRequested()) {
+        emit m_downloader->canceled();
+        m_thread->quit();
         return;
     }
 
@@ -104,41 +251,41 @@ void Downloader::downloadSingleFile()
         }
 
         if (m_downloadDir.exists(filename)) {
-            emit one_completed(m_currentDownloadingFile);
+            emit m_downloader->one_completed(m_currentDownloadingFile);
             downloadSingleFile();
             return;
         }
     }
     m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
-    connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
-    connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-    connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
+    connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &DownloaderPrivate::singleFileError);
+    connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &DownloaderPrivate::singleFileFinished);
+    connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &DownloaderPrivate::downloadProgress);
 
     m_lastRecordedDownloadProgress = 0;
     m_timer->start();
 }
 
-void Downloader::singleFileError(QNetworkReply::NetworkError /*e*/)
+void DownloaderPrivate::singleFileError(QNetworkReply::NetworkError /*e*/)
 {
     m_failedList << m_currentDownloadingFile;
-    if (m_currentDownloadingReply != NULL)
+    if (m_currentDownloadingReply != nullptr)
         qDebug() << m_currentDownloadingReply->errorString();
 }
 
-void Downloader::downloadProgress(quint64 downloaded, quint64 total)
+void DownloaderPrivate::downloadProgress(quint64 downloaded, quint64 total)
 {
     if (downloaded - m_lastRecordedDownloadProgress > 10000) {
         m_lastRecordedDownloadProgress = downloaded;
         m_timer->start();
     }
-    emit download_progress(downloaded, total);
+    emit m_downloader->download_progress(downloaded, total);
 }
 
-void Downloader::singleFileFinished()
+void DownloaderPrivate::singleFileFinished()
 {
     m_timer->stop();
     if (m_failedList.contains(m_currentDownloadingFile)) {
-        emit one_failed(m_currentDownloadingFile);
+        emit m_downloader->one_failed(m_currentDownloadingFile);
         downloadSingleFile();
     } else {
         if (m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).isNull()) {
@@ -168,12 +315,12 @@ void Downloader::singleFileFinished()
                     qDebug() << "load jpg error " << filename;
             }
 
-            emit one_completed(m_currentDownloadingFile);
+            emit m_downloader->one_completed(m_currentDownloadingFile);
             downloadSingleFile();
         } else {
-            if (m_cancelRequested) {
-                emit canceled();
-                quit();
+            if (m_thread->isInterruptionRequested()) {
+                emit m_downloader->canceled();
+                m_thread->quit();
                 return;
             }
             QUrl u = m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
@@ -183,9 +330,9 @@ void Downloader::singleFileFinished()
             qDebug() << u;
             m_currentDownloadingFile = u.toString();
             m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(u));
-            connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
-            connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-            connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
+            connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &DownloaderPrivate::singleFileError);
+            connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &DownloaderPrivate::singleFileFinished);
+            connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &DownloaderPrivate::downloadProgress);
         }
     }
 }
@@ -198,30 +345,9 @@ Downloader *operator<<(Downloader *downloader, const QString &filename)
 
 void Downloader::cancel()
 {
-    disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
-    disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
-
-    m_currentDownloadingReply->abort();
-
-    m_failedList << m_currentDownloadingFile;
-    qDebug() << m_currentDownloadingFile << "abort";
-
-    m_cancelRequested = true;
-
-    singleFileFinished();
+    Q_D(Downloader);
+    d->m_thread->requestInterruption();
+    emit d->cancel();
 }
 
-void Downloader::timeout()
-{
-    disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &Downloader::singleFileError);
-    disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &Downloader::singleFileFinished);
-    disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &Downloader::downloadProgress);
-
-    m_currentDownloadingReply->abort();
-
-    m_failedList << m_currentDownloadingFile;
-    qDebug() << m_currentDownloadingFile << "timeout";
-
-    singleFileFinished();
-}
+#include "downloader.moc"
