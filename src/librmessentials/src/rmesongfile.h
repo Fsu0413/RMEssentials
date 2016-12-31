@@ -1,0 +1,71 @@
+#ifndef __SONGFILE_H__
+#define __SONGFILE_H__
+
+#include "rmeglobal.h"
+
+#include <QList>
+
+class QIODevice;
+
+namespace RmeSong {
+struct RmeSongClientItemStruct;
+struct RmePapaSongClientItemStruct;
+struct RmeSongClientHeaderStruct;
+
+enum RmeFileFormat
+{
+    Unknown,
+    BinFormat,
+    XmlFormat
+};
+
+class RmeSongClientFilePrivate;
+
+class LIBRMESSENTIALS_EXPORT RmeSongClientFile
+{
+public:
+    RmeSongClientFile();
+    ~RmeSongClientFile();
+    bool readInfoFromDevice(QIODevice *input, RmeFileFormat format); // the device should be opened READABLE or CLOSED when calling this func
+    bool saveInfoToDevice(QIODevice *output, RmeFileFormat format) const; // the device must be CLOSED when calling this func
+    RmeSongClientItemStruct *song(int n);
+    const RmeSongClientItemStruct *song(int n) const;
+    const RmeSongClientHeaderStruct &fileHeader() const;
+    QList<int> search(const QString &cond) const;
+
+    // Attention!! after merging, the file2 is not available anymore, thus been deleted, please do not get access to it after calling this function!!!
+    void mergeSongList(RmeSongClientFile *file2);
+
+    int songCount() const;
+
+private:
+    Q_DISABLE_COPY(RmeSongClientFile)
+    Q_DECLARE_PRIVATE(RmeSongClientFile)
+    RmeSongClientFilePrivate *d_ptr;
+};
+
+class RmePapaSongClientFilePrivate;
+
+class LIBRMESSENTIALS_EXPORT RmePapaSongClientFile
+{
+public:
+    RmePapaSongClientFile();
+    ~RmePapaSongClientFile();
+
+    bool readInfoFromDevice(QIODevice *input, RmeFileFormat format); // the device should be opened READABLE or CLOSED when calling this func
+    bool saveInfoToDevice(QIODevice *output, RmeFileFormat format) const; // the device must be CLOSED when calling this func
+    RmePapaSongClientItemStruct *song(int n);
+    const RmePapaSongClientItemStruct *song(int n) const;
+    const RmeSongClientHeaderStruct &fileHeader() const;
+    QList<int> search(const QString &cond) const;
+
+    int songCount() const;
+
+private:
+    Q_DISABLE_COPY(RmePapaSongClientFile)
+    Q_DECLARE_PRIVATE(RmePapaSongClientFile)
+    RmePapaSongClientFilePrivate *d_ptr;
+};
+}
+
+#endif

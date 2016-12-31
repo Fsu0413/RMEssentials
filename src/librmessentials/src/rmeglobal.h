@@ -1,0 +1,20 @@
+#ifndef LIBRMEGLOBAL_H
+#define LIBRMEGLOBAL_H
+
+#include <QtGlobal>
+
+#if 0
+class LIBRMESSENTIALS_EXPORT RmeGlobal
+#endif
+
+#ifdef LIBRMESSETIALS_STATIC
+#define LIBRMESSENTIALS_EXPORT
+#else
+#ifndef LIBRMESSENTIALS_BUILD
+#define LIBRMESSENTIALS_EXPORT Q_DECL_IMPORT
+#else
+#define LIBRMESSENTIALS_EXPORT Q_DECL_EXPORT
+#endif
+#endif
+
+#endif // LIBRMEGLOBAL_H
