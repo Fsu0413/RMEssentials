@@ -17,8 +17,7 @@ use_quazip {
 TEMPLATE = lib
 TARGET = RMEssentials
 
-staticlib: DEFINES += LIBRMESSETIALS_STATIC
-else: DEFINES += LIBRMESSENTIALS_BUILD
+!staticlib: DEFINES += LIBRMESSENTIALS_BUILD
 
 DESTDIR = $$OUT_PWD/../dist/lib
 DLLDESTDIR = $$OUT_PWD/../dist/bin

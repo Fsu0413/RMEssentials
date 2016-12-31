@@ -1,4 +1,4 @@
-#include "songclientedit.h"
+﻿#include "songclientedit.h"
 
 #include <RMEssentials/RmeDownloader>
 #include <RMEssentials/RmeSongClientStruct>
