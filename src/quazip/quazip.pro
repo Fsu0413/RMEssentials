@@ -54,15 +54,16 @@ HEADERS += \
     src/unzip.h \
     src/zip.h
 
-generateHeaders.target = ../dist/include/quazip
-contains(QMAKE_HOST.os, "Windows") {
-    mkdirGenerateHeaders.commands = if not exist $$system_path($$generateHeaders.target) md $$system_path($$generateHeaders.target)
-    generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$generateHeaders.target) -f $$system_path($$PWD/src/)
-} else {
-    mkdirGenerateHeaders.commands = mkdir -p $$generateHeaders.target
-    generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$generateHeaders.target -f $$PWD/src/
-}
-generateHeaders.depends = mkdirGenerateHeaders
+generateHeaders.target = $$OUT_PWD/../dist/include/quazip/.timestamp
+!build_pass: mkpath($$OUT_PWD/../dist/include/quazip)
 
-QMAKE_EXTRA_TARGETS += mkdirGenerateHeaders generateHeaders
-POST_TARGETDEPS += $$generateHeaders.target
+contains(QMAKE_HOST.os, "Windows"): generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$OUT_PWD/../dist/include/quazip) -f $$system_path($$PWD/src/)
+else: generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$OUT_PWD/../dist/include/quazip -f $$PWD/src/
+
+HEADERS_ABSOLUTE =
+for (header, HEADERS): HEADERS_ABSOLUTE += $$absolute_path($$header)
+
+generateHeaders.depends = $$HEADERS_ABSOLUTE
+
+QMAKE_EXTRA_TARGETS += generateHeaders
+PRE_TARGETDEPS += $$generateHeaders.target
