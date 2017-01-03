@@ -3,12 +3,9 @@
 
 #include "rmeglobal.h"
 
-#include <QNetworkReply>
 #include <QObject>
-#include <QStringList>
 
-class QTimer;
-
+class QStringList;
 class RmeDownloaderPrivate;
 
 class LIBRMESSENTIALS_EXPORT RmeDownloader : public QObject
@@ -41,7 +38,7 @@ signals:
     void singleFileCompleted(const QString &url);
     void singleFileFailed(const QString &url);
     void error();
-    void downloadProgress(quint64, quint64);
+    void downloadProgress(quint64 downloaded, quint64 total);
     void finished();
 
 private:

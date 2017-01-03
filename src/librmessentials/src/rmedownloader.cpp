@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QPixmap>
 #include <QReadWriteLock>
 #include <QThread>
