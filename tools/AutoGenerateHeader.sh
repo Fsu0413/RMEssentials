@@ -7,9 +7,13 @@ echo "Generating Headers..."
 outdir=
 folder=
 
+generateOnly=false;
+
 processSingleFile() {
-    echo "Copying file $1"
-    cp -f $1 $outdir/
+    if ! $generateOnly; then
+        echo "Copying file $1"
+        cp -f $1 $outdir/
+    fi
     classes=`cat $1 | sed -n -E "s/^(class|struct) +[A-Z]*_EXPORT +([A-Za-z0-9_]+)( .*)?/\2/p"`
     for x in $classes; do
         echo "Generating Header for $x"
@@ -17,9 +21,7 @@ processSingleFile() {
     done
 }
 
-generateOnly=false;
-
-until [ $#  -eq 0 ]; do
+until [ $# -eq 0 ]; do
     if [ "x$1" = "x-o" ]; then
         shift
         outdir=$1
@@ -51,13 +53,17 @@ fi
 
 if [ "x$folder" = "x" ]; then
     folder=$scriptpath
-
+fi
 
 if [ "x$outdir" = "x$folder" ]; then
     generateOnly=true;
 fi
 
 for x in `ls -1 $folder/*.h`; do
+    processSingleFile $x
+done
+
+for x in `ls -1 $folder/*.hpp`; do
     processSingleFile $x
 done
 

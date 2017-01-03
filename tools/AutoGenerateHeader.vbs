@@ -12,11 +12,11 @@ Dim generateonly
 generateonly = False
 
 Sub procedureSingleFile(fileName)
-    WScript.Echo "Copying file " & fileName
     Dim outPath
     outPath = outdir.Path
     If Right(path, 1) <> "\" Then outPath = outPath & "\"
     If Not generateonly then
+        WScript.Echo "Copying file " & fileName
         fso.CopyFile fileName, outPath & fso.GetFileName(fileName)
     End if
     Set fs = fso.OpenTextFile(fileName)
@@ -54,7 +54,7 @@ For i = 0 To WScript.Arguments.Count - 1
     ElseIf WScript.Arguments(i) = "-f" Then
         i = i + 1
         If Not fso.FolderExists(WScript.Arguments(i)) Then
-            WScript.Echo "folder " & WScript.Arguments(i) & " does not exist. Exiting..."
+            WScript.Echo "Folder " & WScript.Arguments(i) & " does not exist. Exiting..."
             WScript.Quit 1
         End If
         Set folder = fso.GetFolder(WScript.Arguments(i))
@@ -83,12 +83,10 @@ If outdir.Path = folder.Path Then
 End If
 
 For Each file In folder.Files
-    If fso.GetExtensionName(file.Path) = "h" Then
+    If (fso.GetExtensionName(file.Path) = "h") Or (fso.GetExtensionName(file.Path) = "hpp") Then
         procedureSingleFile(file.Path)
     End If
 Next
-
-wscript.echo "Header Generation Complete"
 
 Dim outPath
 outPath = outdir.Path
@@ -101,5 +99,7 @@ End if
 Set touchfile = fso.CreateTextFile(outPath & ".timestamp", True)
 touchfile.write ""
 touchfile.close
+
+wscript.echo "Header Generation Complete"
 
 WScript.Quit 0
