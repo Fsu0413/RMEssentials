@@ -1,6 +1,8 @@
 #ifndef CHANGENAME_H
 #define CHANGENAME_H
 
+#include <RMEssentials/RmeGlobal>
+
 #include <QDialog>
 
 class QLineEdit;
@@ -19,10 +21,6 @@ private:
     QLineEdit *m_toRename;
 
     QLabel *m_filesLabels[18];
-    // 0 :mp3    1 :Bigpng 2 :SmallPng
-    // 3 :4KEZ   4 :4KNM   5 :4KHD
-    // 6 :5KEZ   7 :5KNM   8 :5KHD
-    // 9 :6KEZ   10:6KNM   11:6KHD
 
 private slots:
     void selectFolder();
@@ -34,10 +32,6 @@ signals:
     void folder_selected(const QString &folder);
 
 private:
-    // 0 :mp3    1 :Bigpng 2 :SmallPng
-    // 3 :4KEZ   4 :4KNM   5 :4KHD
-    // 6 :5KEZ   7 :5KNM   8 :5KHD
-    // 9 :6KEZ   10:6KNM   11:6KHD
     static QLayout *layFiles(QLabel *labels[18]);
 };
 

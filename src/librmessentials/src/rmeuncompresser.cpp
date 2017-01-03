@@ -3,10 +3,8 @@
 
 #ifdef RME_USE_QUAZIP
 #include "rmedownloader.h"
-
-#include <quazip/QuaZipFile>
-
 #include <QDir>
+#include <quazip/QuaZipFile>
 
 void RmeUncompresser::run()
 {

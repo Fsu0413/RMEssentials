@@ -1,6 +1,8 @@
 #ifndef DOWNLOAD_H
 #define DOWNLOAD_H
 
+#include <RMEssentials/RmeGlobal>
+
 #include <QDialog>
 #include <QDir>
 
