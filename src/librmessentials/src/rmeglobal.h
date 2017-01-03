@@ -7,6 +7,12 @@
 
 #include <QtGlobal>
 
+// We assume the byte order is little endian.
+// Force a compile error when compiling for a machine of big endian.
+#if Q_BYTE_ORDER == Q_BIG_ENDIAN
+#error "Big endian is not supported"
+#endif
+
 #if 0
 class LIBRMESSENTIALS_EXPORT RmeGlobal
 #endif
