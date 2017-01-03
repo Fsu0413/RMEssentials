@@ -48,11 +48,11 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
                 if (d->m_header == nullptr)
                     d->m_header = new RmeSongClientHeaderStruct;
                 QByteArray fh = ba.mid(0, 0x88);
-                ByteArray2Header(fh, *d->m_header);
+                d->m_header->parseByteArray(fh);
                 for (int i = 0x88; i < ba.size(); i += 0x33e) {
                     QByteArray sp = ba.mid(i, 0x33e);
                     RmeSongClientItemStruct *ss = new RmeSongClientItemStruct;
-                    ByteArray2Song(sp, *ss);
+                    ss->parseByteArray(sp);
                     d->m_songsList << ss;
                 }
                 input->close();
@@ -75,12 +75,10 @@ bool RmeSong::RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileForm
         return false;
     else if (format == BinFormat) {
         if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-            QByteArray fh;
-            Header2ByteArray(*d->m_header, fh);
+            QByteArray fh = d->m_header->toByteArray();
             output->write(fh, 0x88);
             foreach (RmeSongClientItemStruct *s, d->m_songsList) {
-                QByteArray arr;
-                Song2ByteArray(*s, arr);
+                QByteArray arr = s->toByteArray();
                 output->write(arr.constData(), 0x33e);
             }
             output->close();
@@ -218,11 +216,11 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                 if (d->m_header == nullptr)
                     d->m_header = new RmeSongClientHeaderStruct;
                 QByteArray fh = ba.mid(0, 0x88);
-                ByteArray2Header(fh, *d->m_header);
+                d->m_header->parseByteArray(fh);
                 for (int i = 0x88; i < ba.size(); i += 0x169) {
                     QByteArray sp = ba.mid(i, 0x169);
                     RmePapaSongClientItemStruct *ss = new RmePapaSongClientItemStruct;
-                    ByteArray2Song(sp, *ss);
+                    ss->parseByteArray(sp);
                     d->m_songsList << ss;
                 }
                 input->close();
@@ -244,12 +242,10 @@ bool RmeSong::RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFile
         return false;
     else if (format == BinFormat) {
         if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-            QByteArray fh;
-            Header2ByteArray(*d->m_header, fh);
+            QByteArray fh = d->m_header->toByteArray();
             output->write(fh, 0x88);
             foreach (RmePapaSongClientItemStruct *s, d->m_songsList) {
-                QByteArray arr;
-                Song2ByteArray(*s, arr);
+                QByteArray arr = s->toByteArray();
                 output->write(arr.constData(), 0x169);
             }
             output->close();

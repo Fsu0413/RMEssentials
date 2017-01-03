@@ -480,7 +480,7 @@ void SongClientEditDialog::convertToFree()
 
     for (int i = 0; i < m_file.songCount(); ++i) {
         RmeSongClientItemStruct *c = m_file.song(i);
-        if (!IsLevel(*c)) {
+        if (!c->isLevel()) {
             c->m_ucIsOpen = true;
             c->m_bIsHide = false;
             c->m_bIsLevelReward = false;
@@ -500,7 +500,7 @@ void SongClientEditDialog::allSongUnlock()
 
     for (int i = 0; i < m_file.songCount(); ++i) {
         RmeSongClientItemStruct *c = m_file.song(i);
-        if (!IsLevel(*c))
+        if (!c->isLevel())
             c->m_bIsFree = false;
     }
 

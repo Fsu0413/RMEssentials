@@ -2,15 +2,25 @@
 
 const QString RmeSong::RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
-bool RmeSong::ByteArray2Header(const QByteArray &arr, RmeSongClientHeaderStruct &header)
+RmeSong::RmeSongClientHeaderStruct::RmeSongClientHeaderStruct()
+    : Magic(0)
+    , Version(0)
+    , Unit(0)
+    , Count(0)
+    , ResVersion(0)
+    , DataOffset(0)
+{
+}
+
+void RmeSong::RmeSongClientHeaderStruct::parseByteArray(const QByteArray &arr)
 {
     Q_ASSERT(arr.length() == 0x88);
     const char *data = arr.constData();
 
 #define GETX(type, name, offset) \
-    header.name = *(reinterpret_cast<const type *>(data + offset))
+    this->name = *(reinterpret_cast<const type *>(data + offset))
 #define GETSTR(name, offset) \
-    header.name = QString::fromUtf8(data + offset)
+    this->name = QString::fromUtf8(data + offset)
 
     GETX(int, Magic, 0x0);
     GETX(int, Version, 0x4);
@@ -24,34 +34,32 @@ bool RmeSong::ByteArray2Header(const QByteArray &arr, RmeSongClientHeaderStruct 
 
 #undef GETSTR
 #undef GETX
-
-    return true;
 }
 
-bool RmeSong::Header2ByteArray(const RmeSongClientHeaderStruct &header, QByteArray &arr)
+QByteArray RmeSong::RmeSongClientHeaderStruct::toByteArray() const
 {
-    arr.clear();
+    QByteArray arr;
     arr.resize(0x88);
     memset(arr.data(), 0, 0x88);
 
-#define SETX(name, offset)                                                 \
-    do {                                                                   \
-        int length = sizeof(header.name);                                  \
-        const char *data = reinterpret_cast<const char *>(&(header.name)); \
-        for (int i = 0; i < length; ++i)                                   \
-            arr[offset + i] = data[i];                                     \
+#define SETX(name, offset)                                                \
+    do {                                                                  \
+        int length = sizeof(this->name);                                  \
+        const char *data = reinterpret_cast<const char *>(&(this->name)); \
+        for (int i = 0; i < length; ++i)                                  \
+            arr[offset + i] = data[i];                                    \
     } while (false)
 
-#define SETSTR(name, offset, len)                  \
-    do {                                           \
-        QByteArray dataArr = header.name.toUtf8(); \
-        const char *data = dataArr.constData();    \
-        for (int i = 0; i < len; ++i) {            \
-            if (i < dataArr.length())              \
-                arr[offset + i] = data[i];         \
-            else                                   \
-                arr[offset + i] = '\0';            \
-        }                                          \
+#define SETSTR(name, offset, len)                 \
+    do {                                          \
+        QByteArray dataArr = this->name.toUtf8(); \
+        const char *data = dataArr.constData();   \
+        for (int i = 0; i < len; ++i) {           \
+            if (i < dataArr.length())             \
+                arr[offset + i] = data[i];        \
+            else                                  \
+                arr[offset + i] = '\0';           \
+        }                                         \
     } while (false)
 
     SETX(Magic, 0x0);
@@ -67,15 +75,15 @@ bool RmeSong::Header2ByteArray(const RmeSongClientHeaderStruct &header, QByteArr
 #undef SETSTR
 #undef SETX
 
-    return true;
+    return arr;
 }
 
-bool RmeSong::Map2Header(const QVariantMap &arr, RmeSongClientHeaderStruct &header)
+void RmeSong::RmeSongClientHeaderStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) \
-    header.name = arr[QStringLiteral(#name)].toString()
+    this->name = map[QStringLiteral(#name)].toString()
 #define GETINT(name) \
-    header.name = arr[QStringLiteral(#name)].toString().trimmed().toInt()
+    this->name = map[QStringLiteral(#name)].toString().trimmed().toInt()
 
     GETINT(Magic);
     GETINT(Version);
@@ -89,18 +97,16 @@ bool RmeSong::Map2Header(const QVariantMap &arr, RmeSongClientHeaderStruct &head
 
 #undef GETSTR
 #undef GETINT
-
-    return true;
 }
 
-bool RmeSong::Herader2Map(const RmeSongClientHeaderStruct &header, QVariantMap &arr)
+QVariantMap RmeSong::RmeSongClientHeaderStruct::toMap() const
 {
-    arr.clear();
+    QVariantMap map;
 
 #define SETSTR(name) \
-    arr[QStringLiteral(#name)] = header.name
+    map[QStringLiteral(#name)] = this->name
 #define SETINT(name) \
-    arr[QStringLiteral(#name)] = QString::number(static_cast<int>(header.name)) + QStringLiteral(" ")
+    map[QStringLiteral(#name)] = QString::number(static_cast<int>(this->name)) + QStringLiteral(" ")
 
     SETINT(Magic);
     SETINT(Version);
@@ -116,18 +122,50 @@ bool RmeSong::Herader2Map(const RmeSongClientHeaderStruct &header, QVariantMap &
 #undef SETSTR
 #undef SETINT
 
-    return true;
+    return map;
 }
 
-bool RmeSong::ByteArray2Song(const QByteArray &arr, RmeSongClientItemStruct &song)
+RmeSong::RmeSongClientItemStruct::RmeSongClientItemStruct()
+    : m_ushSongID(0)
+    , m_iVersion(0)
+    , m_iGameTime(0)
+    , m_iRegion(0)
+    , m_iStyle(0)
+    , m_ucIsNew(0)
+    , m_ucIsHot(0)
+    , m_ucIsRecommend(0)
+    , m_ucIsOpen(0)
+    , m_ucCanBuy(false)
+    , m_iOrderIndex(0)
+    , m_bIsFree(false)
+    , m_bSongPkg(false)
+    , m_ush4KeyEasy(0)
+    , m_ush4KeyNormal(0)
+    , m_ush4KeyHard(0)
+    , m_ush5KeyEasy(0)
+    , m_ush5KeyNormal(0)
+    , m_ush5KeyHard(0)
+    , m_ush6KeyEasy(0)
+    , m_ush6KeyNormal(0)
+    , m_ush6KeyHard(0)
+    , m_iPrice(0)
+    , m_iVipFlag(0)
+    , m_bIsHide(false)
+    , m_bIsReward(false)
+    , m_bIsLevelReward(false)
+
+{
+}
+
+void RmeSong::RmeSongClientItemStruct::parseByteArray(const QByteArray &arr)
 {
     Q_ASSERT(arr.length() == 0x33e);
     const char *data = arr.constData();
 
 #define GETX(type, name, offset) \
-    song.m_##name = *(reinterpret_cast<const type *>(data + offset))
+    this->m_##name = *(reinterpret_cast<const type *>(data + offset))
 #define GETSTR(name, offset) \
-    song.m_##name = QString::fromUtf8(data + offset)
+    this->m_##name = QString::fromUtf8(data + offset)
 
     GETX(short, ushSongID, 0x0);
     GETX(int, iVersion, 0x2);
@@ -169,34 +207,32 @@ bool RmeSong::ByteArray2Song(const QByteArray &arr, RmeSongClientItemStruct &son
 
 #undef GETSTR
 #undef GETX
-
-    return true;
 }
 
-bool RmeSong::Song2ByteArray(const RmeSongClientItemStruct &song, QByteArray &arr)
+QByteArray RmeSong::RmeSongClientItemStruct::toByteArray() const
 {
-    arr.clear();
+    QByteArray arr;
     arr.resize(0x33e);
     memset(arr.data(), 0, 0x33e);
 
-#define SETX(name, offset)                                                   \
-    do {                                                                     \
-        int length = sizeof(song.m_##name);                                  \
-        const char *data = reinterpret_cast<const char *>(&(song.m_##name)); \
-        for (int i = 0; i < length; ++i)                                     \
-            arr[offset + i] = data[i];                                       \
+#define SETX(name, offset)                                                    \
+    do {                                                                      \
+        int length = sizeof(this->m_##name);                                  \
+        const char *data = reinterpret_cast<const char *>(&(this->m_##name)); \
+        for (int i = 0; i < length; ++i)                                      \
+            arr[offset + i] = data[i];                                        \
     } while (false)
 
-#define SETSTR(name, offset, len)                    \
-    do {                                             \
-        QByteArray dataArr = song.m_##name.toUtf8(); \
-        const char *data = dataArr.constData();      \
-        for (int i = 0; i < len; ++i) {              \
-            if (i < dataArr.length())                \
-                arr[offset + i] = data[i];           \
-            else                                     \
-                arr[offset + i] = '\0';              \
-        }                                            \
+#define SETSTR(name, offset, len)                     \
+    do {                                              \
+        QByteArray dataArr = this->m_##name.toUtf8(); \
+        const char *data = dataArr.constData();       \
+        for (int i = 0; i < len; ++i) {               \
+            if (i < dataArr.length())                 \
+                arr[offset + i] = data[i];            \
+            else                                      \
+                arr[offset + i] = '\0';               \
+        }                                             \
     } while (false)
 
     SETX(ushSongID, 0x0);
@@ -240,17 +276,17 @@ bool RmeSong::Song2ByteArray(const RmeSongClientItemStruct &song, QByteArray &ar
 #undef SETSTR
 #undef SETX
 
-    return true;
+    return arr;
 }
 
-bool RmeSong::Map2Song(const QVariantMap &arr, RmeSongClientItemStruct &song)
+void RmeSong::RmeSongClientItemStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString()
+    this->m_##name = map[QStringLiteral("m_" #name)].toString()
 #define GETINT(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
+    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
+    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -293,20 +329,18 @@ bool RmeSong::Map2Song(const QVariantMap &arr, RmeSongClientItemStruct &song)
 #undef GETSTR
 #undef GETINT
 #undef GETHEX
-
-    return true;
 }
 
-bool RmeSong::Song2Map(const RmeSongClientItemStruct &song, QVariantMap &arr)
+QVariantMap RmeSong::RmeSongClientItemStruct::toMap() const
 {
-    arr.clear();
+    QVariantMap map;
 
 #define SETSTR(name) \
-    arr[QStringLiteral("m_" #name)] = song.m_##name
+    map[QStringLiteral("m_" #name)] = this->m_##name
 #define SETINT(name) \
-    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_##name)) + QStringLiteral(" ")
+    map[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(this->m_##name)) + QStringLiteral(" ")
 #define SETHEX(name) \
-    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_##name), 16) + QStringLiteral(" ")
+    map[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(this->m_##name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);
@@ -350,56 +384,71 @@ bool RmeSong::Song2Map(const RmeSongClientItemStruct &song, QVariantMap &arr)
 #undef SETINT
 #undef SETHEX
 
-    return true;
+    return map;
 }
 
-bool RmeSong::IsBuy(const RmeSongClientItemStruct &song)
+bool RmeSong::RmeSongClientItemStruct::isHidden() const
 {
-    return song.m_ucCanBuy;
+    return m_bIsHide;
 }
 
-bool RmeSong::IsDown(const RmeSongClientItemStruct &song)
+bool RmeSong::RmeSongClientItemStruct::isReward() const
 {
-    return song.m_ucIsOpen == 0;
+    return m_bIsReward && !isLevel();
 }
 
-bool RmeSong::IsFree(const RmeSongClientItemStruct &song)
+bool RmeSong::RmeSongClientItemStruct::isDown() const
 {
-    return !IsBuy(song) && !IsDown(song) && !IsHidden(song) && !IsLevel(song) && !IsReward(song);
+    return m_ucIsOpen == 0;
 }
 
-bool RmeSong::IsHidden(const RmeSongClientItemStruct &song)
+bool RmeSong::RmeSongClientItemStruct::isBuy() const
 {
-    return song.m_bIsHide;
+    return m_ucCanBuy;
 }
 
-bool RmeSong::IsLevel(const RmeSongClientItemStruct &song)
+bool RmeSong::RmeSongClientItemStruct::isFree() const
+{
+    return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward();
+}
+
+bool RmeSong::RmeSongClientItemStruct::isLevel() const
 {
     // BIG IMPORTANT HACK!!!!
     // RM used No251-262 as level reward, and m_bIsLevelReward doesn't make sense anymore.
-    return song.m_ushSongID >= 251 && song.m_ushSongID <= 262;
+    return m_ushSongID >= 251 && m_ushSongID <= 262;
 }
 
-bool RmeSong::IsReward(const RmeSongClientItemStruct &song)
-{
-    // Level reward now is also reward
-    return song.m_bIsReward && !IsLevel(song);
-}
-
-bool RmeSong::sortByID(const RmeSongClientItemStruct &a, const RmeSongClientItemStruct &b)
+bool RmeSong::RmeSongClientItemStruct::sortByID(const RmeSong::RmeSongClientItemStruct &a, const RmeSong::RmeSongClientItemStruct &b)
 {
     return a.m_ushSongID < b.m_ushSongID;
 }
 
-bool RmeSong::ByteArray2Song(const QByteArray &arr, RmePapaSongClientItemStruct &song)
+RmeSong::RmePapaSongClientItemStruct::RmePapaSongClientItemStruct()
+    : m_ushSongID(0)
+    , m_iVersion(0)
+    , m_cDifficulty(0)
+    , m_cLevel(0)
+    , m_iGameTime(0)
+    , m_iOrderIndex(0)
+    , m_ucIsOpen(0)
+    , m_ucIsFree(0)
+    , m_ucIsHide(0)
+    , m_ucIsReward(0)
+    , m_ucIsLevelReward(0)
+    , m_iSongType(0)
+{
+}
+
+void RmeSong::RmePapaSongClientItemStruct::parseByteArray(const QByteArray &arr)
 {
     Q_ASSERT(arr.length() == 0x169);
     const char *data = arr.constData();
 
 #define GETX(type, name, offset) \
-    song.m_##name = *(reinterpret_cast<const type *>(data + offset))
+    this->m_##name = *(reinterpret_cast<const type *>(data + offset))
 #define GETSTR(name, offset) \
-    song.m_##name = QString::fromUtf8(data + offset)
+    this->m_##name = QString::fromUtf8(data + offset)
 
     GETX(short, ushSongID, 0x0);
     GETX(int, iVersion, 0x2);
@@ -424,34 +473,32 @@ bool RmeSong::ByteArray2Song(const QByteArray &arr, RmePapaSongClientItemStruct 
 
 #undef GETSTR
 #undef GETX
-
-    return true;
 }
 
-bool RmeSong::Song2ByteArray(const RmePapaSongClientItemStruct &song, QByteArray &arr)
+QByteArray RmeSong::RmePapaSongClientItemStruct::toByteArray() const
 {
-    arr.clear();
+    QByteArray arr;
     arr.resize(0x169);
     memset(arr.data(), 0, 0x169);
 
-#define SETX(name, offset)                                                   \
-    do {                                                                     \
-        int length = sizeof(song.m_##name);                                  \
-        const char *data = reinterpret_cast<const char *>(&(song.m_##name)); \
-        for (int i = 0; i < length; ++i)                                     \
-            arr[offset + i] = data[i];                                       \
+#define SETX(name, offset)                                                    \
+    do {                                                                      \
+        int length = sizeof(this->m_##name);                                  \
+        const char *data = reinterpret_cast<const char *>(&(this->m_##name)); \
+        for (int i = 0; i < length; ++i)                                      \
+            arr[offset + i] = data[i];                                        \
     } while (false)
 
-#define SETSTR(name, offset, len)                    \
-    do {                                             \
-        QByteArray dataArr = song.m_##name.toUtf8(); \
-        const char *data = dataArr.constData();      \
-        for (int i = 0; i < len; ++i) {              \
-            if (i < dataArr.length())                \
-                arr[offset + i] = data[i];           \
-            else                                     \
-                arr[offset + i] = '\0';              \
-        }                                            \
+#define SETSTR(name, offset, len)                     \
+    do {                                              \
+        QByteArray dataArr = this->m_##name.toUtf8(); \
+        const char *data = dataArr.constData();       \
+        for (int i = 0; i < len; ++i) {               \
+            if (i < dataArr.length())                 \
+                arr[offset + i] = data[i];            \
+            else                                      \
+                arr[offset + i] = '\0';               \
+        }                                             \
     } while (false)
 
     SETX(ushSongID, 0x0);
@@ -478,17 +525,17 @@ bool RmeSong::Song2ByteArray(const RmePapaSongClientItemStruct &song, QByteArray
 #undef SETSTR
 #undef SETX
 
-    return true;
+    return arr;
 }
 
-bool RmeSong::Map2Song(const QVariantMap &arr, RmePapaSongClientItemStruct &song)
+void RmeSong::RmePapaSongClientItemStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString()
+    this->m_##name = map[QStringLiteral("m_" #name)].toString()
 #define GETINT(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().toInt()
+    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().toInt()
 #define GETHEX(name) \
-    song.m_##name = arr[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
+    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -514,20 +561,18 @@ bool RmeSong::Map2Song(const QVariantMap &arr, RmePapaSongClientItemStruct &song
 #undef GETSTR
 #undef GETINT
 #undef GETHEX
-
-    return true;
 }
 
-bool RmeSong::Song2Map(const RmePapaSongClientItemStruct &song, QVariantMap &arr)
+QVariantMap RmeSong::RmePapaSongClientItemStruct::toMap() const
 {
-    arr.clear();
+    QVariantMap map;
 
 #define SETSTR(name) \
-    arr[QStringLiteral("m_" #name)] = song.m_##name
+    map[QStringLiteral("m_" #name)] = this->m_##name
 #define SETINT(name) \
-    arr[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(song.m_##name)) + QStringLiteral(" ")
+    map[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(this->m_##name)) + QStringLiteral(" ")
 #define SETHEX(name) \
-    arr[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(song.m_##name), 16) + QStringLiteral(" ")
+    map[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(this->m_##name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);
@@ -554,10 +599,10 @@ bool RmeSong::Song2Map(const RmePapaSongClientItemStruct &song, QVariantMap &arr
 #undef SETINT
 #undef SETHEX
 
-    return true;
+    return map;
 }
 
-bool RmeSong::sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b)
+bool RmeSong::RmePapaSongClientItemStruct::sortByID(const RmeSong::RmePapaSongClientItemStruct &a, const RmeSong::RmePapaSongClientItemStruct &b)
 {
     return a.m_ushSongID < b.m_ushSongID;
 }

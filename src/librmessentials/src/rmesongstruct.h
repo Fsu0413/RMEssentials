@@ -23,12 +23,14 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientHeaderStruct
     QString ResEncoding;
     QString ContentHash;
     int DataOffset;
-};
 
-LIBRMESSENTIALS_EXPORT bool ByteArray2Header(const QByteArray &arr, RmeSongClientHeaderStruct &header);
-LIBRMESSENTIALS_EXPORT bool Header2ByteArray(const RmeSongClientHeaderStruct &header, QByteArray &arr);
-LIBRMESSENTIALS_EXPORT bool Map2Header(const QVariantMap &arr, RmeSongClientHeaderStruct &header);
-LIBRMESSENTIALS_EXPORT bool Herader2Map(const RmeSongClientHeaderStruct &header, QVariantMap &arr);
+    RmeSongClientHeaderStruct();
+
+    void parseByteArray(const QByteArray &arr);
+    QByteArray toByteArray() const;
+    void parseMap(const QVariantMap &map);
+    QVariantMap toMap() const;
+};
 
 struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
 {
@@ -68,20 +70,24 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
     int m_iVipFlag;
     bool m_bIsHide;
     bool m_bIsReward;
-    bool m_bIsLevelReward; // obsolete?
-};
+    bool m_bIsLevelReward;
 
-LIBRMESSENTIALS_EXPORT bool ByteArray2Song(const QByteArray &arr, RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool Song2ByteArray(const RmeSongClientItemStruct &song, QByteArray &arr);
-LIBRMESSENTIALS_EXPORT bool Map2Song(const QVariantMap &arr, RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool Song2Map(const RmeSongClientItemStruct &song, QVariantMap &arr);
-LIBRMESSENTIALS_EXPORT bool IsHidden(const RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool IsReward(const RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool IsDown(const RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool IsBuy(const RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool IsFree(const RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool IsLevel(const RmeSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool sortByID(const RmeSongClientItemStruct &a, const RmeSongClientItemStruct &b);
+    RmeSongClientItemStruct();
+
+    void parseByteArray(const QByteArray &arr);
+    QByteArray toByteArray() const;
+    void parseMap(const QVariantMap &map);
+    QVariantMap toMap() const;
+
+    bool isHidden() const;
+    bool isReward() const;
+    bool isDown() const;
+    bool isBuy() const;
+    bool isFree() const;
+    bool isLevel() const;
+
+    static bool sortByID(const RmeSongClientItemStruct &a, const RmeSongClientItemStruct &b);
+};
 
 struct LIBRMESSENTIALS_EXPORT RmePapaSongClientItemStruct
 {
@@ -103,15 +109,18 @@ struct LIBRMESSENTIALS_EXPORT RmePapaSongClientItemStruct
     char m_ucIsFree;
     char m_ucIsHide;
     char m_ucIsReward;
-    char m_ucIsLevelReward; // obsolete?
+    char m_ucIsLevelReward;
     int m_iSongType;
-};
 
-LIBRMESSENTIALS_EXPORT bool ByteArray2Song(const QByteArray &arr, RmePapaSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool Song2ByteArray(const RmePapaSongClientItemStruct &song, QByteArray &arr);
-LIBRMESSENTIALS_EXPORT bool Map2Song(const QVariantMap &arr, RmePapaSongClientItemStruct &song);
-LIBRMESSENTIALS_EXPORT bool Song2Map(const RmePapaSongClientItemStruct &song, QVariantMap &arr);
-LIBRMESSENTIALS_EXPORT bool sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b);
+    RmePapaSongClientItemStruct();
+
+    void parseByteArray(const QByteArray &arr);
+    QByteArray toByteArray() const;
+    void parseMap(const QVariantMap &map);
+    QVariantMap toMap() const;
+
+    static bool sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b);
+};
 }
 
 #endif
