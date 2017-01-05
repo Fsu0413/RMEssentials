@@ -248,17 +248,10 @@ void DownloadDialog::startUncompress()
 {
 #ifdef RME_USE_QUAZIP
     RmeUncompresser *unc = new RmeUncompresser;
-    unc->zipNames
-        << QStringLiteral("MD5List.zip")
-        << QStringLiteral("TableComBin.zip")
-        << QStringLiteral("TableComBin.zip")
-        << QStringLiteral("TableComBin_IOS.zip");
-
-    unc->fileNames
-        << QStringLiteral("MD5List.xml")
-        << QStringLiteral("mrock_song_client_android.bin")
-        << QStringLiteral("mrock_papasong_client.bin")
-        << QStringLiteral("mrock_song_client.bin");
+    unc->addFile(QStringLiteral("MD5List.zip"), QStringLiteral("MD5List.xml"));
+    unc->addFile(QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_song_client_android.bin"));
+    unc->addFile(QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_papasong_client.bin"));
+    unc->addFile(QStringLiteral("TableComBin_IOS.zip"), QStringLiteral("mrock_song_client.bin"));
 
     connect(unc, &RmeUncompresser::finished, this, &DownloadDialog::loadPaths);
     connect(unc, &RmeUncompresser::finished, unc, &RmeUncompresser::deleteLater);

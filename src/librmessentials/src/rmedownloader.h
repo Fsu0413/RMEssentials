@@ -14,7 +14,7 @@ class LIBRMESSENTIALS_EXPORT RmeDownloader : public QObject
 
 public:
     RmeDownloader();
-    ~RmeDownloader();
+    ~RmeDownloader() override;
 
     static QString downloadPath();
 
