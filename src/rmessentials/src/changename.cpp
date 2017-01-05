@@ -92,7 +92,7 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 
     setLayout(totalLayout);
 
-    connect(this, &ChangeNameDialog::folder_selected, this, &ChangeNameDialog::checkFiles);
+    connect(this, &ChangeNameDialog::folderSelected, this, &ChangeNameDialog::checkFiles);
 }
 
 void ChangeNameDialog::selectFolder()
@@ -117,7 +117,7 @@ void ChangeNameDialog::selectFolder()
     }
 
     m_folderName->setText(d.absolutePath());
-    emit folder_selected(d.absolutePath());
+    emit folderSelected(d.absolutePath());
 }
 
 void ChangeNameDialog::rename()

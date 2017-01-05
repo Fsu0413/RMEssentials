@@ -29,7 +29,7 @@ private slots:
     void renameToEasy();
 
 signals:
-    void folder_selected(const QString &folder);
+    void folderSelected(const QString &folder);
 
 private:
     static QLayout *layFiles(QLabel *labels[18]);

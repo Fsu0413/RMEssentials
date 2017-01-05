@@ -35,7 +35,7 @@ private:
 
 signals:
     void busy(bool);
-    void cancel_download();
+    void cancelDownload();
 
 private slots:
     void downloadAndroidList();

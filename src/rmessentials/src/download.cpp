@@ -88,7 +88,7 @@ void DownloadDialog::downloadClicked()
     if (!m_busy)
         startDownload();
     else
-        emit cancel_download();
+        emit cancelDownload();
 }
 
 void DownloadDialog::startDownloadAll()
@@ -178,7 +178,7 @@ void DownloadDialog::startDownload(DownloadMode mode)
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
-    connect(this, &DownloadDialog::cancel_download, downloader, &RmeDownloader::cancel);
+    connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
 
     switch (mode) {
@@ -278,7 +278,7 @@ void DownloadDialog::downloadList()
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::downloadAndroidList);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
-    connect(this, &DownloadDialog::cancel_download, downloader, &RmeDownloader::cancel);
+    connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
 
     emit busy(true);
@@ -316,7 +316,7 @@ void DownloadDialog::downloadAndroidList()
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startUncompress);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
     connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
-    connect(this, &DownloadDialog::cancel_download, downloader, &RmeDownloader::cancel);
+    connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
 
     downloader->start();
@@ -432,7 +432,7 @@ void DownloadDialog::closeEvent(QCloseEvent *e)
     if (m_busy) {
         e->ignore();
         m_exitRequested = true;
-        emit cancel_download();
+        emit cancelDownload();
     } else
         QDialog::closeEvent(e);
 }
