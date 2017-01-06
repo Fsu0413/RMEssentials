@@ -22,15 +22,15 @@ void RmeSong::RmeSongClientHeaderStruct::parseByteArray(const QByteArray &arr)
 #define GETSTR(name, offset) \
     this->name = QString::fromUtf8(data + offset)
 
-    GETX(int, Magic, 0x0);
-    GETX(int, Version, 0x4);
-    GETX(int, Unit, 0x8);
-    GETX(int, Count, 0xc);
+    GETX(int32_t, Magic, 0x0);
+    GETX(int32_t, Version, 0x4);
+    GETX(int32_t, Unit, 0x8);
+    GETX(int32_t, Count, 0xc);
     GETSTR(MetalibHash, 0x10);
-    GETX(int, ResVersion, 0x34);
+    GETX(int32_t, ResVersion, 0x34);
     GETSTR(ResEncoding, 0x40);
     GETSTR(ContentHash, 0x60);
-    GETX(int, DataOffset, 0x84);
+    GETX(int32_t, DataOffset, 0x84);
 
 #undef GETSTR
 #undef GETX
@@ -44,9 +44,9 @@ QByteArray RmeSong::RmeSongClientHeaderStruct::toByteArray() const
 
 #define SETX(name, offset)                                                \
     do {                                                                  \
-        int length = sizeof(this->name);                                  \
+        size_t length = sizeof(this->name);                               \
         const char *data = reinterpret_cast<const char *>(&(this->name)); \
-        for (int i = 0; i < length; ++i)                                  \
+        for (size_t i = 0; i < length; ++i)                               \
             arr[offset + i] = data[i];                                    \
     } while (false)
 
@@ -167,40 +167,40 @@ void RmeSong::RmeSongClientItemStruct::parseByteArray(const QByteArray &arr)
 #define GETSTR(name, offset) \
     this->m_##name = QString::fromUtf8(data + offset)
 
-    GETX(short, ushSongID, 0x0);
-    GETX(int, iVersion, 0x2);
+    GETX(int16_t, ushSongID, 0x0);
+    GETX(int32_t, iVersion, 0x2);
     GETSTR(szSongName, 0x6);
     GETSTR(szPath, 0x46);
     GETSTR(szArtist, 0x86);
     GETSTR(szComposer, 0xc6);
     GETSTR(szSongTime, 0x106);
-    GETX(int, iGameTime, 0x146);
-    GETX(int, iRegion, 0x14a);
-    GETX(int, iStyle, 0x14e);
-    GETX(short, ucIsNew, 0x152);
-    GETX(short, ucIsHot, 0x154);
-    GETX(short, ucIsRecommend, 0x156);
+    GETX(int32_t, iGameTime, 0x146);
+    GETX(int32_t, iRegion, 0x14a);
+    GETX(int32_t, iStyle, 0x14e);
+    GETX(int16_t, ucIsNew, 0x152);
+    GETX(int16_t, ucIsHot, 0x154);
+    GETX(int16_t, ucIsRecommend, 0x156);
     GETSTR(szBPM, 0x158);
-    GETX(short, ucIsOpen, 0x198);
+    GETX(int16_t, ucIsOpen, 0x198);
     GETX(bool, ucCanBuy, 0x19a);
-    GETX(int, iOrderIndex, 0x19b);
+    GETX(int32_t, iOrderIndex, 0x19b);
     GETX(bool, bIsFree, 0x19f);
     GETX(bool, bSongPkg, 0x1a0);
     GETSTR(szFreeBeginTime, 0x1a1);
     GETSTR(szFreeEndTime, 0x1e1);
-    GETX(short, ush4KeyEasy, 0x221);
-    GETX(short, ush4KeyNormal, 0x223);
-    GETX(short, ush4KeyHard, 0x225);
-    GETX(short, ush5KeyEasy, 0x227);
-    GETX(short, ush5KeyNormal, 0x229);
-    GETX(short, ush5KeyHard, 0x22b);
-    GETX(short, ush6KeyEasy, 0x22d);
-    GETX(short, ush6KeyNormal, 0x22f);
-    GETX(short, ush6KeyHard, 0x231);
-    GETX(int, iPrice, 0x233);
+    GETX(int16_t, ush4KeyEasy, 0x221);
+    GETX(int16_t, ush4KeyNormal, 0x223);
+    GETX(int16_t, ush4KeyHard, 0x225);
+    GETX(int16_t, ush5KeyEasy, 0x227);
+    GETX(int16_t, ush5KeyNormal, 0x229);
+    GETX(int16_t, ush5KeyHard, 0x22b);
+    GETX(int16_t, ush6KeyEasy, 0x22d);
+    GETX(int16_t, ush6KeyNormal, 0x22f);
+    GETX(int16_t, ush6KeyHard, 0x231);
+    GETX(int32_t, iPrice, 0x233);
     GETSTR(szNoteNumber, 0x237);
     GETSTR(szProductID, 0x2b7);
-    GETX(int, iVipFlag, 0x337);
+    GETX(int32_t, iVipFlag, 0x337);
     GETX(bool, bIsHide, 0x33b);
     GETX(bool, bIsReward, 0x33c);
     GETX(bool, bIsLevelReward, 0x33d);
@@ -217,9 +217,9 @@ QByteArray RmeSong::RmeSongClientItemStruct::toByteArray() const
 
 #define SETX(name, offset)                                                    \
     do {                                                                      \
-        int length = sizeof(this->m_##name);                                  \
+        size_t length = sizeof(this->m_##name);                               \
         const char *data = reinterpret_cast<const char *>(&(this->m_##name)); \
-        for (int i = 0; i < length; ++i)                                      \
+        for (size_t i = 0; i < length; ++i)                                   \
             arr[offset + i] = data[i];                                        \
     } while (false)
 
@@ -450,26 +450,26 @@ void RmeSong::RmePapaSongClientItemStruct::parseByteArray(const QByteArray &arr)
 #define GETSTR(name, offset) \
     this->m_##name = QString::fromUtf8(data + offset)
 
-    GETX(short, ushSongID, 0x0);
-    GETX(int, iVersion, 0x2);
+    GETX(int16_t, ushSongID, 0x0);
+    GETX(int32_t, iVersion, 0x2);
     GETSTR(szSongName, 0x6);
-    GETX(char, cDifficulty, 0x46);
-    GETX(char, cLevel, 0x47);
+    GETX(int8_t, cDifficulty, 0x46);
+    GETX(int8_t, cLevel, 0x47);
     GETSTR(szPath, 0x48);
     GETSTR(szArtist, 0x88);
     GETSTR(szSongTime, 0xc8);
-    GETX(int, iGameTime, 0x108);
+    GETX(int32_t, iGameTime, 0x108);
     GETSTR(szRegion, 0x10c);
     GETSTR(szStyle, 0x120);
     GETSTR(szBPM, 0x134);
     GETSTR(szNoteNumber, 0x148);
-    GETX(int, iOrderIndex, 0x15c);
-    GETX(char, ucIsOpen, 0x160);
-    GETX(char, ucIsFree, 0x161);
-    GETX(char, ucIsHide, 0x162);
-    GETX(char, ucIsReward, 0x163);
-    GETX(char, ucIsLevelReward, 0x164);
-    GETX(int, iSongType, 0x165);
+    GETX(int32_t, iOrderIndex, 0x15c);
+    GETX(int8_t, ucIsOpen, 0x160);
+    GETX(int8_t, ucIsFree, 0x161);
+    GETX(int8_t, ucIsHide, 0x162);
+    GETX(int8_t, ucIsReward, 0x163);
+    GETX(int8_t, ucIsLevelReward, 0x164);
+    GETX(int32_t, iSongType, 0x165);
 
 #undef GETSTR
 #undef GETX
@@ -483,9 +483,9 @@ QByteArray RmeSong::RmePapaSongClientItemStruct::toByteArray() const
 
 #define SETX(name, offset)                                                    \
     do {                                                                      \
-        int length = sizeof(this->m_##name);                                  \
+        size_t length = sizeof(this->m_##name);                               \
         const char *data = reinterpret_cast<const char *>(&(this->m_##name)); \
-        for (int i = 0; i < length; ++i)                                      \
+        for (size_t i = 0; i < length; ++i)                                   \
             arr[offset + i] = data[i];                                        \
     } while (false)
 

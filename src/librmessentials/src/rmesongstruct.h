@@ -5,6 +5,7 @@
 
 #include <QString>
 #include <QVariantMap>
+#include <cstdint>
 
 #if 0
 class LIBRMESSENTIALS_EXPORT RmeSongClientStruct
@@ -13,16 +14,16 @@ class LIBRMESSENTIALS_EXPORT RmeSongClientStruct
 namespace RmeSong {
 struct LIBRMESSENTIALS_EXPORT RmeSongClientHeaderStruct
 {
-    int Magic;
-    int Version;
-    int Unit;
-    int Count;
+    int32_t Magic;
+    int32_t Version;
+    int32_t Unit;
+    int32_t Count;
     QString MetalibHash;
-    int ResVersion;
+    int32_t ResVersion;
     static const QString CreateTime; // CreateTime?? better static?
     QString ResEncoding;
     QString ContentHash;
-    int DataOffset;
+    int32_t DataOffset;
 
     RmeSongClientHeaderStruct();
 
@@ -34,40 +35,40 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientHeaderStruct
 
 struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
 {
-    short m_ushSongID;
-    int m_iVersion; // what's this?
+    int16_t m_ushSongID;
+    int32_t m_iVersion; // what's this?
     QString m_szSongName;
     QString m_szPath;
     QString m_szArtist;
     QString m_szComposer;
     QString m_szSongTime;
-    int m_iGameTime;
-    int m_iRegion;
-    int m_iStyle;
-    short m_ucIsNew;
-    short m_ucIsHot;
-    short m_ucIsRecommend;
+    int32_t m_iGameTime;
+    int32_t m_iRegion;
+    int32_t m_iStyle;
+    int16_t m_ucIsNew;
+    int16_t m_ucIsHot;
+    int16_t m_ucIsRecommend;
     QString m_szBPM;
-    short m_ucIsOpen;
+    int16_t m_ucIsOpen;
     bool m_ucCanBuy;
-    int m_iOrderIndex;
+    int32_t m_iOrderIndex;
     bool m_bIsFree;
     bool m_bSongPkg;
     QString m_szFreeBeginTime;
     QString m_szFreeEndTime;
-    short m_ush4KeyEasy;
-    short m_ush4KeyNormal;
-    short m_ush4KeyHard;
-    short m_ush5KeyEasy;
-    short m_ush5KeyNormal;
-    short m_ush5KeyHard;
-    short m_ush6KeyEasy;
-    short m_ush6KeyNormal;
-    short m_ush6KeyHard;
-    int m_iPrice;
+    int16_t m_ush4KeyEasy;
+    int16_t m_ush4KeyNormal;
+    int16_t m_ush4KeyHard;
+    int16_t m_ush5KeyEasy;
+    int16_t m_ush5KeyNormal;
+    int16_t m_ush5KeyHard;
+    int16_t m_ush6KeyEasy;
+    int16_t m_ush6KeyNormal;
+    int16_t m_ush6KeyHard;
+    int32_t m_iPrice;
     QString m_szNoteNumber;
     QString m_szProductID;
-    int m_iVipFlag;
+    int32_t m_iVipFlag;
     bool m_bIsHide;
     bool m_bIsReward;
     bool m_bIsLevelReward;
@@ -91,26 +92,26 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
 
 struct LIBRMESSENTIALS_EXPORT RmePapaSongClientItemStruct
 {
-    short m_ushSongID;
-    int m_iVersion; // what's this?
+    int16_t m_ushSongID;
+    int32_t m_iVersion; // what's this?
     QString m_szSongName;
-    char m_cDifficulty;
-    char m_cLevel;
+    int8_t m_cDifficulty;
+    int8_t m_cLevel;
     QString m_szPath;
     QString m_szArtist;
     QString m_szSongTime;
-    int m_iGameTime;
+    int32_t m_iGameTime;
     QString m_szRegion;
     QString m_szStyle;
     QString m_szBPM;
     QString m_szNoteNumber;
-    int m_iOrderIndex;
-    char m_ucIsOpen;
-    char m_ucIsFree;
-    char m_ucIsHide;
-    char m_ucIsReward;
-    char m_ucIsLevelReward;
-    int m_iSongType;
+    int32_t m_iOrderIndex;
+    int8_t m_ucIsOpen;
+    int8_t m_ucIsFree;
+    int8_t m_ucIsHide;
+    int8_t m_ucIsReward;
+    int8_t m_ucIsLevelReward;
+    int32_t m_iSongType;
 
     RmePapaSongClientItemStruct();
 
