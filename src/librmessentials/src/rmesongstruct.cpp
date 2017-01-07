@@ -44,9 +44,9 @@ QByteArray RmeSong::RmeSongClientHeaderStruct::toByteArray() const
 
 #define SETX(name, offset)                                                \
     do {                                                                  \
-        size_t length = sizeof(this->name);                               \
+        int length = sizeof(this->name);                                  \
         const char *data = reinterpret_cast<const char *>(&(this->name)); \
-        for (size_t i = 0; i < length; ++i)                               \
+        for (int i = 0; i < length; ++i)                                  \
             arr[offset + i] = data[i];                                    \
     } while (false)
 
@@ -217,9 +217,9 @@ QByteArray RmeSong::RmeSongClientItemStruct::toByteArray() const
 
 #define SETX(name, offset)                                                    \
     do {                                                                      \
-        size_t length = sizeof(this->m_##name);                               \
+        int length = sizeof(this->m_##name);                                  \
         const char *data = reinterpret_cast<const char *>(&(this->m_##name)); \
-        for (size_t i = 0; i < length; ++i)                                   \
+        for (int i = 0; i < length; ++i)                                      \
             arr[offset + i] = data[i];                                        \
     } while (false)
 
@@ -483,9 +483,9 @@ QByteArray RmeSong::RmePapaSongClientItemStruct::toByteArray() const
 
 #define SETX(name, offset)                                                    \
     do {                                                                      \
-        size_t length = sizeof(this->m_##name);                               \
+        int length = sizeof(this->m_##name);                                  \
         const char *data = reinterpret_cast<const char *>(&(this->m_##name)); \
-        for (size_t i = 0; i < length; ++i)                                   \
+        for (int i = 0; i < length; ++i)                                      \
             arr[offset + i] = data[i];                                        \
     } while (false)
 
