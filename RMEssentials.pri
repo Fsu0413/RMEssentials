@@ -14,7 +14,7 @@ android || ios {
     CONFIG += use_quazip
 }
 
-staticlib: DEFINES += LIBRMESSETIALS_STATIC
+staticlib: DEFINES += LIBRMESSENTIALS_STATIC
 
 !isEmpty($$(PREFIX)) {
     CONFIG += install_build
