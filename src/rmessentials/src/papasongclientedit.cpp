@@ -55,7 +55,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
-    connect(funcBtn, &QPushButton::clicked, this, &PapaSongClientEditDialog::popup);
+    funcBtn->setMenu(m_popup);
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
 
@@ -347,11 +347,6 @@ void PapaSongClientEditDialog::readCurrent()
 #undef RP_BL
 #undef RP_ST
 #undef RP_NM
-}
-
-void PapaSongClientEditDialog::popup()
-{
-    m_popup->popup(QCursor::pos());
 }
 
 void PapaSongClientEditDialog::calculateSongTime()

@@ -66,7 +66,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
-    connect(funcBtn, &QPushButton::clicked, this, &SongClientEditDialog::popup);
+    funcBtn->setMenu(m_popup);
 
     szSongName = new QLineEdit;
     szPath = new QLineEdit;
@@ -505,11 +505,6 @@ void SongClientEditDialog::allSongUnlock()
     }
 
     readCurrent();
-}
-
-void SongClientEditDialog::popup()
-{
-    m_popup->popup(QCursor::pos());
 }
 
 void SongClientEditDialog::calculateSongTime()

@@ -39,8 +39,6 @@ private slots:
     void search();
     void searchResultDblClicked(QListWidgetItem *index);
 
-    void popup();
-
 private:
     // controls
     QLineEdit *ushSongID; // Readonly, User Making note better > 800
