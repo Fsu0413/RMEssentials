@@ -66,7 +66,7 @@ MainDialog::MainDialog(QWidget *parent)
     static const QString dlpasswd = QStringLiteral("http://fsu0413.github.io/RMEssentials/dlpasswd");
 
     RmeDownloader *downloader = new RmeDownloader;
-    downloader << versioninfo << whatsnew;
+    downloader << versioninfo << whatsnew << dlurl << dlpasswd;
 
     downloader->setSavePath(QStringLiteral("RMESSENTIALS"));
 
