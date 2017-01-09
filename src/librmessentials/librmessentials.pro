@@ -39,14 +39,14 @@ SOURCES += \
     src/rmeuncompresser.cpp \
     src/rmeutils.cpp
 
-generateHeaders.target = $$OUT_PWD/../dist/include/RMEssentials/.timestamp
+generateHeaders.target = $$system_path($$OUT_PWD/../dist/include/RMEssentials/.timestamp)
 !build_pass: mkpath($$OUT_PWD/../dist/include/RMEssentials)
 
 contains(QMAKE_HOST.os, "Windows"): generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$OUT_PWD/../dist/include/RMEssentials) -f $$system_path($$PWD/src/)
 else: generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$OUT_PWD/../dist/include/RMEssentials -f $$PWD/src/
 
 HEADERS_ABSOLUTE =
-for (header, HEADERS): HEADERS_ABSOLUTE += $$absolute_path($$header)
+for (header, HEADERS): HEADERS_ABSOLUTE += $$system_path($$absolute_path($$header))
 
 generateHeaders.depends = $$HEADERS_ABSOLUTE
 

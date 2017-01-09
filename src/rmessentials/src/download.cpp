@@ -286,12 +286,12 @@ void DownloadDialog::downloadList()
     downloader->start();
 #else
 #ifdef Q_OS_ANDROID
-    QFile::remove(RmeDownloader::downloadPath() + "MD5List.xml");
-    QFile::remove(RmeDownloader::downloadPath() + "mrock_song_client_android.bin");
-    QFile::remove(RmeDownloader::downloadPath() + "mrock_papasong_client.bin");
-    QFile::copy(RmeDownloader::downloadPath() + "../MD5List.xml", RmeDownloader::downloadPath() + "MD5List.xml");
-    QFile::copy(RmeDownloader::downloadPath() + "../mrock_song_client_android.bin", RmeDownloader::downloadPath() + "mrock_song_client_android.bin");
-    QFile::copy(RmeDownloader::downloadPath() + "../mrock_papasong_client.bin", RmeDownloader::downloadPath() + "mrock_papasong_client.bin");
+    QFile::remove(RmeDownloader::downloadPath() + QStringLiteral("MD5List.xml"));
+    QFile::remove(RmeDownloader::downloadPath() + QStringLiteral("mrock_song_client_android.bin"));
+    QFile::remove(RmeDownloader::downloadPath() + QStringLiteral("mrock_papasong_client.bin"));
+    QFile::copy(RmeDownloader::downloadPath() + QStringLiteral("../MD5List.xml"), RmeDownloader::downloadPath() + QStringLiteral("MD5List.xml"));
+    QFile::copy(RmeDownloader::downloadPath() + QStringLiteral("../mrock_song_client_android.bin"), RmeDownloader::downloadPath() + QStringLiteral("mrock_song_client_android.bin"));
+    QFile::copy(RmeDownloader::downloadPath() + QStringLiteral("../mrock_papasong_client.bin"), RmeDownloader::downloadPath() + QStringLiteral("mrock_papasong_client.bin"));
 #endif
     loadPaths();
 #endif

@@ -163,7 +163,7 @@ QString RmeDownloader::downloadPath()
         currentDir.cd("RMEssentials");
     }
 #elif defined(Q_OS_ANDROID)
-    QDir currentDir("/sdcard/RM/res/song");
+    QDir currentDir(QStringLiteral("/sdcard/RM/res/song"));
     if (!currentDir.exists())
         return QString();
 #endif
