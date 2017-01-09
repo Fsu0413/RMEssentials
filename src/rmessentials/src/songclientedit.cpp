@@ -25,17 +25,59 @@
 
 using namespace RmeSong;
 
+struct SongClientEditDialogControls
+{
+    QLineEdit *ushSongID; // Readonly, User Making note better > 800
+    QLineEdit *iVersion; // what's this?
+    QLineEdit *szSongName;
+    QLineEdit *szPath;
+    QLineEdit *szArtist;
+    QLineEdit *szComposer;
+    QLabel *szSongTime; // Auto Generate
+    QLineEdit *iGameTime; // Number only
+    QLineEdit *iRegion; // QComboBox?
+    QLineEdit *iStyle; // QComboBox?
+    QCheckBox *ucIsNew;
+    QCheckBox *ucIsHot;
+    QCheckBox *ucIsRecommend;
+    QLineEdit *szBPM; // Number only
+    QCheckBox *ucIsOpen;
+    QCheckBox *ucCanBuy;
+    QLineEdit *iOrderIndex; // Number only
+    QCheckBox *bIsFree;
+    QCheckBox *bSongPkg;
+    QLineEdit *szFreeBeginTime; // better keep empty
+    QLineEdit *szFreeEndTime; // better keep empty
+    QLineEdit *ush4KeyEasy; // Number only
+    QLineEdit *ush4KeyNormal; // Number only
+    QLineEdit *ush4KeyHard; // Number only
+    QLineEdit *ush5KeyEasy; // Number only
+    QLineEdit *ush5KeyNormal; // Number only
+    QLineEdit *ush5KeyHard; // Number only
+    QLineEdit *ush6KeyEasy; // Number only
+    QLineEdit *ush6KeyNormal; // Number only
+    QLineEdit *ush6KeyHard; // Number only
+    QLineEdit *iPrice; // Number only
+    QLineEdit *szNoteNumber; // Number only
+    QLineEdit *szProductID; // better keep empty
+    QCheckBox *iVipFlag;
+    QCheckBox *bIsHide;
+    QCheckBox *bIsReward;
+    QCheckBox *bIsLevelReward;
+};
+
 SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     : QDialog(parent)
     , m_currentIndex(-1)
     , m_isLoaded(false)
+    , m_controls(new SongClientEditDialogControls)
 {
     setWindowTitle(tr("Rhythm Master Song Client Editor"));
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
 
-    ushSongID = new QLineEdit;
-    ushSongID->setReadOnly(true);
+    m_controls->ushSongID = new QLineEdit;
+    m_controls->ushSongID->setReadOnly(true);
     QPushButton *prevBtn = new QPushButton(tr("prev"));
     prevBtn->setAutoDefault(false);
     prevBtn->setDefault(false);
@@ -73,82 +115,82 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     funcBtn->setDefault(false);
     funcBtn->setMenu(m_popup);
 
-    szSongName = new QLineEdit;
-    szPath = new QLineEdit;
+    m_controls->szSongName = new QLineEdit;
+    m_controls->szPath = new QLineEdit;
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
-    szPath->setValidator(szPathValidator);
-    szArtist = new QLineEdit;
-    szComposer = new QLineEdit;
-    iGameTime = new QLineEdit;
+    m_controls->szPath->setValidator(szPathValidator);
+    m_controls->szArtist = new QLineEdit;
+    m_controls->szComposer = new QLineEdit;
+    m_controls->iGameTime = new QLineEdit;
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
-    iGameTime->setValidator(iGameTimeValidator);
-    connect(iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::calculateSongTime);
-    szSongTime = new QLabel;
-    iRegion = new QLineEdit;
+    m_controls->iGameTime->setValidator(iGameTimeValidator);
+    connect(m_controls->iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::calculateSongTime);
+    m_controls->szSongTime = new QLabel;
+    m_controls->iRegion = new QLineEdit;
     QIntValidator *iRegionValidator = new QIntValidator(0, 11, this);
-    iRegion->setValidator(iRegionValidator);
-    iStyle = new QLineEdit;
+    m_controls->iRegion->setValidator(iRegionValidator);
+    m_controls->iStyle = new QLineEdit;
     QIntValidator *iStyleValidator = new QIntValidator(0, 20, this);
-    iStyle->setValidator(iStyleValidator);
-    szBPM = new QLineEdit;
+    m_controls->iStyle->setValidator(iStyleValidator);
+    m_controls->szBPM = new QLineEdit;
     QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
-    szBPM->setValidator(szBPMValidator);
+    m_controls->szBPM->setValidator(szBPMValidator);
 
-    ucIsNew = new QCheckBox(QStringLiteral("ucIsNew"));
-    ucIsHot = new QCheckBox(QStringLiteral("ucIsHot"));
-    ucIsRecommend = new QCheckBox(QStringLiteral("ucIsRecommend"));
-    ucIsOpen = new QCheckBox(QStringLiteral("ucIsOpen"));
-    ucCanBuy = new QCheckBox(QStringLiteral("ucCanBuy"));
-    bIsFree = new QCheckBox(QStringLiteral("bIsFree"));
-    bSongPkg = new QCheckBox(QStringLiteral("bSongPkg"));
+    m_controls->ucIsNew = new QCheckBox(QStringLiteral("ucIsNew"));
+    m_controls->ucIsHot = new QCheckBox(QStringLiteral("ucIsHot"));
+    m_controls->ucIsRecommend = new QCheckBox(QStringLiteral("ucIsRecommend"));
+    m_controls->ucIsOpen = new QCheckBox(QStringLiteral("ucIsOpen"));
+    m_controls->ucCanBuy = new QCheckBox(QStringLiteral("ucCanBuy"));
+    m_controls->bIsFree = new QCheckBox(QStringLiteral("bIsFree"));
+    m_controls->bSongPkg = new QCheckBox(QStringLiteral("bSongPkg"));
 
-    iOrderIndex = new QLineEdit;
+    m_controls->iOrderIndex = new QLineEdit;
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
-    iOrderIndex->setValidator(iOrderIndexValidator);
-    szFreeBeginTime = new QLineEdit;
-    szFreeBeginTime->setPlaceholderText(tr("Better keep empty"));
-    szFreeEndTime = new QLineEdit;
-    szFreeEndTime->setPlaceholderText(tr("Better keep empty"));
+    m_controls->iOrderIndex->setValidator(iOrderIndexValidator);
+    m_controls->szFreeBeginTime = new QLineEdit;
+    m_controls->szFreeBeginTime->setPlaceholderText(tr("Better keep empty"));
+    m_controls->szFreeEndTime = new QLineEdit;
+    m_controls->szFreeEndTime->setPlaceholderText(tr("Better keep empty"));
 
     QIntValidator *hardLevelValidator = new QIntValidator(1, 10, this);
-    ush4KeyEasy = new QLineEdit;
-    ush4KeyEasy->setValidator(hardLevelValidator);
-    ush4KeyNormal = new QLineEdit;
-    ush4KeyNormal->setValidator(hardLevelValidator);
-    ush4KeyHard = new QLineEdit;
-    ush4KeyHard->setValidator(hardLevelValidator);
-    ush5KeyEasy = new QLineEdit;
-    ush5KeyEasy->setValidator(hardLevelValidator);
-    ush5KeyNormal = new QLineEdit;
-    ush5KeyNormal->setValidator(hardLevelValidator);
-    ush5KeyHard = new QLineEdit;
-    ush5KeyHard->setValidator(hardLevelValidator);
-    ush6KeyEasy = new QLineEdit;
-    ush6KeyEasy->setValidator(hardLevelValidator);
-    ush6KeyNormal = new QLineEdit;
-    ush6KeyNormal->setValidator(hardLevelValidator);
-    ush6KeyHard = new QLineEdit;
-    ush6KeyHard->setValidator(hardLevelValidator);
+    m_controls->ush4KeyEasy = new QLineEdit;
+    m_controls->ush4KeyEasy->setValidator(hardLevelValidator);
+    m_controls->ush4KeyNormal = new QLineEdit;
+    m_controls->ush4KeyNormal->setValidator(hardLevelValidator);
+    m_controls->ush4KeyHard = new QLineEdit;
+    m_controls->ush4KeyHard->setValidator(hardLevelValidator);
+    m_controls->ush5KeyEasy = new QLineEdit;
+    m_controls->ush5KeyEasy->setValidator(hardLevelValidator);
+    m_controls->ush5KeyNormal = new QLineEdit;
+    m_controls->ush5KeyNormal->setValidator(hardLevelValidator);
+    m_controls->ush5KeyHard = new QLineEdit;
+    m_controls->ush5KeyHard->setValidator(hardLevelValidator);
+    m_controls->ush6KeyEasy = new QLineEdit;
+    m_controls->ush6KeyEasy->setValidator(hardLevelValidator);
+    m_controls->ush6KeyNormal = new QLineEdit;
+    m_controls->ush6KeyNormal->setValidator(hardLevelValidator);
+    m_controls->ush6KeyHard = new QLineEdit;
+    m_controls->ush6KeyHard->setValidator(hardLevelValidator);
 
-    szNoteNumber = new QLineEdit;
-    szNoteNumber->setPlaceholderText(QStringLiteral("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH"));
-    szNoteNumber->setInputMask(QStringLiteral("09999,09999,09999,09999,09999,09999,09999,09999,09999"));
+    m_controls->szNoteNumber = new QLineEdit;
+    m_controls->szNoteNumber->setPlaceholderText(QStringLiteral("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH"));
+    m_controls->szNoteNumber->setInputMask(QStringLiteral("09999,09999,09999,09999,09999,09999,09999,09999,09999"));
 
-    iPrice = new QLineEdit;
-    iPrice->setPlaceholderText(tr("Number only, Better keep empty"));
-    szProductID = new QLineEdit;
-    szProductID->setPlaceholderText(tr("Better keep empty"));
-    iVipFlag = new QCheckBox(QStringLiteral("iVipFlag"));
+    m_controls->iPrice = new QLineEdit;
+    m_controls->iPrice->setPlaceholderText(tr("Number only, Better keep empty"));
+    m_controls->szProductID = new QLineEdit;
+    m_controls->szProductID->setPlaceholderText(tr("Better keep empty"));
+    m_controls->iVipFlag = new QCheckBox(QStringLiteral("iVipFlag"));
 
-    bIsHide = new QCheckBox(QStringLiteral("bIsHide"));
-    bIsReward = new QCheckBox(QStringLiteral("bIsReward"));
-    bIsLevelReward = new QCheckBox(QStringLiteral("bIsLevelReward"));
-    iVersion = new QLineEdit;
+    m_controls->bIsHide = new QCheckBox(QStringLiteral("bIsHide"));
+    m_controls->bIsReward = new QCheckBox(QStringLiteral("bIsReward"));
+    m_controls->bIsLevelReward = new QCheckBox(QStringLiteral("bIsLevelReward"));
+    m_controls->iVersion = new QLineEdit;
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
-    iVersion->setValidator(iVersionValidator);
+    m_controls->iVersion->setValidator(iVersionValidator);
 
 // for QFormLayout
-#define AR(l, x) l->addRow(QStringLiteral(#x), x)
+#define AR(l, x) l->addRow(QStringLiteral(#x), m_controls->x)
 
     // 1st line
     QHBoxLayout *hlayout1 = new QHBoxLayout;
@@ -184,13 +226,13 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     // 5th line...
     QHBoxLayout *hlayout5 = new QHBoxLayout;
-    hlayout5->addWidget(ucIsNew);
-    hlayout5->addWidget(ucIsHot);
-    hlayout5->addWidget(ucIsRecommend);
-    hlayout5->addWidget(ucIsOpen);
-    hlayout5->addWidget(ucCanBuy);
-    hlayout5->addWidget(bIsFree);
-    hlayout5->addWidget(bSongPkg);
+    hlayout5->addWidget(m_controls->ucIsNew);
+    hlayout5->addWidget(m_controls->ucIsHot);
+    hlayout5->addWidget(m_controls->ucIsRecommend);
+    hlayout5->addWidget(m_controls->ucIsOpen);
+    hlayout5->addWidget(m_controls->ucCanBuy);
+    hlayout5->addWidget(m_controls->bIsFree);
+    hlayout5->addWidget(m_controls->bSongPkg);
 
     // 6th, 7th, 8th, 9th lines...
     QHBoxLayout *hlayout6789 = new QHBoxLayout;
@@ -225,15 +267,15 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     AR(flayout9, szProductID);
     hlayout11->addLayout(flayout8);
     hlayout11->addLayout(flayout9);
-    hlayout11->addWidget(iVipFlag);
+    hlayout11->addWidget(m_controls->iVipFlag);
 
     // 12th line...
     QHBoxLayout *hlayout12 = new QHBoxLayout;
     QFormLayout *flayout10 = new QFormLayout;
     AR(flayout10, iVersion);
-    hlayout12->addWidget(bIsHide);
-    hlayout12->addWidget(bIsReward);
-    hlayout12->addWidget(bIsLevelReward);
+    hlayout12->addWidget(m_controls->bIsHide);
+    hlayout12->addWidget(m_controls->bIsReward);
+    hlayout12->addWidget(m_controls->bIsLevelReward);
     hlayout12->addLayout(flayout10);
 
     leftLayout->addLayout(hlayout234);
@@ -256,13 +298,13 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     AR(flayout1, szBPM);
     vlayout->addLayout(flayout1);
 
-    vlayout->addWidget(ucIsNew);
-    vlayout->addWidget(ucIsHot);
-    vlayout->addWidget(ucIsRecommend);
-    vlayout->addWidget(ucIsOpen);
-    vlayout->addWidget(ucCanBuy);
-    vlayout->addWidget(bIsFree);
-    vlayout->addWidget(bSongPkg);
+    vlayout->addWidget(m_controls->ucIsNew);
+    vlayout->addWidget(m_controls->ucIsHot);
+    vlayout->addWidget(m_controls->ucIsRecommend);
+    vlayout->addWidget(m_controls->ucIsOpen);
+    vlayout->addWidget(m_controls->ucCanBuy);
+    vlayout->addWidget(m_controls->bIsFree);
+    vlayout->addWidget(m_controls->bSongPkg);
 
     QFormLayout *flayout2 = new QFormLayout;
     AR(flayout2, iOrderIndex);
@@ -282,10 +324,10 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     AR(flayout2, szProductID);
     vlayout->addLayout(flayout2);
 
-    vlayout->addWidget(iVipFlag);
-    vlayout->addWidget(bIsHide);
-    vlayout->addWidget(bIsReward);
-    vlayout->addWidget(bIsLevelReward);
+    vlayout->addWidget(m_controls->iVipFlag);
+    vlayout->addWidget(m_controls->bIsHide);
+    vlayout->addWidget(m_controls->bIsReward);
+    vlayout->addWidget(m_controls->bIsLevelReward);
 
     QFormLayout *flayout3 = new QFormLayout;
     AR(flayout3, iVersion);
@@ -341,6 +383,11 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     alllayout->addLayout(rightLayout);
 
     setLayout(alllayout);
+}
+
+SongClientEditDialog::~SongClientEditDialog()
+{
+    delete m_controls;
 }
 
 bool SongClientEditDialog::reloadFile()
@@ -431,9 +478,9 @@ void SongClientEditDialog::readCurrent()
 {
     const RmeSongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
-#define RP_NM(p) p->setText(QString::number(c.m_##p))
-#define RP_ST(p) p->setText(c.m_##p)
-#define RP_BL(p) p->setChecked(c.m_##p)
+#define RP_NM(p) m_controls->p->setText(QString::number(c.m_##p))
+#define RP_ST(p) m_controls->p->setText(c.m_##p)
+#define RP_BL(p) m_controls->p->setChecked(c.m_##p)
 
     RP_NM(ushSongID);
     RP_NM(iVersion);
@@ -514,7 +561,7 @@ void SongClientEditDialog::allSongUnlock()
 
 void SongClientEditDialog::calculateSongTime()
 {
-    int gameTime = iGameTime->text().toInt();
+    int gameTime = m_controls->iGameTime->text().toInt();
     float songTime = gameTime / 1440.f;
     QString r = QString::number(songTime);
     if (r.length() > 8) {
@@ -525,18 +572,18 @@ void SongClientEditDialog::calculateSongTime()
         }
     }
     r = r.left(8);
-    szSongTime->setText(r);
+    m_controls->szSongTime->setText(r);
 }
 
 void SongClientEditDialog::saveCurrent()
 {
     RmeSongClientItemStruct &c = *(m_file.song(m_currentIndex));
 
-#define SP_NS(p) c.m_##p = p->text().toShort()
-#define SP_NI(p) c.m_##p = p->text().toInt()
-#define SP_ST(p) c.m_##p = p->text()
-#define SP_BN(p) c.m_##p = (p->isChecked() ? 1 : 0)
-#define SP_BL(p) c.m_##p = p->isChecked()
+#define SP_NS(p) c.m_##p = m_controls->p->text().toShort()
+#define SP_NI(p) c.m_##p = m_controls->p->text().toInt()
+#define SP_ST(p) c.m_##p = m_controls->p->text()
+#define SP_BN(p) c.m_##p = (m_controls->p->isChecked() ? 1 : 0)
+#define SP_BL(p) c.m_##p = m_controls->p->isChecked()
 
     SP_NS(ushSongID);
     SP_NI(iVersion);

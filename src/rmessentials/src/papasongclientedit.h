@@ -12,13 +12,15 @@ class QMenu;
 class QListWidget;
 class QListWidgetItem;
 
+struct PapaSongClientEditDialogControls;
+
 class PapaSongClientEditDialog : public QDialog
 {
     Q_OBJECT
 
 public:
     PapaSongClientEditDialog(QWidget *parent = nullptr);
-
+    ~PapaSongClientEditDialog() override;
     bool loadFile();
 
 private:
@@ -41,28 +43,7 @@ private slots:
     void applyPatch();
 
 private:
-    // controls
-    QLineEdit *ushSongID; // Readonly, User Making note better > 800
-    QLineEdit *iVersion; // what's this?
-    QLineEdit *szSongName;
-    QLineEdit *szArtist;
-    QLineEdit *cDifficulty;
-    QLineEdit *cLevel;
-    QLineEdit *szPath;
-    QLabel *szSongTime; // Auto Generate
-    QLineEdit *iGameTime; // Number only
-    QLineEdit *szRegion;
-    QLineEdit *szStyle;
-    QLineEdit *szBPM; // Number only
-    QLineEdit *szNoteNumber; // Number only
-    QLineEdit *iOrderIndex; // Number only
-    QCheckBox *ucIsOpen; // convert to bool? using QCheckBox?
-    QCheckBox *ucIsFree;
-    QCheckBox *ucIsHide;
-    QCheckBox *ucIsReward;
-    QCheckBox *ucIsLevelReward; // OBSOLETE???
-    QLineEdit *iSongType; // better keep empty
-
+    PapaSongClientEditDialogControls *m_controls;
     QMenu *m_popup;
     QLineEdit *m_searchEdit;
     QListWidget *m_searchList;
