@@ -1,6 +1,7 @@
 #ifndef LIBRMEGLOBAL_H
 #define LIBRMEGLOBAL_H
 
+#include <QDebug>
 #include <QtGlobal>
 
 // We assume the byte order is little endian.

@@ -1,14 +1,16 @@
 #include "rmesongfile.h"
 #include "rmesongstruct.h"
 
-using namespace RmeSong;
-
 #include <QIODevice>
+#include <QJsonDocument>
+#include <QMap>
+
+using namespace RmeSong;
 
 class RmeSong::RmeSongClientFilePrivate
 {
 public:
-    QList<RmeSongClientItemStruct *> m_songsList;
+    QMap<int16_t, RmeSongClientItemStruct *> m_songsList;
     RmeSongClientHeaderStruct *m_header;
     void cleanup();
 };
@@ -44,6 +46,7 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
         if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
             d->cleanup();
             QByteArray ba = input->readAll();
+            input->close();
             if (ba.size() % 0x33e == 0x88) {
                 if (d->m_header == nullptr)
                     d->m_header = new RmeSongClientHeaderStruct;
@@ -53,12 +56,10 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
                     QByteArray sp = ba.mid(i, 0x33e);
                     RmeSongClientItemStruct *ss = new RmeSongClientItemStruct;
                     ss->parseByteArray(sp);
-                    d->m_songsList << ss;
+                    d->m_songsList[ss->m_ushSongID] = ss;
                 }
-                input->close();
                 return true;
             }
-            input->close();
         }
     } else if (format == XmlFormat) {
         // to be realized
@@ -95,13 +96,13 @@ bool RmeSong::RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileForm
 RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n)
 {
     Q_D(RmeSongClientFile);
-    return d->m_songsList.value(n);
+    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
 }
 
 const RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n) const
 {
     Q_D(const RmeSongClientFile);
-    return d->m_songsList.value(n);
+    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
 }
 
 const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmeSongClientFile::fileHeader() const
@@ -137,10 +138,63 @@ QList<int> RmeSong::RmeSongClientFile::search(const QString &cond) const
     return r;
 }
 
+bool RmeSongClientFile::savePatchToDevice(QIODevice *output, const RmeSongClientFile &orig) const
+{
+    Q_D(const RmeSongClientFile);
+    if (output == nullptr || d->m_header == nullptr || orig.d_ptr->m_header == nullptr)
+        return false;
+
+    QJsonObject ob;
+    foreach (int16_t id, d->m_songsList.keys()) {
+        if (orig.d_ptr->m_songsList.contains(id)) {
+            QJsonObject ob1 = d->m_songsList.value(id)->createPatch(*orig.d_ptr->m_songsList.value(id));
+            if (!ob1.isEmpty())
+                ob[QString::number(id)] = ob1;
+        }
+    }
+
+    if (ob.isEmpty())
+        return false;
+
+    if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        QJsonDocument doc(ob);
+        output->write(doc.toJson(QJsonDocument::Indented));
+        output->close();
+    } else
+        return false;
+
+    return true;
+}
+
+bool RmeSongClientFile::applyPatchFromDevice(QIODevice *input)
+{
+    Q_D(RmeSongClientFile);
+    if (input == nullptr || d->m_header == nullptr)
+        return false;
+    if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
+        QByteArray arr = input->readAll();
+        input->close();
+        QJsonParseError err;
+        QJsonDocument doc = QJsonDocument::fromJson(arr, &err);
+        if (err.error == QJsonParseError::NoError) {
+            QJsonObject ob = doc.object();
+            foreach (const QString &key, ob.keys()) {
+                bool ok = false;
+                int16_t id = key.toInt(&ok);
+                if (ok && d->m_songsList.contains(id))
+                    d->m_songsList[id]->applyPatch(ob.value(key).toObject());
+            }
+        } else
+            return false;
+    } else
+        return false;
+    return true;
+}
+
 int RmeSong::RmeSongClientFile::songCount() const
 {
     Q_D(const RmeSongClientFile);
-    return d->m_songsList.length();
+    return d->m_songsList.size();
 }
 
 void RmeSong::RmeSongClientFile::mergeSongList(RmeSongClientFile *file2)
@@ -153,20 +207,16 @@ void RmeSong::RmeSongClientFile::mergeSongList(RmeSongClientFile *file2)
     d->m_header = file2->d_ptr->m_header;
     file2->d_ptr->m_header = nullptr;
 
-    QList<RmeSongClientItemStruct *> s = d->m_songsList;
+    QMap<int16_t, RmeSongClientItemStruct *> s = d->m_songsList;
     d->m_songsList = file2->d_ptr->m_songsList;
     file2->d_ptr->m_songsList.clear();
     delete file2;
 
-    int j = 0;
-    for (int i = 0; i < d->m_songsList.length(); ++i) {
-        if (s.value(j)->m_ushSongID == d->m_songsList.value(i)->m_ushSongID) {
-            delete d->m_songsList.value(i);
-            d->m_songsList[i] = s.value(j);
-            s[j] = nullptr;
-            ++j;
-            if (j >= s.length())
-                break;
+    foreach (int16_t id, d->m_songsList.keys()) {
+        if (s.contains(id)) {
+            delete d->m_songsList.value(id, nullptr);
+            d->m_songsList[id] = s.value(id);
+            s.remove(id);
         }
     }
 
@@ -176,7 +226,7 @@ void RmeSong::RmeSongClientFile::mergeSongList(RmeSongClientFile *file2)
 class RmeSong::RmePapaSongClientFilePrivate
 {
 public:
-    QList<RmePapaSongClientItemStruct *> m_songsList;
+    QMap<int16_t, RmePapaSongClientItemStruct *> m_songsList;
     RmeSongClientHeaderStruct *m_header;
     void cleanup();
 };
@@ -212,6 +262,7 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
         if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
             d->cleanup();
             QByteArray ba = input->readAll();
+            input->close();
             if (ba.size() % 0x169 == 0x88) {
                 if (d->m_header == nullptr)
                     d->m_header = new RmeSongClientHeaderStruct;
@@ -221,12 +272,10 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                     QByteArray sp = ba.mid(i, 0x169);
                     RmePapaSongClientItemStruct *ss = new RmePapaSongClientItemStruct;
                     ss->parseByteArray(sp);
-                    d->m_songsList << ss;
+                    d->m_songsList[ss->m_ushSongID] = ss;
                 }
-                input->close();
                 return true;
             }
-            input->close();
         }
     } else if (format == XmlFormat) {
         // to be realized
@@ -262,25 +311,19 @@ bool RmeSong::RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFile
 RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n)
 {
     Q_D(RmePapaSongClientFile);
-    return d->m_songsList.value(n);
+    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
 }
 
 const RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n) const
 {
     Q_D(const RmePapaSongClientFile);
-    return d->m_songsList.value(n);
+    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
 }
 
 const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmePapaSongClientFile::fileHeader() const
 {
     Q_D(const RmePapaSongClientFile);
     return *d->m_header;
-}
-
-int RmeSong::RmePapaSongClientFile::songCount() const
-{
-    Q_D(const RmePapaSongClientFile);
-    return d->m_songsList.length();
 }
 
 QList<int> RmeSong::RmePapaSongClientFile::search(const QString &cond) const
@@ -308,4 +351,63 @@ QList<int> RmeSong::RmePapaSongClientFile::search(const QString &cond) const
     }
 
     return r;
+}
+
+bool RmePapaSongClientFile::savePatchToDevice(QIODevice *output, const RmePapaSongClientFile &orig) const
+{
+    Q_D(const RmePapaSongClientFile);
+    if (output == nullptr || d->m_header == nullptr || orig.d_ptr->m_header == nullptr)
+        return false;
+
+    QJsonObject ob;
+    foreach (int16_t id, d->m_songsList.keys()) {
+        if (orig.d_ptr->m_songsList.contains(id)) {
+            QJsonObject ob1 = d->m_songsList.value(id)->createPatch(*orig.d_ptr->m_songsList.value(id));
+            if (!ob1.isEmpty())
+                ob[QString::number(id)] = ob1;
+        }
+    }
+
+    if (ob.isEmpty())
+        return false;
+
+    if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        QJsonDocument doc(ob);
+        output->write(doc.toJson(QJsonDocument::Indented));
+        output->close();
+    } else
+        return false;
+
+    return true;
+}
+
+bool RmePapaSongClientFile::applyPatchFromDevice(QIODevice *input)
+{
+    Q_D(RmePapaSongClientFile);
+    if (input == nullptr || d->m_header == nullptr)
+        return false;
+    if ((input->isOpen() && input->isReadable()) || input->open(QIODevice::ReadOnly)) {
+        QByteArray arr = input->readAll();
+        input->close();
+        QJsonParseError err;
+        QJsonDocument doc = QJsonDocument::fromJson(arr, &err);
+        if (err.error == QJsonParseError::NoError) {
+            QJsonObject ob = doc.object();
+            foreach (const QString &key, ob.keys()) {
+                bool ok = false;
+                int16_t id = key.toInt(&ok);
+                if (ok && d->m_songsList.contains(id))
+                    d->m_songsList[id]->applyPatch(ob.value(key).toObject());
+            }
+        } else
+            return false;
+    } else
+        return false;
+    return true;
+}
+
+int RmeSong::RmePapaSongClientFile::songCount() const
+{
+    Q_D(const RmePapaSongClientFile);
+    return d->m_songsList.size();
 }

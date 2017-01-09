@@ -387,6 +387,148 @@ QVariantMap RmeSong::RmeSongClientItemStruct::toMap() const
     return map;
 }
 
+namespace {
+const QStringList NoteNumSuffix = {
+    QStringLiteral("_4KeyEasy"),
+    QStringLiteral("_4KeyNormal"),
+    QStringLiteral("_4KeyHard"),
+    QStringLiteral("_5KeyEasy"),
+    QStringLiteral("_5KeyNormal"),
+    QStringLiteral("_5KeyHard"),
+    QStringLiteral("_6KeyEasy"),
+    QStringLiteral("_6KeyNormal"),
+    QStringLiteral("_6KeyHard")
+};
+}
+
+QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSongClientItemStruct &orig) const
+{
+    if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
+        return QJsonObject();
+
+    QJsonObject ob;
+
+    ob[QStringLiteral("ushSongID")] = QJsonValue(static_cast<int>(m_ushSongID));
+    ob[QStringLiteral("szPath")] = QJsonValue(m_szPath);
+
+#define SETOTH(name)                                                \
+    do {                                                            \
+        if (this->m_##name != orig.m_##name)                        \
+            ob[QStringLiteral(#name)] = QJsonValue(this->m_##name); \
+    } while (false)
+
+#define SETINT(name)                                                                  \
+    do {                                                                              \
+        if (this->m_##name != orig.m_##name)                                          \
+            ob[QStringLiteral(#name)] = QJsonValue(static_cast<int>(this->m_##name)); \
+    } while (false)
+
+    SETOTH(szSongName);
+    SETOTH(szArtist);
+    SETOTH(szSongTime);
+    SETINT(iGameTime);
+    SETOTH(szBPM);
+    SETINT(iOrderIndex);
+    SETINT(ush4KeyEasy);
+    SETINT(ush4KeyNormal);
+    SETINT(ush4KeyHard);
+    SETINT(ush5KeyEasy);
+    SETINT(ush5KeyNormal);
+    SETINT(ush5KeyHard);
+    SETINT(ush6KeyEasy);
+    SETINT(ush6KeyNormal);
+    SETINT(ush6KeyHard);
+
+#undef SETOTH
+#undef SETINT
+
+    // NoteNumber split
+
+    QStringList noteNums1str = m_szNoteNumber.split(QLatin1Char(','), QString::SkipEmptyParts);
+    QStringList noteNums2str = orig.m_szNoteNumber.split(QLatin1Char(','), QString::SkipEmptyParts);
+
+    QList<int> noteNums1;
+    QList<int> noteNums2;
+    foreach (const QString &s, noteNums1str)
+        noteNums1 << s.toInt();
+    while (noteNums1.length() < 9)
+        noteNums1 << 0;
+
+    foreach (const QString &s, noteNums2str)
+        noteNums2 << s.toInt();
+    while (noteNums2.length() < 9)
+        noteNums2 << 0;
+
+    for (int i = 0; i < 9; ++i) {
+        if (noteNums1.value(i) != noteNums2.value(i))
+            ob[QStringLiteral("szNoteNumber") + NoteNumSuffix.value(i)] = QJsonValue(static_cast<int>(noteNums1.value(i)));
+    }
+
+    if (ob.size() == 2)
+        return QJsonObject();
+
+    return ob;
+}
+
+bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch)
+{
+    if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
+        return false;
+
+#define GETSTR(name)                                                  \
+    do {                                                              \
+        if (patch.contains(QStringLiteral(#name)))                    \
+            this->m_##name = patch[QStringLiteral(#name)].toString(); \
+    } while (false)
+
+#define GETINT(name)                                               \
+    do {                                                           \
+        if (patch.contains(QStringLiteral(#name)))                 \
+            this->m_##name = patch[QStringLiteral(#name)].toInt(); \
+    } while (false)
+
+    GETSTR(szSongName);
+    GETSTR(szArtist);
+    GETSTR(szSongTime);
+    GETINT(iGameTime);
+    GETSTR(szBPM);
+    GETINT(iOrderIndex);
+    GETINT(ush4KeyEasy);
+    GETINT(ush4KeyNormal);
+    GETINT(ush4KeyHard);
+    GETINT(ush5KeyEasy);
+    GETINT(ush5KeyNormal);
+    GETINT(ush5KeyHard);
+    GETINT(ush6KeyEasy);
+    GETINT(ush6KeyNormal);
+    GETINT(ush6KeyHard);
+
+#undef GETSTR
+#undef GETINT
+
+    QStringList noteNums1str = m_szNoteNumber.split(QLatin1Char(','), QString::SkipEmptyParts);
+
+    QList<int> noteNums1;
+    foreach (const QString &s, noteNums1str)
+        noteNums1 << s.toInt();
+    while (noteNums1.length() < 9)
+        noteNums1 << 0;
+    if (noteNums1.length() > 9)
+        noteNums1 = noteNums1.mid(0, 9);
+
+    for (int i = 0; i < 9; ++i) {
+        QString key = QStringLiteral("szNoteNumber") + NoteNumSuffix.value(i);
+        if (patch.contains(key))
+            noteNums1[i] = patch[key].toInt();
+    }
+    noteNums1str.clear();
+    foreach (int n, noteNums1)
+        noteNums1str << QString::number(n);
+    m_szNoteNumber = noteNums1str.join(QLatin1Char(','));
+
+    return true;
+}
+
 bool RmeSong::RmeSongClientItemStruct::isHidden() const
 {
     return m_bIsHide;
@@ -600,6 +742,86 @@ QVariantMap RmeSong::RmePapaSongClientItemStruct::toMap() const
 #undef SETHEX
 
     return map;
+}
+
+QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::RmePapaSongClientItemStruct &orig) const
+{
+    if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
+        return QJsonObject();
+
+    QJsonObject ob;
+
+    ob[QStringLiteral("ushSongID")] = QJsonValue(static_cast<int>(m_ushSongID));
+    ob[QStringLiteral("szPath")] = QJsonValue(m_szPath);
+
+#define SETOTH(name)                                                \
+    do {                                                            \
+        if (this->m_##name != orig.m_##name)                        \
+            ob[QStringLiteral(#name)] = QJsonValue(this->m_##name); \
+    } while (false)
+
+#define SETINT(name)                                                                  \
+    do {                                                                              \
+        if (this->m_##name != orig.m_##name)                                          \
+            ob[QStringLiteral(#name)] = QJsonValue(static_cast<int>(this->m_##name)); \
+    } while (false)
+
+    SETOTH(szSongName);
+    SETOTH(szArtist);
+    SETOTH(szSongTime);
+    SETINT(iGameTime);
+    SETOTH(szBPM);
+    SETINT(iOrderIndex);
+    SETINT(cDifficulty);
+
+#undef SETOTH
+#undef SETINT
+
+    // NoteNumber convert to int
+
+    int noteNum = m_szNoteNumber.toInt();
+    int noteNum2 = orig.m_szNoteNumber.toInt();
+    if (noteNum != noteNum2)
+        ob[QStringLiteral("szNoteNumber")] = QJsonValue(static_cast<int>(noteNum));
+
+    if (ob.size() == 2)
+        return QJsonObject();
+
+    return ob;
+}
+
+bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch)
+{
+    if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
+        return false;
+
+#define GETSTR(name)                                                  \
+    do {                                                              \
+        if (patch.contains(QStringLiteral(#name)))                    \
+            this->m_##name = patch[QStringLiteral(#name)].toString(); \
+    } while (false)
+
+#define GETINT(name)                                               \
+    do {                                                           \
+        if (patch.contains(QStringLiteral(#name)))                 \
+            this->m_##name = patch[QStringLiteral(#name)].toInt(); \
+    } while (false)
+
+    GETSTR(szSongName);
+    GETSTR(szArtist);
+    GETSTR(szSongTime);
+    GETINT(iGameTime);
+    GETSTR(szBPM);
+    GETINT(iOrderIndex);
+    GETINT(cDifficulty);
+
+#undef GETSTR
+#undef GETINT
+
+    if (patch.contains(QStringLiteral("szNoteNumber")))
+        m_szNoteNumber = QString::number(patch[QStringLiteral("szNoteNumber")].toInt());
+
+    return true;
 }
 
 bool RmeSong::RmePapaSongClientItemStruct::sortByID(const RmeSong::RmePapaSongClientItemStruct &a, const RmeSong::RmePapaSongClientItemStruct &b)

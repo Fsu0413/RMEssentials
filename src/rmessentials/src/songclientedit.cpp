@@ -63,6 +63,11 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(msl, &QAction::triggered, this, &SongClientEditDialog::mergeSongList);
     QAction *pfumn = m_popup->addAction(tr("Prepare for User Making Notes"));
     connect(pfumn, &QAction::triggered, this, &SongClientEditDialog::prepareForUserMakingNotes);
+    m_popup->addSeparator();
+    QAction *cp = m_popup->addAction(tr("Create Patch from another file base"));
+    connect(cp, &QAction::triggered, this, &SongClientEditDialog::createPatch);
+    QAction *ap = m_popup->addAction(tr("Apply Patch File"));
+    connect(ap, &QAction::triggered, this, &SongClientEditDialog::applyPatch);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
@@ -629,6 +634,7 @@ void SongClientEditDialog::mergeSongList()
     RmeSongClientFile *file2 = new RmeSongClientFile;
     if (!file2->readInfoFromDevice(&f, BinFormat)) {
         delete file2;
+        QMessageBox::warning(this, tr("RMEssentials"), tr("Load info from file failed."));
         return;
     }
 
@@ -660,5 +666,49 @@ void SongClientEditDialog::prepareForUserMakingNotes()
         }
     }
 
+    readCurrent();
+}
+
+void SongClientEditDialog::createPatch()
+{
+    if (!m_isLoaded)
+        return;
+
+    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+
+    QFile f(filepath);
+    if (!f.exists())
+        return;
+
+    RmeSongClientFile file2;
+    if (!file2.readInfoFromDevice(&f, BinFormat)) {
+        QMessageBox::warning(this, tr("RMEssentials"), tr("Load info from file failed."));
+        return;
+    }
+
+    QString filepathToSave = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
+
+    QFile f2(filepathToSave);
+    if (!m_file.savePatchToDevice(&f2, file2)) {
+        QMessageBox::warning(this, tr("RMEssentials"), tr("Save file failed"));
+        return;
+    }
+}
+
+void SongClientEditDialog::applyPatch()
+{
+    if (!m_isLoaded)
+        return;
+
+    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
+    QFile f(filepath);
+
+    if (!f.exists())
+        return;
+
+    if (!m_file.applyPatchFromDevice(&f)) {
+        QMessageBox::warning(this, tr("RMEssentials"), tr("Apply patch from device failed"));
+        return;
+    }
     readCurrent();
 }

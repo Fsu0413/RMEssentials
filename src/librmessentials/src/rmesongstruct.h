@@ -3,6 +3,7 @@
 
 #include "rmeglobal.h"
 
+#include <QJsonObject>
 #include <QString>
 #include <QVariantMap>
 #include <cstdint>
@@ -29,6 +30,7 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientHeaderStruct
 
     void parseByteArray(const QByteArray &arr);
     QByteArray toByteArray() const;
+
     void parseMap(const QVariantMap &map);
     QVariantMap toMap() const;
 };
@@ -77,8 +79,12 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
 
     void parseByteArray(const QByteArray &arr);
     QByteArray toByteArray() const;
+
     void parseMap(const QVariantMap &map);
     QVariantMap toMap() const;
+
+    QJsonObject createPatch(const RmeSongClientItemStruct &orig) const;
+    bool applyPatch(const QJsonObject &patch);
 
     bool isHidden() const;
     bool isReward() const;
@@ -117,8 +123,12 @@ struct LIBRMESSENTIALS_EXPORT RmePapaSongClientItemStruct
 
     void parseByteArray(const QByteArray &arr);
     QByteArray toByteArray() const;
+
     void parseMap(const QVariantMap &map);
     QVariantMap toMap() const;
+
+    QJsonObject createPatch(const RmePapaSongClientItemStruct &orig) const;
+    bool applyPatch(const QJsonObject &patch);
 
     static bool sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b);
 };

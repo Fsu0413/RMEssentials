@@ -35,9 +35,10 @@ private slots:
     void saveCurrent();
     void saveFile();
     bool reloadFile();
-
     void search();
     void searchResultDblClicked(QListWidgetItem *index);
+    void createPatch();
+    void applyPatch();
 
 private:
     // controls
