@@ -177,6 +177,9 @@ bool RmeSongClientFile::applyPatchFromDevice(QIODevice *input)
         QJsonParseError err;
         QJsonDocument doc = QJsonDocument::fromJson(arr, &err);
         if (err.error == QJsonParseError::NoError) {
+            // Todo: one of these solutions must be procedured:
+            // 1. check the patch if it is valid, notify user if it may not be applyed
+            // 2. deep copy the original song list and try to apply the patch, if succeeded, create a new RmeSongClientFilePrivate and swap d_ptr
             QJsonObject ob = doc.object();
             foreach (const QString &key, ob.keys()) {
                 bool ok = false;
