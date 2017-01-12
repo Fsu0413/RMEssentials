@@ -26,7 +26,7 @@ public:
         Mis
     };
 
-    DownloadDialog(QWidget *parent = nullptr);
+    explicit DownloadDialog(QWidget *parent = nullptr);
 
     void downloadList();
 

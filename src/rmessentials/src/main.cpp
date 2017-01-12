@@ -127,15 +127,21 @@ void MainDialog::showPapaSongClientEditDialog()
 void MainDialog::about()
 {
     QString aboutContent = tr(
-                               "The version of RMEssentials is: %1.\n\n"
+                               "The version of RMEssentials frontend is: %1.\n\n"
                                "RMEssentials is a small software written by Fsu0413. \n"
                                "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
                                "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
-                               "This Program is using Qt %2.")
+                               "This Program is linked against Qt %2, and loads Qt %3 to run.\n"
+                               "This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 to run.")
                                .arg(QStringLiteral(RMEVERSION))
-                               .arg(QStringLiteral(QT_VERSION_STR));
+                               .arg(QStringLiteral(QT_VERSION_STR))
+                               .arg(QString::fromUtf8(qVersion()))
+                               .arg(QString::fromUtf8(RmeVersion()));
 #ifdef RME_USE_QUAZIP
-    aboutContent += tr("\nThis Program is using QuaZip %1.").arg(QStringLiteral(RME_USE_QUAZIP));
+    aboutContent += tr("\nThis Program is linked against QuaZip %1.\n"
+                       "Since Quazip does not provide a way to detect version number, "
+                       "we cannot know which version we are loading when running.")
+                        .arg(QStringLiteral(RME_USE_QUAZIP));
 #endif
     QMessageBox::about(this, tr("About RMEssentials"), aboutContent);
 }

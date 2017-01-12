@@ -19,7 +19,7 @@ class PapaSongClientEditDialog : public QDialog
     Q_OBJECT
 
 public:
-    PapaSongClientEditDialog(QWidget *parent = nullptr);
+    explicit PapaSongClientEditDialog(QWidget *parent = nullptr);
     ~PapaSongClientEditDialog() override;
     bool loadFile();
 

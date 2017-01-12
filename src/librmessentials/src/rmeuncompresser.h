@@ -13,7 +13,7 @@ class LIBRMESSENTIALS_EXPORT RmeUncompresser : public QThread
     Q_OBJECT
 
 public:
-    RmeUncompresser(QObject *parent = nullptr);
+    explicit RmeUncompresser(QObject *parent = nullptr);
     ~RmeUncompresser() override;
 
     void addFile(const QString &zipName, const QString &fileName);

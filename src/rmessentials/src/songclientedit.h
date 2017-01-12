@@ -19,7 +19,7 @@ class SongClientEditDialog : public QDialog
     Q_OBJECT
 
 public:
-    SongClientEditDialog(QWidget *parent = nullptr);
+    explicit SongClientEditDialog(QWidget *parent = nullptr);
     ~SongClientEditDialog() override;
     bool loadFile();
 

@@ -37,7 +37,8 @@ SOURCES += \
     src/rmesongfile.cpp \
     src/rmesongstruct.cpp \
     src/rmeuncompresser.cpp \
-    src/rmeutils.cpp
+    src/rmeutils.cpp \
+    src/rmeglobal.c
 
 generateHeaders.target = $$system_path($$OUT_PWD/../dist/include/RMEssentials/.timestamp)
 !build_pass: mkpath($$OUT_PWD/../dist/include/RMEssentials)
