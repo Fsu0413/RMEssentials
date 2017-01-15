@@ -1,4 +1,4 @@
-﻿#include "songclientedit.h"
+#include "songclientedit.h"
 
 #include <RMEssentials/RmeDownloader>
 #include <RMEssentials/RmeSongClientStruct>
@@ -701,17 +701,8 @@ void SongClientEditDialog::prepareForUserMakingNotes()
     if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?")) == QMessageBox::No)
         return;
 
-    for (int i = 0; i < m_file.songCount(); ++i) {
-        RmeSongClientItemStruct *c = m_file.song(i);
-        if (c->m_ucIsOpen && !c->m_bIsReward && !c->m_bIsHide && !c->m_bIsLevelReward && !c->m_ucCanBuy && !c->m_szSongName.startsWith(QStringLiteral("【限时】"))) {
-            // I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
-            c->m_szComposer = QStringLiteral("Offical Free Song");
-            c->m_iOrderIndex = 1;
-        } else {
-            c->m_szComposer = QStringLiteral("Offical Non-free Song");
-            c->m_iOrderIndex = 0;
-        }
-    }
+    for (int i = 0; i < m_file.songCount(); ++i)
+        m_file.song(i)->prepareForUserMakingNotes();
 
     readCurrent();
 }

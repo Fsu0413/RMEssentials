@@ -1,6 +1,11 @@
-#include "rmesongstruct.h"
+﻿#include "rmesongstruct.h"
 
 const QString RmeSong::RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
+
+namespace {
+// I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
+const QString strTemp = QStringLiteral("【限时】");
+}
 
 RmeSong::RmeSongClientHeaderStruct::RmeSongClientHeaderStruct()
     : Magic(0)
@@ -529,6 +534,17 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch)
     return true;
 }
 
+void RmeSong::RmeSongClientItemStruct::prepareForUserMakingNotes()
+{
+    if (m_ucIsOpen && !m_bIsReward && !m_bIsHide && !m_bIsLevelReward && !m_ucCanBuy && !m_szSongName.startsWith(strTemp)) {
+        m_szComposer = QStringLiteral("Offical Free Song");
+        m_iOrderIndex = 1;
+    } else {
+        m_szComposer = QStringLiteral("Offical Non-free Song");
+        m_iOrderIndex = 0;
+    }
+}
+
 bool RmeSong::RmeSongClientItemStruct::isHidden() const
 {
     return m_bIsHide;
@@ -556,9 +572,7 @@ bool RmeSong::RmeSongClientItemStruct::isFree() const
 
 bool RmeSong::RmeSongClientItemStruct::isLevel() const
 {
-    // BIG IMPORTANT HACK!!!!
-    // RM used No251-262 as level reward, and m_bIsLevelReward doesn't make sense anymore.
-    return m_ushSongID >= 251 && m_ushSongID <= 262;
+    return m_bIsLevelReward;
 }
 
 bool RmeSong::RmeSongClientItemStruct::sortByID(const RmeSong::RmeSongClientItemStruct &a, const RmeSong::RmeSongClientItemStruct &b)
@@ -766,7 +780,6 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
             ob[QStringLiteral(#name)] = QJsonValue(static_cast<int>(this->m_##name)); \
     } while (false)
 
-    SETOTH(szSongName);
     SETOTH(szArtist);
     SETOTH(szSongTime);
     SETINT(iGameTime);
@@ -776,6 +789,16 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
 
 #undef SETOTH
 #undef SETINT
+
+    QString songName1 = m_szSongName;
+    if (songName1.startsWith(strTemp))
+        songName1 = songName1.mid(strTemp.length());
+    QString songName2 = orig.m_szSongName;
+    if (songName2.startsWith(strTemp))
+        songName2 = songName2.mid(strTemp.length());
+
+    if (songName1 != songName2)
+        ob[QStringLiteral("szSongName")] = QJsonValue(songName1);
 
     // NoteNumber convert to int
 
