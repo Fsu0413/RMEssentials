@@ -1,5 +1,5 @@
-#ifndef __UNCOMPRESSER_H__
-#define __UNCOMPRESSER_H__
+#ifndef RMEUNCOMPRESSER_H__INCLUDED
+#define RMEUNCOMPRESSER_H__INCLUDED
 
 #include "rmeglobal.h"
 

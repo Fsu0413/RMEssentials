@@ -5,7 +5,7 @@ const char *RmeVersion()
     return RMEVERSION;
 }
 
-enum QuazipUsage RmeQuazipUsage()
+QuazipUsage RmeQuazipUsage()
 {
 #if !defined(RME_USE_QUAZIP)
     return QuazipNotUsed;
@@ -15,3 +15,10 @@ enum QuazipUsage RmeQuazipUsage()
     return QuazipDynamicLinked;
 #endif
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+QVersionNumber RmeVersionNumber()
+{
+    return QVersionNumber::fromString(QStringLiteral(RMEVERSIONNUMBER));
+}
+#endif

@@ -1,5 +1,5 @@
-#ifndef LIBRMEGLOBAL_H
-#define LIBRMEGLOBAL_H
+#ifndef RMEGLOBAL_H__INCLUDED
+#define RMEGLOBAL_H__INCLUDED
 
 #include <QtGlobal>
 
@@ -41,6 +41,10 @@ LIBRMESSENTIALS_EXPORT const char *RmeVersion();
 LIBRMESSENTIALS_EXPORT enum QuazipUsage RmeQuazipUsage();
 #ifdef __cplusplus
 }
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+#include <QVersionNumber>
+LIBRMESSENTIALS_EXPORT QVersionNumber RmeVersionNumber();
+#endif
 #endif
 
-#endif // LIBRMEGLOBAL_H
+#endif

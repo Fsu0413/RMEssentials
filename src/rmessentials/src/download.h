@@ -1,5 +1,5 @@
-#ifndef DOWNLOAD_H
-#define DOWNLOAD_H
+#ifndef DOWNLOAD_H__INCLUDED
+#define DOWNLOAD_H__INCLUDED
 
 #include <RMEssentials/RmeGlobal>
 

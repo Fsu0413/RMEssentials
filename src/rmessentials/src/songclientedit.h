@@ -1,5 +1,5 @@
-#ifndef SONGCLIENTEDIT_H
-#define SONGCLIENTEDIT_H
+#ifndef SONGCLIENTEDIT_H__INCLUDED
+#define SONGCLIENTEDIT_H__INCLUDED
 
 #include <RMEssentials/RmeSongClientFile>
 

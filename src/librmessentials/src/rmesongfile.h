@@ -1,5 +1,5 @@
-#ifndef __SONGFILE_H__
-#define __SONGFILE_H__
+#ifndef RMESONGFILE_H__INCLUDED
+#define RMESONGFILE_H__INCLUDED
 
 #include "rmeglobal.h"
 

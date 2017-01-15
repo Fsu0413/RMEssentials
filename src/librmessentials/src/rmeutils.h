@@ -1,5 +1,5 @@
-#ifndef __UTILS_H__
-#define __UTILS_H__
+#ifndef RMEUTILS_H__INCLUDED
+#define RMEUTILS_H__INCLUDED
 
 #include "rmeglobal.h"
 
@@ -36,4 +36,4 @@ LIBRMESSENTIALS_EXPORT bool hasPapaSmallPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT ExistNotes existNotes(const QDir &dir);
 }
 
-#endif // __UTILS_H__
+#endif

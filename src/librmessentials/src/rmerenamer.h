@@ -1,7 +1,5 @@
-// GEN: Renamer
-
-#ifndef __RENAMER_H__
-#define __RENAMER_H__
+#ifndef RMERENAMER_H__INCLUDED
+#define RMERENAMER_H__INCLUDED
 
 #include "rmeglobal.h"
 
@@ -29,4 +27,4 @@ private:
     RmeRenamerPrivate *d_ptr;
 };
 
-#endif // __RENAMER_H__
+#endif

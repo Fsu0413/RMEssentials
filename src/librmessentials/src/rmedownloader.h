@@ -1,5 +1,5 @@
-#ifndef __DOWNLOADER_H__
-#define __DOWNLOADER_H__
+#ifndef RMEDOWNLOADER_H__INCLUDED
+#define RMEDOWNLOADER_H__INCLUDED
 
 #include "rmeglobal.h"
 

@@ -1,5 +1,5 @@
-#ifndef CHANGENAME_H
-#define CHANGENAME_H
+#ifndef CHANGENAME_H__INCLUDED
+#define CHANGENAME_H__INCLUDED
 
 #include <RMEssentials/RmeGlobal>
 

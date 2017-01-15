@@ -1,5 +1,5 @@
-#ifndef __SONGSTRUCT_H__
-#define __SONGSTRUCT_H__
+#ifndef RMESONGSTRUCT_H__INCLUDED
+#define RMESONGSTRUCT_H__INCLUDED
 
 #include "rmeglobal.h"
 
