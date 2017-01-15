@@ -254,30 +254,33 @@ Are you sure?</source>
         <translation>节奏大师工具箱</translation>
     </message>
     <message>
-        <source>The version of RMEssentials is: %1.
+        <source>  new version %1 available</source>
+        <translation>  新版本 %1 可用</translation>
+    </message>
+    <message>
+        <source>The version of RMEssentials frontend is: %1.
 
 RMEssentials is a small software written by Fsu0413. 
 It is used to operate the files for a game by Tencent: Rhythm Master. 
 It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. 
 
-This Program is using Qt %2.</source>
-        <translation>节奏大师工具箱的当前版本为：%1。
+This Program is linked against Qt %2, and loads Qt %3 to run.
+This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 to run.</source>
+        <translation>当前节奏大师工具箱前端的版本是：%1.
 
-节奏大师工具箱是一个由Fsu0413写的小软件。
-用途为操作节奏大师（一款腾讯游戏）的文件。
-现在主要拥有4个功能：文件改名，下载，经典模式客户端编辑，星动模式客户端编辑。
+节奏大师工具箱是由Fsu0413编写的小软件。
+用来操作节奏大师（一款由腾讯开发的游戏）相关的文件的软件。
+现在包含4个主要功能：修改名字，下载歌曲和谱面，客户端歌曲编辑，星动模式客户端歌曲编辑。
 
-这个程序使用 Qt %2。</translation>
+这个程序链接时使用Qt %2，运行时加载Qt %3。
+这个程序链接时使用libRMEssentials %1，运行时加载libRMEssentials %4。</translation>
     </message>
     <message>
         <source>
-This Program is using QuaZip %1.</source>
-        <translation>
-这个程序使用 QuaZip %1。</translation>
-    </message>
-    <message>
-        <source>  new version %1 available</source>
-        <translation>  新版本 %1 可用</translation>
+This Program is linked against QuaZip %1.
+Since Quazip does not provide a way to detect version number, we cannot know which version we are loading when running.</source>
+        <translation>这个程序链接时使用Quazip%1。
+因为Quazip不提供检测版本号的方法，无法得知运行时加载的Quazip的版本号。</translation>
     </message>
 </context>
 <context>
@@ -338,42 +341,25 @@ This Program is using QuaZip %1.</source>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
-</context>
-<context>
-    <name>QuaGzipFile</name>
     <message>
-        <source>QIODevice::Append is not supported for GZIP</source>
-        <translation>GZIP不支持QIODevice::Append</translation>
+        <source>Create Patch from another file base</source>
+        <translation>与另一个基准文件比较，创建补丁</translation>
     </message>
     <message>
-        <source>Opening gzip for both reading and writing is not supported</source>
-        <translation>不支持作为读写模式打开gzip</translation>
+        <source>Apply Patch File</source>
+        <translation>应用补丁文件</translation>
     </message>
     <message>
-        <source>You can open a gzip either for reading or for writing. Which is it?</source>
-        <translation>你可以以只读或读写的方式打开gzip文件。要选择哪一种？</translation>
+        <source>Load info from file failed.</source>
+        <translation>从文件加载信息失败。</translation>
     </message>
     <message>
-        <source>Could not gzopen() file</source>
-        <translation>不能gzopen()文件</translation>
-    </message>
-</context>
-<context>
-    <name>QuaZIODevice</name>
-    <message>
-        <source>QIODevice::Append is not supported for QuaZIODevice</source>
-        <translation>QuaZIODevice不支持QIODevice::Append</translation>
+        <source>Json files</source>
+        <translation>Json文件</translation>
     </message>
     <message>
-        <source>QIODevice::ReadWrite is not supported for QuaZIODevice</source>
-        <translation>QuaZIODevice不支持QIODevice::ReadWrite</translation>
-    </message>
-</context>
-<context>
-    <name>QuaZipFile</name>
-    <message>
-        <source>ZIP/UNZIP API error %1</source>
-        <translation>ZIP/UNZIP API 错误 %1</translation>
+        <source>Apply patch from device failed</source>
+        <translation>从设备应用补丁失败</translation>
     </message>
 </context>
 <context>
@@ -465,6 +451,26 @@ This Program is using QuaZip %1.</source>
     <message>
         <source>Please be sure that the current open file is the offical one from the server of RM!!!!&lt;br /&gt;Are you sure to proceed?</source>
         <translation>请确认当前打开的文件是从节奏大师官方服务器下载下来的！！！！&lt;br /&gt;确认执行么？</translation>
+    </message>
+    <message>
+        <source>Create Patch from another file base</source>
+        <translation>与另一个基准文件比较，创建补丁</translation>
+    </message>
+    <message>
+        <source>Apply Patch File</source>
+        <translation>应用补丁文件</translation>
+    </message>
+    <message>
+        <source>Load info from file failed.</source>
+        <translation>从文件加载信息失败。</translation>
+    </message>
+    <message>
+        <source>Json files</source>
+        <translation>Json文件</translation>
+    </message>
+    <message>
+        <source>Apply patch from device failed</source>
+        <translation>从设备应用补丁失败</translation>
     </message>
 </context>
 </TS>
