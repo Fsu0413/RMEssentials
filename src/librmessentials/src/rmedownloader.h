@@ -19,10 +19,9 @@ public:
     static QString downloadPath();
 
     RmeDownloader &operator<<(const QString &filename);
-    const QStringList &downloadSequence() const;
-    const QStringList &failedList() const;
+    QStringList downloadSequence() const;
 
-    const QString &savePath() const;
+    QString savePath() const;
     void setSavePath(const QString &sp);
 
     void setIsAll(bool all);

@@ -34,32 +34,39 @@ private slots:
 signals:
     void cancel();
 
-public: // public to Downloader only since this is not interface of Downloader
+public:
+    // q-ptr and thread-related stuff
     RmeDownloader *m_downloader;
 
     QThread *m_thread;
     mutable QReadWriteLock m_dataLock;
 
+public:
+    // public to RmeDownloader only since this class is always an incomplete type outside rmedownloader.cpp
+    // Note these variables are shared between threads so the RW-Lock(m_dataLock) should be used for thread safety
     QStringList m_downloadSequence;
-    QStringList m_failedList;
     QString m_savePath;
+    bool m_isAll;
+
+private:
+    // private to RmeDownloaderPrivate only.
+    QStringList m_failedList;
     QString m_currentDownloadingFile;
     QDir m_downloadDir;
     QNetworkReply *m_currentDownloadingReply;
     QNetworkAccessManager *m_networkAccessManager;
     QTimer *m_timer;
 
-    bool m_isAll;
     quint64 m_lastRecordedDownloadProgress;
 };
 
 RmeDownloaderPrivate::RmeDownloaderPrivate(RmeDownloader *downloader)
     : m_downloader(downloader)
     , m_thread(new QThread(downloader))
+    , m_isAll(false)
     , m_currentDownloadingReply(nullptr)
     , m_networkAccessManager(nullptr)
     , m_timer(nullptr)
-    , m_isAll(false)
     , m_lastRecordedDownloadProgress(0u)
 {
     connect(m_thread, &QThread::finished, m_downloader, &RmeDownloader::finished);
@@ -77,8 +84,6 @@ void RmeDownloaderPrivate::run()
     m_timer->setSingleShot(true);
     connect(m_timer, &QTimer::timeout, this, &RmeDownloaderPrivate::canceled);
 
-    m_dataLock.lockForWrite();
-    m_isAll = false;
     m_currentDownloadingReply = nullptr;
 
     QString s = RmeDownloader::downloadPath();
@@ -88,17 +93,20 @@ void RmeDownloaderPrivate::run()
     }
 
     QDir dir(s);
-    if (!m_savePath.isEmpty()) {
-        if (!dir.cd(m_savePath)) {
-            if (!dir.mkdir(m_savePath)) {
+    m_dataLock.lockForRead();
+    QString savePath = m_savePath;
+    m_dataLock.unlock();
+
+    if (!savePath.isEmpty()) {
+        if (!dir.cd(savePath)) {
+            if (!dir.mkdir(savePath)) {
                 //emit error();
                 return;
             }
-            dir.cd(m_savePath);
+            dir.cd(savePath);
         }
     }
     m_downloadDir = dir;
-    m_dataLock.unlock();
 
     downloadSingleFile();
 }
@@ -184,7 +192,7 @@ RmeDownloader &RmeDownloader::operator<<(const QString &filename)
     return *this;
 }
 
-const QStringList &RmeDownloader::downloadSequence() const
+QStringList RmeDownloader::downloadSequence() const
 {
     Q_D(const RmeDownloader);
     QReadLocker rl(&d->m_dataLock);
@@ -192,15 +200,7 @@ const QStringList &RmeDownloader::downloadSequence() const
     return d->m_downloadSequence;
 }
 
-const QStringList &RmeDownloader::failedList() const
-{
-    Q_D(const RmeDownloader);
-    QReadLocker rl(&d->m_dataLock);
-    Q_UNUSED(rl);
-    return d->m_failedList;
-}
-
-const QString &RmeDownloader::savePath() const
+QString RmeDownloader::savePath() const
 {
     Q_D(const RmeDownloader);
     QReadLocker rl(&d->m_dataLock);
@@ -234,18 +234,23 @@ bool RmeDownloader::isAll() const
 
 void RmeDownloaderPrivate::downloadSingleFile()
 {
+    m_dataLock.lockForWrite();
     if (m_downloadSequence.isEmpty()) {
+        m_dataLock.unlock();
         emit m_downloader->allCompleted();
         m_thread->quit();
         return;
     } else if (m_thread->isInterruptionRequested()) {
+        m_dataLock.unlock();
         emit m_downloader->canceled();
         m_thread->quit();
         return;
     }
 
     m_currentDownloadingFile = m_downloadSequence.takeFirst();
-    if (m_isAll) {
+    bool isAll = m_isAll;
+    m_dataLock.unlock();
+    if (isAll) {
         QString filename = QUrl(m_currentDownloadingFile).fileName();
         if (filename.endsWith(QStringLiteral(".jpg"))) { // important hack!!
             filename.chop(4);
