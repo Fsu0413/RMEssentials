@@ -484,10 +484,12 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
     return ob;
 }
 
-bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch)
+bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool patchPath)
 {
-    if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
-        return false;
+    if (!patchPath) {
+        if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
+            return false;
+    }
 
 #define GETSTR(name)                                                  \
     do {                                                              \
@@ -517,6 +519,9 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch)
     GETINT(ush6KeyNormal);
     GETINT(ush6KeyHard);
 
+    if (patchPath)
+        GETSTR(szPath);
+
 #undef GETSTR
 #undef GETINT
 
@@ -545,7 +550,7 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch)
 
 void RmeSong::RmeSongClientItemStruct::prepareForUserMakingNotes()
 {
-    if (m_ucIsOpen && !m_bIsReward && !m_bIsHide && !m_bIsLevelReward && !m_ucCanBuy && !m_szSongName.startsWith(strTemp)) {
+    if (isFree()) {
         m_szComposer = QStringLiteral("Offical Free Song");
         m_iOrderIndex = 1;
     } else {
@@ -576,7 +581,7 @@ bool RmeSong::RmeSongClientItemStruct::isBuy() const
 
 bool RmeSong::RmeSongClientItemStruct::isFree() const
 {
-    return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward();
+    return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward() && !m_szSongName.startsWith(strTemp);
 }
 
 bool RmeSong::RmeSongClientItemStruct::isLevel() const
@@ -813,10 +818,12 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
     return ob;
 }
 
-bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch)
+bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, bool patchPath)
 {
-    if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
-        return false;
+    if (!patchPath) {
+        if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
+            return false;
+    }
 
 #define GETSTR(name)                                                  \
     do {                                                              \
@@ -829,6 +836,9 @@ bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch)
         if (patch.contains(QStringLiteral(#name)))                 \
             this->m_##name = patch[QStringLiteral(#name)].toInt(); \
     } while (false)
+
+    if (patchPath)
+        GETSTR(szPath);
 
     GETSTR(szSongName);
     GETSTR(szArtist);

@@ -84,7 +84,7 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
     QVariantMap toMap() const;
 
     QJsonObject createPatch(const RmeSongClientItemStruct &orig) const;
-    bool applyPatch(const QJsonObject &patch);
+    bool applyPatch(const QJsonObject &patch, bool patchPath = false);
 
     void prepareForUserMakingNotes();
 
@@ -130,7 +130,7 @@ struct LIBRMESSENTIALS_EXPORT RmePapaSongClientItemStruct
     QVariantMap toMap() const;
 
     QJsonObject createPatch(const RmePapaSongClientItemStruct &orig) const;
-    bool applyPatch(const QJsonObject &patch);
+    bool applyPatch(const QJsonObject &patch, bool patchPath = false);
 
     static bool sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b);
 };
