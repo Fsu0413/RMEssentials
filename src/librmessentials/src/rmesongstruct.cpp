@@ -428,7 +428,6 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
             ob[QStringLiteral(#name)] = QJsonValue(static_cast<int>(this->m_##name)); \
     } while (false)
 
-    SETOTH(szSongName);
     SETOTH(szArtist);
     SETOTH(szSongTime);
     SETINT(iGameTime);
@@ -446,6 +445,16 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
 
 #undef SETOTH
 #undef SETINT
+
+    QString songName1 = m_szSongName;
+    if (songName1.startsWith(strTemp))
+        songName1 = songName1.mid(strTemp.length());
+    QString songName2 = orig.m_szSongName;
+    if (songName2.startsWith(strTemp))
+        songName2 = songName2.mid(strTemp.length());
+
+    if (songName1 != songName2)
+        ob[QStringLiteral("szSongName")] = QJsonValue(songName1);
 
     // NoteNumber split
 
@@ -780,6 +789,7 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
             ob[QStringLiteral(#name)] = QJsonValue(static_cast<int>(this->m_##name)); \
     } while (false)
 
+    SETOTH(szSongName);
     SETOTH(szArtist);
     SETOTH(szSongTime);
     SETINT(iGameTime);
@@ -789,16 +799,6 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
 
 #undef SETOTH
 #undef SETINT
-
-    QString songName1 = m_szSongName;
-    if (songName1.startsWith(strTemp))
-        songName1 = songName1.mid(strTemp.length());
-    QString songName2 = orig.m_szSongName;
-    if (songName2.startsWith(strTemp))
-        songName2 = songName2.mid(strTemp.length());
-
-    if (songName1 != songName2)
-        ob[QStringLiteral("szSongName")] = QJsonValue(songName1);
 
     // NoteNumber convert to int
 
