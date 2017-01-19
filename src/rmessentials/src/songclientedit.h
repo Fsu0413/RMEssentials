@@ -41,7 +41,6 @@ private slots:
     bool reloadFile();
     void search();
     void searchResultDblClicked(QListWidgetItem *index);
-    void mergeSongList();
     void prepareForUserMakingNotes();
     void createPatch();
     void applyPatch();

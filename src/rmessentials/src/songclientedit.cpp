@@ -102,8 +102,6 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(castf, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
     QAction *asul = m_popup->addAction(tr("All Song Unlock"));
     connect(asul, &QAction::triggered, this, &SongClientEditDialog::allSongUnlock);
-    QAction *msl = m_popup->addAction(tr("Merge Song List"));
-    connect(msl, &QAction::triggered, this, &SongClientEditDialog::mergeSongList);
     QAction *pfumn = m_popup->addAction(tr("Prepare for User Making Notes"));
     connect(pfumn, &QAction::triggered, this, &SongClientEditDialog::prepareForUserMakingNotes);
     m_popup->addSeparator();
@@ -655,32 +653,6 @@ void SongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
         return;
 
     m_currentIndex = i;
-    readCurrent();
-}
-
-void SongClientEditDialog::mergeSongList()
-{
-    if (!m_isLoaded)
-        return;
-
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
-
-    QFile f(filepath);
-    if (!f.exists())
-        return;
-
-    RmeSongClientFile *file2 = new RmeSongClientFile;
-    if (!file2->readInfoFromDevice(&f, BinFormat)) {
-        delete file2;
-        QMessageBox::warning(this, tr("RMEssentials"), tr("Load info from file failed."));
-        return;
-    }
-
-    if (QMessageBox::question(this, tr("RMEssentials"), tr("Are you sure to merge the current loaded file to the select file?")) == QMessageBox::No)
-        return;
-
-    m_file.mergeSongList(file2);
-    m_currentIndex = 0;
     readCurrent();
 }
 

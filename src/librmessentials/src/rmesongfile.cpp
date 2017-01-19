@@ -228,32 +228,6 @@ int RmeSong::RmeSongClientFile::songCount() const
     return d->m_songsList.size();
 }
 
-void RmeSong::RmeSongClientFile::mergeSongList(RmeSongClientFile *file2)
-{
-    if (file2 == nullptr)
-        return;
-
-    Q_D(RmeSongClientFile);
-    delete d->m_header;
-    d->m_header = file2->d_ptr->m_header;
-    file2->d_ptr->m_header = nullptr;
-
-    QMap<int16_t, RmeSongClientItemStruct *> s = d->m_songsList;
-    d->m_songsList = file2->d_ptr->m_songsList;
-    file2->d_ptr->m_songsList.clear();
-    delete file2;
-
-    foreach (int16_t id, d->m_songsList.keys()) {
-        if (s.contains(id)) {
-            delete d->m_songsList.value(id, nullptr);
-            d->m_songsList[id] = s.value(id);
-            s.remove(id);
-        }
-    }
-
-    qDeleteAll(s);
-}
-
 void RmeSongClientFile::prepareForUserMadeNotes()
 {
     Q_D(RmeSongClientFile);
