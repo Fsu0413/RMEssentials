@@ -548,17 +548,6 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
     return true;
 }
 
-void RmeSong::RmeSongClientItemStruct::prepareForUserMakingNotes()
-{
-    if (isFree()) {
-        m_szComposer = QStringLiteral("Offical Free Song");
-        m_iOrderIndex = 1;
-    } else {
-        m_szComposer = QStringLiteral("Offical Non-free Song");
-        m_iOrderIndex = 0;
-    }
-}
-
 bool RmeSong::RmeSongClientItemStruct::isHidden() const
 {
     return m_bIsHide;
@@ -576,7 +565,7 @@ bool RmeSong::RmeSongClientItemStruct::isDown() const
 
 bool RmeSong::RmeSongClientItemStruct::isBuy() const
 {
-    return m_ucCanBuy;
+    return m_ucCanBuy || m_bSongPkg;
 }
 
 bool RmeSong::RmeSongClientItemStruct::isFree() const

@@ -251,6 +251,22 @@ void RmeSong::RmeSongClientFile::mergeSongList(RmeSongClientFile *file2)
     qDeleteAll(s);
 }
 
+void RmeSongClientFile::prepareForUserMakingNotes()
+{
+    Q_D(RmeSongClientFile);
+    int orderIndex = 0;
+    for (auto it = d->m_songsList.end(), b = d->m_songsList.begin(); it != b;) {
+        --it;
+        if ((*it)->isFree()) {
+            (*it)->m_szComposer = QStringLiteral("Offical Free Song");
+            (*it)->m_iOrderIndex = ++orderIndex;
+        } else {
+            (*it)->m_szComposer = QStringLiteral("Offical Non-free Song");
+            (*it)->m_iOrderIndex = 0;
+        }
+    }
+}
+
 class RmeSong::RmePapaSongClientFilePrivate
 {
 public:

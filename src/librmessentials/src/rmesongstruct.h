@@ -86,8 +86,6 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
     QJsonObject createPatch(const RmeSongClientItemStruct &orig) const;
     bool applyPatch(const QJsonObject &patch, bool patchPath = false);
 
-    void prepareForUserMakingNotes();
-
     bool isHidden() const;
     bool isReward() const;
     bool isDown() const;

@@ -44,6 +44,8 @@ public:
     // Attention!! after merging, the file2 is not available anymore, thus been deleted, please do not get access to it after calling this function!!!
     void mergeSongList(RmeSongClientFile *file2);
 
+    void prepareForUserMakingNotes();
+
 private:
     Q_DISABLE_COPY(RmeSongClientFile)
     Q_DECLARE_PRIVATE(RmeSongClientFile)

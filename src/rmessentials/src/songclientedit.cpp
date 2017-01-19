@@ -701,8 +701,7 @@ void SongClientEditDialog::prepareForUserMakingNotes()
     if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?")) == QMessageBox::No)
         return;
 
-    for (int i = 0; i < m_file.songCount(); ++i)
-        m_file.song(i)->prepareForUserMakingNotes();
+    m_file.prepareForUserMakingNotes();
 
     readCurrent();
 }
