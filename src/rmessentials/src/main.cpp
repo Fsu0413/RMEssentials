@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
     qApp->installTranslator(&qt_translator);
 
     QTranslator translator;
-    translator.load(QStringLiteral(CURRENTDIRPREFIX "changename.qm"));
+    translator.load(QStringLiteral(CURRENTDIRPREFIX "rmessentials.qm"));
     qApp->installTranslator(&translator);
 
 #ifdef MOBILE_DEVICES
