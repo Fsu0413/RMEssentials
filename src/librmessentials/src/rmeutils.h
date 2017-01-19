@@ -34,6 +34,8 @@ LIBRMESSENTIALS_EXPORT bool hasSmallPng(const QDir &dir, QString &suffix);
 LIBRMESSENTIALS_EXPORT bool hasPapaBigPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT bool hasPapaSmallPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT ExistNotes existNotes(const QDir &dir);
+
+LIBRMESSENTIALS_EXPORT QString calculateSongTime(int gameTime);
 }
 
 #endif

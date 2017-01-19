@@ -13,6 +13,7 @@ class RmeSong::RmeSongClientFilePrivate
 public:
     QMap<int16_t, RmeSongClientItemStruct *> m_songsList;
     RmeSongClientHeaderStruct *m_header;
+    bool m_isUserMade;
     void cleanup();
 };
 
@@ -21,6 +22,7 @@ RmeSong::RmeSongClientFile::RmeSongClientFile()
 {
     Q_D(RmeSongClientFile);
     d->m_header = nullptr;
+    d->m_isUserMade = false;
 }
 
 RmeSong::RmeSongClientFile::~RmeSongClientFile()
@@ -150,7 +152,7 @@ bool RmeSongClientFile::savePatchToDevice(QIODevice *output, const RmeSongClient
     for (auto it = key.crbegin(), e = key.crend(); it != e; ++it) {
         int16_t id = *it;
         if (orig.d_ptr->m_songsList.contains(id)) {
-            QJsonObject ob1 = d->m_songsList.value(id)->createPatch(*orig.d_ptr->m_songsList.value(id));
+            QJsonObject ob1 = d->m_songsList.value(id)->createPatch(*orig.d_ptr->m_songsList.value(id), d->m_isUserMade);
             if (!ob1.isEmpty())
                 arr << ob1;
         }
@@ -161,7 +163,7 @@ bool RmeSongClientFile::savePatchToDevice(QIODevice *output, const RmeSongClient
 
     if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         QJsonObject ob;
-        ob[QStringLiteral("userMadePatch")] = QJsonValue(false);
+        ob[QStringLiteral("userMadePatch")] = QJsonValue(d->m_isUserMade);
         ob[QStringLiteral("data")] = arr;
         QJsonDocument doc(ob);
         output->write(doc.toJson(QJsonDocument::Indented));
@@ -190,6 +192,7 @@ bool RmeSongClientFile::applyPatchFromDevice(QIODevice *input)
                 QJsonObject ob = doc.object();
                 QJsonArray arr = ob.value(QStringLiteral("data")).toArray();
                 if (ob.contains(QStringLiteral("userMadePatch")) && ob.value(QStringLiteral("userMadePatch")).toBool(false)) {
+                    prepareForUserMadeNotes();
                     // find next free song, and patch it
                     auto listit = d->m_songsList.end();
                     for (auto arrit = arr.constBegin(), arre = arr.constEnd(); listit != d->m_songsList.begin() && arrit != arre; ++arrit) {
@@ -251,9 +254,10 @@ void RmeSong::RmeSongClientFile::mergeSongList(RmeSongClientFile *file2)
     qDeleteAll(s);
 }
 
-void RmeSongClientFile::prepareForUserMakingNotes()
+void RmeSongClientFile::prepareForUserMadeNotes()
 {
     Q_D(RmeSongClientFile);
+    d->m_isUserMade = true;
     int orderIndex = 0;
     for (auto it = d->m_songsList.end(), b = d->m_songsList.begin(); it != b;) {
         --it;
@@ -265,6 +269,12 @@ void RmeSongClientFile::prepareForUserMakingNotes()
             (*it)->m_iOrderIndex = 0;
         }
     }
+}
+
+bool RmeSongClientFile::isUserMadeMode() const
+{
+    Q_D(const RmeSongClientFile);
+    return d->m_isUserMade;
 }
 
 class RmeSong::RmePapaSongClientFilePrivate
@@ -419,7 +429,6 @@ bool RmePapaSongClientFile::savePatchToDevice(QIODevice *output, const RmePapaSo
 
     if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         QJsonObject ob;
-        ob[QStringLiteral("userMadePatch")] = QJsonValue(false);
         ob[QStringLiteral("data")] = arr;
         QJsonDocument doc(ob);
         output->write(doc.toJson(QJsonDocument::Indented));
@@ -447,20 +456,11 @@ bool RmePapaSongClientFile::applyPatchFromDevice(QIODevice *input)
             if (doc.isObject()) {
                 QJsonObject ob = doc.object();
                 QJsonArray arr = ob.value(QStringLiteral("data")).toArray();
-                if (ob.contains(QStringLiteral("userMadePatch")) && ob.value(QStringLiteral("userMadePatch")).toBool(false)) {
-                    // find next free song, and patch it
-                    auto listit = d->m_songsList.end();
-                    for (auto arrit = arr.constBegin(), arre = arr.constEnd(); listit != d->m_songsList.begin() && arrit != arre; ++arrit) {
-                        --listit;
-                        (*listit)->applyPatch(arrit->toObject(), true);
-                    }
-                } else {
-                    for (auto it = arr.constBegin(), e = arr.constEnd(); it != e; ++it) {
-                        QJsonObject item = it->toObject();
-                        int16_t id = item.value(QStringLiteral("ushSongID")).toInt(0);
-                        if (id != 0 && d->m_songsList.contains(id))
-                            d->m_songsList[id]->applyPatch(item);
-                    }
+                for (auto it = arr.constBegin(), e = arr.constEnd(); it != e; ++it) {
+                    QJsonObject item = it->toObject();
+                    int16_t id = item.value(QStringLiteral("ushSongID")).toInt(0);
+                    if (id != 0 && d->m_songsList.contains(id))
+                        d->m_songsList[id]->applyPatch(item);
                 }
             } else
                 return false;

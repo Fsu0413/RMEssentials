@@ -1,4 +1,5 @@
 ﻿#include "rmesongstruct.h"
+#include "rmeutils.h"
 
 const QString RmeSong::RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
@@ -406,10 +407,15 @@ const QStringList NoteNumSuffix = {
 };
 }
 
-QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSongClientItemStruct &orig) const
+QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSongClientItemStruct &orig, bool userMade) const
 {
-    if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
-        return QJsonObject();
+    if (!userMade) {
+        if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
+            return QJsonObject();
+    } else {
+        if (!isFree())
+            return QJsonObject();
+    }
 
     QJsonObject ob;
 
@@ -418,18 +424,17 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
 
 #define SETOTH(name)                                                \
     do {                                                            \
-        if (this->m_##name != orig.m_##name)                        \
+        if (userMade || (this->m_##name != orig.m_##name))          \
             ob[QStringLiteral(#name)] = QJsonValue(this->m_##name); \
     } while (false)
 
 #define SETINT(name)                                                                  \
     do {                                                                              \
-        if (this->m_##name != orig.m_##name)                                          \
+        if (userMade || (this->m_##name != orig.m_##name))                            \
             ob[QStringLiteral(#name)] = QJsonValue(static_cast<int>(this->m_##name)); \
     } while (false)
 
     SETOTH(szArtist);
-    SETOTH(szSongTime);
     SETINT(iGameTime);
     SETOTH(szBPM);
     SETINT(iOrderIndex);
@@ -453,7 +458,7 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
     if (songName2.startsWith(strTemp))
         songName2 = songName2.mid(strTemp.length());
 
-    if (songName1 != songName2)
+    if (userMade || (songName1 != songName2))
         ob[QStringLiteral("szSongName")] = QJsonValue(songName1);
 
     // NoteNumber split
@@ -474,7 +479,7 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
         noteNums2 << 0;
 
     for (int i = 0; i < 9; ++i) {
-        if (noteNums1.value(i) != noteNums2.value(i))
+        if (userMade || (noteNums1.value(i) != noteNums2.value(i)))
             ob[QStringLiteral("szNoteNumber") + NoteNumSuffix.value(i)] = QJsonValue(static_cast<int>(noteNums1.value(i)));
     }
 
@@ -505,7 +510,6 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
 
     GETSTR(szSongName);
     GETSTR(szArtist);
-    GETSTR(szSongTime);
     GETINT(iGameTime);
     GETSTR(szBPM);
     GETINT(iOrderIndex);
@@ -544,6 +548,8 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
     foreach (int n, noteNums1)
         noteNums1str << QString::number(n);
     m_szNoteNumber = noteNums1str.join(QLatin1Char(','));
+
+    m_szSongTime = RmeUtils::calculateSongTime(m_iGameTime);
 
     return true;
 }
@@ -761,7 +767,7 @@ QVariantMap RmeSong::RmePapaSongClientItemStruct::toMap() const
     return map;
 }
 
-QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::RmePapaSongClientItemStruct &orig) const
+QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::RmePapaSongClientItemStruct &orig, bool /*userMade*/) const
 {
     if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
         return QJsonObject();
@@ -785,7 +791,6 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
 
     SETOTH(szSongName);
     SETOTH(szArtist);
-    SETOTH(szSongTime);
     SETINT(iGameTime);
     SETOTH(szBPM);
     SETINT(iOrderIndex);
@@ -831,7 +836,6 @@ bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, 
 
     GETSTR(szSongName);
     GETSTR(szArtist);
-    GETSTR(szSongTime);
     GETINT(iGameTime);
     GETSTR(szBPM);
     GETINT(iOrderIndex);
@@ -842,6 +846,8 @@ bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, 
 
     if (patch.contains(QStringLiteral("szNoteNumber")))
         m_szNoteNumber = QString::number(patch[QStringLiteral("szNoteNumber")].toInt());
+
+    m_szSongTime = RmeUtils::calculateSongTime(m_iGameTime);
 
     return true;
 }

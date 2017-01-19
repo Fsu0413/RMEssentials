@@ -2,6 +2,7 @@
 
 #include <RMEssentials/RmeDownloader>
 #include <RMEssentials/RmeSongClientStruct>
+#include <RMEssentials/RmeUtils>
 
 #include <QCheckBox>
 #include <QDoubleValidator>
@@ -562,17 +563,7 @@ void SongClientEditDialog::allSongUnlock()
 void SongClientEditDialog::calculateSongTime()
 {
     int gameTime = m_controls->iGameTime->text().toInt();
-    float songTime = gameTime / 1440.f;
-    QString r = QString::number(songTime);
-    if (r.length() > 8) {
-        int r9 = r.at(8).toLatin1() - 48;
-        if (r9 >= 5) {
-            songTime += 0.000001f;
-            r = QString::number(songTime);
-        }
-    }
-    r = r.left(8);
-    m_controls->szSongTime->setText(r);
+    m_controls->szSongTime->setText(RmeUtils::calculateSongTime(gameTime));
 }
 
 void SongClientEditDialog::saveCurrent()
@@ -701,7 +692,8 @@ void SongClientEditDialog::prepareForUserMakingNotes()
     if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?")) == QMessageBox::No)
         return;
 
-    m_file.prepareForUserMakingNotes();
+    m_file.prepareForUserMadeNotes();
+    setWindowTitle(tr("Rhythm Master Song Client Editor") + tr(" - User Made Notes Mode"));
 
     readCurrent();
 }
@@ -747,5 +739,8 @@ void SongClientEditDialog::applyPatch()
         QMessageBox::warning(this, tr("RMEssentials"), tr("Apply patch from device failed"));
         return;
     }
+
+    if (m_file.isUserMadeMode())
+        setWindowTitle(tr("Rhythm Master Song Client Editor") + tr(" - User Made Notes Mode"));
     readCurrent();
 }
