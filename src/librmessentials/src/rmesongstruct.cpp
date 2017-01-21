@@ -489,9 +489,9 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
     return ob;
 }
 
-bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool patchPath)
+bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool userMade)
 {
-    if (!patchPath) {
+    if (!userMade) {
         if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
             return false;
     }
@@ -500,19 +500,24 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
     do {                                                              \
         if (patch.contains(QStringLiteral(#name)))                    \
             this->m_##name = patch[QStringLiteral(#name)].toString(); \
+        else if (userMade)                                            \
+            this->m_##name = QString();                               \
     } while (false)
 
 #define GETINT(name)                                               \
     do {                                                           \
         if (patch.contains(QStringLiteral(#name)))                 \
             this->m_##name = patch[QStringLiteral(#name)].toInt(); \
+        else if (userMade)                                         \
+            this->m_##name = 0;                                    \
     } while (false)
 
     GETSTR(szSongName);
     GETSTR(szArtist);
     GETINT(iGameTime);
     GETSTR(szBPM);
-    GETINT(iOrderIndex);
+    if (!userMade)
+        GETINT(iOrderIndex);
     GETINT(ush4KeyEasy);
     GETINT(ush4KeyNormal);
     GETINT(ush4KeyHard);
@@ -523,7 +528,7 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
     GETINT(ush6KeyNormal);
     GETINT(ush6KeyHard);
 
-    if (patchPath)
+    if (userMade)
         GETSTR(szPath);
 
 #undef GETSTR
@@ -543,6 +548,8 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
         QString key = QStringLiteral("szNoteNumber") + NoteNumSuffix.value(i);
         if (patch.contains(key))
             noteNums1[i] = patch[key].toInt();
+        else if (userMade)
+            noteNums1[i] = 0;
     }
     noteNums1str.clear();
     foreach (int n, noteNums1)
@@ -812,9 +819,9 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
     return ob;
 }
 
-bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, bool patchPath)
+bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, bool userMade)
 {
-    if (!patchPath) {
+    if (!userMade) {
         if (!(static_cast<int>(m_ushSongID) == patch[QStringLiteral("ushSongID")].toInt() && m_szPath == patch[QStringLiteral("szPath")].toString()))
             return false;
     }
@@ -823,22 +830,27 @@ bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, 
     do {                                                              \
         if (patch.contains(QStringLiteral(#name)))                    \
             this->m_##name = patch[QStringLiteral(#name)].toString(); \
+        else if (userMade)                                            \
+            this->m_##name = QString();                               \
     } while (false)
 
 #define GETINT(name)                                               \
     do {                                                           \
         if (patch.contains(QStringLiteral(#name)))                 \
             this->m_##name = patch[QStringLiteral(#name)].toInt(); \
+        else if (userMade)                                         \
+            this->m_##name = 0;                                    \
     } while (false)
 
-    if (patchPath)
+    if (userMade)
         GETSTR(szPath);
 
     GETSTR(szSongName);
     GETSTR(szArtist);
     GETINT(iGameTime);
     GETSTR(szBPM);
-    GETINT(iOrderIndex);
+    if (!userMade)
+        GETINT(iOrderIndex);
     GETINT(cDifficulty);
 
 #undef GETSTR
@@ -846,6 +858,8 @@ bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, 
 
     if (patch.contains(QStringLiteral("szNoteNumber")))
         m_szNoteNumber = QString::number(patch[QStringLiteral("szNoteNumber")].toInt());
+    else if (userMade)
+        m_szNoteNumber = QStringLiteral("0");
 
     m_szSongTime = RmeUtils::calculateSongTime(m_iGameTime);
 

@@ -84,7 +84,7 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
     QVariantMap toMap() const;
 
     QJsonObject createPatch(const RmeSongClientItemStruct &orig, bool userMade = false) const;
-    bool applyPatch(const QJsonObject &patch, bool patchPath = false);
+    bool applyPatch(const QJsonObject &patch, bool userMade = false);
 
     bool isHidden() const;
     bool isReward() const;
@@ -129,7 +129,7 @@ struct LIBRMESSENTIALS_EXPORT RmePapaSongClientItemStruct
 
     // currently this "userMade" value do not make sence, reserved for future use
     QJsonObject createPatch(const RmePapaSongClientItemStruct &orig, bool userMade = false) const;
-    bool applyPatch(const QJsonObject &patch, bool patchPath = false);
+    bool applyPatch(const QJsonObject &patch, bool userMade = false);
 
     static bool sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b);
 };

@@ -398,6 +398,7 @@ bool SongClientEditDialog::reloadFile()
         return false;
 
     if (m_file.readInfoFromDevice(&f, BinFormat)) {
+        setWindowTitle(tr("Rhythm Master Song Client Editor"));
         m_isLoaded = true;
         m_currentIndex = 0;
         readCurrent();
@@ -425,6 +426,7 @@ bool SongClientEditDialog::loadFile()
         return false;
 
     if (m_file.readInfoFromDevice(&f, BinFormat)) {
+        setWindowTitle(tr("Rhythm Master Song Client Editor"));
         m_isLoaded = true;
         m_currentIndex = 0;
         readCurrent();

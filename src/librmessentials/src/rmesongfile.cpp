@@ -215,8 +215,11 @@ bool RmeSongClientFile::applyPatchFromDevice(QIODevice *input)
                 }
             } else
                 return false;
-        } else
+        } else {
+            qDebug() << err.error << err.offset;
+            qDebug() << err.errorString();
             return false;
+        }
     } else
         return false;
     return true;
