@@ -22,7 +22,7 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientHeaderStruct
     QString MetalibHash;
     int32_t ResVersion;
     static const QString CreateTime; // CreateTime?? better static?
-    QString ResEncoding;
+    QString ResEncording;
     QString ContentHash;
     int32_t DataOffset;
 

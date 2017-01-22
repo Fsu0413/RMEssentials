@@ -26,6 +26,38 @@
 
 using namespace RmeSong;
 
+namespace {
+RmeFileFormat getOpenFileName(QWidget *parent, QString &filepath)
+{
+    QString selectedFilter;
+    filepath = QFileDialog::getOpenFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files") + QStringLiteral(" (*.xml)"), &selectedFilter);
+    if (filepath.isNull())
+        return UnknownFormat;
+
+    if (selectedFilter.contains(QStringLiteral(".bin")))
+        return BinFormat;
+    else if (selectedFilter.contains(QStringLiteral(".xml")))
+        return XmlFormat;
+
+    return UnknownFormat;
+}
+
+RmeFileFormat getSaveFileName(QWidget *parent, QString &filepath)
+{
+    QString selectedFilter;
+    filepath = QFileDialog::getSaveFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files") + QStringLiteral(" (*.xml)"), &selectedFilter);
+    if (filepath.isNull())
+        return UnknownFormat;
+
+    if (selectedFilter.contains(QStringLiteral(".bin")))
+        return BinFormat;
+    else if (selectedFilter.contains(QStringLiteral(".xml")))
+        return XmlFormat;
+
+    return UnknownFormat;
+}
+}
+
 struct SongClientEditDialogControls
 {
     QLineEdit *ushSongID; // Readonly, User Making note better > 800
@@ -391,13 +423,16 @@ SongClientEditDialog::~SongClientEditDialog()
 
 bool SongClientEditDialog::reloadFile()
 {
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+    QString filepath;
+    auto format = getOpenFileName(this, filepath);
+    if (filepath.isNull())
+        return false;
 
     QFile f(filepath);
     if (!f.exists())
         return false;
 
-    if (m_file.readInfoFromDevice(&f, BinFormat)) {
+    if (m_file.readInfoFromDevice(&f, format)) {
         setWindowTitle(tr("Rhythm Master Song Client Editor"));
         m_isLoaded = true;
         m_currentIndex = 0;
@@ -414,18 +449,21 @@ bool SongClientEditDialog::loadFile()
     QDir d(RmeDownloader::downloadPath());
 
     QString filepath;
+    RmeFileFormat format = BinFormat;
     if (d.exists() && d.exists(QStringLiteral("mrock_song_client_android.bin")))
         filepath = d.absoluteFilePath(QStringLiteral("mrock_song_client_android.bin"));
     else {
         QMessageBox::information(this, tr("RMEssentials"), tr("mrock_song_client_android.bin doesn't exist, please select the file to open."));
-        filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+        format = getOpenFileName(this, filepath);
     }
+    if (filepath.isNull())
+        return false;
 
     QFile f(filepath);
     if (!f.exists())
         return false;
 
-    if (m_file.readInfoFromDevice(&f, BinFormat)) {
+    if (m_file.readInfoFromDevice(&f, format)) {
         setWindowTitle(tr("Rhythm Master Song Client Editor"));
         m_isLoaded = true;
         m_currentIndex = 0;
@@ -442,12 +480,14 @@ void SongClientEditDialog::saveFile()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
-    QFile f(filepath);
-    if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
+    QString filepath;
+    auto format = getSaveFileName(this, filepath);
+    if (filepath.isNull())
         return;
 
-    if (!m_file.saveInfoToDevice(&f, BinFormat))
+    QFile f(filepath);
+
+    if (!m_file.saveInfoToDevice(&f, format))
         QMessageBox::critical(this, tr("RMEssentials"), tr("Save file failed"));
 }
 
@@ -677,14 +717,19 @@ void SongClientEditDialog::createPatch()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+    QString filepath;
+
+    auto format = getOpenFileName(this, filepath);
+
+    if (filepath.isNull())
+        return;
 
     QFile f(filepath);
     if (!f.exists())
         return;
 
     RmeSongClientFile file2;
-    if (!file2.readInfoFromDevice(&f, BinFormat)) {
+    if (!file2.readInfoFromDevice(&f, format)) {
         QMessageBox::warning(this, tr("RMEssentials"), tr("Load info from file failed."));
         return;
     }

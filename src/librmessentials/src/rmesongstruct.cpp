@@ -34,7 +34,7 @@ void RmeSong::RmeSongClientHeaderStruct::parseByteArray(const QByteArray &arr)
     GETX(int32_t, Count, 0xc);
     GETSTR(MetalibHash, 0x10);
     GETX(int32_t, ResVersion, 0x34);
-    GETSTR(ResEncoding, 0x40);
+    GETSTR(ResEncording, 0x40);
     GETSTR(ContentHash, 0x60);
     GETX(int32_t, DataOffset, 0x84);
 
@@ -74,7 +74,7 @@ QByteArray RmeSong::RmeSongClientHeaderStruct::toByteArray() const
     SETX(Count, 0xc);
     SETSTR(MetalibHash, 0x10, 0x24);
     SETX(ResVersion, 0x34);
-    SETSTR(ResEncoding, 0x40, 0x20);
+    SETSTR(ResEncording, 0x40, 0x20);
     SETSTR(ContentHash, 0x60, 0x24);
     SETX(DataOffset, 0x84);
 
@@ -97,7 +97,7 @@ void RmeSong::RmeSongClientHeaderStruct::parseMap(const QVariantMap &map)
     GETINT(Count);
     GETSTR(MetalibHash);
     GETINT(ResVersion);
-    GETSTR(ResEncoding);
+    GETSTR(ResEncording);
     GETSTR(ContentHash);
     GETINT(DataOffset);
 
@@ -121,7 +121,7 @@ QVariantMap RmeSong::RmeSongClientHeaderStruct::toMap() const
     SETSTR(MetalibHash);
     SETINT(ResVersion);
     SETSTR(CreateTime); // important!!!! It don't need any convertion and can be used here
-    SETSTR(ResEncoding);
+    SETSTR(ResEncording);
     SETSTR(ContentHash);
     SETINT(DataOffset);
 
@@ -557,6 +557,9 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
     m_szNoteNumber = noteNums1str.join(QLatin1Char(','));
 
     m_szSongTime = RmeUtils::calculateSongTime(m_iGameTime);
+
+    if (userMade)
+        m_bIsFree = false;
 
     return true;
 }

@@ -14,7 +14,7 @@ struct RmeSongClientHeaderStruct;
 
 enum RmeFileFormat
 {
-    Unknown,
+    UnknownFormat,
     BinFormat,
     XmlFormat
 };
