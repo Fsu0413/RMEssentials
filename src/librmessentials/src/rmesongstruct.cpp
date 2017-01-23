@@ -419,7 +419,9 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
 
     QJsonObject ob;
 
-    ob[QStringLiteral("ushSongID")] = QJsonValue(static_cast<int>(m_ushSongID));
+    if (!userMade)
+        ob[QStringLiteral("ushSongID")] = QJsonValue(static_cast<int>(m_ushSongID));
+
     ob[QStringLiteral("szPath")] = QJsonValue(m_szPath);
 
 #define SETOTH(name)                                                \
@@ -777,14 +779,18 @@ QVariantMap RmeSong::RmePapaSongClientItemStruct::toMap() const
     return map;
 }
 
-QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::RmePapaSongClientItemStruct &orig, bool /*userMade*/) const
+QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::RmePapaSongClientItemStruct &orig, bool userMade) const
 {
-    if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
-        return QJsonObject();
+    if (!userMade) {
+        if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
+            return QJsonObject();
+    }
 
     QJsonObject ob;
 
-    ob[QStringLiteral("ushSongID")] = QJsonValue(static_cast<int>(m_ushSongID));
+    if (!userMade)
+        ob[QStringLiteral("ushSongID")] = QJsonValue(static_cast<int>(m_ushSongID));
+
     ob[QStringLiteral("szPath")] = QJsonValue(m_szPath);
 
 #define SETOTH(name)                                                \
