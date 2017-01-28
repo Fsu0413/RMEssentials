@@ -563,19 +563,32 @@ QList<int> RmeSong::RmeSongClientFile::search(const QString &cond) const
 {
     Q_D(const RmeSongClientFile);
     QList<int> r;
-    bool matchId = false;
-    int preferedId = cond.toInt(&matchId);
+    bool isNum = false;
+    int num = cond.toInt(&isNum);
     int i = 0;
     foreach (const RmeSongClientItemStruct *s, d->m_songsList) {
         bool flag = false;
-        if (matchId && s->m_ushSongID == preferedId)
-            flag = true;
-        else if (s->m_szSongName.toLower().contains(cond.toLower()))
+        if (s->m_szSongName.toLower().contains(cond.toLower()))
             flag = true;
         else if (s->m_szPath.toLower().contains(cond.toLower()))
             flag = true;
         else if (s->m_szArtist.toLower().contains(cond.toLower()))
             flag = true;
+        else if (isNum) {
+            if (s->m_ushSongID == num)
+                flag = true;
+            else {
+                QStringList l = s->m_szNoteNumber.split(QLatin1Char(','));
+                foreach (const QString &nn, l) {
+                    bool isNumNn;
+                    int numNn = nn.toInt(&isNumNn);
+                    if (isNumNn && numNn == num) {
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         if (flag)
             r << i;
@@ -818,19 +831,27 @@ QList<int> RmeSong::RmePapaSongClientFile::search(const QString &cond) const
 {
     Q_D(const RmePapaSongClientFile);
     QList<int> r;
-    bool matchId = false;
-    int preferedId = cond.toInt(&matchId);
+    bool isNum = false;
+    int num = cond.toInt(&isNum);
     int i = 0;
     foreach (const RmePapaSongClientItemStruct *s, d->m_songsList) {
         bool flag = false;
-        if (matchId && s->m_ushSongID == preferedId)
-            flag = true;
-        else if (s->m_szSongName.toLower().contains(cond.toLower()))
+        if (s->m_szSongName.toLower().contains(cond.toLower()))
             flag = true;
         else if (s->m_szPath.toLower().contains(cond.toLower()))
             flag = true;
         else if (s->m_szArtist.toLower().contains(cond.toLower()))
             flag = true;
+        else if (isNum) {
+            if (s->m_ushSongID == num)
+                flag = true;
+            else {
+                bool isNumNn;
+                int numNn = s->m_szNoteNumber.toInt(&isNumNn);
+                if (isNumNn && numNn == num)
+                    flag = true;
+            }
+        }
 
         if (flag)
             r << i;
