@@ -69,7 +69,9 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QVBoxLayout *alllayout = new QVBoxLayout;
     alllayout->addWidget(tabWidget);
     alllayout->addWidget(m_list);
+#ifndef Q_OS_ANDROID
     alllayout->addWidget(m_progressBar);
+#endif
 
     setLayout(alllayout);
 
