@@ -9,6 +9,7 @@ DEFINES += "RMEVERSION=\\\"$$RMEVERSION\\\"" "RMEVERSIONNUMBER=\\\"$$VERSION\\\"
 DEFINES += QT_NO_CAST_FROM_ASCII
 
 android || ios {
+    CONFIG += staticlib
     DEFINES += MOBILE_DEVICES
 } else {
     CONFIG += use_quazip
