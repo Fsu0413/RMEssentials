@@ -16,13 +16,14 @@ public:
     RmeDownloader();
     ~RmeDownloader() override;
 
-    static QString downloadPath();
+    static QString songDownloadPath();
+    static QString binDownloadPath();
 
     RmeDownloader &operator<<(const QString &filename);
     QStringList downloadSequence() const;
 
-    QString savePath() const;
-    void setSavePath(const QString &sp);
+    QString downloadPath() const;
+    void setDownloadPath(const QString &sp);
 
     void setIsAll(bool all);
     bool isAll() const;
@@ -38,7 +39,6 @@ signals:
     void singleFileFailed(const QString &url);
     void error();
     void downloadProgress(quint64 downloaded, quint64 total);
-    void finished();
 
 private:
     Q_DISABLE_COPY(RmeDownloader)

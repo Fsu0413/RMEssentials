@@ -98,7 +98,7 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 void ChangeNameDialog::selectFolder()
 {
     QString dir;
-    QDir d_detect(RmeDownloader::downloadPath());
+    QDir d_detect(RmeDownloader::songDownloadPath());
     if (d_detect.exists())
         dir = d_detect.absolutePath();
     else

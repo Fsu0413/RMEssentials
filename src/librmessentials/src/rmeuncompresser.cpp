@@ -54,7 +54,7 @@ void RmeUncompresser::run()
         return;
     }
     while (!d->zipNames.isEmpty()) {
-        QString zipName = RmeDownloader::downloadPath() + d->zipNames.takeFirst();
+        QString zipName = d->zipNames.takeFirst();
         QString fileName = d->fileNames.takeFirst();
         d->m.unlock();
 

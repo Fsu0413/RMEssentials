@@ -42,6 +42,9 @@ private slots:
     void createPatch();
     void applyPatch();
 
+protected:
+    void showEvent(QShowEvent *e) override;
+
 private:
     PapaSongClientEditDialogControls *m_controls;
     QMenu *m_popup;

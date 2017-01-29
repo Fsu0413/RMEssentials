@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStandardPaths>
 #include <QTextStream>
 #include <QTranslator>
 #include <QVBoxLayout>
@@ -68,10 +69,10 @@ MainDialog::MainDialog(QWidget *parent)
     RmeDownloader *downloader = new RmeDownloader;
     downloader << versioninfo << whatsnew << dlurl << dlpasswd;
 
-    downloader->setSavePath(QStringLiteral("RMESSENTIALS"));
+    downloader->setDownloadPath(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS"));
 
-    connect(downloader, &RmeDownloader::finished, downloader, &RmeDownloader::deleteLater);
     connect(downloader, &RmeDownloader::allCompleted, this, &MainDialog::checkForUpdate);
+    connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
     connect(this, &MainDialog::finished, downloader, &RmeDownloader::cancel);
 
     downloader->start();
@@ -97,7 +98,6 @@ void MainDialog::showDownloadDialog()
 #else
     dl->showMaximized();
 #endif
-    dl->downloadList();
 }
 
 void MainDialog::showSongClientEditDialog()
@@ -109,7 +109,6 @@ void MainDialog::showSongClientEditDialog()
 #else
     dl->showMaximized();
 #endif
-    dl->loadFile();
 }
 
 void MainDialog::showPapaSongClientEditDialog()
@@ -121,7 +120,6 @@ void MainDialog::showPapaSongClientEditDialog()
 #else
     dl->showMaximized();
 #endif
-    dl->loadFile();
 }
 
 void MainDialog::about()
@@ -149,30 +147,30 @@ void MainDialog::about()
 void MainDialog::checkForUpdate()
 {
 #ifdef QT_NO_DEBUG
-    QFile v(QStringLiteral("downloader/RMESSENTIALS/versioninfo"));
+    QFile v(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/versioninfo"));
 #else
-    QFile v(QStringLiteral("downloader/RMESSENTIALS/versioninfotest"));
+    QFile v(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/versioninfotest"));
 #endif
     if (v.open(QIODevice::ReadOnly)) {
         QString version = QString::fromUtf8(v.readAll());
         v.close();
 
         if (QStringLiteral(RMEVERSION) < version) {
-            QFile n(QStringLiteral("downloader/RMESSENTIALS/whatsnew"));
+            QFile n(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/whatsnew"));
             QString whatsnew = tr("Failed to load whatsnew from network");
             if (n.open(QIODevice::ReadOnly)) {
                 whatsnew = QString::fromUtf8(n.readAll());
                 n.close();
             }
 
-            QFile l(QStringLiteral("downloader/RMESSENTIALS/dlurl"));
+            QFile l(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/dlurl"));
             QString link = QStringLiteral("http://pan.baidu.com/s/1eQvwPzW");
             if (l.open(QIODevice::ReadOnly)) {
                 link = QString::fromUtf8(l.readAll());
                 l.close();
             }
 
-            QFile p(QStringLiteral("downloader/RMESSENTIALS/dlpasswd"));
+            QFile p(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/dlpasswd"));
             QString passwd = QStringLiteral("at7c");
             if (p.open(QIODevice::ReadOnly)) {
                 passwd = QString::fromUtf8(p.readAll());

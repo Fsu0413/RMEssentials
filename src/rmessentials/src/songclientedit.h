@@ -45,6 +45,9 @@ private slots:
     void createPatch();
     void applyPatch();
 
+protected:
+    void showEvent(QShowEvent *e) override;
+
 private:
     SongClientEditDialogControls *m_controls;
     QMenu *m_popup;

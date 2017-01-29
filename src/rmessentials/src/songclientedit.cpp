@@ -446,7 +446,7 @@ bool SongClientEditDialog::reloadFile()
 
 bool SongClientEditDialog::loadFile()
 {
-    QDir d(RmeDownloader::downloadPath());
+    QDir d(RmeDownloader::binDownloadPath());
 
     QString filepath;
     RmeFileFormat format = BinFormat;
@@ -762,4 +762,11 @@ void SongClientEditDialog::applyPatch()
     if (m_file.isUserMadeMode())
         setWindowTitle(tr("Rhythm Master Song Client Editor") + tr(" - User Made Notes Mode"));
     readCurrent();
+}
+
+void SongClientEditDialog::showEvent(QShowEvent *e)
+{
+    QDialog::showEvent(e);
+
+    loadFile();
 }

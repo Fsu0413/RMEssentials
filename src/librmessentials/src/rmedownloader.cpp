@@ -29,10 +29,11 @@ private slots:
     void downloadProgress(quint64 downloaded, quint64 total);
 
     void run();
-    void canceled();
+    void cancel();
 
 signals:
-    void cancel();
+    void canceled();
+    void started();
 
 public:
     // q-ptr and thread-related stuff
@@ -45,8 +46,10 @@ public:
     // public to RmeDownloader only since this class is always an incomplete type outside rmedownloader.cpp
     // Note these variables are shared between threads so the RW-Lock(m_dataLock) should be used for thread safety
     QStringList m_downloadSequence;
-    QString m_savePath;
+    QString m_downloadPath;
     bool m_isAll;
+    bool m_canceled;
+    bool m_running;
 
 private:
     // private to RmeDownloaderPrivate only.
@@ -64,15 +67,17 @@ RmeDownloaderPrivate::RmeDownloaderPrivate(RmeDownloader *downloader)
     : m_downloader(downloader)
     , m_thread(new QThread(downloader))
     , m_isAll(false)
+    , m_canceled(false)
+    , m_running(false)
     , m_currentDownloadingReply(nullptr)
     , m_networkAccessManager(nullptr)
     , m_timer(nullptr)
     , m_lastRecordedDownloadProgress(0u)
 {
-    connect(m_thread, &QThread::finished, m_downloader, &RmeDownloader::finished);
-    connect(m_thread, &QThread::finished, [this]() -> void { moveToThread(m_downloader->thread()); });
-    connect(m_thread, &QThread::started, this, &RmeDownloaderPrivate::run);
-    connect(this, &RmeDownloaderPrivate::cancel, this, &RmeDownloaderPrivate::canceled);
+    moveToThread(m_thread);
+    connect(m_thread, &QThread::finished, this, &RmeDownloaderPrivate::deleteLater);
+    connect(this, &RmeDownloaderPrivate::started, this, &RmeDownloaderPrivate::run);
+    connect(this, &RmeDownloaderPrivate::canceled, this, &RmeDownloaderPrivate::cancel);
 }
 
 void RmeDownloaderPrivate::run()
@@ -82,24 +87,20 @@ void RmeDownloaderPrivate::run()
     m_timer = new QTimer(this);
     m_timer->setInterval(10000);
     m_timer->setSingleShot(true);
-    connect(m_timer, &QTimer::timeout, this, &RmeDownloaderPrivate::canceled);
+    connect(m_timer, &QTimer::timeout, this, &RmeDownloaderPrivate::cancel);
 
     m_currentDownloadingReply = nullptr;
 
-    QString s = RmeDownloader::downloadPath();
-    if (s.isEmpty()) {
-        // emit error();
-        return;
-    }
-
-    QDir dir(s);
-    m_dataLock.lockForRead();
-    QString savePath = m_savePath;
+    QDir dir;
+    m_dataLock.lockForWrite();
+    m_running = true;
+    m_canceled = false;
+    QString savePath = m_downloadPath;
     m_dataLock.unlock();
 
     if (!savePath.isEmpty()) {
         if (!dir.cd(savePath)) {
-            if (!dir.mkdir(savePath)) {
+            if (!dir.mkpath(savePath)) {
                 //emit error();
                 return;
             }
@@ -111,7 +112,7 @@ void RmeDownloaderPrivate::run()
     downloadSingleFile();
 }
 
-void RmeDownloaderPrivate::canceled()
+void RmeDownloaderPrivate::cancel()
 {
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &RmeDownloaderPrivate::singleFileFinished);
@@ -134,14 +135,15 @@ RmeDownloader::RmeDownloader()
     : d_ptr(new RmeDownloaderPrivate(this))
 {
     Q_D(RmeDownloader);
-    connect(this, &RmeDownloader::destroyed, d, &RmeDownloaderPrivate::deleteLater);
+    d->m_thread->start();
 }
 
 RmeDownloader::~RmeDownloader()
 {
     Q_D(RmeDownloader);
-    if (d->m_thread == d->thread())
+    if (d->m_running)
         cancel();
+    d->m_thread->quit();
 
     if (!d->m_thread->wait(3000UL))
         d->m_thread->terminate();
@@ -150,11 +152,10 @@ RmeDownloader::~RmeDownloader()
 void RmeDownloader::start()
 {
     Q_D(RmeDownloader);
-    d->moveToThread(d->m_thread);
-    d->m_thread->start();
+    emit d->started();
 }
 
-QString RmeDownloader::downloadPath()
+QString RmeDownloader::songDownloadPath()
 {
 #if defined(Q_OS_WIN)
     QDir currentDir = QDir::current();
@@ -183,6 +184,23 @@ QString RmeDownloader::downloadPath()
     return r;
 }
 
+QString RmeDownloader::binDownloadPath()
+{
+#ifndef Q_OS_ANDROID
+    return songDownloadPath();
+#else
+    QDir currentDir(QStringLiteral("/sdcard/RM/res"));
+    if (!currentDir.exists())
+        return QString();
+
+    QString r = currentDir.absolutePath();
+    if (!r.endsWith(QStringLiteral("/")))
+        r.append(QStringLiteral("/"));
+
+    return r;
+#endif
+}
+
 RmeDownloader &RmeDownloader::operator<<(const QString &filename)
 {
     Q_D(RmeDownloader);
@@ -200,20 +218,20 @@ QStringList RmeDownloader::downloadSequence() const
     return d->m_downloadSequence;
 }
 
-QString RmeDownloader::savePath() const
+QString RmeDownloader::downloadPath() const
 {
     Q_D(const RmeDownloader);
     QReadLocker rl(&d->m_dataLock);
     Q_UNUSED(rl);
-    return d->m_savePath;
+    return d->m_downloadPath;
 }
 
-void RmeDownloader::setSavePath(const QString &sp)
+void RmeDownloader::setDownloadPath(const QString &sp)
 {
     Q_D(RmeDownloader);
     QWriteLocker wl(&d->m_dataLock);
     Q_UNUSED(wl);
-    d->m_savePath = sp;
+    d->m_downloadPath = sp;
 }
 
 void RmeDownloader::setIsAll(bool all)
@@ -236,14 +254,15 @@ void RmeDownloaderPrivate::downloadSingleFile()
 {
     m_dataLock.lockForWrite();
     if (m_downloadSequence.isEmpty()) {
+        m_running = false;
         m_dataLock.unlock();
         emit m_downloader->allCompleted();
-        m_thread->quit();
         return;
-    } else if (m_thread->isInterruptionRequested()) {
+    } else if (m_canceled) {
+        m_running = false;
+        m_canceled = false;
         m_dataLock.unlock();
         emit m_downloader->canceled();
-        m_thread->quit();
         return;
     }
 
@@ -353,8 +372,10 @@ RmeDownloader *operator<<(RmeDownloader *downloader, const QString &filename)
 void RmeDownloader::cancel()
 {
     Q_D(RmeDownloader);
-    d->m_thread->requestInterruption();
-    emit d->cancel();
+    QWriteLocker locker(&d->m_dataLock);
+    Q_UNUSED(locker);
+    d->m_canceled = true;
+    emit d->canceled();
 }
 
 #include "rmedownloader.moc"

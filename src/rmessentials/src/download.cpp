@@ -11,6 +11,7 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QShowEvent>
+#include <QTabWidget>
 #include <QVBoxLayout>
 
 #ifdef Q_OS_WIN
@@ -28,7 +29,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
 {
     setWindowTitle(tr("Rhythm Master Downloader"));
 
-    QVBoxLayout *alllayout = new QVBoxLayout;
+    QVBoxLayout *downloadSongLayout = new QVBoxLayout;
 
     QFormLayout *flayout = new QFormLayout;
     m_nameCombo = new QComboBox;
@@ -51,17 +52,25 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QHBoxLayout *layout2 = new QHBoxLayout;
     layout2->addWidget(downloadAllBtn);
     layout2->addWidget(downloadMissingBtn);
+    downloadSongLayout->addLayout(flayout);
+    downloadSongLayout->addLayout(layout2);
 
+    QWidget *downloadSongWidget = new QWidget;
+    downloadSongWidget->setLayout(downloadSongLayout);
+
+    QTabWidget *tabWidget = new QTabWidget;
+    tabWidget->addTab(downloadSongWidget, tr("Song && IMDs"));
     m_list = new QListWidget;
     m_list->setSortingEnabled(false);
 
     m_progressBar = new QProgressBar;
     m_progressBar->setMinimum(0);
 
-    alllayout->addLayout(flayout);
-    alllayout->addLayout(layout2);
+    QVBoxLayout *alllayout = new QVBoxLayout;
+    alllayout->addWidget(tabWidget);
     alllayout->addWidget(m_list);
     alllayout->addWidget(m_progressBar);
+
     setLayout(alllayout);
 
     connect(this, &DownloadDialog::busy, this, &DownloadDialog::setBusy);
@@ -81,6 +90,7 @@ void DownloadDialog::showEvent(QShowEvent *e)
         prog->reset();
     }
 #endif
+    downloadList();
 }
 
 void DownloadDialog::downloadClicked()
@@ -111,7 +121,7 @@ void DownloadDialog::startDownloadNext()
 void DownloadDialog::startDownloadAllMissing()
 {
     m_nameCombo->setCurrentIndex(0);
-    while (QDir(RmeDownloader::downloadPath() + m_nameCombo->currentText()).exists()) {
+    while (QDir(RmeDownloader::songDownloadPath() + m_nameCombo->currentText()).exists()) {
         if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
             return;
@@ -126,7 +136,7 @@ void DownloadDialog::startDownloadAllMissing()
 void DownloadDialog::startDownloadNextMissing()
 {
     m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
-    while (QDir(RmeDownloader::downloadPath() + m_nameCombo->currentText()).exists()) {
+    while (QDir(RmeDownloader::songDownloadPath() + m_nameCombo->currentText()).exists()) {
         if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
             allCompleted();
             return;
@@ -171,9 +181,8 @@ void DownloadDialog::startDownload(DownloadMode mode)
     foreach (const QString &suf, suffixs)
         downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
 
-    downloader->setSavePath(songname);
+    downloader->setDownloadPath(RmeDownloader::songDownloadPath() + songname);
 
-    connect(downloader, &RmeDownloader::finished, downloader, &RmeDownloader::deleteLater);
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
@@ -194,6 +203,7 @@ void DownloadDialog::startDownload(DownloadMode mode)
         downloader->setIsAll(true);
         break;
     }
+    connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
 
     emit busy(true);
 
@@ -248,10 +258,10 @@ void DownloadDialog::startUncompress()
 {
 #ifdef RME_USE_QUAZIP
     RmeUncompresser *unc = new RmeUncompresser;
-    unc->addFile(QStringLiteral("MD5List.zip"), QStringLiteral("MD5List.xml"));
-    unc->addFile(QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_song_client_android.bin"));
-    unc->addFile(QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_papasong_client.bin"));
-    unc->addFile(QStringLiteral("TableComBin_IOS.zip"), QStringLiteral("mrock_song_client.bin"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("MD5List.zip"), QStringLiteral("MD5List.xml"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_song_client_android.bin"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_papasong_client.bin"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"), QStringLiteral("mrock_song_client.bin"));
 
     connect(unc, &RmeUncompresser::finished, this, &DownloadDialog::loadPaths);
     connect(unc, &RmeUncompresser::finished, unc, &RmeUncompresser::deleteLater);
@@ -270,9 +280,8 @@ void DownloadDialog::downloadList()
     RmeDownloader *downloader = new RmeDownloader;
     downloader << md5 << bin;
 
-    downloader->setSavePath(QString());
+    downloader->setDownloadPath(RmeDownloader::binDownloadPath());
 
-    connect(downloader, &RmeDownloader::finished, downloader, &RmeDownloader::deleteLater);
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::downloadAndroidList);
@@ -280,19 +289,12 @@ void DownloadDialog::downloadList()
     connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
+    connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
 
     emit busy(true);
 
     downloader->start();
 #else
-#ifdef Q_OS_ANDROID
-    QFile::remove(RmeDownloader::downloadPath() + QStringLiteral("MD5List.xml"));
-    QFile::remove(RmeDownloader::downloadPath() + QStringLiteral("mrock_song_client_android.bin"));
-    QFile::remove(RmeDownloader::downloadPath() + QStringLiteral("mrock_papasong_client.bin"));
-    QFile::copy(RmeDownloader::downloadPath() + QStringLiteral("../MD5List.xml"), RmeDownloader::downloadPath() + QStringLiteral("MD5List.xml"));
-    QFile::copy(RmeDownloader::downloadPath() + QStringLiteral("../mrock_song_client_android.bin"), RmeDownloader::downloadPath() + QStringLiteral("mrock_song_client_android.bin"));
-    QFile::copy(RmeDownloader::downloadPath() + QStringLiteral("../mrock_papasong_client.bin"), RmeDownloader::downloadPath() + QStringLiteral("mrock_papasong_client.bin"));
-#endif
     loadPaths();
 #endif
 }
@@ -300,17 +302,18 @@ void DownloadDialog::downloadList()
 void DownloadDialog::downloadAndroidList()
 {
 #ifdef RME_USE_QUAZIP
-    if (QFile::exists(RmeDownloader::downloadPath() + QStringLiteral("TableComBin.zip")))
-        QFile(RmeDownloader::downloadPath() + QStringLiteral("TableComBin.zip")).rename(RmeDownloader::downloadPath() + QStringLiteral("TableComBin_IOS.zip"));
+    if (QFile::exists(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"))) {
+        QFile::remove(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"));
+        QFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip")).rename(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"));
+    }
 
     static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip");
 
     RmeDownloader *downloader = new RmeDownloader;
     downloader << bin;
 
-    downloader->setSavePath(QString());
+    downloader->setDownloadPath(RmeDownloader::binDownloadPath());
 
-    connect(downloader, &RmeDownloader::finished, downloader, &RmeDownloader::deleteLater);
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startUncompress);
@@ -318,6 +321,7 @@ void DownloadDialog::downloadAndroidList()
     connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
+    connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
 
     downloader->start();
 #endif
@@ -331,7 +335,7 @@ void DownloadDialog::appendLog(const QString &log)
 
 void DownloadDialog::loadPaths()
 {
-    QDir dir(RmeDownloader::downloadPath());
+    QDir dir(RmeDownloader::binDownloadPath());
     if (!dir.exists())
         return;
 
@@ -394,8 +398,6 @@ void DownloadDialog::loadPaths()
     }
 
     QStringList l = paths.toList();
-
-    qSort(l);
 
     m_nameCombo->addItems(l);
 

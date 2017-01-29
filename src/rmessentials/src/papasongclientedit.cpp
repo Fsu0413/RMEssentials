@@ -287,7 +287,7 @@ bool PapaSongClientEditDialog::reloadFile()
 
 bool PapaSongClientEditDialog::loadFile()
 {
-    QDir d(RmeDownloader::downloadPath());
+    QDir d(RmeDownloader::binDownloadPath());
 
     QString filepath;
     if (d.exists() && d.exists(QStringLiteral("mrock_papasong_client.bin")))
@@ -517,4 +517,11 @@ void PapaSongClientEditDialog::applyPatch()
         return;
     }
     readCurrent();
+}
+
+void PapaSongClientEditDialog::showEvent(QShowEvent *e)
+{
+    QDialog::showEvent(e);
+
+    loadFile();
 }
