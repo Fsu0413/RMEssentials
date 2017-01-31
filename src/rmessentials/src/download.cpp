@@ -5,12 +5,14 @@
 
 #include <QCloseEvent>
 #include <QComboBox>
+#include <QFontMetrics>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QShowEvent>
+#include <QSizePolicy>
 #include <QTabWidget>
 #include <QVBoxLayout>
 
@@ -34,9 +36,14 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QFormLayout *flayout = new QFormLayout;
     m_nameCombo = new QComboBox;
     m_nameCombo->setEditable(true);
+#ifdef Q_OS_ANDROID
+    m_nameCombo->setStyleSheet(QStringLiteral("QComboBox{height:%1;}").arg(QFontMetrics(m_nameCombo->font()).height() * 1.7));
+#endif
     connect(this, &DownloadDialog::busy, m_nameCombo, &QComboBox::setDisabled);
-    m_downloadBtn = new QPushButton(tr("Download!"));
-    m_downloadBtn->setMaximumWidth(120);
+    QString downloadBtnTitle = tr("Download!");
+    m_downloadBtn = new QPushButton(downloadBtnTitle);
+    m_downloadBtn->setFixedWidth(QFontMetrics(m_downloadBtn->font()).width(downloadBtnTitle) * 1.7);
+
     connect(m_downloadBtn, &QPushButton::clicked, this, &DownloadDialog::downloadClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;
     layout1->addWidget(m_nameCombo);
@@ -57,6 +64,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
 
     QWidget *downloadSongWidget = new QWidget;
     downloadSongWidget->setLayout(downloadSongLayout);
+    downloadSongWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     QTabWidget *tabWidget = new QTabWidget;
     tabWidget->addTab(downloadSongWidget, tr("Song && IMDs"));
@@ -69,9 +77,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QVBoxLayout *alllayout = new QVBoxLayout;
     alllayout->addWidget(tabWidget);
     alllayout->addWidget(m_list);
-#ifndef Q_OS_ANDROID
     alllayout->addWidget(m_progressBar);
-#endif
 
     setLayout(alllayout);
 
@@ -400,6 +406,7 @@ void DownloadDialog::loadPaths()
     }
 
     QStringList l = paths.toList();
+    std::sort(l.begin(), l.end());
 
     m_nameCombo->addItems(l);
 
