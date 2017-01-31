@@ -206,6 +206,10 @@ Are you sure?</source>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
+    <message>
+        <source>Song &amp;&amp; IMDs</source>
+        <translation>歌曲与IMD</translation>
+    </message>
 </context>
 <context>
     <name>MainDialog</name>
@@ -258,9 +262,17 @@ Are you sure?</source>
         <translation>  新版本 %1 可用</translation>
     </message>
     <message>
+        <source>
+This Program is linked against QuaZip %1.
+Since Quazip does not provide a way to detect version number, we cannot know which version we are loading when running.</source>
+        <translation>
+这个程序链接时使用Quazip%1。
+因为Quazip不提供检测版本号的方法，无法得知运行时加载的Quazip的版本号。</translation>
+    </message>
+    <message>
         <source>The version of RMEssentials frontend is: %1.
 
-RMEssentials is a small software written by Fsu0413. 
+RMEssentials is a small software written by Fsu0413(from Wings of Melody). 
 It is used to operate the files for a game by Tencent: Rhythm Master. 
 It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. 
 
@@ -268,19 +280,12 @@ This Program is linked against Qt %2, and loads Qt %3 to run.
 This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 to run.</source>
         <translation>当前节奏大师工具箱前端的版本是：%1.
 
-节奏大师工具箱是由Fsu0413编写的小软件。
+节奏大师工具箱是由Wom★Fsu0413编写的小软件。
 用来操作节奏大师（一款由腾讯开发的游戏）相关的文件的软件。
 现在包含4个主要功能：修改名字，下载歌曲和谱面，客户端歌曲编辑，星动模式客户端歌曲编辑。
 
 这个程序链接时使用Qt %2，运行时加载Qt %3。
 这个程序链接时使用libRMEssentials %1，运行时加载libRMEssentials %4。</translation>
-    </message>
-    <message>
-        <source>
-This Program is linked against QuaZip %1.
-Since Quazip does not provide a way to detect version number, we cannot know which version we are loading when running.</source>
-        <translation>这个程序链接时使用Quazip%1。
-因为Quazip不提供检测版本号的方法，无法得知运行时加载的Quazip的版本号。</translation>
     </message>
 </context>
 <context>
@@ -405,10 +410,6 @@ Since Quazip does not provide a way to detect version number, we cannot know whi
         <translation>bin文件</translation>
     </message>
     <message>
-        <source>File is already exists, do you want to overwrite?</source>
-        <translation>文件已存在，覆盖？</translation>
-    </message>
-    <message>
         <source>open an other file</source>
         <translation>打开一个其他文件</translation>
     </message>
@@ -431,14 +432,6 @@ Since Quazip does not provide a way to detect version number, we cannot know whi
     <message>
         <source>Search</source>
         <translation>搜索</translation>
-    </message>
-    <message>
-        <source>Merge Song List</source>
-        <translation>合并歌单</translation>
-    </message>
-    <message>
-        <source>Are you sure to merge the current loaded file to the select file?</source>
-        <translation>你确定要将现在载入的文件合并到你选择的文件中么？</translation>
     </message>
     <message>
         <source>All Song Unlock</source>
@@ -471,6 +464,14 @@ Since Quazip does not provide a way to detect version number, we cannot know whi
     <message>
         <source>Apply patch from device failed</source>
         <translation>从设备应用补丁失败</translation>
+    </message>
+    <message>
+        <source>xml files</source>
+        <translation>xml文件</translation>
+    </message>
+    <message>
+        <source> - User Made Notes Mode</source>
+        <translation> - 自制谱模式</translation>
     </message>
 </context>
 </TS>
