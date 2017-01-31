@@ -352,8 +352,7 @@ void RmeDownloaderPrivate::singleFileFinished()
             QUrl u = m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
             if (u.isRelative())
                 u = u.resolved(QUrl(m_currentDownloadingFile));
-            qDebug() << "redirect!!";
-            qDebug() << u;
+            qDebug() << "redirect!!" << u;
             m_currentDownloadingFile = u.toString();
             m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(u));
             connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);

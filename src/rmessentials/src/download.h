@@ -33,6 +33,8 @@ public:
 private:
     void appendLog(const QString &log);
 
+    QWidget *createDownloadSongTab();
+
 signals:
     void busy(bool);
     void cancelDownload();

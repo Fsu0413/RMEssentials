@@ -31,6 +31,27 @@ DownloadDialog::DownloadDialog(QWidget *parent)
 {
     setWindowTitle(tr("Rhythm Master Downloader"));
 
+    QTabWidget *tabWidget = new QTabWidget;
+    tabWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    tabWidget->addTab(createDownloadSongTab(), tr("Song && IMDs"));
+    m_list = new QListWidget;
+    m_list->setSortingEnabled(false);
+
+    m_progressBar = new QProgressBar;
+    m_progressBar->setMinimum(0);
+
+    QVBoxLayout *alllayout = new QVBoxLayout;
+    alllayout->addWidget(tabWidget);
+    alllayout->addWidget(m_list);
+    alllayout->addWidget(m_progressBar);
+
+    setLayout(alllayout);
+
+    connect(this, &DownloadDialog::busy, this, &DownloadDialog::setBusy);
+}
+
+QWidget *DownloadDialog::createDownloadSongTab()
+{
     QVBoxLayout *downloadSongLayout = new QVBoxLayout;
 
     QFormLayout *flayout = new QFormLayout;
@@ -62,26 +83,10 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     downloadSongLayout->addLayout(flayout);
     downloadSongLayout->addLayout(layout2);
 
-    QWidget *downloadSongWidget = new QWidget;
-    downloadSongWidget->setLayout(downloadSongLayout);
-    downloadSongWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QWidget *downloadSongTab = new QWidget;
+    downloadSongTab->setLayout(downloadSongLayout);
 
-    QTabWidget *tabWidget = new QTabWidget;
-    tabWidget->addTab(downloadSongWidget, tr("Song && IMDs"));
-    m_list = new QListWidget;
-    m_list->setSortingEnabled(false);
-
-    m_progressBar = new QProgressBar;
-    m_progressBar->setMinimum(0);
-
-    QVBoxLayout *alllayout = new QVBoxLayout;
-    alllayout->addWidget(tabWidget);
-    alllayout->addWidget(m_list);
-    alllayout->addWidget(m_progressBar);
-
-    setLayout(alllayout);
-
-    connect(this, &DownloadDialog::busy, this, &DownloadDialog::setBusy);
+    return downloadSongTab;
 }
 
 void DownloadDialog::showEvent(QShowEvent *e)
