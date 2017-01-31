@@ -18,7 +18,10 @@ android {
 }
 
 TRANSLATIONS += translations/rmessentials.ts
-DISTFILES += $$TRANSLATIONS
+DISTFILES += $$TRANSLATIONS \
+    android/AndroidManifest.xml \
+    android/res/values/libs.xml \
+    android/build.gradle
 
 win32 {
     RC_ICONS = res/1.ico

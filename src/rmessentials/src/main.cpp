@@ -221,15 +221,6 @@ int main(int argc, char *argv[])
     translator.load(QStringLiteral(CURRENTDIRPREFIX "rmessentials.qm"));
     qApp->installTranslator(&translator);
 
-#ifdef MOBILE_DEVICES
-    QFile qss(QStringLiteral(CURRENTDIRPREFIX "RMEssentialsAndroid.qss"));
-    if (qss.open(QIODevice::ReadOnly)) {
-        QTextStream qssStream(&qss);
-        qApp->setStyleSheet(qssStream.readAll());
-        qss.close();
-    }
-#endif
-
     MainDialog w;
 #ifdef MOBILE_DEVICES
     w.showMaximized();
