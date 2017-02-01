@@ -67,7 +67,7 @@ for x in `ls -1 $folder/*.hpp`; do
     processSingleFile $x
 done
 
-touch $scriptpath/.timestamp
+touch $outdir/.timestamp
 
 echo "Header Generation Complete"
 
