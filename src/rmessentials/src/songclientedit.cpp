@@ -1,4 +1,5 @@
 #include "songclientedit.h"
+#include "pastelineedit.h"
 
 #include <RMEssentials/RmeDownloader>
 #include <RMEssentials/RmeSongClientStruct>
@@ -62,10 +63,10 @@ struct SongClientEditDialogControls
 {
     QLineEdit *ushSongID; // Readonly, User Making note better > 800
     QLineEdit *iVersion; // what's this?
-    QLineEdit *szSongName;
-    QLineEdit *szPath;
-    QLineEdit *szArtist;
-    QLineEdit *szComposer;
+    PasteLineEdit *szSongName;
+    PasteLineEdit *szPath;
+    PasteLineEdit *szArtist;
+    PasteLineEdit *szComposer;
     QLabel *szSongTime; // Auto Generate
     QLineEdit *iGameTime; // Number only
     QLineEdit *iRegion; // QComboBox?
@@ -146,12 +147,12 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     funcBtn->setDefault(false);
     funcBtn->setMenu(m_popup);
 
-    m_controls->szSongName = new QLineEdit;
-    m_controls->szPath = new QLineEdit;
+    m_controls->szSongName = new PasteLineEdit;
+    m_controls->szPath = new PasteLineEdit;
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     m_controls->szPath->setValidator(szPathValidator);
-    m_controls->szArtist = new QLineEdit;
-    m_controls->szComposer = new QLineEdit;
+    m_controls->szArtist = new PasteLineEdit;
+    m_controls->szComposer = new PasteLineEdit;
     m_controls->iGameTime = new QLineEdit;
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
     m_controls->iGameTime->setValidator(iGameTimeValidator);

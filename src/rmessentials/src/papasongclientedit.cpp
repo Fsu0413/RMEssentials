@@ -1,4 +1,5 @@
 #include "papasongclientedit.h"
+#include "pastelineedit.h"
 
 #include <RMEssentials/RmeDownloader>
 #include <RMEssentials/RmeSongClientStruct>
@@ -29,11 +30,11 @@ struct PapaSongClientEditDialogControls
 {
     QLineEdit *ushSongID; // Readonly, User Making note better > 10800
     QLineEdit *iVersion; // what's this?
-    QLineEdit *szSongName;
-    QLineEdit *szArtist;
+    PasteLineEdit *szSongName;
+    PasteLineEdit *szArtist;
     QLineEdit *cDifficulty;
     QLineEdit *cLevel;
-    QLineEdit *szPath;
+    PasteLineEdit *szPath;
     QLabel *szSongTime; // Auto Generate
     QLineEdit *iGameTime; // Number only
     QLineEdit *szRegion;
@@ -89,13 +90,13 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
 
-    m_controls->szSongName = new QLineEdit;
+    m_controls->szSongName = new PasteLineEdit;
     m_controls->szNoteNumber = new QLineEdit;
     m_controls->szRegion = new QLineEdit;
     m_controls->iOrderIndex = new QLineEdit;
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
     m_controls->iOrderIndex->setValidator(iOrderIndexValidator);
-    m_controls->szPath = new QLineEdit;
+    m_controls->szPath = new PasteLineEdit;
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     m_controls->szPath->setValidator(szPathValidator);
     m_controls->iGameTime = new QLineEdit;
@@ -105,7 +106,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     m_controls->szStyle = new QLineEdit;
     m_controls->iSongType = new QLineEdit;
     m_controls->iSongType->setValidator(iGameTimeValidator);
-    m_controls->szArtist = new QLineEdit;
+    m_controls->szArtist = new PasteLineEdit;
     m_controls->szSongTime = new QLabel;
     m_controls->szBPM = new QLineEdit;
     QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
