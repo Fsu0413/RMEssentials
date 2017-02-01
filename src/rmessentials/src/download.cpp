@@ -63,7 +63,7 @@ QWidget *DownloadDialog::createDownloadSongTab()
     connect(this, &DownloadDialog::busy, m_nameCombo, &QComboBox::setDisabled);
     QString downloadBtnTitle = tr("Download!");
     m_downloadBtn = new QPushButton(downloadBtnTitle);
-    m_downloadBtn->setFixedWidth(QFontMetrics(m_downloadBtn->font()).width(downloadBtnTitle) * 1.7);
+    m_downloadBtn->setFixedWidth(m_downloadBtn->fontMetrics().width(downloadBtnTitle) * 1.7);
 
     connect(m_downloadBtn, &QPushButton::clicked, this, &DownloadDialog::downloadClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;

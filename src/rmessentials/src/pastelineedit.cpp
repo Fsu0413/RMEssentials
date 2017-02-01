@@ -56,7 +56,7 @@ void PasteLineEdit::mouseMoveEvent(QMouseEvent *event)
     QLineEdit::mouseMoveEvent(event);
 
     if (!m_point.isNull() && (event->buttons() & Qt::LeftButton)) {
-        if ((event->pos() - m_point).manhattanLength() > 10) {
+        if ((event->pos() - m_point).manhattanLength() >= qApp->startDragDistance()) {
             m_timer->stop();
             m_point = QPoint();
         }
@@ -70,7 +70,7 @@ void PasteLineEdit::init()
     connect(paste, &QAction::triggered, this, &PasteLineEdit::paste);
 
     m_timer = new QTimer(this);
-    m_timer->setInterval(500);
+    m_timer->setInterval(qApp->startDragTime());
     m_timer->setSingleShot(true);
 
     connect(m_timer, &QTimer::timeout, this, &PasteLineEdit::popup);
