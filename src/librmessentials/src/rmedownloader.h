@@ -25,8 +25,8 @@ public:
     QString downloadPath() const;
     void setDownloadPath(const QString &sp);
 
-    void setIsAll(bool all);
-    bool isAll() const;
+    void setSkipExisting(bool skip);
+    bool skipExisting() const;
 
 public slots:
     void start();

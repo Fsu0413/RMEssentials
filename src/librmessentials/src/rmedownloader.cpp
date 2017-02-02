@@ -47,7 +47,7 @@ public:
     // Note these variables are shared between threads so the RW-Lock(m_dataLock) should be used for thread safety
     QStringList m_downloadSequence;
     QString m_downloadPath;
-    bool m_isAll;
+    bool m_skipExisting;
     bool m_canceled;
     bool m_running;
 
@@ -66,7 +66,7 @@ private:
 RmeDownloaderPrivate::RmeDownloaderPrivate(RmeDownloader *downloader)
     : m_downloader(downloader)
     , m_thread(new QThread(downloader))
-    , m_isAll(false)
+    , m_skipExisting(false)
     , m_canceled(false)
     , m_running(false)
     , m_currentDownloadingReply(nullptr)
@@ -234,20 +234,20 @@ void RmeDownloader::setDownloadPath(const QString &sp)
     d->m_downloadPath = sp;
 }
 
-void RmeDownloader::setIsAll(bool all)
+void RmeDownloader::setSkipExisting(bool skip)
 {
     Q_D(RmeDownloader);
     QWriteLocker wl(&d->m_dataLock);
     Q_UNUSED(wl);
-    d->m_isAll = all;
+    d->m_skipExisting = all;
 }
 
-bool RmeDownloader::isAll() const
+bool RmeDownloader::skipExisting() const
 {
     Q_D(const RmeDownloader);
     QReadLocker rl(&d->m_dataLock);
     Q_UNUSED(rl);
-    return d->m_isAll;
+    return d->m_skipExisting;
 }
 
 void RmeDownloaderPrivate::downloadSingleFile()
@@ -267,7 +267,7 @@ void RmeDownloaderPrivate::downloadSingleFile()
     }
 
     m_currentDownloadingFile = m_downloadSequence.takeFirst();
-    bool isAll = m_isAll;
+    bool isAll = m_skipExisting;
     m_dataLock.unlock();
     if (isAll) {
         QString filename = QUrl(m_currentDownloadingFile).fileName();

@@ -206,14 +206,14 @@ void DownloadDialog::startDownload(DownloadMode mode)
     switch (mode) {
     case All:
         connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNext);
-        downloader->setIsAll(true);
+        downloader->setSkipExisting(true);
         break;
     case One:
         connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::allCompleted);
         break;
     case Mis:
         connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNextMissing);
-        downloader->setIsAll(true);
+        downloader->setSkipExisting(true);
         break;
     }
     connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
