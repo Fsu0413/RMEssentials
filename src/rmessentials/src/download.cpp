@@ -55,31 +55,31 @@ QWidget *DownloadDialog::createDownloadSongTab()
     QVBoxLayout *downloadSongLayout = new QVBoxLayout;
 
     QFormLayout *flayout = new QFormLayout;
-    m_nameCombo = new QComboBox;
-    m_nameCombo->setEditable(true);
+    m_songNameCombo = new QComboBox;
+    m_songNameCombo->setEditable(true);
 #ifdef Q_OS_ANDROID
     m_nameCombo->setStyleSheet(QStringLiteral("QComboBox{height:%1;}").arg(QFontMetrics(m_nameCombo->font()).height() * 1.7));
 #endif
-    connect(this, &DownloadDialog::busy, m_nameCombo, &QComboBox::setDisabled);
+    connect(this, &DownloadDialog::busy, m_songNameCombo, &QComboBox::setDisabled);
     QString downloadBtnTitle = tr("Download!");
-    m_downloadBtn = new QPushButton(downloadBtnTitle);
-    m_downloadBtn->setFixedWidth(m_downloadBtn->fontMetrics().width(downloadBtnTitle) * 1.7);
+    m_downloadSongBtn = new QPushButton(downloadBtnTitle);
+    m_downloadSongBtn->setFixedWidth(m_downloadSongBtn->fontMetrics().width(downloadBtnTitle) * 1.7);
 
-    connect(m_downloadBtn, &QPushButton::clicked, this, &DownloadDialog::downloadClicked);
+    connect(m_downloadSongBtn, &QPushButton::clicked, this, &DownloadDialog::downloadSongClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;
-    layout1->addWidget(m_nameCombo);
-    layout1->addWidget(m_downloadBtn);
+    layout1->addWidget(m_songNameCombo);
+    layout1->addWidget(m_downloadSongBtn);
     flayout->addRow(tr("Filename:"), layout1);
 
-    QPushButton *downloadAllBtn = new QPushButton(tr("Download All"));
-    connect(downloadAllBtn, &QPushButton::clicked, this, &DownloadDialog::startDownloadAll);
-    connect(this, &DownloadDialog::busy, downloadAllBtn, &QPushButton::setDisabled);
-    QPushButton *downloadMissingBtn = new QPushButton(tr("Download missing"));
-    connect(downloadMissingBtn, &QPushButton::clicked, this, &DownloadDialog::startDownloadAllMissing);
-    connect(this, &DownloadDialog::busy, downloadMissingBtn, &QPushButton::setDisabled);
+    QPushButton *downloadAllSongBtn = new QPushButton(tr("Download All"));
+    connect(downloadAllSongBtn, &QPushButton::clicked, this, &DownloadDialog::startDownloadAllSong);
+    connect(this, &DownloadDialog::busy, downloadAllSongBtn, &QPushButton::setDisabled);
+    QPushButton *downloadMissingSongBtn = new QPushButton(tr("Download missing"));
+    connect(downloadMissingSongBtn, &QPushButton::clicked, this, &DownloadDialog::startDownloadAllMissingSong);
+    connect(this, &DownloadDialog::busy, downloadMissingSongBtn, &QPushButton::setDisabled);
     QHBoxLayout *layout2 = new QHBoxLayout;
-    layout2->addWidget(downloadAllBtn);
-    layout2->addWidget(downloadMissingBtn);
+    layout2->addWidget(downloadAllSongBtn);
+    layout2->addWidget(downloadMissingSongBtn);
     downloadSongLayout->addLayout(flayout);
     downloadSongLayout->addLayout(layout2);
 
@@ -106,62 +106,62 @@ void DownloadDialog::showEvent(QShowEvent *e)
     downloadList();
 }
 
-void DownloadDialog::downloadClicked()
+void DownloadDialog::downloadSongClicked()
 {
     if (!m_busy)
-        startDownload();
+        startDownloadSong();
     else
         emit cancelDownload();
 }
 
-void DownloadDialog::startDownloadAll()
+void DownloadDialog::startDownloadAllSong()
 {
-    m_nameCombo->setCurrentIndex(0);
-    startDownload(All);
+    m_songNameCombo->setCurrentIndex(0);
+    startDownloadSong(All);
 }
 
 void DownloadDialog::startDownloadNext()
 {
-    if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
+    if (m_songNameCombo->currentIndex() == m_songNameCombo->count() - 1) {
         allCompleted();
         return;
     }
 
-    m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
-    startDownload(All);
+    m_songNameCombo->setCurrentIndex(m_songNameCombo->currentIndex() + 1);
+    startDownloadSong(All);
 }
 
-void DownloadDialog::startDownloadAllMissing()
+void DownloadDialog::startDownloadAllMissingSong()
 {
-    m_nameCombo->setCurrentIndex(0);
-    while (QDir(RmeDownloader::songDownloadPath() + m_nameCombo->currentText()).exists()) {
-        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
+    m_songNameCombo->setCurrentIndex(0);
+    while (QDir(RmeDownloader::songDownloadPath() + m_songNameCombo->currentText()).exists()) {
+        if (m_songNameCombo->currentIndex() == m_songNameCombo->count() - 1) {
             allCompleted();
             return;
         }
 
-        m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
+        m_songNameCombo->setCurrentIndex(m_songNameCombo->currentIndex() + 1);
     }
 
-    startDownload(Mis);
+    startDownloadSong(Mis);
 }
 
 void DownloadDialog::startDownloadNextMissing()
 {
-    m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
-    while (QDir(RmeDownloader::songDownloadPath() + m_nameCombo->currentText()).exists()) {
-        if (m_nameCombo->currentIndex() == m_nameCombo->count() - 1) {
+    m_songNameCombo->setCurrentIndex(m_songNameCombo->currentIndex() + 1);
+    while (QDir(RmeDownloader::songDownloadPath() + m_songNameCombo->currentText()).exists()) {
+        if (m_songNameCombo->currentIndex() == m_songNameCombo->count() - 1) {
             allCompleted();
             return;
         }
 
-        m_nameCombo->setCurrentIndex(m_nameCombo->currentIndex() + 1);
+        m_songNameCombo->setCurrentIndex(m_songNameCombo->currentIndex() + 1);
     }
 
-    startDownload(Mis);
+    startDownloadSong(Mis);
 }
 
-void DownloadDialog::startDownload(DownloadMode mode)
+void DownloadDialog::startDownloadSong(DownloadMode mode)
 {
     static QStringList suffixs;
     static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/song/");
@@ -190,7 +190,7 @@ void DownloadDialog::startDownload(DownloadMode mode)
             << QStringLiteral("_Papa_Hard.mde");
 
     RmeDownloader *downloader = new RmeDownloader;
-    QString songname = m_nameCombo->currentText();
+    QString songname = m_songNameCombo->currentText();
     foreach (const QString &suf, suffixs)
         downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
 
@@ -413,7 +413,7 @@ void DownloadDialog::loadPaths()
     QStringList l = paths.toList();
     std::sort(l.begin(), l.end());
 
-    m_nameCombo->addItems(l);
+    m_songNameCombo->addItems(l);
 
 #ifdef Q_OS_WIN
     m_taskbarBtn->progress()->hide();
@@ -428,7 +428,7 @@ void DownloadDialog::setBusy(bool b)
 {
     m_busy = b;
     if (b) {
-        m_downloadBtn->setText(tr("Cancel"));
+        m_downloadSongBtn->setText(tr("Cancel"));
 #ifdef Q_OS_WIN
         m_taskbarBtn->progress()->reset();
         m_taskbarBtn->progress()->show();
@@ -437,8 +437,8 @@ void DownloadDialog::setBusy(bool b)
         if (m_exitRequested)
             reject();
         else {
-            m_downloadBtn->setText(tr("Download!"));
-            m_downloadBtn->setEnabled(true);
+            m_downloadSongBtn->setText(tr("Download!"));
+            m_downloadSongBtn->setEnabled(true);
         }
     }
 }

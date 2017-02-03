@@ -42,8 +42,8 @@ signals:
 private slots:
     void downloadAndroidList();
 
-    void downloadClicked();
-    void startDownload(DownloadMode mode = One);
+    void downloadSongClicked();
+    void startDownloadSong(DownloadMode mode = One);
     void oneCompleted(const QString &url);
     void oneUncompressed(const QString &filename);
     void oneFailed(const QString &url);
@@ -54,9 +54,9 @@ private slots:
     void loadPaths();
     void setBusy(bool b);
 
-    void startDownloadAll();
+    void startDownloadAllSong();
     void startDownloadNext();
-    void startDownloadAllMissing();
+    void startDownloadAllMissingSong();
     void startDownloadNextMissing();
     void downloadProgress(quint64 downloaded, quint64 total);
 
@@ -66,8 +66,8 @@ protected:
 
 private:
     QListWidget *m_list;
-    QComboBox *m_nameCombo;
-    QPushButton *m_downloadBtn;
+    QComboBox *m_songNameCombo;
+    QPushButton *m_downloadSongBtn;
     QProgressBar *m_progressBar;
 
     bool m_busy;
