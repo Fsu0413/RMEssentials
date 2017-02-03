@@ -239,7 +239,7 @@ void RmeDownloader::setSkipExisting(bool skip)
     Q_D(RmeDownloader);
     QWriteLocker wl(&d->m_dataLock);
     Q_UNUSED(wl);
-    d->m_skipExisting = all;
+    d->m_skipExisting = skip;
 }
 
 bool RmeDownloader::skipExisting() const
