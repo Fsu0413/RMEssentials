@@ -166,10 +166,10 @@ QString RmeDownloader::songDownloadPath()
     }
 #elif defined(Q_OS_OSX)
     QDir currentDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
-    if (!currentDir.cd("RMEssentials")) {
-        if (!currentDir.mkdir("RMEssentials"))
+    if (!currentDir.cd(QStringLiteral("RMEssentials"))) {
+        if (!currentDir.mkdir(QStringLiteral("RMEssentials")))
             return QString();
-        currentDir.cd("RMEssentials");
+        currentDir.cd(QStringLiteral("RMEssentials"));
     }
 #elif defined(Q_OS_ANDROID)
     QDir currentDir(QStringLiteral("/sdcard/RM/res/song"));
