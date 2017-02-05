@@ -146,15 +146,15 @@ RmeSongClientItemStruct *RmeXmlReader::readItem()
     while (m_reader.isStartElement()) {
         map[m_reader.name().toString()] = m_reader.readElementText();
         if (m_reader.hasError())
-            return false;
+            return nullptr;
 
         READNEXT(nullptr);
     }
 
     if (!m_reader.isEndElement())
-        return false;
+        return nullptr;
     if (m_reader.name() != QStringLiteral("SongConfig_Client"))
-        return false;
+        return nullptr;
 
     RmeSongClientItemStruct *item = new RmeSongClientItemStruct;
     item->parseMap(map);
@@ -187,15 +187,15 @@ RmePapaSongClientItemStruct *RmeXmlReader::readPapaItem()
     while (m_reader.isStartElement()) {
         map[m_reader.name().toString()] = m_reader.readElementText();
         if (m_reader.hasError())
-            return false;
+            return nullptr;
 
         READNEXT(nullptr);
     }
 
     if (!m_reader.isEndElement())
-        return false;
+        return nullptr;
     if (m_reader.name() != QStringLiteral("PapaSongConfig_Client_Tab"))
-        return false;
+        return nullptr;
 
     RmePapaSongClientItemStruct *item = new RmePapaSongClientItemStruct;
     item->parseMap(map);
