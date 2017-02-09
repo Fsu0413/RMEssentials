@@ -5,6 +5,7 @@
 
 #include <QDialog>
 #include <QDir>
+#include <QMap>
 
 class QListWidget;
 class QComboBox;
@@ -34,6 +35,7 @@ private:
     void appendLog(const QString &log);
 
     QWidget *createDownloadSongTab();
+    QWidget *createDownloadRoleTab();
 
 signals:
     void busy(bool);
@@ -43,7 +45,11 @@ private slots:
     void downloadAndroidList();
 
     void downloadSongClicked();
+    void downloadRoleClicked();
+
     void startDownloadSong(DownloadMode mode = One);
+    void startDownloadRole();
+    void startDownloadNoteImage();
     void oneCompleted(const QString &url);
     void oneUncompressed(const QString &filename);
     void oneFailed(const QString &url);
@@ -66,9 +72,15 @@ protected:
 
 private:
     QListWidget *m_list;
+    QProgressBar *m_progressBar;
+
     QComboBox *m_songNameCombo;
     QPushButton *m_downloadSongBtn;
-    QProgressBar *m_progressBar;
+
+    QComboBox *m_roleNameCombo;
+    QPushButton *m_downloadRoleBtn;
+
+    QMap<int, QStringList> m_rolePadUiMap;
 
     bool m_busy;
     bool m_exitRequested;

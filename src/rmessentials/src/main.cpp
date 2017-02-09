@@ -73,6 +73,7 @@ MainDialog::MainDialog(QWidget *parent)
 
     connect(downloader, &RmeDownloader::allCompleted, this, &MainDialog::checkForUpdate);
     connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
+    connect(downloader, &RmeDownloader::canceled, downloader, &RmeDownloader::deleteLater);
     connect(this, &MainDialog::finished, downloader, &RmeDownloader::cancel);
 
     downloader->start();

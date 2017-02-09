@@ -16,8 +16,10 @@ public:
     RmeDownloader();
     ~RmeDownloader() override;
 
-    static QString songDownloadPath();
     static QString binDownloadPath();
+    static QString songDownloadPath();
+    static QString roleDownloadPath();
+    static QString noteImageDownloadPath();
 
     RmeDownloader &operator<<(const QString &filename);
     QStringList downloadSequence() const;
