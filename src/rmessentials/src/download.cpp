@@ -231,7 +231,6 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-    connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
 
@@ -271,7 +270,6 @@ void DownloadDialog::startDownloadRole()
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-    connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNoteImage);
@@ -310,7 +308,6 @@ void DownloadDialog::startDownloadNoteImage()
         connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
         connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
         connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-        connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
         connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
         connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
         connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::allCompleted);
@@ -338,15 +335,6 @@ void DownloadDialog::allCompleted()
     appendLog(tr("All files downloaded"));
 #ifdef Q_OS_WIN
     m_taskbarBtn->progress()->hide();
-#endif
-    emit busy(false);
-}
-
-void DownloadDialog::errorOccurred()
-{
-    appendLog(tr("Download failed"));
-#ifdef Q_OS_WIN
-    m_taskbarBtn->progress()->stop();
 #endif
     emit busy(false);
 }
@@ -398,7 +386,6 @@ void DownloadDialog::downloadList()
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::downloadAndroidList);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-    connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
     connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
@@ -431,7 +418,6 @@ void DownloadDialog::downloadAndroidList()
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startUncompress);
     connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-    connect(downloader, &RmeDownloader::error, this, &DownloadDialog::errorOccurred);
     connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
     connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
     connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);

@@ -39,7 +39,6 @@ signals:
     void canceled();
     void singleFileCompleted(const QString &url);
     void singleFileFailed(const QString &url);
-    void error();
     void downloadProgress(quint64 downloaded, quint64 total);
 
 private:
