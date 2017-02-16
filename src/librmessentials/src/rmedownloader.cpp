@@ -174,7 +174,7 @@ QString RmeDownloader::binDownloadPath()
 #elif defined(Q_OS_ANDROID)
     QDir currentDir(QStringLiteral("/sdcard/RM/res"));
     if (!currentDir.exists()) {
-        currentDir = QDir("/sdcard");
+        currentDir = QDir(QStringLiteral("/sdcard"));
         if (!currentDir.mkpath(QStringLiteral("/sdcard/RM/res")))
             return QString();
         currentDir = QDir(QStringLiteral("/sdcard/RM/res"));

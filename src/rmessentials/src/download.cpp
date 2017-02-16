@@ -59,7 +59,7 @@ QWidget *DownloadDialog::createDownloadSongTab()
     m_songNameCombo = new QComboBox;
     m_songNameCombo->setEditable(true);
 #ifdef Q_OS_ANDROID
-    m_songNameCombo->setStyleSheet(QStringLiteral("QComboBox{height:%1;}").arg(QFontMetrics(m_nameCombo->font()).height() * 1.7));
+    m_songNameCombo->setStyleSheet(QStringLiteral("QComboBox{height:%1;}").arg(QFontMetrics(m_songNameCombo->font()).height() * 1.7));
 #endif
     connect(this, &DownloadDialog::busy, m_songNameCombo, &QComboBox::setDisabled);
     QString downloadBtnTitle = tr("Download!");
@@ -96,7 +96,7 @@ QWidget *DownloadDialog::createDownloadRoleTab()
     m_roleNameCombo = new QComboBox;
     m_roleNameCombo->setEditable(true);
 #ifdef Q_OS_ANDROID
-    m_roleNameCombo->setStyleSheet(QStringLiteral("QComboBox{height:%1;}").arg(QFontMetrics(m_nameCombo->font()).height() * 1.7));
+    m_roleNameCombo->setStyleSheet(QStringLiteral("QComboBox{height:%1;}").arg(QFontMetrics(m_roleNameCombo->font()).height() * 1.7));
 #endif
     connect(this, &DownloadDialog::busy, m_roleNameCombo, &QComboBox::setDisabled);
     QString downloadBtnTitle = tr("Download!");
