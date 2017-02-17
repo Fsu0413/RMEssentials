@@ -143,10 +143,11 @@ RmeDownloader::~RmeDownloader()
     Q_D(RmeDownloader);
     if (d->m_running)
         cancel();
-    d->m_thread->quit();
 
-    if (!d->m_thread->wait(3000UL))
-        d->m_thread->terminate();
+    QThread *childThread = d->m_thread;
+    childThread->quit();
+    if (childThread->wait(3000UL))
+        childThread->terminate();
 }
 
 void RmeDownloader::start()
