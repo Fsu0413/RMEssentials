@@ -3,19 +3,8 @@ include($$_PRO_FILE_PWD_/../../RMEssentials.pri)
 
 QT += core gui network
 
-use_quazip {
-    qtHaveModule("zlib-private") {
-        QT += zlib-private
-    } else {
-        LIBS += -lz
-    }
-
-    LIBS += -lquazip
-    DEFINES += QUAZIP_STATIC
-}
-
 TEMPLATE = lib
-TARGET = RMEssentials
+TARGET = RMEss
 
 !staticlib: DEFINES += LIBRMESSENTIALS_BUILD
 

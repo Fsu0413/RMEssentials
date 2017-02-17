@@ -9,21 +9,13 @@ DEFINES += "RMEVERSION=\\\"$$RMEVERSION\\\"" "RMEVERSIONNUMBER=\\\"$$VERSION\\\"
 DEFINES += QT_NO_CAST_FROM_ASCII
 
 android || ios {
-    CONFIG += staticlib
     DEFINES += MOBILE_DEVICES
-} else {
-    CONFIG += use_quazip
 }
-
 staticlib: DEFINES += LIBRMESSENTIALS_STATIC
 
 !isEmpty($$(PREFIX)) {
     CONFIG += install_build
 }
-
-#load(configure)
-
-#qtCompileTest(quazip)
 
 !win32-msvc* {
     # we use gcc/clang on unix-like systems and mingw
@@ -36,7 +28,3 @@ staticlib: DEFINES += LIBRMESSENTIALS_STATIC
 
 LIBS += -L$$OUT_PWD/../dist/lib
 INCLUDEPATH += $$OUT_PWD/../dist/include
-
-use_quazip {
-    DEFINES += "RME_USE_QUAZIP=\\\"0.7.2\\\""
-}
