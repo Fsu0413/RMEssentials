@@ -38,5 +38,5 @@ LIBS += -L$$OUT_PWD/../dist/lib
 INCLUDEPATH += $$OUT_PWD/../dist/include
 
 use_quazip {
-    DEFINES += "RME_USE_QUAZIP=\\\"0.7.2\\\""
+    DEFINES += "RME_USE_QUAZIP=\\\"0.7.3\\\""
 }
