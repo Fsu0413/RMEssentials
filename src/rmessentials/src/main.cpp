@@ -136,12 +136,6 @@ void MainDialog::about()
                                .arg(QStringLiteral(QT_VERSION_STR))
                                .arg(QString::fromUtf8(qVersion()))
                                .arg(QString::fromUtf8(RmeVersion()));
-#ifdef RME_USE_QUAZIP
-    aboutContent += tr("\nThis Program is linked against QuaZip %1.\n"
-                       "Since Quazip does not provide a way to detect version number, "
-                       "we cannot know which version we are loading when running.")
-                        .arg(QStringLiteral(RME_USE_QUAZIP));
-#endif
     QMessageBox::about(this, tr("About RMEssentials"), aboutContent);
 }
 

@@ -373,7 +373,7 @@ void DownloadDialog::startUncompress()
 
 void DownloadDialog::downloadList()
 {
-#ifdef RME_USE_QUAZIP
+#ifndef MOBILE_DEVICES
     static const QString md5 = QStringLiteral("http://game.ds.qq.com/Com_SongRes/MD5List.zip");
     static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip");
 
@@ -401,7 +401,7 @@ void DownloadDialog::downloadList()
 
 void DownloadDialog::downloadAndroidList()
 {
-#ifdef RME_USE_QUAZIP
+#ifndef MOBILE_DEVICES
     if (QFile::exists(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"))) {
         QFile::remove(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"));
         QFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip")).rename(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"));
