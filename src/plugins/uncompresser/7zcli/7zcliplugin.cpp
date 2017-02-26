@@ -166,3 +166,15 @@ QString RmeUncomp7zCliPlugin::binaryPath() const
 {
     return m_binaryPath.isEmpty() ? QStringLiteral("7zr") : m_binaryPath;
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+QVersionNumber RmeUncomp7zCliPlugin::versionNumber() const
+{
+    return QVersionNumber();
+}
+#endif
+
+const char *RmeUncomp7zCliPlugin::version() const
+{
+    return "0";
+}

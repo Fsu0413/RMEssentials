@@ -191,3 +191,15 @@ QString RmeUncompUnrarCliPlugin::binaryPath() const
 {
     return m_binaryPath.isEmpty() ? QStringLiteral("unrar") : m_binaryPath;
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+QVersionNumber RmeUncompUnrarCliPlugin::versionNumber() const
+{
+    return QVersionNumber();
+}
+#endif
+
+const char *RmeUncompUnrarCliPlugin::version() const
+{
+    return "0";
+}

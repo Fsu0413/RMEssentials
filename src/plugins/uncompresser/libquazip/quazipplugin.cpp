@@ -83,3 +83,15 @@ RmeUncompresserResult RmeUncompLibQuaZipPlugin::uncompressOneFile(const QDir &ta
 
     return RmeUncompSuccess;
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+QVersionNumber RmeUncompLibQuaZipPlugin::versionNumber() const
+{
+    return QVersionNumber(0, 7, 3);
+}
+#endif
+
+const char *RmeUncompLibQuaZipPlugin::version() const
+{
+    return "0.7.3";
+}

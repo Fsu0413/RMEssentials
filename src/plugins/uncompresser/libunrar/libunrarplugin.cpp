@@ -94,6 +94,7 @@ typedef void(PASCAL *rarSetPassword)(HANDLE hArcData, char *Password);
 typedef int(PASCAL *rarGetDllVersion)();
 #else
 extern "C" {
+#include "src/version.hpp"
 HANDLE PASCAL RAROpenArchive(struct RAROpenArchiveData *ArchiveData);
 int PASCAL RARCloseArchive(HANDLE hArcData);
 int PASCAL RARReadHeader(HANDLE hArcData, struct RARHeaderData *HeaderData);
@@ -440,3 +441,19 @@ QString RmeUncompLibUnrarPlugin::libraryPath() const
     return m_libraryPath.isEmpty() ? QStringLiteral("unrar") : m_libraryPath;
 }
 #endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+QVersionNumber RmeUncompLibUnrarPlugin::versionNumber() const
+{
+    return QVersionNumber(RARVER_MAJOR, RARVER_MINOR, RARVER_BETA);
+}
+#endif
+
+const char *RmeUncompLibUnrarPlugin::version() const
+{
+#ifdef RARDLL
+    return QT_STRINGIFY(RARVER_MAJOR) "." QT_STRINGIFY(RARVER_MINOR) "." QT_STRINGIFY(RARVER_BETA);
+#else
+    return "0";
+#endif
+}

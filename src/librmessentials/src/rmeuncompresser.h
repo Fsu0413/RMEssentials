@@ -7,6 +7,7 @@
 #include <QFlags>
 #include <QStringList>
 #include <QThread>
+#include <QVersionNumber>
 
 Q_DECLARE_METATYPE(QDir)
 
@@ -52,6 +53,11 @@ public:
     virtual QStringList listFiles() = 0;
     virtual RmeUncompresserResult uncompressAllFiles(const QDir &targetDir) = 0;
     virtual RmeUncompresserResult uncompressOneFile(const QDir &targetDir, const QString &fileName) = 0;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+    virtual QVersionNumber versionNumber() const = 0;
+#endif
+    virtual const char *version() const = 0;
 
     QStringList propertyList() const;
     void setUncompresser(RmeUncompresser *uncompresser);

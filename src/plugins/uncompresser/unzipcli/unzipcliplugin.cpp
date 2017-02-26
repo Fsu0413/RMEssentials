@@ -176,3 +176,15 @@ QString RmeUncompUnzipCliPlugin::binaryPath() const
 {
     return m_binaryPath.isEmpty() ? QStringLiteral("unzip") : m_binaryPath;
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+QVersionNumber RmeUncompUnzipCliPlugin::versionNumber() const
+{
+    return QVersionNumber();
+}
+#endif
+
+const char *RmeUncompUnzipCliPlugin::version() const
+{
+    return "0";
+}

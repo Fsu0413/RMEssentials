@@ -25,6 +25,11 @@ public:
     RmeUncompresserResult uncompressAllFiles(const QDir &targetDir) final override;
     RmeUncompresserResult uncompressOneFile(const QDir &targetDir, const QString &fileName) final override;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+    QVersionNumber versionNumber() const final override;
+#endif
+    const char *version() const final override;
+
 private:
     QuaZip *m_zip;
 
