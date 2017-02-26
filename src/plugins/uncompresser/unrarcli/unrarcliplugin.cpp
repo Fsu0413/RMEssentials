@@ -15,7 +15,7 @@ bool israr(const QString &output)
 }
 
 RmeUncompUnrarCliPlugin::RmeUncompUnrarCliPlugin(QObject *parent)
-    : QObject(parent)
+    : RmeUncompresserPlugin(parent)
 {
 }
 
@@ -187,44 +187,7 @@ RmeUncompresserResult RmeUncompUnrarCliPlugin::uncompressOneFile(const QDir &tar
     return RmeUncompSuccess;
 }
 
-void RmeUncompUnrarCliPlugin::setPassword(const QString &password)
-{
-    m_password = password;
-}
-
-QJsonObject RmeUncompUnrarCliPlugin::pluginSettings() const
-{
-    QJsonObject ob;
-    ob[QStringLiteral("binaryPath")] = binaryPath();
-    return ob;
-}
-
-bool RmeUncompUnrarCliPlugin::setPluginSetting(const QString &key, const QJsonValue &value)
-{
-    if (key == QStringLiteral("binaryPath") && value.isString()) {
-        m_binaryPath = value.toString();
-        return true;
-    }
-    return false;
-}
-
-bool RmeUncompUnrarCliPlugin::setPluginSettings(const QJsonObject &json)
-{
-    bool result = true;
-    foreach (const QString &key, json.keys())
-        result &= setPluginSetting(key, json.value(key));
-    return result;
-}
-
 QString RmeUncompUnrarCliPlugin::binaryPath() const
 {
-    if (m_binaryPath.isEmpty())
-        return QStringLiteral("unrar");
-
-    return m_binaryPath;
-}
-
-QString RmeUncompUnrarCliPlugin::password() const
-{
-    return m_password.isEmpty() ? QStringLiteral("-") : m_password;
+    return m_binaryPath.isEmpty() ? QStringLiteral("unrar") : m_binaryPath;
 }

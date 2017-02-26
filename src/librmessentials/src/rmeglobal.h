@@ -26,19 +26,10 @@ class LIBRMESSENTIALS_EXPORT RmeGlobal
 #endif
 #endif
 
-enum QuazipUsage
-{
-    QuazipNotUsed = 0x00,
-    QuazipUsing = 0x01,
-    QuazipBundled = 0x11,
-    QuazipDynamicLinked = 0x12
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 LIBRMESSENTIALS_EXPORT const char *RmeVersion();
-LIBRMESSENTIALS_EXPORT enum QuazipUsage RmeQuazipUsage();
 #ifdef __cplusplus
 }
 #if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)

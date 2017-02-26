@@ -7,7 +7,7 @@
 #include "quazipfile.h"
 
 RmeUncompLibQuaZipPlugin::RmeUncompLibQuaZipPlugin(QObject *parent)
-    : QObject(parent)
+    : RmeUncompresserPlugin(parent)
     , m_zip(nullptr)
 {
 }
@@ -82,35 +82,4 @@ RmeUncompresserResult RmeUncompLibQuaZipPlugin::uncompressOneFile(const QDir &ta
         return RmeUncompFileNotExist;
 
     return RmeUncompSuccess;
-}
-
-void RmeUncompLibQuaZipPlugin::setPassword(const QString &password)
-{
-    m_password = password;
-}
-
-QJsonObject RmeUncompLibQuaZipPlugin::pluginSettings() const
-{
-    QJsonObject ob;
-    return ob;
-}
-
-bool RmeUncompLibQuaZipPlugin::setPluginSetting(const QString &key, const QJsonValue &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-    return false;
-}
-
-bool RmeUncompLibQuaZipPlugin::setPluginSettings(const QJsonObject &json)
-{
-    bool result = true;
-    foreach (const QString &key, json.keys())
-        result &= setPluginSetting(key, json.value(key));
-    return result;
-}
-
-QString RmeUncompLibQuaZipPlugin::password() const
-{
-    return m_password.isEmpty() ? QStringLiteral("-") : m_password;
 }

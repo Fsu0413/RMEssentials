@@ -85,53 +85,75 @@ struct RAROpenArchiveData
 };
 
 #pragma pack(pop)
-
-typedef HANDLE(PASCAL *RAROpenArchive)(RAROpenArchiveData *ArchiveData);
-typedef int(PASCAL *RARCloseArchive)(HANDLE hArcData);
-typedef int(PASCAL *RARReadHeader)(HANDLE hArcData, RARHeaderData *HeaderData);
-typedef int(PASCAL *RARProcessFile)(HANDLE hArcData, int Operation, char *DestPath, char *DestName);
-typedef void(PASCAL *RARSetPassword)(HANDLE hArcData, char *Password);
-typedef int(PASCAL *RARGetDllVersion)();
+#ifndef RARDLL
+typedef HANDLE(PASCAL *rarOpenArchive)(RAROpenArchiveData *ArchiveData);
+typedef int(PASCAL *rarCloseArchive)(HANDLE hArcData);
+typedef int(PASCAL *rarReadHeader)(HANDLE hArcData, RARHeaderData *HeaderData);
+typedef int(PASCAL *rarProcessFile)(HANDLE hArcData, int Operation, char *DestPath, char *DestName);
+typedef void(PASCAL *rarSetPassword)(HANDLE hArcData, char *Password);
+typedef int(PASCAL *rarGetDllVersion)();
+#else
+extern "C" {
+HANDLE PASCAL RAROpenArchive(struct RAROpenArchiveData *ArchiveData);
+int PASCAL RARCloseArchive(HANDLE hArcData);
+int PASCAL RARReadHeader(HANDLE hArcData, struct RARHeaderData *HeaderData);
+int PASCAL RARProcessFile(HANDLE hArcData, int Operation, char *DestPath, char *DestName);
+void PASCAL RARSetPassword(HANDLE hArcData, char *Password);
+int PASCAL RARGetDllVersion();
+}
+#endif
 
 RmeUncompLibUnrarPlugin::RmeUncompLibUnrarPlugin(QObject *parent)
-    : QObject(parent)
+    : RmeUncompresserPlugin(parent)
+#ifndef RARDLL
     , m_libunrar(nullptr)
+#endif
 {
 }
 
 bool RmeUncompLibUnrarPlugin::isReadyForUse() const
 {
+#ifndef RARDLL
     if (const_cast<RmeUncompLibUnrarPlugin *>(this)->loadLibUnrar())
         return true;
 
     return false;
+#else
+    return true;
+#endif
 }
 
 RmeUncompresserFormats RmeUncompLibUnrarPlugin::supportedFormats() const
 {
+#ifndef RARDLL
     if (const_cast<RmeUncompLibUnrarPlugin *>(this)->loadLibUnrar())
         return RmeUncompRar;
 
     return RmeUncompresserFormats();
+#else
+    return RmeUncompRar;
+#endif
 }
 
 RmeUncompresserResult RmeUncompLibUnrarPlugin::openArchive(const QString &fileName)
 {
+#ifndef RARDLL
     if (!loadLibUnrar())
         return RmeUncompNotReadyForUse;
 
-    RAROpenArchive rarOpenArchive = reinterpret_cast<RAROpenArchive>(m_libunrar->resolve("RAROpenArchive"));
-    if (rarOpenArchive == nullptr)
+    rarOpenArchive RAROpenArchive = reinterpret_cast<rarOpenArchive>(m_libunrar->resolve("RAROpenArchive"));
+    if (RAROpenArchive == nullptr)
         return RmeUncompUnknownError;
-    RARCloseArchive rarCloseArchive = reinterpret_cast<RARCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
-    if (rarCloseArchive == nullptr)
+    rarCloseArchive RARCloseArchive = reinterpret_cast<rarCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
+    if (RARCloseArchive == nullptr)
         return RmeUncompUnknownError;
+#endif
 
     RAROpenArchiveData data;
     memset(&data, 0, sizeof(RAROpenArchiveData));
     data.ArcName = qstrdup(fileName.toLocal8Bit().constData());
     data.OpenMode = RAR_OM_LIST;
-    HANDLE handle = (*rarOpenArchive)(&data);
+    HANDLE handle = RAROpenArchive(&data);
 
     switch (data.OpenResult) {
     case ERAR_SUCCESS:
@@ -148,7 +170,7 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::openArchive(const QString &fileNa
         return RmeUncompUnknownError;
     }
 
-    rarCloseArchive(handle);
+    RARCloseArchive(handle);
     delete[] data.ArcName;
 
     m_fileName = fileName;
@@ -157,30 +179,32 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::openArchive(const QString &fileNa
 
 QStringList RmeUncompLibUnrarPlugin::listFiles()
 {
+#ifndef RARDLL
     if (!loadLibUnrar())
         return QStringList();
 
-    RAROpenArchive rarOpenArchive = reinterpret_cast<RAROpenArchive>(m_libunrar->resolve("RAROpenArchive"));
-    if (rarOpenArchive == nullptr)
+    rarOpenArchive RAROpenArchive = reinterpret_cast<rarOpenArchive>(m_libunrar->resolve("RAROpenArchive"));
+    if (RAROpenArchive == nullptr)
         return QStringList();
-    RARCloseArchive rarCloseArchive = reinterpret_cast<RARCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
-    if (rarCloseArchive == nullptr)
+    rarCloseArchive RARCloseArchive = reinterpret_cast<rarCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
+    if (RARCloseArchive == nullptr)
         return QStringList();
-    RARSetPassword rarSetPassword = reinterpret_cast<RARSetPassword>(m_libunrar->resolve("RARSetPassword"));
-    if (rarSetPassword == nullptr)
+    rarSetPassword RARSetPassword = reinterpret_cast<rarSetPassword>(m_libunrar->resolve("RARSetPassword"));
+    if (RARSetPassword == nullptr)
         return QStringList();
-    RARReadHeader rarReadHeader = reinterpret_cast<RARReadHeader>(m_libunrar->resolve("RARReadHeader"));
-    if (rarReadHeader == nullptr)
+    rarReadHeader RARReadHeader = reinterpret_cast<rarReadHeader>(m_libunrar->resolve("RARReadHeader"));
+    if (RARReadHeader == nullptr)
         return QStringList();
-    RARProcessFile rarProcessFile = reinterpret_cast<RARProcessFile>(m_libunrar->resolve("RARProcessFile"));
-    if (rarProcessFile == nullptr)
+    rarProcessFile RARProcessFile = reinterpret_cast<rarProcessFile>(m_libunrar->resolve("RARProcessFile"));
+    if (RARProcessFile == nullptr)
         return QStringList();
+#endif
 
     RAROpenArchiveData data;
     memset(&data, 0, sizeof(RAROpenArchiveData));
     data.ArcName = qstrdup(m_fileName.toLocal8Bit().constData());
     data.OpenMode = RAR_OM_LIST;
-    HANDLE handle = (*rarOpenArchive)(&data);
+    HANDLE handle = RAROpenArchive(&data);
 
     switch (data.OpenResult) {
     case ERAR_SUCCESS:
@@ -190,23 +214,23 @@ QStringList RmeUncompLibUnrarPlugin::listFiles()
         return QStringList();
     }
     char *pass = qstrdup(password().toLocal8Bit().constData());
-    (*rarSetPassword)(handle, pass);
+    RARSetPassword(handle, pass);
 
     RARHeaderData headerData;
     memset(&headerData, 0, sizeof(RARHeaderData));
     int result;
     QStringList l;
-    while ((result = (*rarReadHeader)(handle, &headerData)) == ERAR_SUCCESS) {
+    while ((result = RARReadHeader(handle, &headerData)) == ERAR_SUCCESS) {
         l << QString::fromLocal8Bit(headerData.FileName);
-        int result2 = (*rarProcessFile)(handle, RAR_SKIP, nullptr, nullptr);
+        int result2 = RARProcessFile(handle, RAR_SKIP, nullptr, nullptr);
         if (result2 != ERAR_SUCCESS) {
-            rarCloseArchive(handle);
+            RARCloseArchive(handle);
             delete[] data.ArcName;
             delete[] pass;
             return QStringList();
         }
     }
-    (*rarCloseArchive)(handle);
+    RARCloseArchive(handle);
     delete[] data.ArcName;
     delete[] pass;
     if (result != ERAR_END_ARCHIVE)
@@ -217,30 +241,32 @@ QStringList RmeUncompLibUnrarPlugin::listFiles()
 
 RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressAllFiles(const QDir &targetDir)
 {
+#ifndef RARDLL
     if (!loadLibUnrar())
         return RmeUncompNotReadyForUse;
 
-    RAROpenArchive rarOpenArchive = reinterpret_cast<RAROpenArchive>(m_libunrar->resolve("RAROpenArchive"));
-    if (rarOpenArchive == nullptr)
+    rarOpenArchive RAROpenArchive = reinterpret_cast<rarOpenArchive>(m_libunrar->resolve("RAROpenArchive"));
+    if (RAROpenArchive == nullptr)
         return RmeUncompUnknownError;
-    RARCloseArchive rarCloseArchive = reinterpret_cast<RARCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
-    if (rarCloseArchive == nullptr)
+    rarCloseArchive RARCloseArchive = reinterpret_cast<rarCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
+    if (RARCloseArchive == nullptr)
         return RmeUncompUnknownError;
-    RARSetPassword rarSetPassword = reinterpret_cast<RARSetPassword>(m_libunrar->resolve("RARSetPassword"));
-    if (rarSetPassword == nullptr)
+    rarSetPassword RARSetPassword = reinterpret_cast<rarSetPassword>(m_libunrar->resolve("RARSetPassword"));
+    if (RARSetPassword == nullptr)
         return RmeUncompUnknownError;
-    RARReadHeader rarReadHeader = reinterpret_cast<RARReadHeader>(m_libunrar->resolve("RARReadHeader"));
-    if (rarReadHeader == nullptr)
+    rarReadHeader RARReadHeader = reinterpret_cast<rarReadHeader>(m_libunrar->resolve("RARReadHeader"));
+    if (RARReadHeader == nullptr)
         return RmeUncompUnknownError;
-    RARProcessFile rarProcessFile = reinterpret_cast<RARProcessFile>(m_libunrar->resolve("RARProcessFile"));
-    if (rarProcessFile == nullptr)
+    rarProcessFile RARProcessFile = reinterpret_cast<rarProcessFile>(m_libunrar->resolve("RARProcessFile"));
+    if (RARProcessFile == nullptr)
         return RmeUncompUnknownError;
+#endif
 
     RAROpenArchiveData data;
     memset(&data, 0, sizeof(RAROpenArchiveData));
     data.ArcName = qstrdup(m_fileName.toLocal8Bit().constData());
     data.OpenMode = RAR_OM_EXTRACT;
-    HANDLE handle = (*rarOpenArchive)(&data);
+    HANDLE handle = RAROpenArchive(&data);
 
     switch (data.OpenResult) {
     case ERAR_SUCCESS:
@@ -257,17 +283,17 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressAllFiles(const QDir &ta
         return RmeUncompUnknownError;
     }
     char *pass = qstrdup(password().toLocal8Bit().constData());
-    (*rarSetPassword)(handle, pass);
+    RARSetPassword(handle, pass);
 
     RARHeaderData headerData;
     memset(&headerData, 0, sizeof(RARHeaderData));
     int result;
     char *destpath = qstrdup(QDir::toNativeSeparators(targetDir.absolutePath()).toLocal8Bit().constData());
 
-    while ((result = (*rarReadHeader)(handle, &headerData)) == ERAR_SUCCESS) {
-        int result2 = (*rarProcessFile)(handle, RAR_EXTRACT, nullptr, destpath);
+    while ((result = RARReadHeader(handle, &headerData)) == ERAR_SUCCESS) {
+        int result2 = RARProcessFile(handle, RAR_EXTRACT, nullptr, destpath);
         if (result2 != ERAR_SUCCESS) {
-            rarCloseArchive(handle);
+            RARCloseArchive(handle);
             delete[] data.ArcName;
             delete[] pass;
             delete[] destpath;
@@ -282,7 +308,7 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressAllFiles(const QDir &ta
             }
         }
     }
-    (*rarCloseArchive)(handle);
+    RARCloseArchive(handle);
     delete[] data.ArcName;
     delete[] pass;
     delete[] destpath;
@@ -294,30 +320,32 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressAllFiles(const QDir &ta
 
 RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressOneFile(const QDir &targetDir, const QString &fileName)
 {
+#ifndef RARDLL
     if (!loadLibUnrar())
         return RmeUncompNotReadyForUse;
 
-    RAROpenArchive rarOpenArchive = reinterpret_cast<RAROpenArchive>(m_libunrar->resolve("RAROpenArchive"));
-    if (rarOpenArchive == nullptr)
+    rarOpenArchive RAROpenArchive = reinterpret_cast<rarOpenArchive>(m_libunrar->resolve("RAROpenArchive"));
+    if (RAROpenArchive == nullptr)
         return RmeUncompUnknownError;
-    RARCloseArchive rarCloseArchive = reinterpret_cast<RARCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
-    if (rarCloseArchive == nullptr)
+    rarCloseArchive RARCloseArchive = reinterpret_cast<rarCloseArchive>(m_libunrar->resolve("RARCloseArchive"));
+    if (RARCloseArchive == nullptr)
         return RmeUncompUnknownError;
-    RARSetPassword rarSetPassword = reinterpret_cast<RARSetPassword>(m_libunrar->resolve("RARSetPassword"));
-    if (rarSetPassword == nullptr)
+    rarSetPassword RARSetPassword = reinterpret_cast<rarSetPassword>(m_libunrar->resolve("RARSetPassword"));
+    if (RARSetPassword == nullptr)
         return RmeUncompUnknownError;
-    RARReadHeader rarReadHeader = reinterpret_cast<RARReadHeader>(m_libunrar->resolve("RARReadHeader"));
-    if (rarReadHeader == nullptr)
+    rarReadHeader RARReadHeader = reinterpret_cast<rarReadHeader>(m_libunrar->resolve("RARReadHeader"));
+    if (RARReadHeader == nullptr)
         return RmeUncompUnknownError;
-    RARProcessFile rarProcessFile = reinterpret_cast<RARProcessFile>(m_libunrar->resolve("RARProcessFile"));
-    if (rarProcessFile == nullptr)
+    rarProcessFile RARProcessFile = reinterpret_cast<rarProcessFile>(m_libunrar->resolve("RARProcessFile"));
+    if (RARProcessFile == nullptr)
         return RmeUncompUnknownError;
+#endif
 
     RAROpenArchiveData data;
     memset(&data, 0, sizeof(RAROpenArchiveData));
     data.ArcName = qstrdup(m_fileName.toLocal8Bit().constData());
     data.OpenMode = RAR_OM_EXTRACT;
-    HANDLE handle = (*rarOpenArchive)(&data);
+    HANDLE handle = RAROpenArchive(&data);
 
     switch (data.OpenResult) {
     case ERAR_SUCCESS:
@@ -334,22 +362,22 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressOneFile(const QDir &tar
         return RmeUncompUnknownError;
     }
     char *pass = qstrdup(password().toLocal8Bit().constData());
-    (*rarSetPassword)(handle, pass);
+    RARSetPassword(handle, pass);
 
     RARHeaderData headerData;
     memset(&headerData, 0, sizeof(RARHeaderData));
     int result;
     char *destpath = qstrdup(QDir::toNativeSeparators(targetDir.absoluteFilePath(fileName)).toLocal8Bit().constData());
     bool extracted = false;
-    while ((result = (*rarReadHeader)(handle, &headerData)) == ERAR_SUCCESS) {
+    while ((result = RARReadHeader(handle, &headerData)) == ERAR_SUCCESS) {
         int result2 = ERAR_SUCCESS;
         if (QDir::fromNativeSeparators(QString::fromLocal8Bit(headerData.FileName)) == fileName) {
-            result2 = (*rarProcessFile)(handle, RAR_EXTRACT, destpath, nullptr);
+            result2 = RARProcessFile(handle, RAR_EXTRACT, destpath, nullptr);
             extracted = true;
         } else
-            result2 = (*rarProcessFile)(handle, RAR_SKIP, nullptr, nullptr);
+            result2 = RARProcessFile(handle, RAR_SKIP, nullptr, nullptr);
         if (result2 != ERAR_SUCCESS) {
-            rarCloseArchive(handle);
+            RARCloseArchive(handle);
             delete[] data.ArcName;
             delete[] pass;
             delete[] destpath;
@@ -365,7 +393,7 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressOneFile(const QDir &tar
         } else if (extracted)
             break;
     }
-    (*rarCloseArchive)(handle);
+    RARCloseArchive(handle);
     delete[] data.ArcName;
     delete[] pass;
     delete[] destpath;
@@ -377,35 +405,7 @@ RmeUncompresserResult RmeUncompLibUnrarPlugin::uncompressOneFile(const QDir &tar
     return RmeUncompSuccess;
 }
 
-void RmeUncompLibUnrarPlugin::setPassword(const QString &password)
-{
-    m_password = password;
-}
-
-QJsonObject RmeUncompLibUnrarPlugin::pluginSettings() const
-{
-    QJsonObject ob;
-    ob[QStringLiteral("libraryPath")] = libraryPath();
-    return ob;
-}
-
-bool RmeUncompLibUnrarPlugin::setPluginSetting(const QString &key, const QJsonValue &value)
-{
-    if (key == QStringLiteral("libraryPath") && value.isString()) {
-        m_libraryPath = value.toString();
-        return true;
-    }
-    return false;
-}
-
-bool RmeUncompLibUnrarPlugin::setPluginSettings(const QJsonObject &json)
-{
-    bool result = true;
-    foreach (const QString &key, json.keys())
-        result &= setPluginSetting(key, json.value(key));
-    return result;
-}
-
+#ifndef RARDLL
 bool RmeUncompLibUnrarPlugin::loadLibUnrar()
 {
     if (m_libunrar != nullptr)
@@ -418,14 +418,14 @@ bool RmeUncompLibUnrarPlugin::loadLibUnrar()
         return false;
     }
 
-    RARGetDllVersion rarGetDllVersion = reinterpret_cast<RARGetDllVersion>(m_libunrar->resolve("RARGetDllVersion"));
-    if (rarGetDllVersion == nullptr) {
+    rarGetDllVersion RARGetDllVersion = reinterpret_cast<rarGetDllVersion>(m_libunrar->resolve("RARGetDllVersion"));
+    if (RARGetDllVersion == nullptr) {
         m_libunrar->unload();
         delete m_libunrar;
         return false;
     }
 
-    int dllversion = (*rarGetDllVersion)();
+    int dllversion = RARGetDllVersion();
     if (dllversion < 7) {
         m_libunrar->unload();
         delete m_libunrar;
@@ -435,12 +435,8 @@ bool RmeUncompLibUnrarPlugin::loadLibUnrar()
     return true;
 }
 
-QString RmeUncompLibUnrarPlugin::password() const
-{
-    return m_password.isEmpty() ? QStringLiteral("-") : m_password;
-}
-
 QString RmeUncompLibUnrarPlugin::libraryPath() const
 {
     return m_libraryPath.isEmpty() ? QStringLiteral("unrar") : m_libraryPath;
 }
+#endif

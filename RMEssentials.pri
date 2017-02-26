@@ -20,7 +20,7 @@ staticlib: DEFINES += LIBRMESSENTIALS_STATIC
 !win32-msvc* {
     # we use gcc/clang on unix-like systems and mingw
     QMAKE_CFLAGS += -Wpointer-to-int-cast
-    QMAKE_CXXFLAGS += -Wc++11-compat 
+    QMAKE_CXXFLAGS += -Wc++11-compat
     *-g++: QMAKE_CXXFLAGS += -Wzero-as-null-pointer-constant
     mac:QMAKE_LFLAGS += -Wl,-undefined -Wl,error
     else:QMAKE_LFLAGS += -Wl,--no-undefined

@@ -3,11 +3,12 @@
 
 #include "rmeglobal.h"
 
+#include <QDir>
 #include <QFlags>
 #include <QStringList>
 #include <QThread>
 
-class QDir;
+Q_DECLARE_METATYPE(QDir)
 
 enum RmeUncompresserResult
 {
@@ -18,21 +19,30 @@ enum RmeUncompresserResult
     RmeUncompUnknownFileFormat,
     RmeUncompChecksumError,
     RmeUncompSubProcessError,
+    RmeUncompNoAvailablePlugin,
     RmeUncompUnknownError = -1
 };
+Q_DECLARE_METATYPE(RmeUncompresserResult)
 
 enum RmeUncompresserFormat
 {
+    RmeUncompUnknownFormat = 0x0,
     RmeUncompZip = 0x1,
     RmeUncompRar = 0x2,
     RmeUncomp7z = 0x4
 };
 Q_DECLARE_FLAGS(RmeUncompresserFormats, RmeUncompresserFormat)
 
+class RmeUncompresser;
+class RmeUncompresserPluginPrivate;
+
 class LIBRMESSENTIALS_EXPORT RmeUncompresserPlugin
+    : public QObject
 {
+    Q_OBJECT
+
 public:
-    RmeUncompresserPlugin();
+    RmeUncompresserPlugin(QObject *parent = nullptr);
     virtual ~RmeUncompresserPlugin();
 
     virtual bool isReadyForUse() const = 0;
@@ -42,17 +52,17 @@ public:
     virtual QStringList listFiles() = 0;
     virtual RmeUncompresserResult uncompressAllFiles(const QDir &targetDir) = 0;
     virtual RmeUncompresserResult uncompressOneFile(const QDir &targetDir, const QString &fileName) = 0;
-    virtual void setPassword(const QString &password) = 0;
 
-    virtual QJsonObject pluginSettings() const = 0;
-    virtual bool setPluginSetting(const QString &key, const QJsonValue &value) = 0;
-    virtual bool setPluginSettings(const QJsonObject &json) = 0;
+    QStringList propertyList() const;
+    void setUncompresser(RmeUncompresser *uncompresser);
+
+    QString password() const;
 
 private:
     Q_DISABLE_COPY(RmeUncompresserPlugin)
+    Q_DECLARE_PRIVATE(RmeUncompresserPlugin)
+    RmeUncompresserPluginPrivate *d_ptr;
 };
-
-Q_DECLARE_INTERFACE(RmeUncompresserPlugin, "org.RMEssentials.RmeUncompresserPlugin")
 
 class RmeUncompresserPrivate;
 
@@ -62,6 +72,9 @@ class LIBRMESSENTIALS_EXPORT RmeUncompresser
     Q_OBJECT
 
 public:
+    RmeUncompresser();
+    ~RmeUncompresser();
+
     static QStringList pluginNames();
     static RmeUncompresserPlugin *plugin(const QString &pluginName);
 
@@ -69,33 +82,19 @@ public:
 
     RmeUncompresserResult openArchive(const QString &fileName);
     QStringList listFiles();
-    RmeUncompresserResult uncompressAllFiles(const QDir &targetDir);
-    RmeUncompresserResult uncompressOneFile(const QDir &targetDir, const QString &fileName);
+    bool uncompressAllFiles(const QDir &targetDir);
+    bool uncompressOneFile(const QDir &targetDir, const QString &fileName);
+
     void setPassword(const QString &password);
+    QString password() const;
 
-    QJsonObject pluginSettings() const;
-    bool setPluginSetting(const QString &key, const QJsonValue &value);
-    bool setPluginSettings(const QJsonObject &json);
+signals:
+    void uncompressOneFileCompleted(RmeUncompresserResult result);
+    void uncompressAllFilesCompleted(RmeUncompresserResult result);
+
+private:
+    Q_DECLARE_PRIVATE(RmeUncompresser)
+    RmeUncompresserPrivate *d_ptr;
 };
-
-//{
-//    Q_OBJECT
-
-//public:
-//    explicit RmeUncompresser(QObject *parent = nullptr);
-//    ~RmeUncompresser() override;
-
-//    void addFile(const QString &zipName, const QString &fileName);
-
-//    void run() override;
-
-//signals:
-//    void signalFileFinished(const QString &filename);
-
-//private:
-//    Q_DISABLE_COPY(RmeUncompresser)
-//    Q_DECLARE_PRIVATE(RmeUncompresser)
-//    RmeUncompresserPrivate *d_ptr;
-//};
 
 #endif

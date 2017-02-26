@@ -1,7 +1,7 @@
 
 include($$_PRO_FILE_PWD_/../../RMEssentials.pri)
 
-QT += core gui network
+QT += core gui network concurrent
 
 TEMPLATE = lib
 TARGET = RMEss

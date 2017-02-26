@@ -15,7 +15,7 @@ bool iszip(const QString &output)
 }
 
 RmeUncompUnzipCliPlugin::RmeUncompUnzipCliPlugin(QObject *parent)
-    : QObject(parent)
+    : RmeUncompresserPlugin(parent)
 {
 }
 
@@ -172,44 +172,7 @@ RmeUncompresserResult RmeUncompUnzipCliPlugin::uncompressOneFile(const QDir &tar
     return RmeUncompSuccess;
 }
 
-void RmeUncompUnzipCliPlugin::setPassword(const QString &password)
-{
-    m_password = password;
-}
-
-QJsonObject RmeUncompUnzipCliPlugin::pluginSettings() const
-{
-    QJsonObject ob;
-    ob[QStringLiteral("binaryPath")] = binaryPath();
-    return ob;
-}
-
-bool RmeUncompUnzipCliPlugin::setPluginSetting(const QString &key, const QJsonValue &value)
-{
-    if (key == QStringLiteral("binaryPath") && value.isString()) {
-        m_binaryPath = value.toString();
-        return true;
-    }
-    return false;
-}
-
-bool RmeUncompUnzipCliPlugin::setPluginSettings(const QJsonObject &json)
-{
-    bool result = true;
-    foreach (const QString &key, json.keys())
-        result &= setPluginSetting(key, json.value(key));
-    return result;
-}
-
 QString RmeUncompUnzipCliPlugin::binaryPath() const
 {
-    if (m_binaryPath.isEmpty())
-        return QStringLiteral("unzip");
-
-    return m_binaryPath;
-}
-
-QString RmeUncompUnzipCliPlugin::password() const
-{
-    return m_password.isEmpty() ? QStringLiteral("-") : m_password;
+    return m_binaryPath.isEmpty() ? QStringLiteral("unzip") : m_binaryPath;
 }

@@ -15,7 +15,7 @@ bool is7z(const QString &output)
 }
 
 RmeUncomp7zCliPlugin::RmeUncomp7zCliPlugin(QObject *parent)
-    : QObject(parent)
+    : RmeUncompresserPlugin(parent)
 {
 }
 
@@ -162,45 +162,7 @@ RmeUncompresserResult RmeUncomp7zCliPlugin::uncompressOneFile(const QDir &target
 
     return RmeUncompSuccess;
 }
-
-void RmeUncomp7zCliPlugin::setPassword(const QString &password)
-{
-    m_password = password;
-}
-
-QJsonObject RmeUncomp7zCliPlugin::pluginSettings() const
-{
-    QJsonObject ob;
-    ob[QStringLiteral("binaryPath")] = binaryPath();
-    return ob;
-}
-
-bool RmeUncomp7zCliPlugin::setPluginSetting(const QString &key, const QJsonValue &value)
-{
-    if (key == QStringLiteral("binaryPath") && value.isString()) {
-        m_binaryPath = value.toString();
-        return true;
-    }
-    return false;
-}
-
-bool RmeUncomp7zCliPlugin::setPluginSettings(const QJsonObject &json)
-{
-    bool result = true;
-    foreach (const QString &key, json.keys())
-        result &= setPluginSetting(key, json.value(key));
-    return result;
-}
-
 QString RmeUncomp7zCliPlugin::binaryPath() const
 {
-    if (m_binaryPath.isEmpty())
-        return QStringLiteral("7zr");
-
-    return m_binaryPath;
-}
-
-QString RmeUncomp7zCliPlugin::password() const
-{
-    return m_password.isEmpty() ? QStringLiteral("-") : m_password;
+    return m_binaryPath.isEmpty() ? QStringLiteral("7zr") : m_binaryPath;
 }
