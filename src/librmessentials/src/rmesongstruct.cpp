@@ -1,11 +1,26 @@
 #include "rmesongstruct.h"
 #include "rmeutils.h"
 
+#include <QFile>
+
 const QString RmeSong::RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
-namespace {
-// I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
-const QString strTemp = QStringLiteral("【限时】");
+// use txt file with qrc to store the "limited time" chinese characters
+static inline const QString &strTemp()
+{
+    static QString str;
+    static QString strCantLoad = QStringLiteral("###QRC CANNOT BE LOADED!!!###");
+    if (str.isEmpty()) {
+        Q_INIT_RESOURCE(strtemp);
+        QFile qrcFile(QStringLiteral(":/RMEssentials/strTemp.txt"));
+        if (!qrcFile.open(QIODevice::ReadOnly))
+            return strCantLoad;
+
+        str = QString::fromUtf8(qrcFile.readAll());
+        qrcFile.close();
+    }
+
+    return str;
 }
 
 RmeSong::RmeSongClientHeaderStruct::RmeSongClientHeaderStruct()
@@ -432,11 +447,11 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
 #undef SETINT
 
     QString songName1 = m_szSongName;
-    if (songName1.startsWith(strTemp))
-        songName1 = songName1.mid(strTemp.length());
+    if (songName1.startsWith(strTemp()))
+        songName1 = songName1.mid(strTemp().length());
     QString songName2 = orig.m_szSongName;
-    if (songName2.startsWith(strTemp))
-        songName2 = songName2.mid(strTemp.length());
+    if (songName2.startsWith(strTemp()))
+        songName2 = songName2.mid(strTemp().length());
 
     if (userMade || (songName1 != songName2))
         ob[QStringLiteral("szSongName")] = QJsonValue(songName1);
@@ -566,7 +581,7 @@ bool RmeSong::RmeSongClientItemStruct::isBuy() const
 
 bool RmeSong::RmeSongClientItemStruct::isFree() const
 {
-    return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward() && !m_szSongName.startsWith(strTemp);
+    return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward() && !m_szSongName.startsWith(strTemp());
 }
 
 bool RmeSong::RmeSongClientItemStruct::isLevel() const

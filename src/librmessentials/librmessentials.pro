@@ -60,3 +60,6 @@ includetarget.files = $$OUT_PWD/../dist/include/RMEssentials/*
 target.path = /lib/
 dlltarget.path = /bin/
 INSTALLS += target dlltarget includetarget
+
+RESOURCES += \
+    res/strtemp.qrc
