@@ -128,8 +128,7 @@ public:
       file name case sensitivity for the platform. Otherwise, just
       returns the appropriate value from the Qt::CaseSensitivity enum.
       */
-    static Qt::CaseSensitivity convertCaseSensitivity(
-        CaseSensitivity cs);
+    static Qt::CaseSensitivity convertCaseSensitivity(CaseSensitivity cs);
 
 private:
     QuaZipPrivate *p;

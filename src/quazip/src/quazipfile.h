@@ -71,8 +71,7 @@ class QuaZipFilePrivate;
  * this class.
  *
  **/
-class QUAZIP_EXPORT QuaZipFile
-    : public QIODevice
+class QUAZIP_EXPORT QuaZipFile : public QIODevice
 {
     friend class QuaZipFilePrivate;
     Q_OBJECT
@@ -343,7 +342,8 @@ public:
      * Arguments \a windowBits, \a memLevel, \a strategy provide zlib
      * algorithms tuning. See deflateInit2() in zlib.
      **/
-    bool open(OpenMode mode, const QuaZipNewInfo &info, const char *password = NULL, quint32 crc = 0, int method = Z_DEFLATED, int level = Z_DEFAULT_COMPRESSION, bool raw = false, int windowBits = -MAX_WBITS, int memLevel = DEF_MEM_LEVEL, int strategy = Z_DEFAULT_STRATEGY);
+    bool open(OpenMode mode, const QuaZipNewInfo &info, const char *password = NULL, quint32 crc = 0, int method = Z_DEFLATED, int level = Z_DEFAULT_COMPRESSION, bool raw = false,
+              int windowBits = -MAX_WBITS, int memLevel = DEF_MEM_LEVEL, int strategy = Z_DEFAULT_STRATEGY);
     /// Returns \c true, but \ref quazipfile-sequential "beware"!
     virtual bool isSequential() const;
     /// Returns current position in the file.

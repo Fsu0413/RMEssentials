@@ -75,11 +75,9 @@ static void init_keys(const char *passwd, unsigned long *pkeys, const z_crc_t FA
     }
 }
 
-#define zdecode(pkeys, pcrc_32_tab, c) \
-    (update_keys(pkeys, pcrc_32_tab, c ^= decrypt_byte(pkeys, pcrc_32_tab)))
+#define zdecode(pkeys, pcrc_32_tab, c) (update_keys(pkeys, pcrc_32_tab, c ^= decrypt_byte(pkeys, pcrc_32_tab)))
 
-#define zencode(pkeys, pcrc_32_tab, c, t) \
-    (t = decrypt_byte(pkeys, pcrc_32_tab), update_keys(pkeys, pcrc_32_tab, c), t ^ (c))
+#define zencode(pkeys, pcrc_32_tab, c, t) (t = decrypt_byte(pkeys, pcrc_32_tab), update_keys(pkeys, pcrc_32_tab, c), t ^ (c))
 
 #ifdef INCLUDECRYPTINGCODE_IFCRYPTALLOWED
 
@@ -89,8 +87,7 @@ static void init_keys(const char *passwd, unsigned long *pkeys, const z_crc_t FA
 #define ZCR_SEED2 3141592654UL /* use PI as default pattern */
 #endif
 
-static int crypthead(passwd, buf, bufSize, pkeys, pcrc_32_tab, crcForCrypting)
-    const char *passwd; /* password string */
+static int crypthead(passwd, buf, bufSize, pkeys, pcrc_32_tab, crcForCrypting) const char *passwd; /* password string */
 unsigned char *buf; /* where to write header */
 int bufSize;
 unsigned long *pkeys;

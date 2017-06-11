@@ -160,9 +160,7 @@ typedef struct unz_file_info_s
     tm_unz tmu_date;
 } unz_file_info;
 
-extern int ZEXPORT unzStringFileNameCompare OF((const char *fileName1,
-                                                const char *fileName2,
-                                                int iCaseSensitivity));
+extern int ZEXPORT unzStringFileNameCompare OF((const char *fileName1, const char *fileName2, int iCaseSensitivity));
 /*
    Compare two filename (fileName1,fileName2).
    If iCaseSenisivity = 1, comparision is case sensitivity (like strcmp)
@@ -189,15 +187,13 @@ extern unzFile ZEXPORT unzOpen64 OF((voidpf file));
        does not describe the reality
 */
 
-extern unzFile ZEXPORT unzOpen2 OF((voidpf file,
-                                    zlib_filefunc_def *pzlib_filefunc_def));
+extern unzFile ZEXPORT unzOpen2 OF((voidpf file, zlib_filefunc_def *pzlib_filefunc_def));
 /*
    Open a Zip file, like unzOpen, but provide a set of file low level API
       for read/write the zip file (see ioapi.h)
 */
 
-extern unzFile ZEXPORT unzOpen2_64 OF((voidpf file,
-                                       zlib_filefunc64_def *pzlib_filefunc_def));
+extern unzFile ZEXPORT unzOpen2_64 OF((voidpf file, zlib_filefunc64_def *pzlib_filefunc_def));
 /*
    Open a Zip file, like unz64Open, but provide a set of file low level API
       for read/write the zip file (see ioapi.h)
@@ -208,10 +204,7 @@ extern unzFile ZEXPORT unzOpen2_64 OF((voidpf file,
  * function MAY change signature in order to implement even more features.
  * You have been warned!
  * */
-extern unzFile unzOpenInternal(voidpf file,
-                               zlib_filefunc64_32_def *pzlib_filefunc64_32_def,
-                               int is64bitOpenFunction,
-                               unsigned flags);
+extern unzFile unzOpenInternal(voidpf file, zlib_filefunc64_32_def *pzlib_filefunc64_32_def, int is64bitOpenFunction, unsigned flags);
 
 extern int ZEXPORT unzClose OF((unzFile file));
 /*
@@ -220,19 +213,15 @@ extern int ZEXPORT unzClose OF((unzFile file));
     these files MUST be closed with unzipCloseCurrentFile before call unzipClose.
   return UNZ_OK if there is no problem. */
 
-extern int ZEXPORT unzGetGlobalInfo OF((unzFile file,
-                                        unz_global_info *pglobal_info));
+extern int ZEXPORT unzGetGlobalInfo OF((unzFile file, unz_global_info *pglobal_info));
 
-extern int ZEXPORT unzGetGlobalInfo64 OF((unzFile file,
-                                          unz_global_info64 *pglobal_info));
+extern int ZEXPORT unzGetGlobalInfo64 OF((unzFile file, unz_global_info64 *pglobal_info));
 /*
   Write info about the ZipFile in the *pglobal_info structure.
   No preparation of the structure is needed
   return UNZ_OK if there is no problem. */
 
-extern int ZEXPORT unzGetGlobalComment OF((unzFile file,
-                                           char *szComment,
-                                           uLong uSizeBuf));
+extern int ZEXPORT unzGetGlobalComment OF((unzFile file, char *szComment, uLong uSizeBuf));
 /*
   Get the global comment string of the ZipFile, in the szComment buffer.
   uSizeBuf is the size of the szComment buffer.
@@ -255,9 +244,7 @@ extern int ZEXPORT unzGoToNextFile OF((unzFile file));
   return UNZ_END_OF_LIST_OF_FILE if the actual file was the latest.
 */
 
-extern int ZEXPORT unzLocateFile OF((unzFile file,
-                                     const char *szFileName,
-                                     int iCaseSensitivity));
+extern int ZEXPORT unzLocateFile OF((unzFile file, const char *szFileName, int iCaseSensitivity));
 /*
   Try locate the file szFileName in the zipfile.
   For the iCaseSensitivity signification, see unzStringFileNameCompare
@@ -276,13 +263,9 @@ typedef struct unz_file_pos_s
     uLong num_of_file; /* # of file */
 } unz_file_pos;
 
-extern int ZEXPORT unzGetFilePos(
-    unzFile file,
-    unz_file_pos *file_pos);
+extern int ZEXPORT unzGetFilePos(unzFile file, unz_file_pos *file_pos);
 
-extern int ZEXPORT unzGoToFilePos(
-    unzFile file,
-    unz_file_pos *file_pos);
+extern int ZEXPORT unzGoToFilePos(unzFile file, unz_file_pos *file_pos);
 
 typedef struct unz64_file_pos_s
 {
@@ -290,33 +273,17 @@ typedef struct unz64_file_pos_s
     ZPOS64_T num_of_file; /* # of file */
 } unz64_file_pos;
 
-extern int ZEXPORT unzGetFilePos64(
-    unzFile file,
-    unz64_file_pos *file_pos);
+extern int ZEXPORT unzGetFilePos64(unzFile file, unz64_file_pos *file_pos);
 
-extern int ZEXPORT unzGoToFilePos64(
-    unzFile file,
-    const unz64_file_pos *file_pos);
+extern int ZEXPORT unzGoToFilePos64(unzFile file, const unz64_file_pos *file_pos);
 
 /* ****************************************** */
 
-extern int ZEXPORT unzGetCurrentFileInfo64 OF((unzFile file,
-                                               unz_file_info64 *pfile_info,
-                                               char *szFileName,
-                                               uLong fileNameBufferSize,
-                                               void *extraField,
-                                               uLong extraFieldBufferSize,
-                                               char *szComment,
-                                               uLong commentBufferSize));
+extern int ZEXPORT unzGetCurrentFileInfo64 OF((unzFile file, unz_file_info64 *pfile_info, char *szFileName, uLong fileNameBufferSize, void *extraField, uLong extraFieldBufferSize,
+                                               char *szComment, uLong commentBufferSize));
 
-extern int ZEXPORT unzGetCurrentFileInfo OF((unzFile file,
-                                             unz_file_info *pfile_info,
-                                             char *szFileName,
-                                             uLong fileNameBufferSize,
-                                             void *extraField,
-                                             uLong extraFieldBufferSize,
-                                             char *szComment,
-                                             uLong commentBufferSize));
+extern int ZEXPORT unzGetCurrentFileInfo OF((unzFile file, unz_file_info *pfile_info, char *szFileName, uLong fileNameBufferSize, void *extraField, uLong extraFieldBufferSize,
+                                             char *szComment, uLong commentBufferSize));
 /*
   Get Info about the current file
   if pfile_info!=NULL, the *pfile_info structure will contain somes info about
@@ -347,18 +314,14 @@ extern int ZEXPORT unzOpenCurrentFile OF((unzFile file));
   If there is no error, the return value is UNZ_OK.
 */
 
-extern int ZEXPORT unzOpenCurrentFilePassword OF((unzFile file,
-                                                  const char *password));
+extern int ZEXPORT unzOpenCurrentFilePassword OF((unzFile file, const char *password));
 /*
   Open for reading data the current file in the zipfile.
   password is a crypting password
   If there is no error, the return value is UNZ_OK.
 */
 
-extern int ZEXPORT unzOpenCurrentFile2 OF((unzFile file,
-                                           int *method,
-                                           int *level,
-                                           int raw));
+extern int ZEXPORT unzOpenCurrentFile2 OF((unzFile file, int *method, int *level, int raw));
 /*
   Same than unzOpenCurrentFile, but open for read raw the file (not uncompress)
     if raw==1
@@ -368,11 +331,7 @@ extern int ZEXPORT unzOpenCurrentFile2 OF((unzFile file,
          but you CANNOT set method parameter as NULL
 */
 
-extern int ZEXPORT unzOpenCurrentFile3 OF((unzFile file,
-                                           int *method,
-                                           int *level,
-                                           int raw,
-                                           const char *password));
+extern int ZEXPORT unzOpenCurrentFile3 OF((unzFile file, int *method, int *level, int raw, const char *password));
 /*
   Same than unzOpenCurrentFile, but open for read raw the file (not uncompress)
     if raw==1
@@ -388,9 +347,7 @@ extern int ZEXPORT unzCloseCurrentFile OF((unzFile file));
   Return UNZ_CRCERROR if all the file was read but the CRC is not good
 */
 
-extern int ZEXPORT unzReadCurrentFile OF((unzFile file,
-                                          voidp buf,
-                                          unsigned len));
+extern int ZEXPORT unzReadCurrentFile OF((unzFile file, voidp buf, unsigned len));
 /*
   Read bytes from the current file (opened by unzOpenCurrentFile)
   buf contain buffer where data must be copied
@@ -414,9 +371,7 @@ extern int ZEXPORT unzeof OF((unzFile file));
   return 1 if the end of file was reached, 0 elsewhere
 */
 
-extern int ZEXPORT unzGetLocalExtrafield OF((unzFile file,
-                                             voidp buf,
-                                             unsigned len));
+extern int ZEXPORT unzGetLocalExtrafield OF((unzFile file, voidp buf, unsigned len));
 /*
   Read extra field from the current file (opened by unzOpenCurrentFile)
   This is the local-header version of the extra field (sometimes, there is

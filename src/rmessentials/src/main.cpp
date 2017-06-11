@@ -1,4 +1,4 @@
-﻿#include "main.h"
+#include "main.h"
 
 #include "changename.h"
 #include "download.h"
@@ -125,13 +125,16 @@ void MainDialog::showPapaSongClientEditDialog()
 
 void MainDialog::about()
 {
-    QString aboutContent = tr(
-                               "The version of RMEssentials frontend is: %1.\n\n"
-                               "RMEssentials is a small software written by Fsu0413(from Wings of Melody). \n"
-                               "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
-                               "It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. \n\n"
-                               "This Program is linked against Qt %2, and loads Qt %3 to run.\n"
-                               "This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 to run.")
+    QString aboutContent = tr("The version of RMEssentials frontend is: %1.\n\n"
+                              "RMEssentials is a small software written by Fsu0413(from Wings of "
+                              "Melody). \n"
+                              "It is used to operate the files for a game by Tencent: Rhythm "
+                              "Master. \n"
+                              "It now contains 4 main features: ChangeName, Download, "
+                              "SongClientEdit, PapaSongClientEdit. \n\n"
+                              "This Program is linked against Qt %2, and loads Qt %3 to run.\n"
+                              "This Program is linked against libRMEssentials %1, and loads "
+                              "libRMEssentials %4 to run.")
                                .arg(QStringLiteral(RMEVERSION))
                                .arg(QStringLiteral(QT_VERSION_STR))
                                .arg(QString::fromUtf8(qVersion()))
@@ -180,10 +183,10 @@ void MainDialog::checkForUpdate()
 
             setWindowTitle(windowTitle() + tr("  new version %1 available").arg(version));
             if (isVisible()) {
-                QString contents = tr(
-                                       "New version avaliable!! Version number: %1<br />"
-                                       "You can download the new version at <a href=\'%2\'>here</a>, the password is \"%3\"<br /><br />"
-                                       "What\'s new in version %1: <br /> %4")
+                QString contents = tr("New version avaliable!! Version number: %1<br />"
+                                      "You can download the new version at <a href=\'%2\'>here</a>, "
+                                      "the password is \"%3\"<br /><br />"
+                                      "What\'s new in version %1: <br /> %4")
                                        .arg(version)
                                        .arg(link)
                                        .arg(passwd)
@@ -195,13 +198,15 @@ void MainDialog::checkForUpdate()
 }
 
 #ifdef Q_OS_ANDROID
-#define CURRENTDIRPREFIX ""         \
-                         "assets:/" \
-                         ""
+#define CURRENTDIRPREFIX \
+    ""                   \
+    "assets:/"           \
+    ""
 #else
-#define CURRENTDIRPREFIX ""        \
-                         "assets/" \
-                         ""
+#define CURRENTDIRPREFIX \
+    ""                   \
+    "assets/"            \
+    ""
 #endif
 
 int main(int argc, char *argv[])
