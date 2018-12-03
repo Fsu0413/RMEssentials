@@ -1,8 +1,8 @@
 #include "papasongclientedit.h"
 #include "pastelineedit.h"
 
-#include <RMEssentials/RmeDownloader>
-#include <RMEssentials/RmeSongClientStruct>
+#include <RMEss/RmeDownloader>
+#include <RMEss/RmeSongClientStruct>
 
 #include <QCheckBox>
 #include <QDoubleValidator>
@@ -262,7 +262,8 @@ PapaSongClientEditDialog::~PapaSongClientEditDialog()
 
 bool PapaSongClientEditDialog::reloadFile()
 {
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+    QString filepath
+        = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
 
     QFile f(filepath);
     if (!f.exists())
@@ -288,7 +289,8 @@ bool PapaSongClientEditDialog::loadFile()
         filepath = d.absoluteFilePath(QStringLiteral("mrock_papasong_client.bin"));
     else {
         QMessageBox::information(this, tr("RMEssentials"), tr("mrock_papasong_client.bin doesn't exist, please select the file to open."));
-        filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+        filepath
+            = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
     }
 
     QFile f(filepath);
@@ -311,7 +313,8 @@ void PapaSongClientEditDialog::saveFile()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+    QString filepath
+        = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
     QFile f(filepath);
     if (f.exists() && QMessageBox::question(this, tr("RMEssentials"), tr("File is already exists, do you want to overwrite?")) == QMessageBox::No)
         return;
@@ -474,7 +477,8 @@ void PapaSongClientEditDialog::createPatch()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
+    QString filepath
+        = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("bin files") + QStringLiteral(" (*.bin)"));
 
     QFile f(filepath);
     if (!f.exists())
@@ -486,7 +490,8 @@ void PapaSongClientEditDialog::createPatch()
         return;
     }
 
-    QString filepathToSave = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
+    QString filepathToSave
+        = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
 
     QFile f2(filepathToSave);
     if (!m_file.savePatchToDevice(&f2, file2)) {
@@ -500,7 +505,8 @@ void PapaSongClientEditDialog::applyPatch()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
+    QString filepath
+        = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
     QFile f(filepath);
 
     if (!f.exists())

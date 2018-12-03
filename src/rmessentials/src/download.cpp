@@ -1,7 +1,7 @@
 #include "download.h"
 
-#include <RMEssentials/RmeDownloader>
-#include <RMEssentials/RmeUncompresser>
+#include <RMEss/RmeDownloader>
+#include <RMEss/RmeUncompresser>
 
 #include <QCloseEvent>
 #include <QComboBox>
@@ -196,29 +196,27 @@ void DownloadDialog::startDownloadNextMissing()
 
 void DownloadDialog::startDownloadSong(DownloadMode mode)
 {
-    static QStringList suffixs = {
-        QStringLiteral(".mp3"),
-        QStringLiteral(".jpg"),
-        QStringLiteral("_title_ipad.jpg"),
-        QStringLiteral("_ipad.jpg"),
-        QStringLiteral("_title_140_90.jpg"), // do not use .png here
+    static QStringList suffixs = {QStringLiteral(".mp3"),
+                                  QStringLiteral(".jpg"),
+                                  QStringLiteral("_title_ipad.jpg"),
+                                  QStringLiteral("_ipad.jpg"),
+                                  QStringLiteral("_title_140_90.jpg"), // do not use .png here
 
-        QStringLiteral("_4k_ez.imd"),
-        QStringLiteral("_4k_nm.imd"),
-        QStringLiteral("_4k_hd.imd"),
+                                  QStringLiteral("_4k_ez.imd"),
+                                  QStringLiteral("_4k_nm.imd"),
+                                  QStringLiteral("_4k_hd.imd"),
 
-        QStringLiteral("_5k_ez.imd"),
-        QStringLiteral("_5k_nm.imd"),
-        QStringLiteral("_5k_hd.imd"),
+                                  QStringLiteral("_5k_ez.imd"),
+                                  QStringLiteral("_5k_nm.imd"),
+                                  QStringLiteral("_5k_hd.imd"),
 
-        QStringLiteral("_6k_ez.imd"),
-        QStringLiteral("_6k_nm.imd"),
-        QStringLiteral("_6k_hd.imd"),
+                                  QStringLiteral("_6k_ez.imd"),
+                                  QStringLiteral("_6k_nm.imd"),
+                                  QStringLiteral("_6k_hd.imd"),
 
-        QStringLiteral("_Papa_Easy.mde"),
-        QStringLiteral("_Papa_Normal.mde"),
-        QStringLiteral("_Papa_Hard.mde")
-    };
+                                  QStringLiteral("_Papa_Easy.mde"),
+                                  QStringLiteral("_Papa_Normal.mde"),
+                                  QStringLiteral("_Papa_Hard.mde")};
     static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/song/");
 
     RmeDownloader *downloader = new RmeDownloader;
@@ -257,7 +255,7 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
 
 void DownloadDialog::startDownloadRole()
 {
-    static QStringList suffixs = { QStringLiteral("_hd.png"), QStringLiteral("_head.png"), QStringLiteral("_cry.png") };
+    static QStringList suffixs = {QStringLiteral("_hd.png"), QStringLiteral("_head.png"), QStringLiteral("_cry.png")};
     static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/icon/role/");
 
     RmeDownloader *downloader = new RmeDownloader;
@@ -514,7 +512,7 @@ void DownloadDialog::loadPaths()
             s = f.peek(0x20l);
             QString padui3 = QString::fromUtf8(s);
             f.seek(f.pos() + 0x40l);
-            m_rolePadUiMap[id] = QStringList{ padui1, padui2, padui3 };
+            m_rolePadUiMap[id] = QStringList {padui1, padui2, padui3};
         }
         f.close();
         appendLog(QStringLiteral("mrock.character_client.bin") + tr(" has been loaded"));

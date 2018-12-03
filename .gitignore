@@ -1,3 +1,4 @@
 *.user
 /downloader/
 rmessentials.qm
+*.orig

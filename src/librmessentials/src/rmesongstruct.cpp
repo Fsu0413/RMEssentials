@@ -1,11 +1,26 @@
-﻿#include "rmesongstruct.h"
+#include "rmesongstruct.h"
 #include "rmeutils.h"
+
+#include <QFile>
 
 const QString RmeSong::RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
-namespace {
-// I have also been drunk.... We must use Chinese here, so I add UTF-8 BOM to this file otherwise it will cause a messed encoding in MSVC.
-const QString strTemp = QStringLiteral("【限时】");
+// use txt file with qrc to store the "limited time" chinese characters
+static inline const QString &strTemp()
+{
+    static QString str;
+    static QString strCantLoad = QStringLiteral("###QRC CANNOT BE LOADED!!!###");
+    if (str.isEmpty()) {
+        Q_INIT_RESOURCE(strtemp);
+        QFile qrcFile(QStringLiteral(":/RMEssentials/strTemp.txt"));
+        if (!qrcFile.open(QIODevice::ReadOnly))
+            return strCantLoad;
+
+        str = QString::fromUtf8(qrcFile.readAll());
+        qrcFile.close();
+    }
+
+    return str;
 }
 
 RmeSong::RmeSongClientHeaderStruct::RmeSongClientHeaderStruct()
@@ -23,10 +38,8 @@ void RmeSong::RmeSongClientHeaderStruct::parseByteArray(const QByteArray &arr)
     Q_ASSERT(arr.length() == 0x88);
     const char *data = arr.constData();
 
-#define GETX(type, name, offset) \
-    this->name = *(reinterpret_cast<const type *>(data + offset))
-#define GETSTR(name, offset) \
-    this->name = QString::fromUtf8(data + offset)
+#define GETX(type, name, offset) this->name = *(reinterpret_cast<const type *>(data + offset))
+#define GETSTR(name, offset) this->name = QString::fromUtf8(data + offset)
 
     GETX(int32_t, Magic, 0x0);
     GETX(int32_t, Version, 0x4);
@@ -86,10 +99,8 @@ QByteArray RmeSong::RmeSongClientHeaderStruct::toByteArray() const
 
 void RmeSong::RmeSongClientHeaderStruct::parseMap(const QVariantMap &map)
 {
-#define GETSTR(name) \
-    this->name = map[QStringLiteral(#name)].toString()
-#define GETINT(name) \
-    this->name = map[QStringLiteral(#name)].toString().trimmed().toInt()
+#define GETSTR(name) this->name = map[QStringLiteral(#name)].toString()
+#define GETINT(name) this->name = map[QStringLiteral(#name)].toString().trimmed().toInt()
 
     GETINT(Magic);
     GETINT(Version);
@@ -109,10 +120,8 @@ QVariantMap RmeSong::RmeSongClientHeaderStruct::toMap() const
 {
     QVariantMap map;
 
-#define SETSTR(name) \
-    map[QStringLiteral(#name)] = this->name
-#define SETINT(name) \
-    map[QStringLiteral(#name)] = QString::number(static_cast<int>(this->name)) + QStringLiteral(" ")
+#define SETSTR(name) map[QStringLiteral(#name)] = this->name
+#define SETINT(name) map[QStringLiteral(#name)] = QString::number(static_cast<int>(this->name)) + QStringLiteral(" ")
 
     SETINT(Magic);
     SETINT(Version);
@@ -168,10 +177,8 @@ void RmeSong::RmeSongClientItemStruct::parseByteArray(const QByteArray &arr)
     Q_ASSERT(arr.length() == 0x33e);
     const char *data = arr.constData();
 
-#define GETX(type, name, offset) \
-    this->m_##name = *(reinterpret_cast<const type *>(data + offset))
-#define GETSTR(name, offset) \
-    this->m_##name = QString::fromUtf8(data + offset)
+#define GETX(type, name, offset) this->m_##name = *(reinterpret_cast<const type *>(data + offset))
+#define GETSTR(name, offset) this->m_##name = QString::fromUtf8(data + offset)
 
     GETX(int16_t, ushSongID, 0x0);
     GETX(int32_t, iVersion, 0x2);
@@ -287,12 +294,9 @@ QByteArray RmeSong::RmeSongClientItemStruct::toByteArray() const
 
 void RmeSong::RmeSongClientItemStruct::parseMap(const QVariantMap &map)
 {
-#define GETSTR(name) \
-    this->m_##name = map[QStringLiteral("m_" #name)].toString()
-#define GETINT(name) \
-    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().toInt()
-#define GETHEX(name) \
-    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
+#define GETSTR(name) this->m_##name = map[QStringLiteral("m_" #name)].toString()
+#define GETINT(name) this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().toInt()
+#define GETHEX(name) this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -341,12 +345,9 @@ QVariantMap RmeSong::RmeSongClientItemStruct::toMap() const
 {
     QVariantMap map;
 
-#define SETSTR(name) \
-    map[QStringLiteral("m_" #name)] = this->m_##name
-#define SETINT(name) \
-    map[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(this->m_##name)) + QStringLiteral(" ")
-#define SETHEX(name) \
-    map[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(this->m_##name), 16) + QStringLiteral(" ")
+#define SETSTR(name) map[QStringLiteral("m_" #name)] = this->m_##name
+#define SETINT(name) map[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(this->m_##name)) + QStringLiteral(" ")
+#define SETHEX(name) map[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(this->m_##name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);
@@ -394,17 +395,9 @@ QVariantMap RmeSong::RmeSongClientItemStruct::toMap() const
 }
 
 namespace {
-const QStringList NoteNumSuffix = {
-    QStringLiteral("_4KeyEasy"),
-    QStringLiteral("_4KeyNormal"),
-    QStringLiteral("_4KeyHard"),
-    QStringLiteral("_5KeyEasy"),
-    QStringLiteral("_5KeyNormal"),
-    QStringLiteral("_5KeyHard"),
-    QStringLiteral("_6KeyEasy"),
-    QStringLiteral("_6KeyNormal"),
-    QStringLiteral("_6KeyHard")
-};
+const QStringList NoteNumSuffix
+    = {QStringLiteral("_4KeyEasy"), QStringLiteral("_4KeyNormal"), QStringLiteral("_4KeyHard"),   QStringLiteral("_5KeyEasy"), QStringLiteral("_5KeyNormal"),
+       QStringLiteral("_5KeyHard"), QStringLiteral("_6KeyEasy"),   QStringLiteral("_6KeyNormal"), QStringLiteral("_6KeyHard")};
 }
 
 QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSongClientItemStruct &orig, bool userMade) const
@@ -454,11 +447,11 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
 #undef SETINT
 
     QString songName1 = m_szSongName;
-    if (songName1.startsWith(strTemp))
-        songName1 = songName1.mid(strTemp.length());
+    if (songName1.startsWith(strTemp()))
+        songName1 = songName1.mid(strTemp().length());
     QString songName2 = orig.m_szSongName;
-    if (songName2.startsWith(strTemp))
-        songName2 = songName2.mid(strTemp.length());
+    if (songName2.startsWith(strTemp()))
+        songName2 = songName2.mid(strTemp().length());
 
     if (userMade || (songName1 != songName2))
         ob[QStringLiteral("szSongName")] = QJsonValue(songName1);
@@ -588,7 +581,7 @@ bool RmeSong::RmeSongClientItemStruct::isBuy() const
 
 bool RmeSong::RmeSongClientItemStruct::isFree() const
 {
-    return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward() && !m_szSongName.startsWith(strTemp);
+    return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward() && !m_szSongName.startsWith(strTemp());
 }
 
 bool RmeSong::RmeSongClientItemStruct::isLevel() const
@@ -622,10 +615,8 @@ void RmeSong::RmePapaSongClientItemStruct::parseByteArray(const QByteArray &arr)
     Q_ASSERT(arr.length() == 0x169);
     const char *data = arr.constData();
 
-#define GETX(type, name, offset) \
-    this->m_##name = *(reinterpret_cast<const type *>(data + offset))
-#define GETSTR(name, offset) \
-    this->m_##name = QString::fromUtf8(data + offset)
+#define GETX(type, name, offset) this->m_##name = *(reinterpret_cast<const type *>(data + offset))
+#define GETSTR(name, offset) this->m_##name = QString::fromUtf8(data + offset)
 
     GETX(int16_t, ushSongID, 0x0);
     GETX(int32_t, iVersion, 0x2);
@@ -707,12 +698,9 @@ QByteArray RmeSong::RmePapaSongClientItemStruct::toByteArray() const
 
 void RmeSong::RmePapaSongClientItemStruct::parseMap(const QVariantMap &map)
 {
-#define GETSTR(name) \
-    this->m_##name = map[QStringLiteral("m_" #name)].toString()
-#define GETINT(name) \
-    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().toInt()
-#define GETHEX(name) \
-    this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
+#define GETSTR(name) this->m_##name = map[QStringLiteral("m_" #name)].toString()
+#define GETINT(name) this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().toInt()
+#define GETHEX(name) this->m_##name = map[QStringLiteral("m_" #name)].toString().trimmed().mid(2).toInt(nullptr, 16)
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -744,12 +732,9 @@ QVariantMap RmeSong::RmePapaSongClientItemStruct::toMap() const
 {
     QVariantMap map;
 
-#define SETSTR(name) \
-    map[QStringLiteral("m_" #name)] = this->m_##name
-#define SETINT(name) \
-    map[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(this->m_##name)) + QStringLiteral(" ")
-#define SETHEX(name) \
-    map[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(this->m_##name), 16) + QStringLiteral(" ")
+#define SETSTR(name) map[QStringLiteral("m_" #name)] = this->m_##name
+#define SETINT(name) map[QStringLiteral("m_" #name)] = QString::number(static_cast<int>(this->m_##name)) + QStringLiteral(" ")
+#define SETHEX(name) map[QStringLiteral("m_" #name)] = QStringLiteral("0x") + QString::number(static_cast<int>(this->m_##name), 16) + QStringLiteral(" ")
 
     SETINT(ushSongID);
     SETINT(iVersion);

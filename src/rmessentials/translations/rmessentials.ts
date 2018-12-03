@@ -176,7 +176,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Download failed</source>
-        <translation>下载失败</translation>
+        <translation type="vanished">下载失败</translation>
     </message>
     <message>
         <source> has been uncompressed</source>
@@ -209,6 +209,14 @@ Are you sure?</source>
     <message>
         <source>Song &amp;&amp; IMDs</source>
         <translation>歌曲与IMD</translation>
+    </message>
+    <message>
+        <source>Role</source>
+        <translation>角色</translation>
+    </message>
+    <message>
+        <source>Role No:</source>
+        <translation>角色编号：</translation>
     </message>
 </context>
 <context>
@@ -365,6 +373,13 @@ This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 
     <message>
         <source>Apply patch from device failed</source>
         <translation>从设备应用补丁失败</translation>
+    </message>
+</context>
+<context>
+    <name>PasteLineEdit</name>
+    <message>
+        <source>Paste</source>
+        <translation>粘贴</translation>
     </message>
 </context>
 <context>

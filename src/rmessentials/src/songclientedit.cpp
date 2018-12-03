@@ -1,9 +1,9 @@
 #include "songclientedit.h"
 #include "pastelineedit.h"
 
-#include <RMEssentials/RmeDownloader>
-#include <RMEssentials/RmeSongClientStruct>
-#include <RMEssentials/RmeUtils>
+#include <RMEss/RmeDownloader>
+#include <RMEss/RmeSongClientStruct>
+#include <RMEss/RmeUtils>
 
 #include <QCheckBox>
 #include <QDoubleValidator>
@@ -31,7 +31,10 @@ namespace {
 RmeFileFormat getOpenFileName(QWidget *parent, QString &filepath)
 {
     QString selectedFilter;
-    filepath = QFileDialog::getOpenFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files") + QStringLiteral(" (*.xml)"), &selectedFilter);
+    filepath = QFileDialog::getOpenFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation),
+                                            SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files")
+                                                + QStringLiteral(" (*.xml)"),
+                                            &selectedFilter);
     if (filepath.isNull())
         return UnknownFormat;
 
@@ -46,7 +49,10 @@ RmeFileFormat getOpenFileName(QWidget *parent, QString &filepath)
 RmeFileFormat getSaveFileName(QWidget *parent, QString &filepath)
 {
     QString selectedFilter;
-    filepath = QFileDialog::getSaveFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files") + QStringLiteral(" (*.xml)"), &selectedFilter);
+    filepath = QFileDialog::getSaveFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation),
+                                            SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files")
+                                                + QStringLiteral(" (*.xml)"),
+                                            &selectedFilter);
     if (filepath.isNull())
         return UnknownFormat;
 
@@ -697,7 +703,8 @@ void SongClientEditDialog::prepareForUserMakingNotes()
     if (!m_isLoaded)
         return;
 
-    if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?")) == QMessageBox::No)
+    if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?"))
+        == QMessageBox::No)
         return;
 
     m_file.prepareForUserMadeNotes();
@@ -728,7 +735,8 @@ void SongClientEditDialog::createPatch()
         return;
     }
 
-    QString filepathToSave = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
+    QString filepathToSave
+        = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
 
     QFile f2(filepathToSave);
     if (!m_file.savePatchToDevice(&f2, file2)) {
@@ -742,7 +750,8 @@ void SongClientEditDialog::applyPatch()
     if (!m_isLoaded)
         return;
 
-    QString filepath = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
+    QString filepath
+        = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
     QFile f(filepath);
 
     if (!f.exists())

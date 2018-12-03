@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/RMEssentials">
+        <file>strTemp.txt</file>
+    </qresource>
+</RCC>
