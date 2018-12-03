@@ -18,6 +18,7 @@ unrarlicense {
     DEFINES += RARDLL UNRAR SILENT
     SOURCES += \
         src/archive.cpp \
+        src/arcmem.cpp \
         src/arcread.cpp \
         src/blake2s.cpp \
         src/cmddata.cpp \

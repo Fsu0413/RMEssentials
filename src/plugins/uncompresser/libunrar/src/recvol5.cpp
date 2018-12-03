@@ -1,5 +1,3 @@
-#include "rar.hpp"
-
 static const uint MaxVolumes=65535;
 
 RecVolumes5::RecVolumes5(bool TestOnly)
@@ -141,8 +139,12 @@ bool RecVolumes5::Restore(RAROptions *Cmd,const wchar *Name,bool Silent)
   wcsncpyz(ArcName,Name,ASIZE(ArcName));
 
   wchar *Num=GetVolNumPart(ArcName);
+  if (Num==ArcName)
+    return false; // Number part is missing in the name.
   while (Num>ArcName && IsDigit(*(Num-1)))
     Num--;
+  if (Num==ArcName)
+    return false; // Entire volume name is numeric, not possible for REV file.
   wcsncpyz(Num,L"*.*",ASIZE(ArcName)-(Num-ArcName));
   
   wchar FirstVolName[NM];
@@ -319,10 +321,8 @@ bool RecVolumes5::Restore(RAROptions *Cmd,const wchar *Name,bool Silent)
 
 
   int64 ProcessedSize=0;
-#ifndef GUI
   int LastPercent=-1;
   mprintf(L"     ");
-#endif
 
   // Even though we already preliminary calculated missing volume number,
   // let's do it again now, when we have the final and exact information.
@@ -414,7 +414,7 @@ bool RecVolumes5::Restore(RAROptions *Cmd,const wchar *Name,bool Silent)
 
   delete[] ValidFlags;
   delete[] Data;
-#if !defined(GUI) && !defined(SILENT)
+#if !defined(SILENT)
   if (!Cmd->DisablePercentage)
     mprintf(L"\b\b\b\b100%%");
   if (!Silent && !Cmd->DisableDone)
@@ -493,10 +493,8 @@ void RecVolumes5::Test(RAROptions *Cmd,const wchar *Name)
     }
     if (!uiStartFileExtract(VolName,false,true,false))
       return;
-#ifndef GUI
     mprintf(St(MExtrTestFile),VolName);
     mprintf(L"     ");
-#endif
     bool Valid=false;
     uint RecNum=ReadHeader(&CurFile,FoundRecVolumes==0);
     if (RecNum!=0)
@@ -510,9 +508,7 @@ void RecVolumes5::Test(RAROptions *Cmd,const wchar *Name)
 
     if (Valid)
     {
-#ifndef GUI
       mprintf(L"%s%s ",L"\b\b\b\b\b ",St(MOk));
-#endif
     }
     else
     {

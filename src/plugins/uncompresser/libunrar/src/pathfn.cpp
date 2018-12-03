@@ -260,9 +260,9 @@ bool EnumConfigPaths(uint Number,wchar *Path,size_t MaxSize,bool Create)
   {
     char *EnvStr=getenv("HOME");
     if (EnvStr!=NULL)
-      GetWideName(EnvStr,NULL,Path,MaxSize);
+      CharToWide(EnvStr,Path,MaxSize);
     else
-      wcsncpyz(Path, ConfPath[0], MaxSize);
+      wcsncpyz(Path,ConfPath[0],MaxSize);
     return true;
   }
   Number--;
@@ -594,7 +594,7 @@ int ParseVersionFileName(wchar *Name,bool Truncate)
 }
 
 
-#if !defined(SFX_MODULE) && !defined(SETUP)
+#if !defined(SFX_MODULE)
 // Get the name of first volume. Return the leftmost digit of volume number.
 wchar* VolNameToFirstName(const wchar *VolName,wchar *FirstName,size_t MaxSize,bool NewNumbering)
 {
@@ -969,7 +969,8 @@ void MakeNameCompatible(wchar *Name)
     if (IsPathDiv(Name[Src]) || Name[Src]==0)
       for (int I=Dest-1;I>0 && (Name[I]==' ' || Name[I]=='.');I--)
       {
-        if (IsPathDiv(Name[I-1])) // Permit path1/./path2 paths.
+        // Permit path1/./path2 and ../path1 paths.
+        if (Name[I]=='.' && (IsPathDiv(Name[I-1]) || Name[I-1]=='.' && I==1))
           break;
         Dest--;
       }

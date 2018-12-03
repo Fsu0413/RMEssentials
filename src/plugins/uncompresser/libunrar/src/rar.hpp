@@ -1,25 +1,6 @@
 #ifndef _RAR_RARCOMMON_
 #define _RAR_RARCOMMON_
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4100)
-#pragma warning(disable: 4189)
-#endif
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wunused-function"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wswitch"
-#pragma GCC diagnostic ignored "-Wparentheses"
-#pragma GCC diagnostic ignored "-Wsign-compare"
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#pragma GCC diagnostic ignored "-Wtype-limits"
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-
-#pragma GCC diagnostic ignored "-Wextra"
-#pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#endif
-
 #include "raros.hpp"
 #include "rartypes.hpp"
 #include "os.hpp"
@@ -33,9 +14,9 @@
 #include "rarlang.hpp"
 #include "unicode.hpp"
 #include "errhnd.hpp"
+#include "secpassword.hpp"
 #include "array.hpp"
 #include "timefn.hpp"
-#include "secpassword.hpp"
 #include "sha1.hpp"
 #include "sha256.hpp"
 #include "blake2s.hpp"
@@ -48,6 +29,9 @@
 #include "pathfn.hpp"
 #include "strfn.hpp"
 #include "strlist.hpp"
+#ifdef _WIN_ALL
+#include "isnt.hpp"
+#endif
 #include "file.hpp"
 #include "crc.hpp"
 #include "ui.hpp"
@@ -65,14 +49,10 @@
 #include "match.hpp"
 #include "cmddata.hpp"
 #include "filcreat.hpp"
-#ifndef GUI
 #include "consio.hpp"
-#endif
 #include "system.hpp"
-#ifdef _WIN_ALL
-#include "isnt.hpp"
-#endif
 #include "log.hpp"
+#include "rawint.hpp"
 #include "rawread.hpp"
 #include "encname.hpp"
 #include "resource.hpp"
@@ -102,5 +82,13 @@
 #include "smallfn.hpp"
 
 #include "global.hpp"
+
+#if 0
+#include "benchmark.hpp"
+#endif
+
+
+
+
 
 #endif

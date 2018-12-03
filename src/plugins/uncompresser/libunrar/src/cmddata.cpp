@@ -13,6 +13,7 @@ void CommandData::Init()
   *Command=0;
   *ArcName=0;
   FileLists=false;
+  NoMoreSwitches=false;
 
   ListMode=RCLM_AUTO;
 
@@ -43,7 +44,7 @@ static const wchar *AllocCmdParam(const wchar *CmdLine,wchar **Par)
 }
 
 
-#if !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 void CommandData::ParseCommandLine(bool Preprocess,int argc, char *argv[])
 {
   *Command=0;
@@ -85,7 +86,7 @@ void CommandData::ParseCommandLine(bool Preprocess,int argc, char *argv[])
 #endif
 
 
-#if !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 void CommandData::ParseArg(wchar *Arg)
 {
   if (IsSwitch(*Arg) && !NoMoreSwitches)
@@ -96,17 +97,15 @@ void CommandData::ParseArg(wchar *Arg)
   else
     if (*Command==0)
     {
-      wcsncpy(Command,Arg,ASIZE(Command));
+      wcsncpyz(Command,Arg,ASIZE(Command));
 
 
-#ifndef GUI
       *Command=toupperw(*Command);
       // 'I' and 'S' commands can contain case sensitive strings after
       // the first character, so we must not modify their case.
       // 'S' can contain SFX name, which case is important in Unix.
       if (*Command!='I' && *Command!='S')
         wcsupper(Command);
-#endif
     }
     else
       if (*ArcName==0)
@@ -135,17 +134,7 @@ void CommandData::ParseArg(wchar *Arg)
             {
               FileLists=true;
 
-              RAR_CHARSET Charset=FilelistCharset;
-
-#if defined(_WIN_ALL) && !defined(GUI)
-              // for compatibility reasons we use OEM encoding
-              // in Win32 console version by default
-
-//              if (Charset==RCH_DEFAULT)
-//                Charset=RCH_OEM;
-#endif
-
-              ReadTextFile(Arg+1,&FileArgs,false,true,Charset,true,true,true);
+              ReadTextFile(Arg+1,&FileArgs,false,true,FilelistCharset,true,true,true);
 
             }
             else
@@ -177,7 +166,7 @@ void CommandData::ParseDone()
 }
 
 
-#if !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 void CommandData::ParseEnvVar()
 {
   char *EnvStr=getenv("RAR");
@@ -192,7 +181,7 @@ void CommandData::ParseEnvVar()
 
 
 
-#if !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 // Preprocess those parameters, which must be processed before the rest of
 // command line. Return 'false' to stop further processing.
 void CommandData::PreprocessArg(const wchar *Arg)
@@ -204,7 +193,6 @@ void CommandData::PreprocessArg(const wchar *Arg)
       NoMoreSwitches=true;
     if (wcsicomp(Arg,L"cfg-")==0)
       ConfigDisabled=true;
-#ifndef GUI
     if (wcsnicomp(Arg,L"ilog",4)==0)
     {
       // Ensure that correct log file name is already set
@@ -212,15 +200,12 @@ void CommandData::PreprocessArg(const wchar *Arg)
       ProcessSwitch(Arg);
       InitLogOptions(LogName,ErrlogCharset);
     }
-#endif
     if (wcsnicomp(Arg,L"sc",2)==0)
     {
       // Process -sc before reading any file lists.
       ProcessSwitch(Arg);
-#ifndef GUI
       if (*LogName!=0)
         InitLogOptions(LogName,ErrlogCharset);
-#endif
     }
   }
   else
@@ -230,7 +215,7 @@ void CommandData::PreprocessArg(const wchar *Arg)
 #endif
 
 
-#if !defined(GUI) && !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 void CommandData::ReadConfig()
 {
   StringList List;
@@ -254,7 +239,7 @@ void CommandData::ReadConfig()
         if (C0=='R' && (C1=='R' || C1=='V'))
           Cmd[2]=0;
         wchar SwName[16+ASIZE(Cmd)];
-        swprintf(SwName,ASIZE(SwName),L"switches_%s=",Cmd);
+        swprintf(SwName,ASIZE(SwName),L"switches_%ls=",Cmd);
         size_t Length=wcslen(SwName);
         if (wcsnicomp(Str,SwName,Length)==0)
           ProcessSwitchesString(Str+Length);
@@ -265,7 +250,7 @@ void CommandData::ReadConfig()
 #endif
 
 
-#if !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 void CommandData::ProcessSwitchesString(const wchar *Str)
 {
   wchar *Par;
@@ -279,7 +264,7 @@ void CommandData::ProcessSwitchesString(const wchar *Str)
 #endif
 
 
-#if !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 void CommandData::ProcessSwitch(const wchar *Switch)
 {
 
@@ -430,6 +415,9 @@ void CommandData::ProcessSwitch(const wchar *Switch)
       if (wcsicomp(Switch+1,L"ERR")==0)
       {
         MsgStream=MSG_STDERR;
+        // Set it immediately when parsing the command line, so it also
+        // affects messages issued while parsing the command line.
+        SetConsoleMsgStream(MSG_STDERR);
         break;
       }
       if (wcsnicomp(Switch+1,L"EML",3)==0)
@@ -437,9 +425,15 @@ void CommandData::ProcessSwitch(const wchar *Switch)
         wcsncpyz(EmailTo,Switch[4]!=0 ? Switch+4:L"@",ASIZE(EmailTo));
         break;
       }
+      if (wcsicomp(Switch+1,L"M")==0)
+      {
+        MoreInfo=true;
+        break;
+      }
       if (wcsicomp(Switch+1,L"NUL")==0)
       {
         MsgStream=MSG_NULL;
+        SetConsoleMsgStream(MSG_NULL);
         break;
       }
       if (toupperw(Switch[1])=='D')
@@ -449,6 +443,7 @@ void CommandData::ProcessSwitch(const wchar *Switch)
           {
             case 'Q':
               MsgStream=MSG_ERRONLY;
+              SetConsoleMsgStream(MSG_ERRONLY);
               break;
             case 'C':
               DisableCopyright=true;
@@ -462,9 +457,24 @@ void CommandData::ProcessSwitch(const wchar *Switch)
           }
         break;
       }
-      if (wcsicomp(Switch+1,L"OFF")==0)
+      if (wcsnicomp(Switch+1,L"OFF",3)==0)
       {
-        Shutdown=true;
+        switch(Switch[4])
+        {
+          case 0:
+          case '1':
+            Shutdown=POWERMODE_OFF;
+            break;
+          case '2':
+            Shutdown=POWERMODE_HIBERNATE;
+            break;
+          case '3':
+            Shutdown=POWERMODE_SLEEP;
+            break;
+          case '4':
+            Shutdown=POWERMODE_RESTART;
+            break;
+        }
         break;
       }
       if (wcsicomp(Switch+1,L"VER")==0)
@@ -580,19 +590,7 @@ void CommandData::ProcessSwitch(const wchar *Switch)
       {
         StringList *Args=toupperw(Switch[0])=='N' ? &InclArgs:&ExclArgs;
         if (Switch[1]=='@' && !IsWildcard(Switch))
-        {
-          RAR_CHARSET Charset=FilelistCharset;
-
-#if defined(_WIN_ALL) && !defined(GUI)
-          // for compatibility reasons we use OEM encoding
-          // in Win32 console version by default
-
-//          if (Charset==RCH_DEFAULT)
-//            Charset=RCH_OEM;
-#endif
-
-          ReadTextFile(Switch+2,Args,false,true,Charset,true,true,true);
-        }
+          ReadTextFile(Switch+2,Args,false,true,FilelistCharset,true,true,true);
         else
           Args->AddString(Switch+1);
       }
@@ -760,6 +758,9 @@ void CommandData::ProcessSwitch(const wchar *Switch)
                 case 'U':
                   rch=RCH_UNICODE;
                   break;
+                case 'F':
+                  rch=RCH_UTF8;
+                  break;
                 default :
                   BadSwitch(Switch);
                   AlreadyBad=true;
@@ -767,7 +768,7 @@ void CommandData::ProcessSwitch(const wchar *Switch)
               };
               if (!AlreadyBad)
                 if (Switch[3]==0)
-                  CommentCharset=FilelistCharset=ErrlogCharset=rch;
+                  CommentCharset=FilelistCharset=ErrlogCharset=RedirectCharset=rch;
                 else
                   for (uint I=3;Switch[I]!=0 && !AlreadyBad;I++)
                     switch(toupperw(Switch[I]))
@@ -786,6 +787,9 @@ void CommandData::ProcessSwitch(const wchar *Switch)
                         AlreadyBad=true;
                         break;
                     }
+              // Set it immediately when parsing the command line, so it also
+              // affects messages issued while parsing the command line.
+              SetConsoleRedirectCharset(RedirectCharset);
             }
             break;
 
@@ -818,6 +822,8 @@ void CommandData::ProcessSwitch(const wchar *Switch)
             bool CommonMode=Switch[2]>='0' && Switch[2]<='4';
             if (CommonMode)
               Mode=(EXTTIME_MODE)(Switch[2]-'0');
+            if (Mode==EXTTIME_HIGH1 || Mode==EXTTIME_HIGH2) // '2' and '3' not supported anymore.
+              Mode=EXTTIME_HIGH3;
             if (Switch[2]=='-')
               Mode=EXTTIME_NONE;
             if (CommonMode || Switch[2]=='-' || Switch[2]=='+' || Switch[2]==0)
@@ -826,6 +832,8 @@ void CommandData::ProcessSwitch(const wchar *Switch)
             {
               if (Switch[3]>='0' && Switch[3]<='4')
                 Mode=(EXTTIME_MODE)(Switch[3]-'0');
+              if (Mode==EXTTIME_HIGH1 || Mode==EXTTIME_HIGH2) // '2' and '3' not supported anymore.
+                Mode=EXTTIME_HIGH3;
               if (Switch[3]=='-')
                 Mode=EXTTIME_NONE;
               switch(toupperw(Switch[2]))
@@ -888,19 +896,15 @@ void CommandData::ProcessSwitch(const wchar *Switch)
     case 'Z':
       if (Switch[1]==0)
       {
-#ifndef GUI // stdin is not supported by WinRAR.
         // If comment file is not specified, we read data from stdin.
         wcscpy(CommentFile,L"stdin");
-#endif
       }
       else
         wcsncpyz(CommentFile,Switch+1,ASIZE(CommentFile));
       break;
-#ifndef GUI
     case '?' :
       OutHelp(RARX_SUCCESS);
       break;
-#endif
     default :
       BadSwitch(Switch);
       break;
@@ -909,7 +913,7 @@ void CommandData::ProcessSwitch(const wchar *Switch)
 #endif
 
 
-#if !defined(SFX_MODULE) && !defined(_ANDROID)
+#if !defined(SFX_MODULE)
 void CommandData::BadSwitch(const wchar *Switch)
 {
   mprintf(St(MUnknownOption),Switch);
@@ -918,7 +922,6 @@ void CommandData::BadSwitch(const wchar *Switch)
 #endif
 
 
-#ifndef GUI
 void CommandData::OutTitle()
 {
   if (BareOutput || DisableCopyright)
@@ -951,14 +954,10 @@ void CommandData::OutTitle()
     mprintf(L"%s",Version);
     exit(0);
   }
-#ifdef UNRAR
   mprintf(St(MUCopyright),Version,RARVER_YEAR);
-#else
-#endif
 #endif
 #endif
 }
-#endif
 
 
 inline bool CmpMSGID(MSGID i1,MSGID i2)
@@ -975,13 +974,13 @@ inline bool CmpMSGID(MSGID i1,MSGID i2)
 
 void CommandData::OutHelp(RAR_EXIT ExitCode)
 {
-#if !defined(GUI) && !defined(SILENT)
+#if !defined(SILENT)
   OutTitle();
   static MSGID Help[]={
 #ifdef SFX_MODULE
     // Console SFX switches definition.
     MCHelpCmd,MSHelpCmdE,MSHelpCmdT,MSHelpCmdV
-#elif defined(UNRAR)
+#else
     // UnRAR switches definition.
     MUNRARTitle1,MRARTitle2,MCHelpCmd,MCHelpCmdE,MCHelpCmdL,
     MCHelpCmdP,MCHelpCmdT,MCHelpCmdV,MCHelpCmdX,MCHelpSw,MCHelpSwm,
@@ -994,7 +993,6 @@ void CommandData::OutHelp(RAR_EXIT ExitCode)
     MCHelpSwTA,MCHelpSwTB,MCHelpSwTN,MCHelpSwTO,MCHelpSwTS,MCHelpSwU,
     MCHelpSwVUnr,MCHelpSwVER,MCHelpSwVP,MCHelpSwX,MCHelpSwXa,MCHelpSwXal,
     MCHelpSwY
-#else
 #endif
   };
 
@@ -1199,8 +1197,8 @@ int CommandData::IsProcessFile(FileHeader &FileHead,bool *ExactMatch,int MatchTy
 {
   if (MatchedArg!=NULL && MatchedArgSize>0)
     *MatchedArg=0;
-  if (wcslen(FileHead.FileName)>=NM)
-    return 0;
+//  if (wcslen(FileHead.FileName)>=NM)
+//    return 0;
   bool Dir=FileHead.Dir;
   if (ExclCheck(FileHead.FileName,Dir,false,true))
     return 0;
@@ -1227,7 +1225,6 @@ int CommandData::IsProcessFile(FileHeader &FileHead,bool *ExactMatch,int MatchTy
 }
 
 
-#ifndef GUI
 void CommandData::ProcessCommand()
 {
 #ifndef SFX_MODULE
@@ -1295,7 +1292,6 @@ void CommandData::ProcessCommand()
   if (!BareOutput)
     mprintf(L"\n");
 }
-#endif
 
 
 void CommandData::AddArcName(const wchar *Name)
@@ -1313,9 +1309,9 @@ bool CommandData::GetArcName(wchar *Name,int MaxSize)
 bool CommandData::IsSwitch(int Ch)
 {
 #if defined(_WIN_ALL) || defined(_EMX)
-  return(Ch=='-' || Ch=='/');
+  return Ch=='-' || Ch=='/';
 #else
-  return(Ch=='-');
+  return Ch=='-';
 #endif
 }
 
@@ -1324,7 +1320,7 @@ bool CommandData::IsSwitch(int Ch)
 uint CommandData::GetExclAttr(const wchar *Str)
 {
   if (IsDigit(*Str))
-    return(wcstol(Str,NULL,0));
+    return wcstol(Str,NULL,0);
 
   uint Attr=0;
   while (*Str!=0)
