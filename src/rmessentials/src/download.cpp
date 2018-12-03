@@ -1,7 +1,7 @@
 #include "download.h"
 
-#include <RMEssentials/RmeDownloader>
-#include <RMEssentials/RmeUncompresser>
+#include <RMEss/RmeDownloader>
+#include <RMEss/RmeUncompresser>
 
 #include <QCloseEvent>
 #include <QComboBox>
@@ -512,7 +512,7 @@ void DownloadDialog::loadPaths()
             s = f.peek(0x20l);
             QString padui3 = QString::fromUtf8(s);
             f.seek(f.pos() + 0x40l);
-            m_rolePadUiMap[id] = QStringList{padui1, padui2, padui3};
+            m_rolePadUiMap[id] = QStringList {padui1, padui2, padui3};
         }
         f.close();
         appendLog(QStringLiteral("mrock.character_client.bin") + tr(" has been loaded"));

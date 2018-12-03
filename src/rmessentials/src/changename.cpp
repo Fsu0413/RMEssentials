@@ -1,8 +1,8 @@
 #include "changename.h"
 
-#include <RMEssentials/RmeDownloader>
-#include <RMEssentials/RmeRenamer>
-#include <RMEssentials/RmeUtils>
+#include <RMEss/RmeDownloader>
+#include <RMEss/RmeRenamer>
+#include <RMEss/RmeUtils>
 
 #include <QFileDialog>
 #include <QFontMetrics>

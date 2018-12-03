@@ -47,7 +47,7 @@ SOURCES += \
     src/papasongclientedit.cpp \
     src/pastelineedit.cpp
 
-LIBS += -L. -lRMEssentials
+LIBS += -L. -lRMEss
 
 unix: !osx: !ios: !android: !install_build {
     !contains(QMAKE_HOST.arch, x86_64) {

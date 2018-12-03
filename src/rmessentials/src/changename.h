@@ -1,7 +1,7 @@
 #ifndef CHANGENAME_H__INCLUDED
 #define CHANGENAME_H__INCLUDED
 
-#include <RMEssentials/RmeGlobal>
+#include <RMEss/RmeGlobal>
 
 #include <QDialog>
 

@@ -1,9 +1,9 @@
 #include "songclientedit.h"
 #include "pastelineedit.h"
 
-#include <RMEssentials/RmeDownloader>
-#include <RMEssentials/RmeSongClientStruct>
-#include <RMEssentials/RmeUtils>
+#include <RMEss/RmeDownloader>
+#include <RMEss/RmeSongClientStruct>
+#include <RMEss/RmeUtils>
 
 #include <QCheckBox>
 #include <QDoubleValidator>

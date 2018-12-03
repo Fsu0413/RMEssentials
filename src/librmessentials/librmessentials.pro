@@ -15,7 +15,7 @@ use_quazip {
 }
 
 TEMPLATE = lib
-TARGET = RMEssentials
+TARGET = RMEss
 
 !staticlib: DEFINES += LIBRMESSENTIALS_BUILD
 
@@ -40,11 +40,11 @@ SOURCES += \
     src/rmeutils.cpp \
     src/rmeglobal.cpp
 
-generateHeaders.target = $$system_path($$OUT_PWD/../dist/include/RMEssentials/.timestamp)
-!build_pass: mkpath($$OUT_PWD/../dist/include/RMEssentials)
+generateHeaders.target = $$system_path($$OUT_PWD/../dist/include/RMEss/.timestamp)
+!build_pass: mkpath($$OUT_PWD/../dist/include/RMEss)
 
-contains(QMAKE_HOST.os, "Windows"): generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$OUT_PWD/../dist/include/RMEssentials) -f $$system_path($$PWD/src/)
-else: generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$OUT_PWD/../dist/include/RMEssentials -f $$PWD/src/
+contains(QMAKE_HOST.os, "Windows"): generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$OUT_PWD/../dist/include/RMEss) -f $$system_path($$PWD/src/)
+else: generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$OUT_PWD/../dist/include/RMEss -f $$PWD/src/
 
 HEADERS_ABSOLUTE =
 for (header, HEADERS): HEADERS_ABSOLUTE += $$system_path($$absolute_path($$header))
@@ -54,8 +54,8 @@ generateHeaders.depends = $$HEADERS_ABSOLUTE
 QMAKE_EXTRA_TARGETS += generateHeaders
 PRE_TARGETDEPS += $$generateHeaders.target
 
-includetarget.path = /include/RMEssentials/
-includetarget.files = $$OUT_PWD/../dist/include/RMEssentials/*
+includetarget.path = /include/RMEss/
+includetarget.files = $$OUT_PWD/../dist/include/RMEss/*
 
 target.path = /lib/
 dlltarget.path = /bin/

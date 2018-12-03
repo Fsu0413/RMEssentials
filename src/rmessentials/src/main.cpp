@@ -5,7 +5,7 @@
 #include "papasongclientedit.h"
 #include "songclientedit.h"
 
-#include <RMEssentials/RmeDownloader>
+#include <RMEss/RmeDownloader>
 
 #include <QApplication>
 #include <QDir>

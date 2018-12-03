@@ -1,8 +1,8 @@
 #include "papasongclientedit.h"
 #include "pastelineedit.h"
 
-#include <RMEssentials/RmeDownloader>
-#include <RMEssentials/RmeSongClientStruct>
+#include <RMEss/RmeDownloader>
+#include <RMEss/RmeSongClientStruct>
 
 #include <QCheckBox>
 #include <QDoubleValidator>
