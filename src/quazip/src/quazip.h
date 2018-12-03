@@ -29,8 +29,8 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 #include <QStringList>
 #include <QTextCodec>
 
-#include "unzip.h"
 #include "zip.h"
+#include "unzip.h"
 
 #include "quazip_global.h"
 #include "quazipfileinfo.h"
@@ -81,25 +81,21 @@ class QuaZipPrivate;
  * detection using locale information. Does anyone know a good way to do
  * it?
  **/
-class QUAZIP_EXPORT QuaZip
-{
-    friend class QuaZipPrivate;
-
-public:
+class QUAZIP_EXPORT QuaZip {
+  friend class QuaZipPrivate;
+  public:
     /// Useful constants.
-    enum Constants
-    {
-        MAX_FILE_NAME_LENGTH = 256 /**< Maximum file name length. Taken from
+    enum Constants {
+      MAX_FILE_NAME_LENGTH=256 /**< Maximum file name length. Taken from
                                  \c UNZ_MAXFILENAMEINZIP constant in
                                  unzip.c. */
     };
     /// Open mode of the ZIP file.
-    enum Mode
-    {
-        mdNotOpen, ///< ZIP file is not open. This is the initial mode.
-        mdUnzip, ///< ZIP file is open for reading files inside it.
-        mdCreate, ///< ZIP file was created with open() call.
-        mdAppend, /**< ZIP file was opened in append mode. This refers to
+    enum Mode {
+      mdNotOpen, ///< ZIP file is not open. This is the initial mode.
+      mdUnzip, ///< ZIP file is open for reading files inside it.
+      mdCreate, ///< ZIP file was created with open() call.
+      mdAppend, /**< ZIP file was opened in append mode. This refers to
                   * \c APPEND_STATUS_CREATEAFTER mode in ZIP/UNZIP package
                   * and means that zip is appended to some existing file
                   * what is useful when that file contains
@@ -107,7 +103,7 @@ public:
                   * you whant to use to add files to the existing ZIP
                   * archive.
                   **/
-        mdAdd ///< ZIP file was opened for adding files in the archive.
+      mdAdd ///< ZIP file was opened for adding files in the archive.
     };
     /// Case sensitivity for the file names.
     /** This is what you specify when accessing files in the archive.
@@ -115,11 +111,10 @@ public:
      * unicode support. This is different from ZIP/UNZIP API, where
      * only US-ASCII characters was supported.
      **/
-    enum CaseSensitivity
-    {
-        csDefault = 0, ///< Default for platform. Case sensitive for UNIX, not for Windows.
-        csSensitive = 1, ///< Case sensitive.
-        csInsensitive = 2 ///< Case insensitive.
+    enum CaseSensitivity {
+      csDefault=0, ///< Default for platform. Case sensitive for UNIX, not for Windows.
+      csSensitive=1, ///< Case sensitive.
+      csInsensitive=2 ///< Case insensitive.
     };
     /// Returns the actual case sensitivity for the specified QuaZIP one.
     /**
@@ -128,21 +123,20 @@ public:
       file name case sensitivity for the platform. Otherwise, just
       returns the appropriate value from the Qt::CaseSensitivity enum.
       */
-    static Qt::CaseSensitivity convertCaseSensitivity(CaseSensitivity cs);
-
-private:
+    static Qt::CaseSensitivity convertCaseSensitivity(
+            CaseSensitivity cs);
+  private:
     QuaZipPrivate *p;
     // not (and will not be) implemented
-    QuaZip(const QuaZip &that);
+    QuaZip(const QuaZip& that);
     // not (and will not be) implemented
-    QuaZip &operator=(const QuaZip &that);
-
-public:
+    QuaZip& operator=(const QuaZip& that);
+  public:
     /// Constructs QuaZip object.
     /** Call setName() before opening constructed object. */
     QuaZip();
     /// Constructs QuaZip object associated with ZIP file \a zipName.
-    QuaZip(const QString &zipName);
+    QuaZip(const QString& zipName);
     /// Constructs QuaZip object associated with ZIP file represented by \a ioDevice.
     /** The IO device must be seekable, otherwise an error will occur when opening. */
     QuaZip(QIODevice *ioDevice);
@@ -196,7 +190,7 @@ public:
      * In short: just forget about the \a ioApi argument and you'll be
      * fine.
      **/
-    bool open(Mode mode, zlib_filefunc_def *ioApi = NULL);
+    bool open(Mode mode, zlib_filefunc_def *ioApi =NULL);
     /// Closes ZIP file.
     /** Call getZipError() to determine if the close was successful.
      *
@@ -234,7 +228,7 @@ public:
      **/
     void setFileNameCodec(const char *fileNameCodecName);
     /// Returns the codec used to encode/decode comments inside archive.
-    QTextCodec *getFileNameCodec() const;
+    QTextCodec* getFileNameCodec() const;
     /// Sets the codec used to encode/decode comments inside archive.
     /** This codec defaults to locale codec, which is probably ok.
      **/
@@ -245,7 +239,7 @@ public:
      **/
     void setCommentCodec(const char *commentCodecName);
     /// Returns the codec used to encode/decode comments inside archive.
-    QTextCodec *getCommentCodec() const;
+    QTextCodec* getCommentCodec() const;
     /// Returns the name of the ZIP file.
     /** Returns null string if no ZIP file name has been set, for
      * example when the QuaZip instance is set up to use a QIODevice
@@ -259,7 +253,7 @@ public:
      * Does not reset error code returned by getZipError().
      * \sa setIoDevice(), getIoDevice(), getZipName()
      **/
-    void setZipName(const QString &zipName);
+    void setZipName(const QString& zipName);
     /// Returns the device representing this ZIP file.
     /** Returns null string if no device has been set explicitly, for
      * example when opening a ZIP file by name.
@@ -303,7 +297,7 @@ public:
      *
      * \sa open()
      **/
-    void setComment(const QString &comment);
+    void setComment(const QString& comment);
     /// Sets the current file to the first file in the archive.
     /** Returns \c true on success, \c false otherwise. Call
      * getZipError() to get the error code.
@@ -353,7 +347,7 @@ public:
      *
      * \sa setFileNameCodec(), CaseSensitivity
      **/
-    bool setCurrentFile(const QString &fileName, CaseSensitivity cs = csDefault);
+    bool setCurrentFile(const QString& fileName, CaseSensitivity cs =csDefault);
     /// Returns \c true if the current file has been set.
     bool hasCurrentFile() const;
     /// Retrieves information about the current file.
@@ -378,7 +372,7 @@ public:
      * \sa getCurrentFileInfo(QuaZipFileInfo64* info)const
      * \sa QuaZipFileInfo64::toQuaZipFileInfo(QuaZipFileInfo&)const
      **/
-    bool getCurrentFileInfo(QuaZipFileInfo *info) const;
+    bool getCurrentFileInfo(QuaZipFileInfo* info)const;
     /// Retrieves information about the current file.
     /** \overload
      *
@@ -388,7 +382,7 @@ public:
      *
      * \sa
      **/
-    bool getCurrentFileInfo(QuaZipFileInfo64 *info) const;
+    bool getCurrentFileInfo(QuaZipFileInfo64* info)const;
     /// Returns the current file name.
     /** Equivalent to calling getCurrentFileInfo() and then getting \c
      * name field of the QuaZipFileInfo structure, but faster and more
@@ -396,7 +390,7 @@ public:
      *
      * Should be used only in QuaZip::mdUnzip mode.
      **/
-    QString getCurrentFileName() const;
+    QString getCurrentFileName()const;
     /// Returns \c unzFile handle.
     /** You can use this handle to directly call UNZIP part of the
      * ZIP/UNZIP package functions (see unzip.h).

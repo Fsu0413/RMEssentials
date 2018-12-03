@@ -15,6 +15,8 @@
 
          For more info read MiniZip_info.txt
 
+         Modifications for static code analysis report
+         Copyright (C) 2016 Intel Deutschland GmbH
 
   ------------------------------------------------------------------------------------
   Decryption code comes from crypt.c by Info-ZIP but has been greatly reduced in terms of
@@ -28,7 +30,7 @@
   If, for some reason, all these files are missing, the Info-ZIP license
   also may be found at:  ftp://ftp.info-zip.org/pub/infozip/license.html
 
-        crypt.c (full version) by Info-ZIP.      Last revised:  [see crypt.h]
+        crypt.c (full version) by Info-ZIP.      Last revised:  [see minizip_crypt.h]
 
   The encryption/decryption parts of this source code (as opposed to the
   non-echoing password parts) were originally written in Europe.  The
@@ -197,7 +199,7 @@ typedef struct
 
 
 #ifndef NOUNCRYPT
-#include "crypt.h"
+#include "minizip_crypt.h"
 #endif
 
 /* ===========================================================================
@@ -1594,6 +1596,7 @@ extern int ZEXPORT unzOpenCurrentFile3 (unzFile file, int* method,
         pfile_in_zip_read_info->stream_initialised=Z_DEFLATED;
       else
       {
+        TRYFREE(pfile_in_zip_read_info->read_buffer);
         TRYFREE(pfile_in_zip_read_info);
         return err;
       }

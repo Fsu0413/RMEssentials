@@ -37,7 +37,7 @@ SOURCES += \
     src/zip.c
 
 HEADERS += \
-    src/crypt.h \
+    src/minizip_crypt.h \
     src/ioapi.h \
     src/JlCompress.h \
     src/quaadler32.h \

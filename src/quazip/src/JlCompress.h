@@ -29,18 +29,17 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "quazip.h"
 #include "quazipfile.h"
 #include "quazipfileinfo.h"
-#include <QDir>
-#include <QFile>
-#include <QFileInfo>
 #include <QString>
+#include <QDir>
+#include <QFileInfo>
+#include <QFile>
 
 /// Utility class for typical operations.
 /**
   This class contains a number of useful static functions to perform
   simple operations, such as mass ZIP packing or extraction.
   */
-class QUAZIP_EXPORT JlCompress
-{
+class QUAZIP_EXPORT JlCompress {
 private:
     static QStringList extractDir(QuaZip &zip, const QString &dir);
     static QStringList getFileList(QuaZip *zip);
@@ -53,7 +52,7 @@ private:
       \param fileDest The full name of the file inside the archive.
       \return true if success, false otherwise.
       */
-    static bool compressFile(QuaZip *zip, QString fileName, QString fileDest);
+    static bool compressFile(QuaZip* zip, QString fileName, QString fileDest);
     /// Compress a subdirectory.
     /**
       \param parentZip Opened zip containing the parent directory.
@@ -64,7 +63,8 @@ private:
       files.
       \return true if success, false otherwise.
       */
-    static bool compressSubDir(QuaZip *parentZip, QString dir, QString parentDir, bool recursive, QDir::Filters filters);
+    static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
+                               QDir::Filters filters);
     /// Extract a single file.
     /**
       \param zip The opened zip archive to extract from.
@@ -72,7 +72,7 @@ private:
       \param fileDest The full path to the destination file.
       \return true if success, false otherwise.
       */
-    static bool extractFile(QuaZip *zip, QString fileName, QString fileDest);
+    static bool extractFile(QuaZip* zip, QString fileName, QString fileDest);
     /// Remove some files.
     /**
       \param listFile The list of files to remove.
@@ -122,7 +122,8 @@ public:
      * for subdirs (if packing recursively) and when looking for files to pack
      * @return true on success, false otherwise
      */
-    static bool compressDir(QString fileCompressed, QString dir, bool recursive, QDir::Filters filters);
+    static bool compressDir(QString fileCompressed, QString dir,
+                            bool recursive, QDir::Filters filters);
 
 public:
     /// Extract a single file.
@@ -190,7 +191,7 @@ public:
       list of the entries, including both files and directories if they
       are present separately.
       */
-    static QStringList getFileList(QIODevice *ioDevice);
+    static QStringList getFileList(QIODevice *ioDevice); 
 };
 
 #endif /* JLCOMPRESSFOLDER_H_ */
