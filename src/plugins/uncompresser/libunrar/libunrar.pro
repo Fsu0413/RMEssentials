@@ -18,7 +18,6 @@ unrarlicense {
     DEFINES += RARDLL UNRAR SILENT
     SOURCES += \
         src/archive.cpp \
-        src/arcmem.cpp \
         src/arcread.cpp \
         src/blake2s.cpp \
         src/cmddata.cpp \
@@ -70,5 +69,5 @@ unrarlicense {
         src/rar.hpp
     RC_FILE = src/dll.rc
 
-    win32:LIBS += -lshell32 -ladvapi32
+    win32:LIBS += -lshell32 -ladvapi32 -luser32
 }

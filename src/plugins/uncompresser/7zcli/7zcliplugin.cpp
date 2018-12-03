@@ -30,7 +30,7 @@ RmeUncompresserFormats RmeUncomp7zCliPlugin::supportedFormats() const
     process.setStandardErrorFile(QProcess::nullDevice());
     process.setStandardInputFile(QProcess::nullDevice());
     process.setReadChannel(QProcess::StandardOutput);
-    process.start(binaryPath(), { QStringLiteral("i") }, QIODevice::ReadOnly);
+    process.start(binaryPath(), {QStringLiteral("i")}, QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished()) {
         process.kill();
         return RmeUncompresserFormats();
@@ -68,7 +68,7 @@ RmeUncompresserResult RmeUncomp7zCliPlugin::openArchive(const QString &fileName)
     process.setStandardInputFile(QProcess::nullDevice());
     process.setStandardOutputFile(QProcess::nullDevice());
 
-    process.start(binaryPath(), { QStringLiteral("l"), QStringLiteral("-p") + password(), QStringLiteral("-ba"), fileName }, QIODevice::ReadOnly);
+    process.start(binaryPath(), {QStringLiteral("l"), QStringLiteral("-p") + password(), QStringLiteral("-ba"), fileName}, QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished()) {
         process.kill();
         return RmeUncompSubProcessError;
@@ -93,7 +93,7 @@ QStringList RmeUncomp7zCliPlugin::listFiles()
     process.setStandardErrorFile(QProcess::nullDevice());
     process.setStandardInputFile(QProcess::nullDevice());
     process.setReadChannel(QProcess::StandardOutput);
-    process.start(binaryPath(), { QStringLiteral("l"), QStringLiteral("-p") + password(), QStringLiteral("-ba"), m_fileName }, QIODevice::ReadOnly);
+    process.start(binaryPath(), {QStringLiteral("l"), QStringLiteral("-p") + password(), QStringLiteral("-ba"), m_fileName}, QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished()) {
         process.kill();
         return QStringList();
@@ -125,7 +125,8 @@ RmeUncompresserResult RmeUncomp7zCliPlugin::uncompressAllFiles(const QDir &targe
     process.setStandardInputFile(QProcess::nullDevice());
     process.setStandardOutputFile(QProcess::nullDevice());
 
-    process.start(binaryPath(), { QStringLiteral("x"), QStringLiteral("-p") + password(), QStringLiteral("-o") + QDir::toNativeSeparators(targetDir.absolutePath()), m_fileName }, QIODevice::ReadOnly);
+    process.start(binaryPath(), {QStringLiteral("x"), QStringLiteral("-p") + password(), QStringLiteral("-o") + QDir::toNativeSeparators(targetDir.absolutePath()), m_fileName},
+                  QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished(300000)) {
         process.kill();
         return RmeUncompSubProcessError;
@@ -150,7 +151,9 @@ RmeUncompresserResult RmeUncomp7zCliPlugin::uncompressOneFile(const QDir &target
     process.setStandardInputFile(QProcess::nullDevice());
     process.setStandardOutputFile(QProcess::nullDevice());
 
-    process.start(binaryPath(), { QStringLiteral("e"), QStringLiteral("-p") + password(), QStringLiteral("-o") + QDir::toNativeSeparators(targetDir.absolutePath()), m_fileName, fileName }, QIODevice::ReadOnly);
+    process.start(binaryPath(),
+                  {QStringLiteral("e"), QStringLiteral("-p") + password(), QStringLiteral("-o") + QDir::toNativeSeparators(targetDir.absolutePath()), m_fileName, fileName},
+                  QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished(300000)) {
         process.kill();
         return RmeUncompSubProcessError;
@@ -162,6 +165,7 @@ RmeUncompresserResult RmeUncomp7zCliPlugin::uncompressOneFile(const QDir &target
 
     return RmeUncompSuccess;
 }
+
 QString RmeUncomp7zCliPlugin::binaryPath() const
 {
     return m_binaryPath.isEmpty() ? QStringLiteral("7zr") : m_binaryPath;

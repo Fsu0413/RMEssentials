@@ -2,12 +2,11 @@
 #define LIBUNRARPLUGIN_H
 
 #include <QObject>
-#include <RMEssentials/RmeUncompresser>
+#include <RMEss/RmeUncompresser>
 
 class QuaZip;
 
-class RmeUncompLibQuaZipPlugin
-    : public RmeUncompresserPlugin
+class RmeUncompLibQuaZipPlugin : public RmeUncompresserPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.RMEssentials.RmeUncompresserPlugin" FILE "quazip.json")

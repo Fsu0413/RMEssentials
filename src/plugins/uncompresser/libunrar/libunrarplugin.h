@@ -2,12 +2,11 @@
 #define LIBUNRARPLUGIN_H
 
 #include <QObject>
-#include <RMEssentials/RmeUncompresser>
+#include <RMEss/RmeUncompresser>
 
 class QLibrary;
 
-class RmeUncompLibUnrarPlugin
-    : public RmeUncompresserPlugin
+class RmeUncompLibUnrarPlugin : public RmeUncompresserPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.RMEssentials.RmeUncompresserPlugin" FILE "libunrar.json")

@@ -2,14 +2,13 @@
 #define UNZIPCLIPLUGIN_H
 
 #include <QObject>
-#include <RMEssentials/RmeUncompresser>
+#include <RMEss/RmeUncompresser>
 
 #ifdef QT_NO_PROCESS
 #error "QT_NO_PROCESS is defined, this plugin will not build"
 #endif
 
-class RmeUncompUnzipCliPlugin
-    : public RmeUncompresserPlugin
+class RmeUncompUnzipCliPlugin : public RmeUncompresserPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.RMEssentials.RmeUncompresserPlugin" FILE "unzipcli.json")

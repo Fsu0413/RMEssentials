@@ -58,7 +58,7 @@ RmeUncompresserResult RmeUncompUnrarCliPlugin::openArchive(const QString &fileNa
     process.setStandardInputFile(QProcess::nullDevice());
     process.setStandardOutputFile(QProcess::nullDevice());
 
-    process.start(binaryPath(), { QStringLiteral("lb"), QStringLiteral("-p") + password(), fileName }, QIODevice::ReadOnly);
+    process.start(binaryPath(), {QStringLiteral("lb"), QStringLiteral("-p") + password(), fileName}, QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished()) {
         process.kill();
         return RmeUncompSubProcessError;
@@ -95,7 +95,7 @@ QStringList RmeUncompUnrarCliPlugin::listFiles()
     process.setStandardErrorFile(QProcess::nullDevice());
     process.setStandardInputFile(QProcess::nullDevice());
     process.setReadChannel(QProcess::StandardOutput);
-    process.start(binaryPath(), { QStringLiteral("lb"), QStringLiteral("-p") + password(), m_fileName }, QIODevice::ReadOnly);
+    process.start(binaryPath(), {QStringLiteral("lb"), QStringLiteral("-p") + password(), m_fileName}, QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished()) {
         process.kill();
         return QStringList();
@@ -126,7 +126,10 @@ RmeUncompresserResult RmeUncompUnrarCliPlugin::uncompressAllFiles(const QDir &ta
     process.setStandardInputFile(QProcess::nullDevice());
     process.setStandardOutputFile(QProcess::nullDevice());
 
-    process.start(binaryPath(), { QStringLiteral("x"), QStringLiteral("-o+"), QStringLiteral("-y"), QStringLiteral("-p") + password(), m_fileName, QDir::toNativeSeparators(targetDir.absolutePath()) }, QIODevice::ReadOnly);
+    process.start(
+        binaryPath(),
+        {QStringLiteral("x"), QStringLiteral("-o+"), QStringLiteral("-y"), QStringLiteral("-p") + password(), m_fileName, QDir::toNativeSeparators(targetDir.absolutePath())},
+        QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished(300000)) {
         process.kill();
         return RmeUncompSubProcessError;
@@ -163,7 +166,10 @@ RmeUncompresserResult RmeUncompUnrarCliPlugin::uncompressOneFile(const QDir &tar
     process.setStandardInputFile(QProcess::nullDevice());
     process.setStandardOutputFile(QProcess::nullDevice());
 
-    process.start(binaryPath(), { QStringLiteral("e"), QStringLiteral("-o+"), QStringLiteral("-y"), QStringLiteral("-p") + password(), m_fileName, fileName, QDir::toNativeSeparators(targetDir.absolutePath()) }, QIODevice::ReadOnly);
+    process.start(binaryPath(),
+                  {QStringLiteral("e"), QStringLiteral("-o+"), QStringLiteral("-y"), QStringLiteral("-p") + password(), m_fileName, fileName,
+                   QDir::toNativeSeparators(targetDir.absolutePath())},
+                  QIODevice::ReadOnly);
     if (!process.waitForStarted() || !process.waitForFinished(300000)) {
         process.kill();
         return RmeUncompSubProcessError;
