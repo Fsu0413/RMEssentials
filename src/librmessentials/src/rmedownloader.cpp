@@ -4,15 +4,12 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QPixmap>
-#include <QReadWriteLock>
-#include <QThread>
 #include <QTimer>
 
 #ifdef Q_OS_OSX
 #include <QStandardPaths>
 #endif
 
-// This class is to be put in the downloader thread
 class RmeDownloaderPrivate : public QObject
 {
     Q_OBJECT
@@ -36,15 +33,10 @@ signals:
     void started();
 
 public:
-    // q-ptr and thread-related stuff
+    // q-ptr
     RmeDownloader *m_downloader;
 
-    QThread *m_thread;
-    mutable QReadWriteLock m_dataLock;
-
-public:
     // public to RmeDownloader only since this class is always an incomplete type outside rmedownloader.cpp
-    // Note these variables are shared between threads so the RW-Lock(m_dataLock) should be used for thread safety
     QStringList m_downloadSequence;
     QString m_downloadPath;
     bool m_skipExisting;
@@ -64,8 +56,8 @@ private:
 };
 
 RmeDownloaderPrivate::RmeDownloaderPrivate(RmeDownloader *downloader)
-    : m_downloader(downloader)
-    , m_thread(new QThread(downloader))
+    : QObject(downloader)
+    , m_downloader(downloader)
     , m_skipExisting(false)
     , m_canceled(false)
     , m_running(false)
@@ -74,8 +66,6 @@ RmeDownloaderPrivate::RmeDownloaderPrivate(RmeDownloader *downloader)
     , m_timer(nullptr)
     , m_lastRecordedDownloadProgress(0u)
 {
-    moveToThread(m_thread);
-    connect(m_thread, &QThread::finished, this, &RmeDownloaderPrivate::deleteLater);
     connect(this, &RmeDownloaderPrivate::started, this, &RmeDownloaderPrivate::run);
     connect(this, &RmeDownloaderPrivate::canceled, this, &RmeDownloaderPrivate::cancel);
 }
@@ -92,11 +82,9 @@ void RmeDownloaderPrivate::run()
     m_currentDownloadingReply = nullptr;
 
     QDir dir;
-    m_dataLock.lockForWrite();
     m_running = true;
     m_canceled = false;
     QString savePath = m_downloadPath;
-    m_dataLock.unlock();
 
     if (!savePath.isEmpty()) {
         if (!dir.cd(savePath)) {
@@ -134,8 +122,6 @@ void RmeDownloaderPrivate::cancel()
 RmeDownloader::RmeDownloader()
     : d_ptr(new RmeDownloaderPrivate(this))
 {
-    Q_D(RmeDownloader);
-    d->m_thread->start();
 }
 
 RmeDownloader::~RmeDownloader()
@@ -143,11 +129,6 @@ RmeDownloader::~RmeDownloader()
     Q_D(RmeDownloader);
     if (d->m_running)
         cancel();
-
-    QThread *childThread = d->m_thread;
-    childThread->quit();
-    if (childThread->wait(3000UL))
-        childThread->terminate();
 }
 
 void RmeDownloader::start()
@@ -249,8 +230,6 @@ QString RmeDownloader::noteImageDownloadPath()
 RmeDownloader &RmeDownloader::operator<<(const QString &filename)
 {
     Q_D(RmeDownloader);
-    QWriteLocker wl(&d->m_dataLock);
-    Q_UNUSED(wl);
     d->m_downloadSequence << filename;
     return *this;
 }
@@ -258,62 +237,48 @@ RmeDownloader &RmeDownloader::operator<<(const QString &filename)
 QStringList RmeDownloader::downloadSequence() const
 {
     Q_D(const RmeDownloader);
-    QReadLocker rl(&d->m_dataLock);
-    Q_UNUSED(rl);
     return d->m_downloadSequence;
 }
 
 QString RmeDownloader::downloadPath() const
 {
     Q_D(const RmeDownloader);
-    QReadLocker rl(&d->m_dataLock);
-    Q_UNUSED(rl);
     return d->m_downloadPath;
 }
 
 void RmeDownloader::setDownloadPath(const QString &sp)
 {
     Q_D(RmeDownloader);
-    QWriteLocker wl(&d->m_dataLock);
-    Q_UNUSED(wl);
     d->m_downloadPath = sp;
 }
 
 void RmeDownloader::setSkipExisting(bool skip)
 {
     Q_D(RmeDownloader);
-    QWriteLocker wl(&d->m_dataLock);
-    Q_UNUSED(wl);
     d->m_skipExisting = skip;
 }
 
 bool RmeDownloader::skipExisting() const
 {
     Q_D(const RmeDownloader);
-    QReadLocker rl(&d->m_dataLock);
-    Q_UNUSED(rl);
     return d->m_skipExisting;
 }
 
 void RmeDownloaderPrivate::downloadSingleFile()
 {
-    m_dataLock.lockForWrite();
     if (m_downloadSequence.isEmpty()) {
         m_running = false;
-        m_dataLock.unlock();
         emit m_downloader->allCompleted();
         return;
     } else if (m_canceled) {
         m_running = false;
         m_canceled = false;
-        m_dataLock.unlock();
         emit m_downloader->canceled();
         return;
     }
 
     m_currentDownloadingFile = m_downloadSequence.takeFirst();
     bool isAll = m_skipExisting;
-    m_dataLock.unlock();
     if (isAll) {
         QString filename = QUrl(m_currentDownloadingFile).fileName();
         if (filename.endsWith(QStringLiteral(".jpg"))) { // important hack!!
@@ -389,9 +354,8 @@ void RmeDownloaderPrivate::singleFileFinished()
             emit m_downloader->singleFileCompleted(m_currentDownloadingFile);
             downloadSingleFile();
         } else {
-            if (m_thread->isInterruptionRequested()) {
+            if (m_canceled) {
                 emit m_downloader->canceled();
-                m_thread->quit();
                 return;
             }
             QUrl u = m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
@@ -416,8 +380,6 @@ RmeDownloader *operator<<(RmeDownloader *downloader, const QString &filename)
 void RmeDownloader::cancel()
 {
     Q_D(RmeDownloader);
-    QWriteLocker locker(&d->m_dataLock);
-    Q_UNUSED(locker);
     d->m_canceled = true;
     emit d->canceled();
 }
