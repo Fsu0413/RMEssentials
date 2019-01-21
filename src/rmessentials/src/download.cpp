@@ -544,6 +544,7 @@ void DownloadDialog::setBusy(bool b)
 #ifdef Q_OS_WIN
         m_taskbarBtn->progress()->reset();
         m_taskbarBtn->progress()->show();
+        m_taskbarBtn->progress()->resume();
 #endif
     } else {
         if (m_exitRequested)
