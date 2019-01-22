@@ -20,17 +20,13 @@ public:
 private:
     void downloadSingleFile();
 
-private slots:
+public slots:
     void singleFileFinished();
     void singleFileError(QNetworkReply::NetworkError e);
     void downloadProgress(quint64 downloaded, quint64 total);
 
     void run();
     void cancel();
-
-signals:
-    void canceled();
-    void started();
 
 public:
     // q-ptr
@@ -66,8 +62,6 @@ RmeDownloaderPrivate::RmeDownloaderPrivate(RmeDownloader *downloader)
     , m_timer(nullptr)
     , m_lastRecordedDownloadProgress(0u)
 {
-    connect(this, &RmeDownloaderPrivate::started, this, &RmeDownloaderPrivate::run);
-    connect(this, &RmeDownloaderPrivate::canceled, this, &RmeDownloaderPrivate::cancel);
 }
 
 void RmeDownloaderPrivate::run()
@@ -102,6 +96,8 @@ void RmeDownloaderPrivate::run()
 
 void RmeDownloaderPrivate::cancel()
 {
+    m_canceled = true;
+
     disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &RmeDownloaderPrivate::singleFileFinished);
     disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &RmeDownloaderPrivate::downloadProgress);
@@ -134,7 +130,7 @@ RmeDownloader::~RmeDownloader()
 void RmeDownloader::start()
 {
     Q_D(RmeDownloader);
-    emit d->started();
+    d->run();
 }
 
 QString RmeDownloader::binDownloadPath()
@@ -380,8 +376,7 @@ RmeDownloader *operator<<(RmeDownloader *downloader, const QString &filename)
 void RmeDownloader::cancel()
 {
     Q_D(RmeDownloader);
-    d->m_canceled = true;
-    emit d->canceled();
+    d->cancel();
 }
 
 #include "rmedownloader.moc"
