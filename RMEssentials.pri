@@ -17,7 +17,7 @@ android || ios {
 
 staticlib: DEFINES += LIBRMESSENTIALS_STATIC
 
-!isEmpty($$(PREFIX)) {
+!isEmpty(PREFIX) {
     CONFIG += install_build
 }
 
