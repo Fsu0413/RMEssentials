@@ -29,6 +29,11 @@ private:
     int m_currentIndex;
     bool m_isLoaded;
 
+    bool m_isContentEdited;
+
+private:
+    bool askForSaveModified();
+
 private slots:
     void movePrev();
     void moveNext();
@@ -41,6 +46,8 @@ private slots:
     void searchResultDblClicked(QListWidgetItem *index);
     void createPatch();
     void applyPatch();
+
+    void contentEdited();
 
 protected:
     void showEvent(QShowEvent *e) override;

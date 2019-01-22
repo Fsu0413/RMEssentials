@@ -110,6 +110,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     : QDialog(parent)
     , m_currentIndex(-1)
     , m_isLoaded(false)
+    , m_isContentEdited(false)
     , m_controls(new SongClientEditDialogControls)
 {
     setWindowTitle(tr("Rhythm Master Song Client Editor"));
@@ -154,35 +155,51 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     funcBtn->setMenu(m_popup);
 
     m_controls->szSongName = new PasteLineEdit;
+    connect(m_controls->szSongName, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->szPath = new PasteLineEdit;
+    connect(m_controls->szPath, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     m_controls->szPath->setValidator(szPathValidator);
     m_controls->szArtist = new PasteLineEdit;
+    connect(m_controls->szArtist, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->szComposer = new PasteLineEdit;
+    connect(m_controls->szComposer, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->iGameTime = new QLineEdit;
+    connect(m_controls->iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
     m_controls->iGameTime->setValidator(iGameTimeValidator);
     connect(m_controls->iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::calculateSongTime);
     m_controls->szSongTime = new QLabel;
     m_controls->iRegion = new QLineEdit;
+    connect(m_controls->iRegion, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QIntValidator *iRegionValidator = new QIntValidator(0, 11, this);
     m_controls->iRegion->setValidator(iRegionValidator);
     m_controls->iStyle = new QLineEdit;
+    connect(m_controls->iStyle, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QIntValidator *iStyleValidator = new QIntValidator(0, 20, this);
     m_controls->iStyle->setValidator(iStyleValidator);
     m_controls->szBPM = new QLineEdit;
+    connect(m_controls->szBPM, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
     m_controls->szBPM->setValidator(szBPMValidator);
 
     m_controls->ucIsNew = new QCheckBox(QStringLiteral("ucIsNew"));
+    connect(m_controls->ucIsNew, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->ucIsHot = new QCheckBox(QStringLiteral("ucIsHot"));
+    connect(m_controls->ucIsHot, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->ucIsRecommend = new QCheckBox(QStringLiteral("ucIsRecommend"));
+    connect(m_controls->ucIsRecommend, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->ucIsOpen = new QCheckBox(QStringLiteral("ucIsOpen"));
+    connect(m_controls->ucIsOpen, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->ucCanBuy = new QCheckBox(QStringLiteral("ucCanBuy"));
+    connect(m_controls->ucCanBuy, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->bIsFree = new QCheckBox(QStringLiteral("bIsFree"));
+    connect(m_controls->bIsFree, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->bSongPkg = new QCheckBox(QStringLiteral("bSongPkg"));
+    connect(m_controls->bSongPkg, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
 
     m_controls->iOrderIndex = new QLineEdit;
+    connect(m_controls->iOrderIndex, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
     m_controls->iOrderIndex->setValidator(iOrderIndexValidator);
     m_controls->szFreeBeginTime = new QLineEdit;
@@ -192,27 +209,37 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     QIntValidator *hardLevelValidator = new QIntValidator(1, 10, this);
     m_controls->ush4KeyEasy = new QLineEdit;
+    connect(m_controls->ush4KeyEasy, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush4KeyEasy->setValidator(hardLevelValidator);
     m_controls->ush4KeyNormal = new QLineEdit;
+    connect(m_controls->ush4KeyNormal, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush4KeyNormal->setValidator(hardLevelValidator);
     m_controls->ush4KeyHard = new QLineEdit;
+    connect(m_controls->ush4KeyHard, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush4KeyHard->setValidator(hardLevelValidator);
     m_controls->ush5KeyEasy = new QLineEdit;
+    connect(m_controls->ush5KeyEasy, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush5KeyEasy->setValidator(hardLevelValidator);
     m_controls->ush5KeyNormal = new QLineEdit;
+    connect(m_controls->ush5KeyNormal, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush5KeyNormal->setValidator(hardLevelValidator);
     m_controls->ush5KeyHard = new QLineEdit;
+    connect(m_controls->ush5KeyHard, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush5KeyHard->setValidator(hardLevelValidator);
     m_controls->ush6KeyEasy = new QLineEdit;
+    connect(m_controls->ush6KeyEasy, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush6KeyEasy->setValidator(hardLevelValidator);
     m_controls->ush6KeyNormal = new QLineEdit;
+    connect(m_controls->ush6KeyNormal, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush6KeyNormal->setValidator(hardLevelValidator);
     m_controls->ush6KeyHard = new QLineEdit;
+    connect(m_controls->ush6KeyHard, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->ush6KeyHard->setValidator(hardLevelValidator);
 
     m_controls->szNoteNumber = new QLineEdit;
+    connect(m_controls->szNoteNumber, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->szNoteNumber->setPlaceholderText(QStringLiteral("4KE,4KN,4KH,5KE,5KN,5KH,6KE,6KN,6KH"));
-    m_controls->szNoteNumber->setInputMask(QStringLiteral("09999,09999,09999,09999,09999,09999,09999,09999,09999"));
+    m_controls->szNoteNumber->setInputMask(QStringLiteral("00009,00009,00009,00009,00009,00009,00009,00009,00009;_"));
 
     m_controls->iPrice = new QLineEdit;
     m_controls->iPrice->setPlaceholderText(tr("Number only, Better keep empty"));
@@ -221,8 +248,11 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     m_controls->iVipFlag = new QCheckBox(QStringLiteral("iVipFlag"));
 
     m_controls->bIsHide = new QCheckBox(QStringLiteral("bIsHide"));
+    connect(m_controls->bIsHide, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->bIsReward = new QCheckBox(QStringLiteral("bIsReward"));
+    connect(m_controls->bIsReward, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->bIsLevelReward = new QCheckBox(QStringLiteral("bIsLevelReward"));
+    connect(m_controls->bIsLevelReward, &QCheckBox::stateChanged, this, &SongClientEditDialog::contentEdited);
     m_controls->iVersion = new QLineEdit;
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
     m_controls->iVersion->setValidator(iVersionValidator);
@@ -475,9 +505,27 @@ bool SongClientEditDialog::loadFile()
     return false;
 }
 
+bool SongClientEditDialog::askForSaveModified()
+{
+    if (!m_isContentEdited)
+        return true;
+
+    int r = QMessageBox::question(this, tr("RMEssentials"), tr("Content of this page is modified."), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    if (r == QMessageBox::Save) {
+        saveCurrent();
+        return true;
+    } else if (r == QMessageBox::Discard)
+        return true;
+
+    return false;
+}
+
 void SongClientEditDialog::saveFile()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     QString filepath;
@@ -496,6 +544,9 @@ void SongClientEditDialog::moveNext()
     if (!m_isLoaded)
         return;
 
+    if (!askForSaveModified())
+        return;
+
     if (m_currentIndex + 1 == m_file.songCount())
         return;
 
@@ -506,6 +557,9 @@ void SongClientEditDialog::moveNext()
 void SongClientEditDialog::movePrev()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     if (m_currentIndex <= 0)
@@ -564,11 +618,16 @@ void SongClientEditDialog::readCurrent()
 #undef RP_BL
 #undef RP_ST
 #undef RP_NM
+
+    m_isContentEdited = false;
 }
 
 void SongClientEditDialog::convertToFree()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     for (int i = 0; i < m_file.songCount(); ++i) {
@@ -589,6 +648,9 @@ void SongClientEditDialog::convertToFree()
 void SongClientEditDialog::allSongUnlock()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     for (int i = 0; i < m_file.songCount(); ++i) {
@@ -659,6 +721,8 @@ void SongClientEditDialog::saveCurrent()
 #undef SP_ST
 #undef SP_NI
 #undef SP_NS
+
+    m_isContentEdited = false;
 }
 
 void SongClientEditDialog::search()
@@ -685,7 +749,13 @@ void SongClientEditDialog::search()
 
 void SongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
 {
+    if (!m_isLoaded)
+        return;
+
     if (index == nullptr)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     bool ok = false;
@@ -703,6 +773,9 @@ void SongClientEditDialog::prepareForUserMakingNotes()
     if (!m_isLoaded)
         return;
 
+    if (!askForSaveModified())
+        return;
+
     if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?"))
         == QMessageBox::No)
         return;
@@ -716,6 +789,9 @@ void SongClientEditDialog::prepareForUserMakingNotes()
 void SongClientEditDialog::createPatch()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     QString filepath;
@@ -750,6 +826,9 @@ void SongClientEditDialog::applyPatch()
     if (!m_isLoaded)
         return;
 
+    if (!askForSaveModified())
+        return;
+
     QString filepath
         = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
     QFile f(filepath);
@@ -765,6 +844,11 @@ void SongClientEditDialog::applyPatch()
     if (m_file.isUserMadeMode())
         setWindowTitle(tr("Rhythm Master Song Client Editor") + tr(" - User Made Notes Mode"));
     readCurrent();
+}
+
+void SongClientEditDialog::contentEdited()
+{
+    m_isContentEdited = true;
 }
 
 void SongClientEditDialog::showEvent(QShowEvent *e)

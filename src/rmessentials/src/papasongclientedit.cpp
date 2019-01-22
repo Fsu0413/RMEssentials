@@ -54,6 +54,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     : QDialog(parent)
     , m_currentIndex(-1)
     , m_isLoaded(false)
+    , m_isContentEdited(false)
     , m_controls(new PapaSongClientEditDialogControls)
 {
     setWindowTitle(tr("Rhythm Master PapaSong Client Editor"));
@@ -91,40 +92,58 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     QVBoxLayout *leftLayout = new QVBoxLayout;
 
     m_controls->szSongName = new PasteLineEdit;
+    connect(m_controls->szSongName, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->szNoteNumber = new QLineEdit;
+    connect(m_controls->szNoteNumber, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->szRegion = new QLineEdit;
+    connect(m_controls->szRegion, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->iOrderIndex = new QLineEdit;
+    connect(m_controls->iOrderIndex, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
     m_controls->iOrderIndex->setValidator(iOrderIndexValidator);
     m_controls->szPath = new PasteLineEdit;
+    connect(m_controls->szPath, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     m_controls->szPath->setValidator(szPathValidator);
     m_controls->iGameTime = new QLineEdit;
+    connect(m_controls->iGameTime, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
     m_controls->iGameTime->setValidator(iGameTimeValidator);
     connect(m_controls->iGameTime, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::calculateSongTime);
     m_controls->szStyle = new QLineEdit;
+    connect(m_controls->szStyle, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->iSongType = new QLineEdit;
+    connect(m_controls->iSongType, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->iSongType->setValidator(iGameTimeValidator);
     m_controls->szArtist = new PasteLineEdit;
+    connect(m_controls->szArtist, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->szSongTime = new QLabel;
     m_controls->szBPM = new QLineEdit;
+    connect(m_controls->szBPM, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
     m_controls->szBPM->setValidator(szBPMValidator);
     m_controls->iVersion = new QLineEdit;
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
     m_controls->iVersion->setValidator(iVersionValidator);
     m_controls->cDifficulty = new QLineEdit;
+    connect(m_controls->cDifficulty, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QIntValidator *cDifficultyValidator = new QIntValidator(1, 3, this);
     m_controls->cDifficulty->setValidator(cDifficultyValidator);
     m_controls->cLevel = new QLineEdit;
+    connect(m_controls->cLevel, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QIntValidator *cLevelValidator = new QIntValidator(1, 10, this);
     m_controls->cLevel->setValidator(cLevelValidator);
+
     m_controls->ucIsHide = new QCheckBox(QStringLiteral("ucIsHide"));
+    connect(m_controls->ucIsHide, &QCheckBox::stateChanged, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->ucIsReward = new QCheckBox(QStringLiteral("ucIsReward"));
+    connect(m_controls->ucIsReward, &QCheckBox::stateChanged, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->ucIsLevelReward = new QCheckBox(QStringLiteral("ucIsLevelReward"));
+    connect(m_controls->ucIsLevelReward, &QCheckBox::stateChanged, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->ucIsOpen = new QCheckBox(QStringLiteral("ucIsOpen"));
+    connect(m_controls->ucIsOpen, &QCheckBox::stateChanged, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->ucIsFree = new QCheckBox(QStringLiteral("ucIsFree"));
+    connect(m_controls->ucIsFree, &QCheckBox::stateChanged, this, &PapaSongClientEditDialog::contentEdited);
 
 // for QFormLayout
 #define AR(l, x) l->addRow(QStringLiteral(#x), m_controls->x)
@@ -308,9 +327,27 @@ bool PapaSongClientEditDialog::loadFile()
     return false;
 }
 
+bool PapaSongClientEditDialog::askForSaveModified()
+{
+    if (!m_isContentEdited)
+        return true;
+
+    int r = QMessageBox::question(this, tr("RMEssentials"), tr("Content of this page is modified."), QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    if (r == QMessageBox::Save) {
+        saveCurrent();
+        return true;
+    } else if (r == QMessageBox::Discard)
+        return true;
+
+    return false;
+}
+
 void PapaSongClientEditDialog::saveFile()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     QString filepath
@@ -328,6 +365,9 @@ void PapaSongClientEditDialog::moveNext()
     if (!m_isLoaded)
         return;
 
+    if (!askForSaveModified())
+        return;
+
     if (m_currentIndex + 1 == m_file.songCount())
         return;
 
@@ -338,6 +378,9 @@ void PapaSongClientEditDialog::moveNext()
 void PapaSongClientEditDialog::movePrev()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     if (m_currentIndex <= 0)
@@ -459,7 +502,13 @@ void PapaSongClientEditDialog::search()
 
 void PapaSongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
 {
+    if (!m_isLoaded)
+        return;
+
     if (index == nullptr)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     bool ok = false;
@@ -475,6 +524,9 @@ void PapaSongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
 void PapaSongClientEditDialog::createPatch()
 {
     if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
         return;
 
     QString filepath
@@ -505,6 +557,9 @@ void PapaSongClientEditDialog::applyPatch()
     if (!m_isLoaded)
         return;
 
+    if (!askForSaveModified())
+        return;
+
     QString filepath
         = QFileDialog::getOpenFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("Json files") + QStringLiteral(" (*.json)"));
     QFile f(filepath);
@@ -517,6 +572,11 @@ void PapaSongClientEditDialog::applyPatch()
         return;
     }
     readCurrent();
+}
+
+void PapaSongClientEditDialog::contentEdited()
+{
+    m_isContentEdited = true;
 }
 
 void PapaSongClientEditDialog::showEvent(QShowEvent *e)
