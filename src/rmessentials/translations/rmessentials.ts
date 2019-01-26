@@ -116,12 +116,6 @@
         <translation>请输入新文件夹名</translation>
     </message>
     <message>
-        <source>You are now renaming %1 to %2.
-Are you sure?</source>
-        <translation>您正在将 %1 重命名为 %2。
-确认？</translation>
-    </message>
-    <message>
         <source>Exists</source>
         <translation>存在</translation>
     </message>
@@ -146,6 +140,14 @@ Are you sure?</source>
     <message>
         <source>The new name is same with the old name, please change the new name</source>
         <translation>新名称和旧名称相同，请修改新名称</translation>
+    </message>
+    <message>
+        <source>You are now renaming %1 to %2.
+Caution!! All unrelated files will be deleted.
+Are you sure?</source>
+        <translation>正在将 %1 重命名为 %2。
+注意！！所有不相关的文件会被全部删除。
+确认？</translation>
     </message>
 </context>
 <context>
@@ -173,10 +175,6 @@ Are you sure?</source>
     <message>
         <source>All files downloaded</source>
         <translation>全部文件已下载</translation>
-    </message>
-    <message>
-        <source>Download failed</source>
-        <translation type="vanished">下载失败</translation>
     </message>
     <message>
         <source> has been uncompressed</source>
@@ -374,6 +372,10 @@ This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 
         <source>Apply patch from device failed</source>
         <translation>从设备应用补丁失败</translation>
     </message>
+    <message>
+        <source>Content of this page is modified.</source>
+        <translation>本页的内容已经被修改了。</translation>
+    </message>
 </context>
 <context>
     <name>PasteLineEdit</name>
@@ -487,6 +489,10 @@ This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 
     <message>
         <source> - User Made Notes Mode</source>
         <translation> - 自制谱模式</translation>
+    </message>
+    <message>
+        <source>Content of this page is modified.</source>
+        <translation>本页的内容已经被修改了。</translation>
     </message>
 </context>
 </TS>
