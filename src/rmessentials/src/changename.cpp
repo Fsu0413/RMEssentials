@@ -12,6 +12,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QRegExpValidator>
 #include <QStandardPaths>
 #include <QVBoxLayout>
 
@@ -61,6 +62,7 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     m_toRename = new QLineEdit;
     m_toRename->setPlaceholderText(tr("Input the name to rename"));
     flayout->addRow(tr("Rename:"), m_toRename);
+    m_toRename->setValidator(new QRegExpValidator(QRegExp(QStringLiteral("[a-z0-9_]+"))));
 
     totalLayout->addLayout(flayout);
 
@@ -134,7 +136,13 @@ void ChangeNameDialog::rename()
         return;
     }
 
-    if (QMessageBox::question(this, windowTitle(), tr("You are now renaming %1 to %2.\nAre you sure?").arg(originPath).arg(m_toRename->text())) == QMessageBox::Yes) {
+    if (QMessageBox::question(this, windowTitle(),
+                              tr("You are now renaming %1 to %2.\n"
+                                 "Caution!! All unrelated files will be deleted.\n"
+                                 "Are you sure?")
+                                  .arg(originPath)
+                                  .arg(m_toRename->text()))
+        == QMessageBox::Yes) {
         RmeRenamer renamer;
         renamer.setDir(QDir(m_folderName->text()));
         renamer.setToRename(m_toRename->text());
