@@ -14,7 +14,7 @@ processSingleFile() {
         echo "Copying file $1"
         cp -f $1 $outdir/
     fi
-    classes=`cat $1 | sed -n -E "s/^(class|struct) +[A-Z]*_EXPORT +([A-Za-z0-9_]+)( .*)?/\2/p"`
+    classes=`cat $1 | sed -n -E "s/^(class|struct) +[A-Z]*_EXPORT +([A-Za-z0-9_]+)([^A-Za-z0-9_].*)?/\2/p"`
     for x in $classes; do
         echo "Generating Header for $x"
         echo "#include \"`basename $1`\"" > $outdir/$x
