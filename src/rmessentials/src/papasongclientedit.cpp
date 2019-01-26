@@ -487,16 +487,19 @@ void PapaSongClientEditDialog::search()
     if (searchResult.isEmpty())
         return;
 
-    if (searchResult.length() == 1) {
-        m_currentIndex = searchResult.first();
-        readCurrent();
-    }
-
     foreach (int n, searchResult) {
         RmePapaSongClientItemStruct *song = m_file.song(n);
         QListWidgetItem *i = new QListWidgetItem(song->m_szSongName);
         i->setData(Qt::UserRole + 1, n);
         m_searchList->addItem(i);
+    }
+
+    if (searchResult.length() == 1) {
+        if (!askForSaveModified())
+            return;
+
+        m_currentIndex = searchResult.first();
+        readCurrent();
     }
 }
 
