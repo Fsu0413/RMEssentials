@@ -3,6 +3,7 @@
 
 #include <RMEss/RmeDownloader>
 #include <RMEss/RmeSongClientStruct>
+#include <RMEss/RmeUtils>
 
 #include <QCheckBox>
 #include <QDoubleValidator>
@@ -427,17 +428,7 @@ void PapaSongClientEditDialog::readCurrent()
 void PapaSongClientEditDialog::calculateSongTime()
 {
     int gameTime = m_controls->iGameTime->text().toInt();
-    float songTime = gameTime / 1440.f;
-    QString r = QString::number(songTime);
-    if (r.length() > 8) {
-        int r9 = r.at(8).toLatin1() - 48;
-        if (r9 >= 5) {
-            songTime += 0.000001f;
-            r = QString::number(songTime);
-        }
-    }
-    r = r.left(8);
-    m_controls->szSongTime->setText(r);
+    m_controls->szSongTime->setText(RmeUtils::calculateSongTime(gameTime));
 }
 
 void PapaSongClientEditDialog::saveCurrent()

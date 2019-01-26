@@ -133,15 +133,11 @@ RmeUtils::ExistNotes RmeUtils::existNotes(const QDir &dir)
 
 QString RmeUtils::calculateSongTime(int gameTime)
 {
-    float songTime = gameTime / 1440.f;
-    QString r = QString::number(songTime);
-    if (r.length() > 8) {
-        int r9 = r.at(8).toLatin1() - 48;
-        if (r9 >= 5) {
-            songTime += 0.000001f;
-            r = QString::number(songTime);
-        }
-    }
+    double songTime = gameTime / 1440.;
+    int songTimeInt = (int)songTime;
+
+    QString r = QString::number(songTime, 'f', qMax(7 - QString::number(songTimeInt).length(), 0));
+
     r = r.left(8);
     return r;
 }
