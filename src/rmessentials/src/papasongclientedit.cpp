@@ -423,6 +423,8 @@ void PapaSongClientEditDialog::readCurrent()
 #undef RP_BL
 #undef RP_ST
 #undef RP_NM
+
+    m_isContentEdited = false;
 }
 
 void PapaSongClientEditDialog::calculateSongTime()
@@ -467,6 +469,8 @@ void PapaSongClientEditDialog::saveCurrent()
 #undef SP_ST
 #undef SP_NI
 #undef SP_NS
+
+    m_isContentEdited = false;
 }
 
 void PapaSongClientEditDialog::search()
