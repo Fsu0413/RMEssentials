@@ -36,16 +36,14 @@ HEADERS += \
     src/download.h \
     src/main.h \
     src/songclientedit.h \
-    src/papasongclientedit.h \
-    src/pastelineedit.h
+    src/papasongclientedit.h
 
 SOURCES += \
     src/main.cpp \
     src/changename.cpp \
     src/download.cpp \
     src/songclientedit.cpp \
-    src/papasongclientedit.cpp \
-    src/pastelineedit.cpp
+    src/papasongclientedit.cpp
 
 LIBS += -L. -lRMEss
 

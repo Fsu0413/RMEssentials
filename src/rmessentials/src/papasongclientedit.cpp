@@ -1,5 +1,4 @@
 #include "papasongclientedit.h"
-#include "pastelineedit.h"
 
 #include <RMEss/RmeDownloader>
 #include <RMEss/RmeSongClientStruct>
@@ -31,11 +30,11 @@ struct PapaSongClientEditDialogControls
 {
     QLineEdit *ushSongID; // Readonly, User Making note better > 10800
     QLineEdit *iVersion; // what's this?
-    PasteLineEdit *szSongName;
-    PasteLineEdit *szArtist;
+    QLineEdit *szSongName;
+    QLineEdit *szArtist;
     QLineEdit *cDifficulty;
     QLineEdit *cLevel;
-    PasteLineEdit *szPath;
+    QLineEdit *szPath;
     QLabel *szSongTime; // Auto Generate
     QLineEdit *iGameTime; // Number only
     QLineEdit *szRegion;
@@ -92,7 +91,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
 
-    m_controls->szSongName = new PasteLineEdit;
+    m_controls->szSongName = new QLineEdit;
     connect(m_controls->szSongName, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->szNoteNumber = new QLineEdit;
     connect(m_controls->szNoteNumber, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
@@ -102,7 +101,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     connect(m_controls->iOrderIndex, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QIntValidator *iOrderIndexValidator = new QIntValidator(0, 100, this);
     m_controls->iOrderIndex->setValidator(iOrderIndexValidator);
-    m_controls->szPath = new PasteLineEdit;
+    m_controls->szPath = new QLineEdit;
     connect(m_controls->szPath, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     m_controls->szPath->setValidator(szPathValidator);
@@ -116,7 +115,7 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     m_controls->iSongType = new QLineEdit;
     connect(m_controls->iSongType, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->iSongType->setValidator(iGameTimeValidator);
-    m_controls->szArtist = new PasteLineEdit;
+    m_controls->szArtist = new QLineEdit;
     connect(m_controls->szArtist, &QLineEdit::textEdited, this, &PapaSongClientEditDialog::contentEdited);
     m_controls->szSongTime = new QLabel;
     m_controls->szBPM = new QLineEdit;

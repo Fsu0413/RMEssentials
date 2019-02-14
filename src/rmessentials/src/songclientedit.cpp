@@ -1,5 +1,4 @@
 #include "songclientedit.h"
-#include "pastelineedit.h"
 
 #include <RMEss/RmeDownloader>
 #include <RMEss/RmeSongClientStruct>
@@ -69,10 +68,10 @@ struct SongClientEditDialogControls
 {
     QLineEdit *ushSongID; // Readonly, User Making note better > 800
     QLineEdit *iVersion; // what's this?
-    PasteLineEdit *szSongName;
-    PasteLineEdit *szPath;
-    PasteLineEdit *szArtist;
-    PasteLineEdit *szComposer;
+    QLineEdit *szSongName;
+    QLineEdit *szPath;
+    QLineEdit *szArtist;
+    QLineEdit *szComposer;
     QLabel *szSongTime; // Auto Generate
     QLineEdit *iGameTime; // Number only
     QLineEdit *iRegion; // QComboBox?
@@ -154,15 +153,15 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     funcBtn->setDefault(false);
     funcBtn->setMenu(m_popup);
 
-    m_controls->szSongName = new PasteLineEdit;
+    m_controls->szSongName = new QLineEdit;
     connect(m_controls->szSongName, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
-    m_controls->szPath = new PasteLineEdit;
+    m_controls->szPath = new QLineEdit;
     connect(m_controls->szPath, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
     m_controls->szPath->setValidator(szPathValidator);
-    m_controls->szArtist = new PasteLineEdit;
+    m_controls->szArtist = new QLineEdit;
     connect(m_controls->szArtist, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
-    m_controls->szComposer = new PasteLineEdit;
+    m_controls->szComposer = new QLineEdit;
     connect(m_controls->szComposer, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->iGameTime = new QLineEdit;
     connect(m_controls->iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
