@@ -11,6 +11,7 @@ class QListWidget;
 class QComboBox;
 class QPushButton;
 class QProgressBar;
+class QCheckBox;
 #ifdef Q_OS_WIN
 class QWinTaskbarButton;
 #endif
@@ -42,8 +43,6 @@ signals:
     void cancelDownload();
 
 private slots:
-    void downloadAndroidList();
-
     void downloadSongClicked();
     void downloadRoleClicked();
 
@@ -75,11 +74,13 @@ private:
 
     QComboBox *m_songNameCombo;
     QPushButton *m_downloadSongBtn;
+    QCheckBox *m_downloadUnofficialBackground;
 
     QComboBox *m_roleNameCombo;
     QPushButton *m_downloadRoleBtn;
 
     QMap<int, QStringList> m_rolePadUiMap;
+    QSet<QString> m_unOfficialBackgroundList;
 
     bool m_busy;
     bool m_exitRequested;

@@ -3,6 +3,7 @@
 #include <RMEss/RmeDownloader>
 #include <RMEss/RmeUncompresser>
 
+#include <QCheckBox>
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QFontMetrics>
@@ -81,8 +82,10 @@ QWidget *DownloadDialog::createDownloadSongTab()
     QHBoxLayout *layout2 = new QHBoxLayout;
     layout2->addWidget(downloadAllSongBtn);
     layout2->addWidget(downloadMissingSongBtn);
+    m_downloadUnofficialBackground = new QCheckBox(tr("Download Unofficial Background"));
     downloadSongLayout->addLayout(flayout);
     downloadSongLayout->addLayout(layout2);
+    downloadSongLayout->addWidget(m_downloadUnofficialBackground);
 
     QWidget *downloadSongTab = new QWidget;
     downloadSongTab->setLayout(downloadSongLayout);
@@ -197,11 +200,8 @@ void DownloadDialog::startDownloadNextMissing()
 void DownloadDialog::startDownloadSong(DownloadMode mode)
 {
     static QStringList suffixs = {QStringLiteral(".mp3"),
-                                  QStringLiteral(".jpg"),
-                                  QStringLiteral("_title_ipad.jpg"),
                                   QStringLiteral("_ipad.jpg"),
                                   QStringLiteral("_title_140_90.jpg"), // do not use .png here
-
                                   QStringLiteral("_4k_ez.imd"),
                                   QStringLiteral("_4k_nm.imd"),
                                   QStringLiteral("_4k_hd.imd"),
@@ -223,6 +223,17 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
     QString songname = m_songNameCombo->currentText();
     foreach (const QString &suf, suffixs)
         downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
+
+    if (m_downloadUnofficialBackground->isChecked() && m_unOfficialBackgroundList.contains(songname)) {
+        static QString unOffBgPrefix = QStringLiteral("http://fsu0413.coding.me/RMEssentialsUpdate/unofficialBg/");
+        static QStringList unOffBgSuffixs = {QStringLiteral(".png"), QStringLiteral("_title_ipad.png")};
+        foreach (const QString &suf, unOffBgSuffixs)
+            downloader << (unOffBgPrefix + songname + QStringLiteral("/") + songname + suf);
+    } else {
+        static QStringList offBgSuffixs = {QStringLiteral(".jpg"), QStringLiteral("_title_ipad.jpg")}; // do not use .png here
+        foreach (const QString &suf, offBgSuffixs)
+            downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
+    }
 
     downloader->setDownloadPath(RmeDownloader::songDownloadPath() + songname);
 
@@ -366,51 +377,26 @@ void DownloadDialog::startUncompress()
     connect(unc, &RmeUncompresser::signalFileFinished, this, &DownloadDialog::oneUncompressed);
 
     unc->start();
-#endif
-}
-
-void DownloadDialog::downloadList()
-{
-#ifdef RME_USE_QUAZIP
-    static const QString md5 = QStringLiteral("http://game.ds.qq.com/Com_SongRes/MD5List.zip");
-    static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip");
-
-    RmeDownloader *downloader = new RmeDownloader;
-    downloader << md5 << bin;
-
-    downloader->setDownloadPath(RmeDownloader::binDownloadPath());
-
-    connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
-    connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
-    connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::downloadAndroidList);
-    connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-    connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
-    connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
-    connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
-    connect(downloader, &RmeDownloader::canceled, downloader, &RmeDownloader::deleteLater);
-
-    emit busy(true);
-
-    downloader->start();
 #else
     loadPaths();
 #endif
 }
 
-void DownloadDialog::downloadAndroidList()
+void DownloadDialog::downloadList()
 {
-#ifdef RME_USE_QUAZIP
-    if (QFile::exists(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"))) {
-        QFile::remove(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"));
-        QFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip")).rename(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"));
-    }
-
-    static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip");
-
     RmeDownloader *downloader = new RmeDownloader;
-    downloader << bin;
-
     downloader->setDownloadPath(RmeDownloader::binDownloadPath());
+#ifdef RME_USE_QUAZIP
+    static const QString md5 = QStringLiteral("http://game.ds.qq.com/Com_SongRes/MD5List.zip");
+    static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip");
+    static const QString andbin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip");
+
+    downloader << md5 << QPair<QString, QString>(bin, QStringLiteral("TableComBin_IOS.zip")) << andbin;
+#endif
+
+    static const QString unoffBgList = QStringLiteral("http://fsu0413.coding.me/RMEssentialsUpdate/unoffBgList.txt");
+
+    downloader << unoffBgList;
 
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
@@ -421,8 +407,9 @@ void DownloadDialog::downloadAndroidList()
     connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
     connect(downloader, &RmeDownloader::canceled, downloader, &RmeDownloader::deleteLater);
 
+    emit busy(true);
+
     downloader->start();
-#endif
 }
 
 void DownloadDialog::appendLog(const QString &log)
@@ -441,7 +428,7 @@ void DownloadDialog::loadPaths()
 
     if (dir.exists(QStringLiteral("MD5List.xml"))) {
         QFile f(dir.absoluteFilePath(QStringLiteral("MD5List.xml")));
-        f.open(QIODevice::ReadOnly);
+        f.open(QIODevice::ReadOnly | QIODevice::Text);
         while (!f.atEnd()) {
             QString s = QString::fromUtf8(f.readLine());
             s = s.trimmed();
@@ -516,6 +503,19 @@ void DownloadDialog::loadPaths()
         }
         f.close();
         appendLog(QStringLiteral("mrock.character_client.bin") + tr(" has been loaded"));
+    }
+
+    if (dir.exists(QStringLiteral("unoffBgList.txt"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("unoffBgList.txt")));
+        f.open(QIODevice::ReadOnly | QIODevice::Text);
+        while (!f.atEnd()) {
+            QString s = QString::fromUtf8(f.readLine());
+            s = s.trimmed();
+            if (!s.isEmpty())
+                m_unOfficialBackgroundList << s;
+        }
+        f.close();
+        appendLog(QStringLiteral("unoffBgList.txt") + tr(" has been loaded"));
     }
 
     QStringList l = paths.toList();
