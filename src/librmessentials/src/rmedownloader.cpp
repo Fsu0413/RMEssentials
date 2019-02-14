@@ -33,7 +33,7 @@ public:
     RmeDownloader *m_downloader;
 
     // public to RmeDownloader only since this class is always an incomplete type outside rmedownloader.cpp
-    QStringList m_downloadSequence;
+    QList<QPair<QString, QString> > m_downloadSequence;
     QString m_downloadPath;
     bool m_skipExisting;
     bool m_canceled;
@@ -42,7 +42,7 @@ public:
 private:
     // private to RmeDownloaderPrivate only.
     QStringList m_failedList;
-    QString m_currentDownloadingFile;
+    QPair<QString, QString> m_currentDownloadingFile;
     QDir m_downloadDir;
     QNetworkReply *m_currentDownloadingReply;
     QNetworkAccessManager *m_networkAccessManager;
@@ -104,13 +104,13 @@ void RmeDownloaderPrivate::cancel()
 
     m_currentDownloadingReply->abort();
 
-    m_failedList << m_currentDownloadingFile;
+    m_failedList << m_currentDownloadingFile.first;
 
     QTimer *timer = qobject_cast<QTimer *>(sender());
     if (timer != nullptr)
-        qDebug() << m_currentDownloadingFile << "timeout";
+        qDebug() << m_currentDownloadingFile.first << "timeout";
     else
-        qDebug() << m_currentDownloadingFile << "abort";
+        qDebug() << m_currentDownloadingFile.first << "abort";
 
     singleFileFinished();
 }
@@ -226,6 +226,13 @@ QString RmeDownloader::noteImageDownloadPath()
 RmeDownloader &RmeDownloader::operator<<(const QString &filename)
 {
     Q_D(RmeDownloader);
+    d->m_downloadSequence << QPair<QString, QString>(filename, QString());
+    return *this;
+}
+
+RmeDownloader &RmeDownloader::operator<<(const QPair<QString, QString> &filename)
+{
+    Q_D(RmeDownloader);
     d->m_downloadSequence << filename;
     return *this;
 }
@@ -233,7 +240,11 @@ RmeDownloader &RmeDownloader::operator<<(const QString &filename)
 QStringList RmeDownloader::downloadSequence() const
 {
     Q_D(const RmeDownloader);
-    return d->m_downloadSequence;
+    QStringList r;
+    foreach (const auto &n, d->m_downloadSequence)
+        r << n.first;
+
+    return r;
 }
 
 QString RmeDownloader::downloadPath() const
@@ -274,21 +285,20 @@ void RmeDownloaderPrivate::downloadSingleFile()
     }
 
     m_currentDownloadingFile = m_downloadSequence.takeFirst();
-    bool isAll = m_skipExisting;
-    if (isAll) {
-        QString filename = QUrl(m_currentDownloadingFile).fileName();
+    if (m_skipExisting) {
+        QString filename = QUrl(m_currentDownloadingFile.first).fileName();
         if (filename.endsWith(QStringLiteral(".jpg"))) { // important hack!!
             filename.chop(4);
             filename.append(QStringLiteral(".png"));
         }
 
         if (m_downloadDir.exists(filename)) {
-            emit m_downloader->singleFileCompleted(m_currentDownloadingFile);
+            emit m_downloader->singleFileCompleted(m_currentDownloadingFile.first);
             downloadSingleFile();
             return;
         }
     }
-    m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(QUrl(m_currentDownloadingFile)));
+    m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(QUrl(m_currentDownloadingFile.first)));
     connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);
     connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &RmeDownloaderPrivate::singleFileFinished);
     connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &RmeDownloaderPrivate::downloadProgress);
@@ -299,7 +309,7 @@ void RmeDownloaderPrivate::downloadSingleFile()
 
 void RmeDownloaderPrivate::singleFileError(QNetworkReply::NetworkError /*e*/)
 {
-    m_failedList << m_currentDownloadingFile;
+    m_failedList << m_currentDownloadingFile.first;
     if (m_currentDownloadingReply != nullptr)
         qDebug() << m_currentDownloadingReply->errorString();
 }
@@ -316,12 +326,16 @@ void RmeDownloaderPrivate::downloadProgress(quint64 downloaded, quint64 total)
 void RmeDownloaderPrivate::singleFileFinished()
 {
     m_timer->stop();
-    if (m_failedList.contains(m_currentDownloadingFile)) {
-        emit m_downloader->singleFileFailed(m_currentDownloadingFile);
+    if (m_failedList.contains(m_currentDownloadingFile.first)) {
+        emit m_downloader->singleFileFailed(m_currentDownloadingFile.first);
         downloadSingleFile();
     } else {
         if (m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).isNull()) {
-            QString filename = QUrl(m_currentDownloadingFile).fileName();
+            QString filename;
+            if (m_currentDownloadingFile.second.isEmpty())
+                filename = QUrl(m_currentDownloadingFile.first).fileName();
+            else
+                filename = m_currentDownloadingFile.second;
             QFile file(m_downloadDir.absoluteFilePath(filename));
             file.open(QIODevice::Truncate | QIODevice::WriteOnly);
             file.write(m_currentDownloadingReply->readAll());
@@ -347,7 +361,7 @@ void RmeDownloaderPrivate::singleFileFinished()
                     qDebug() << "load jpg error " << filename;
             }
 
-            emit m_downloader->singleFileCompleted(m_currentDownloadingFile);
+            emit m_downloader->singleFileCompleted(m_currentDownloadingFile.first);
             downloadSingleFile();
         } else {
             if (m_canceled) {
@@ -356,9 +370,9 @@ void RmeDownloaderPrivate::singleFileFinished()
             }
             QUrl u = m_currentDownloadingReply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
             if (u.isRelative())
-                u = u.resolved(QUrl(m_currentDownloadingFile));
+                u = u.resolved(QUrl(m_currentDownloadingFile.first));
             qDebug() << "redirect!!" << u;
-            m_currentDownloadingFile = u.toString();
+            m_currentDownloadingFile.first = u.toString();
             m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(u));
             connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);
             connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &RmeDownloaderPrivate::singleFileFinished);
@@ -367,16 +381,22 @@ void RmeDownloaderPrivate::singleFileFinished()
     }
 }
 
+void RmeDownloader::cancel()
+{
+    Q_D(RmeDownloader);
+    d->cancel();
+}
+
 RmeDownloader *operator<<(RmeDownloader *downloader, const QString &filename)
 {
     (*downloader) << filename;
     return downloader;
 }
 
-void RmeDownloader::cancel()
+RmeDownloader *operator<<(RmeDownloader *downloader, const QPair<QString, QString> &filename)
 {
-    Q_D(RmeDownloader);
-    d->cancel();
+    (*downloader) << filename;
+    return downloader;
 }
 
 #include "rmedownloader.moc"

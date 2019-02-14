@@ -4,6 +4,8 @@
 #include "rmeglobal.h"
 
 #include <QObject>
+#include <QPair>
+#include <QString>
 
 class QStringList;
 class RmeDownloaderPrivate;
@@ -22,6 +24,7 @@ public:
     static QString noteImageDownloadPath();
 
     RmeDownloader &operator<<(const QString &filename);
+    RmeDownloader &operator<<(const QPair<QString, QString> &fileNames);
     QStringList downloadSequence() const;
 
     QString downloadPath() const;
@@ -48,5 +51,6 @@ private:
 };
 
 LIBRMESSENTIALS_EXPORT RmeDownloader *operator<<(RmeDownloader *downloader, const QString &filename);
+LIBRMESSENTIALS_EXPORT RmeDownloader *operator<<(RmeDownloader *downloader, const QPair<QString, QString> &filename);
 
 #endif
