@@ -216,6 +216,10 @@ Are you sure?</source>
         <source>Role No:</source>
         <translation>角色编号：</translation>
     </message>
+    <message>
+        <source>Download Unofficial Background</source>
+        <translation>下载非官方背景图片</translation>
+    </message>
 </context>
 <context>
     <name>MainDialog</name>
@@ -375,13 +379,6 @@ This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 
     <message>
         <source>Content of this page is modified.</source>
         <translation>本页的内容已经被修改了。</translation>
-    </message>
-</context>
-<context>
-    <name>PasteLineEdit</name>
-    <message>
-        <source>Paste</source>
-        <translation>粘贴</translation>
     </message>
 </context>
 <context>

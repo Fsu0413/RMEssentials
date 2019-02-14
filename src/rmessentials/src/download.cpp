@@ -83,6 +83,7 @@ QWidget *DownloadDialog::createDownloadSongTab()
     layout2->addWidget(downloadAllSongBtn);
     layout2->addWidget(downloadMissingSongBtn);
     m_downloadUnofficialBackground = new QCheckBox(tr("Download Unofficial Background"));
+    connect(this, &DownloadDialog::busy, this, &DownloadDialog::updateUnofficialBackgroundStatus);
     downloadSongLayout->addLayout(flayout);
     downloadSongLayout->addLayout(layout2);
     downloadSongLayout->addWidget(m_downloadUnofficialBackground);
@@ -576,4 +577,12 @@ void DownloadDialog::downloadProgress(quint64 downloaded, quint64 total)
         m_taskbarBtn->progress()->setValue(downloaded);
 #endif // Q_OS_WIN
     }
+}
+
+void DownloadDialog::updateUnofficialBackgroundStatus(bool busy)
+{
+    if (busy)
+        m_downloadUnofficialBackground->setDisabled(true);
+    else
+        m_downloadUnofficialBackground->setDisabled(m_unOfficialBackgroundList.isEmpty());
 }

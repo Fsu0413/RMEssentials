@@ -64,6 +64,8 @@ private slots:
     void startDownloadNextMissing();
     void downloadProgress(quint64 downloaded, quint64 total);
 
+    void updateUnofficialBackgroundStatus(bool busy);
+
 protected:
     void closeEvent(QCloseEvent *e) override;
     void showEvent(QShowEvent *e) override;
