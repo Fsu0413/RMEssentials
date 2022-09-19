@@ -11,6 +11,8 @@ qtHaveModule("zlib-private") {
     LIBS += -lz
 }
 
+equals(QT_MAJOR_VERSION, 6): QT += core5compat
+
 TEMPLATE = lib
 CONFIG += staticlib
 
@@ -34,7 +36,8 @@ SOURCES += \
     src/quazipfileinfo.cpp \
     src/quazipnewinfo.cpp \
     src/unzip.c \
-    src/zip.c
+    src/zip.c \
+    src/quachecksum32.cpp
 
 HEADERS += \
     src/minizip_crypt.h \
@@ -52,7 +55,8 @@ HEADERS += \
     src/quazipfileinfo.h \
     src/quazipnewinfo.h \
     src/unzip.h \
-    src/zip.h
+    src/zip.h \
+    src/quazip_qt_compat.h
 
 generateHeaders.target = $$OUT_PWD/../dist/include/quazip/.timestamp
 !build_pass: mkpath($$OUT_PWD/../dist/include/quazip)
