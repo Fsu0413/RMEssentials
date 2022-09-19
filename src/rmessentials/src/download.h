@@ -12,7 +12,7 @@ class QComboBox;
 class QPushButton;
 class QProgressBar;
 class QCheckBox;
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
 class QWinTaskbarButton;
 #endif
 
@@ -46,7 +46,7 @@ private slots:
     void downloadSongClicked();
     void downloadRoleClicked();
 
-    void startDownloadSong(DownloadMode mode = One);
+    void startDownloadSong(DownloadDialog::DownloadMode mode = One);
     void startDownloadRole();
     void startDownloadNoteImage();
     void oneCompleted(const QString &url);
@@ -87,7 +87,7 @@ private:
     bool m_busy;
     bool m_exitRequested;
 
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
     QWinTaskbarButton *m_taskbarBtn;
 #endif
 };

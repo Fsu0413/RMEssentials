@@ -6,8 +6,8 @@
 #include <QObject>
 #include <QPair>
 #include <QString>
+#include <QStringList>
 
-class QStringList;
 class RmeDownloaderPrivate;
 
 class LIBRMESSENTIALS_EXPORT RmeDownloader : public QObject

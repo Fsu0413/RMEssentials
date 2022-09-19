@@ -16,7 +16,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QStandardPaths>
 #include <QVBoxLayout>
 
@@ -157,7 +157,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(m_controls->szSongName, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     m_controls->szPath = new QLineEdit;
     connect(m_controls->szPath, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
-    QRegExpValidator *szPathValidator = new QRegExpValidator(QRegExp(QStringLiteral("[0-9a-z_]+")), this);
+    QRegularExpressionValidator *szPathValidator = new QRegularExpressionValidator(QRegularExpression(QStringLiteral("[0-9a-z_]+")), this);
     m_controls->szPath->setValidator(szPathValidator);
     m_controls->szArtist = new QLineEdit;
     connect(m_controls->szArtist, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
@@ -418,13 +418,13 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     m_searchEdit = new QLineEdit;
     m_searchEdit->setPlaceholderText(searchText);
-    m_searchEdit->setMinimumWidth(m_searchEdit->fontMetrics().width(searchText) * 2);
+    m_searchEdit->setMinimumWidth(m_searchEdit->fontMetrics().horizontalAdvance(searchText) * 2);
     connect(m_searchEdit, &QLineEdit::returnPressed, this, &SongClientEditDialog::search);
 
     QPushButton *searchBtn = new QPushButton(searchText);
     searchBtn->setAutoDefault(false);
     searchBtn->setDefault(false);
-    searchBtn->setFixedWidth(searchBtn->fontMetrics().width(searchText) * 1.7);
+    searchBtn->setFixedWidth(searchBtn->fontMetrics().horizontalAdvance(searchText) * 1.7);
     connect(searchBtn, &QPushButton::clicked, this, &SongClientEditDialog::search);
 
     m_searchList = new QListWidget;

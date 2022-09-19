@@ -10,6 +10,8 @@ use_quazip {
         LIBS += -lz
     }
 
+    equals(QT_MAJOR_VERSION, 6): QT += core5compat
+
     LIBS += -lquazip
     DEFINES += QUAZIP_STATIC
 }

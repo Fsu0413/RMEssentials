@@ -432,7 +432,9 @@ bool RmeXmlWriter::startWriting(bool isPapa)
     // Todo: find a way to control indent, Auto formating is.......
     m_writer.setAutoFormattingIndent(4);
     m_writer.setAutoFormatting(true);
+#if QT_VERSION_MAJOR == 5
     m_writer.setCodec("UTF-8");
+#endif
     m_writer.writeStartDocument(QStringLiteral("1.0"), true);
     if (isPapa)
         m_writer.writeStartElement(QStringLiteral("PapaSongConfig_Client_Tab"));

@@ -17,7 +17,7 @@
 #include <QTabWidget>
 #include <QVBoxLayout>
 
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
 #include <QWinTaskbarButton>
 #include <QWinTaskbarProgress>
 #endif
@@ -26,7 +26,7 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     : QDialog(parent)
     , m_busy(false)
     , m_exitRequested(false)
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
     , m_taskbarBtn(nullptr)
 #endif
 {
@@ -65,7 +65,7 @@ QWidget *DownloadDialog::createDownloadSongTab()
     connect(this, &DownloadDialog::busy, m_songNameCombo, &QComboBox::setDisabled);
     QString downloadBtnTitle = tr("Download!");
     m_downloadSongBtn = new QPushButton(downloadBtnTitle);
-    m_downloadSongBtn->setFixedWidth(m_downloadSongBtn->fontMetrics().width(downloadBtnTitle) * 1.7);
+    m_downloadSongBtn->setFixedWidth(m_downloadSongBtn->fontMetrics().horizontalAdvance(downloadBtnTitle) * 1.7);
 
     connect(m_downloadSongBtn, &QPushButton::clicked, this, &DownloadDialog::downloadSongClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;
@@ -105,7 +105,7 @@ QWidget *DownloadDialog::createDownloadRoleTab()
     connect(this, &DownloadDialog::busy, m_roleNameCombo, &QComboBox::setDisabled);
     QString downloadBtnTitle = tr("Download!");
     m_downloadRoleBtn = new QPushButton(downloadBtnTitle);
-    m_downloadRoleBtn->setFixedWidth(m_downloadRoleBtn->fontMetrics().width(downloadBtnTitle) * 1.7);
+    m_downloadRoleBtn->setFixedWidth(m_downloadRoleBtn->fontMetrics().horizontalAdvance(downloadBtnTitle) * 1.7);
     connect(m_downloadRoleBtn, &QPushButton::clicked, this, &DownloadDialog::downloadRoleClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;
     layout1->addWidget(m_roleNameCombo);
@@ -122,7 +122,7 @@ void DownloadDialog::showEvent(QShowEvent *e)
 {
     QDialog::showEvent(e);
 
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
     if (m_taskbarBtn == nullptr) {
         m_taskbarBtn = new QWinTaskbarButton(this);
         m_taskbarBtn->setWindow(windowHandle());
@@ -343,7 +343,7 @@ void DownloadDialog::oneFailed(const QString &url)
 void DownloadDialog::allCompleted()
 {
     appendLog(tr("All files downloaded"));
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
     m_taskbarBtn->progress()->hide();
 #endif
     emit busy(false);
@@ -352,7 +352,7 @@ void DownloadDialog::allCompleted()
 void DownloadDialog::canceled()
 {
     appendLog(tr("Download canceled"));
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
     m_taskbarBtn->progress()->stop();
 #endif
     emit busy(false);
@@ -433,9 +433,10 @@ void DownloadDialog::loadPaths()
         while (!f.atEnd()) {
             QString s = QString::fromUtf8(f.readLine());
             s = s.trimmed();
-            QRegExp rx(QStringLiteral("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>"));
-            if (rx.exactMatch(s))
-                paths.insert(rx.capturedTexts()[1]);
+            QRegularExpression rx(QRegularExpression::anchoredPattern(QStringLiteral("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>")));
+            QRegularExpressionMatch match = rx.match(s);
+            if (match.hasMatch())
+                paths.insert(match.capturedTexts()[1]);
         }
         f.close();
         appendLog(QStringLiteral("MD5List.xml") + tr(" has been loaded"));
@@ -519,7 +520,7 @@ void DownloadDialog::loadPaths()
         appendLog(QStringLiteral("unoffBgList.txt") + tr(" has been loaded"));
     }
 
-    QStringList l = paths.toList();
+    QStringList l = paths.values();
     std::sort(l.begin(), l.end());
 
     m_songNameCombo->addItems(l);
@@ -527,7 +528,7 @@ void DownloadDialog::loadPaths()
     foreach (int id, m_rolePadUiMap.keys())
         m_roleNameCombo->addItem(QString::number(id));
 
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
     m_taskbarBtn->progress()->hide();
 #endif
 
@@ -542,7 +543,7 @@ void DownloadDialog::setBusy(bool b)
     if (b) {
         m_downloadSongBtn->setText(tr("Cancel"));
         m_downloadRoleBtn->setText(tr("Cancel"));
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
         m_taskbarBtn->progress()->reset();
         m_taskbarBtn->progress()->show();
         m_taskbarBtn->progress()->resume();
@@ -572,7 +573,7 @@ void DownloadDialog::downloadProgress(quint64 downloaded, quint64 total)
     if (m_busy) {
         m_progressBar->setMaximum(total);
         m_progressBar->setValue(downloaded);
-#ifdef Q_OS_WIN
+#ifdef QT_WINEXTRAS_LIB
         m_taskbarBtn->progress()->setMaximum(total);
         m_taskbarBtn->progress()->setValue(downloaded);
 #endif // Q_OS_WIN

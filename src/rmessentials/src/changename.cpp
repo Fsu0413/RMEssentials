@@ -12,7 +12,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QStandardPaths>
 #include <QVBoxLayout>
 
@@ -62,13 +62,13 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     m_toRename = new QLineEdit;
     m_toRename->setPlaceholderText(tr("Input the name to rename"));
     flayout->addRow(tr("Rename:"), m_toRename);
-    m_toRename->setValidator(new QRegExpValidator(QRegExp(QStringLiteral("[a-z0-9_]+"))));
+    m_toRename->setValidator(new QRegularExpressionValidator(QRegularExpression(QStringLiteral("[a-z0-9_]+"))));
 
     totalLayout->addLayout(flayout);
 
     QFontMetrics fm(font());
-    int width = fm.width(tr("Missing"));
-    int titleWidth = fm.width(QStringLiteral("_title_ipad"));
+    int width = fm.horizontalAdvance(tr("Missing"));
+    int titleWidth = fm.horizontalAdvance(QStringLiteral("_title_ipad"));
 
     for (int i = 0; i < 18; ++i) {
         m_filesLabels[i] = new QLabel;

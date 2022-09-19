@@ -213,11 +213,11 @@ int main(int argc, char *argv[])
     QDir::setCurrent(qApp->applicationDirPath());
 
     QTranslator qt_translator;
-    qt_translator.load(QStringLiteral(CURRENTDIRPREFIX "qt_zh_CN.qm"));
+    (void)qt_translator.load(QStringLiteral(CURRENTDIRPREFIX "qt_zh_CN.qm"));
     qApp->installTranslator(&qt_translator);
 
     QTranslator translator;
-    translator.load(QStringLiteral(CURRENTDIRPREFIX "rmessentials.qm"));
+    (void)translator.load(QStringLiteral(CURRENTDIRPREFIX "rmessentials.qm"));
     qApp->installTranslator(&translator);
 
     MainDialog w;

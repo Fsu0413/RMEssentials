@@ -6,7 +6,7 @@ TARGET = RMEssentials
 
 QT += core gui widgets network
 win32 {
-    QT += winextras
+    equals(QT_MAJOR_VERSION, 5): QT += winextras
 }
 
 android {
