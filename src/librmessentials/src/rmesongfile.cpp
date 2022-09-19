@@ -715,7 +715,7 @@ bool RmeSongClientFile::isUserMadeMode() const
 class RmeSong::RmePapaSongClientFilePrivate
 {
 public:
-    QMap<int16_t, RmePapaSongClientItemStruct *> m_songsList;
+    QMap<int32_t, RmePapaSongClientItemStruct *> m_songsList;
     RmeSongClientHeaderStruct *m_header;
     void cleanup();
 };
@@ -762,7 +762,7 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                     QByteArray sp = ba.mid(i, 0x169);
                     RmePapaSongClientItemStruct *ss = new RmePapaSongClientItemStruct;
                     ss->parseByteArray(sp);
-                    d->m_songsList[ss->m_ushSongID] = ss;
+                    d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
                 }
                 return true;
             }
@@ -776,7 +776,7 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                 RmePapaSongClientItemStruct *ss = reader.readPapaItem();
                 if (ss == nullptr)
                     continue;
-                d->m_songsList[ss->m_ushSongID] = ss;
+                d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
             }
             return true;
         }
