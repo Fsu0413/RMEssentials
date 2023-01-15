@@ -30,8 +30,6 @@ private:
     bool m_isPapa;
     bool m_isError;
 
-    int m_no;
-
     QXmlStreamReader m_reader;
     RmeSongClientHeaderStruct m_header;
 
@@ -65,7 +63,6 @@ private:
 RmeXmlReader::RmeXmlReader(QIODevice *device)
     : m_isPapa(false)
     , m_isError(false)
-    , m_no(0)
     , m_reader(device)
 {
     m_isError = !readHeader();
@@ -74,7 +71,6 @@ RmeXmlReader::RmeXmlReader(QIODevice *device)
 RmeXmlReader::RmeXmlReader(const QByteArray &array)
     : m_isPapa(false)
     , m_isError(false)
-    , m_no(0)
     , m_reader(array)
 {
     m_isError = !readHeader();
@@ -83,7 +79,6 @@ RmeXmlReader::RmeXmlReader(const QByteArray &array)
 RmeXmlReader::RmeXmlReader(const QString &str)
     : m_isPapa(false)
     , m_isError(false)
-    , m_no(0)
     , m_reader(str)
 {
     m_isError = !readHeader();
@@ -92,7 +87,6 @@ RmeXmlReader::RmeXmlReader(const QString &str)
 RmeXmlReader::RmeXmlReader(const char *str)
     : m_isPapa(false)
     , m_isError(false)
-    , m_no(0)
     , m_reader(str)
 {
     m_isError = !readHeader();
@@ -138,8 +132,6 @@ RmeSongClientItemStruct *RmeXmlReader::readItem()
         return nullptr;
     }
 
-    ++m_no;
-
     READNEXT(nullptr);
 
     QVariantMap map;
@@ -178,8 +170,6 @@ RmePapaSongClientItemStruct *RmeXmlReader::readPapaItem()
         m_isError = true;
         return nullptr;
     }
-
-    ++m_no;
 
     READNEXT(nullptr);
 
