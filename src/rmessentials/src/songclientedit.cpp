@@ -31,13 +31,15 @@ RmeFileFormat getOpenFileName(QWidget *parent, QString &filepath)
 {
     QString selectedFilter;
     filepath = QFileDialog::getOpenFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation),
-                                            SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files")
-                                                + QStringLiteral(" (*.xml)"),
+                                            SongClientEditDialog::tr("Json files") + QStringLiteral(" (*.json)") + QStringLiteral(";;") + SongClientEditDialog::tr("bin files")
+                                                + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files") + QStringLiteral(" (*.xml)"),
                                             &selectedFilter);
     if (filepath.isNull())
         return UnknownFormat;
 
-    if (selectedFilter.contains(QStringLiteral(".bin")))
+    if (selectedFilter.contains(QStringLiteral(".json")))
+        return JsonFormat;
+    else if (selectedFilter.contains(QStringLiteral(".bin")))
         return BinFormat;
     else if (selectedFilter.contains(QStringLiteral(".xml")))
         return XmlFormat;
@@ -49,13 +51,15 @@ RmeFileFormat getSaveFileName(QWidget *parent, QString &filepath)
 {
     QString selectedFilter;
     filepath = QFileDialog::getSaveFileName(parent, SongClientEditDialog::tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation),
-                                            SongClientEditDialog::tr("bin files") + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files")
-                                                + QStringLiteral(" (*.xml)"),
+                                            SongClientEditDialog::tr("Json files") + QStringLiteral(" (*.json)") + QStringLiteral(";;") + SongClientEditDialog::tr("bin files")
+                                                + QStringLiteral(" (*.bin)") + QStringLiteral(";;") + SongClientEditDialog::tr("xml files") + QStringLiteral(" (*.xml)"),
                                             &selectedFilter);
     if (filepath.isNull())
         return UnknownFormat;
 
-    if (selectedFilter.contains(QStringLiteral(".bin")))
+    if (selectedFilter.contains(QStringLiteral(".json")))
+        return JsonFormat;
+    else if (selectedFilter.contains(QStringLiteral(".bin")))
         return BinFormat;
     else if (selectedFilter.contains(QStringLiteral(".xml")))
         return XmlFormat;

@@ -74,6 +74,7 @@ struct LIBRMESSENTIALS_EXPORT RmeSongClientItemStruct
     bool m_bIsHide;
     bool m_bIsReward;
     bool m_bIsLevelReward;
+    int16_t m_ushTypeMark;
 
     RmeSongClientItemStruct();
 

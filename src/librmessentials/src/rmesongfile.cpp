@@ -9,6 +9,8 @@
 
 using namespace RmeSong;
 
+namespace {
+
 class RmeXmlReader
 {
 public:
@@ -434,6 +436,332 @@ bool RmeXmlWriter::startWriting(bool isPapa)
     return !m_writer.hasError();
 }
 
+class RmeJsonReader
+{
+public:
+    explicit RmeJsonReader(QIODevice *device);
+    explicit RmeJsonReader(const QByteArray &array);
+    explicit RmeJsonReader(const char *str);
+
+    bool error() const;
+    const RmeSongClientHeaderStruct &header() const;
+
+    RmeSongClientItemStruct *readItem();
+    RmePapaSongClientItemStruct *readPapaItem();
+
+private:
+    bool load(const QByteArray &data);
+
+    bool m_isPapa;
+    bool m_isError;
+
+    QJsonArray m_jsonArray;
+    QJsonParseError m_jsonError;
+
+    RmeSongClientHeaderStruct m_header;
+
+    Q_DISABLE_COPY(RmeJsonReader)
+    RmeJsonReader() = delete;
+};
+
+// This class is different by design from RmeXmlWriter since all data are written to Json Array
+// the IODevice or Array can only be updated in destructor
+class RmeJsonWriter
+{
+public:
+    explicit RmeJsonWriter(QIODevice *device, bool isPapa);
+    explicit RmeJsonWriter(QByteArray *array, bool isPapa);
+    ~RmeJsonWriter();
+
+    bool writeHeader(const RmeSongClientHeaderStruct *header);
+    bool writeClient(const RmeSongClientItemStruct *item);
+    bool writeClient(const RmePapaSongClientItemStruct *item);
+
+    bool error() const;
+
+private:
+    QJsonArray m_jsonArray;
+
+    QIODevice *m_device;
+    QByteArray *m_byteArray;
+
+    Q_DISABLE_COPY(RmeJsonWriter)
+    RmeJsonWriter() = delete;
+};
+
+RmeJsonReader::RmeJsonReader(QIODevice *device)
+    : m_isPapa(false)
+    , m_isError(false)
+{
+    if ((device->isOpen() && device->isReadable()) || device->open(QIODevice::ReadOnly)) {
+        QByteArray arr = device->readAll();
+        load(arr);
+    }
+}
+
+RmeJsonReader::RmeJsonReader(const QByteArray &array)
+    : m_isPapa(false)
+    , m_isError(false)
+{
+    load(array);
+}
+
+RmeJsonReader::RmeJsonReader(const char *str)
+    : m_isPapa(false)
+    , m_isError(false)
+{
+    QByteArray arr = QByteArray::fromRawData(str, (int)std::strlen(str));
+    load(arr);
+}
+
+bool RmeJsonReader::error() const
+{
+    return m_isError;
+}
+
+const RmeSongClientHeaderStruct &RmeJsonReader::header() const
+{
+    return m_header;
+}
+
+RmeSongClientItemStruct *RmeJsonReader::readItem()
+{
+    if (m_isPapa)
+        return nullptr;
+    if (error())
+        return nullptr;
+    if (m_jsonArray.isEmpty()) {
+        m_isError = true;
+        return nullptr;
+    }
+
+    QJsonValue v = m_jsonArray.takeAt(0);
+
+    if (!v.isObject()) {
+        m_isError = true;
+        return nullptr;
+    }
+
+    QJsonObject ob = v.toObject();
+
+    // idk what if we use toVariantMap
+    QVariantMap map;
+    for (auto it = ob.begin(); it != ob.end(); ++it) {
+        QString value;
+        if (it.value().isString()) {
+            value = it.value().toString();
+        } else if (!it.value().isNull()) {
+            m_isError = true;
+            return nullptr;
+        }
+
+        map[it.key()] = value;
+    }
+
+    RmeSongClientItemStruct *item = new RmeSongClientItemStruct;
+    item->parseMap(map);
+    return item;
+}
+
+RmePapaSongClientItemStruct *RmeJsonReader::readPapaItem()
+{
+    if (!m_isPapa)
+        return nullptr;
+    if (error())
+        return nullptr;
+    if (m_jsonArray.isEmpty()) {
+        m_isError = true;
+        return nullptr;
+    }
+
+    QJsonValue v = m_jsonArray.takeAt(0);
+
+    if (!v.isObject()) {
+        m_isError = true;
+        return nullptr;
+    }
+
+    QJsonObject ob = v.toObject();
+
+    // idk what if we use toVariantMap
+    QVariantMap map;
+    for (auto it = ob.begin(); it != ob.end(); ++it) {
+        QString value;
+        if (it.value().isString()) {
+            value = it.value().toString();
+        } else if (!it.value().isNull()) {
+            m_isError = true;
+            return nullptr;
+        }
+
+        map[it.key()] = value;
+    }
+
+    RmePapaSongClientItemStruct *item = new RmePapaSongClientItemStruct;
+    item->parseMap(map);
+    return item;
+}
+
+bool RmeJsonReader::load(const QByteArray &data)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(data, &m_jsonError);
+    if (m_jsonError.error != QJsonParseError::NoError) {
+        m_isError = true;
+        return false;
+    }
+
+    if (!doc.isArray()) {
+        m_isError = true;
+        return false;
+    }
+
+    m_jsonArray = doc.array();
+
+    // distinguish it is Papa struct or not
+    // Papa struct has an "m_cLevel" in each element while normal mode does not
+    QJsonValue v = m_jsonArray.at(0);
+    if (v.isObject() && v.toObject().contains(QStringLiteral("m_cLevel"))) // assuming it is papa struct
+        m_isPapa = true;
+
+    return true;
+}
+
+RmeJsonWriter::RmeJsonWriter(QIODevice *device, bool)
+    : m_device(device)
+{
+    m_byteArray = new QByteArray;
+}
+
+RmeJsonWriter::RmeJsonWriter(QByteArray *array, bool)
+    : m_byteArray(array)
+{
+}
+
+RmeJsonWriter::~RmeJsonWriter()
+{
+    QJsonDocument doc(m_jsonArray);
+    *m_byteArray = doc.toJson(QJsonDocument::Indented);
+
+    if (m_device != nullptr) {
+        if ((m_device->isOpen() && m_device->isWritable()) || m_device->open(QIODevice::WriteOnly)) {
+            uint64_t written = m_device->write(*m_byteArray);
+            if (written < m_byteArray->length()) {
+                // what to do....
+            }
+        }
+
+        delete m_byteArray;
+    }
+}
+
+bool RmeJsonWriter::writeHeader(const RmeSongClientHeaderStruct *)
+{
+    // nothing is needed to do
+    return true;
+}
+
+#define WRITEELEMENT(x)                                         \
+    do {                                                        \
+        QString str = map.value(QStringLiteral(#x)).toString(); \
+        if (str.isEmpty())                                      \
+            ob[QStringLiteral(#x)] = QJsonValue::Null;          \
+        else                                                    \
+            ob[QStringLiteral(#x)] = str;                       \
+    } while (0)
+
+bool RmeJsonWriter::writeClient(const RmeSongClientItemStruct *item)
+{
+    QVariantMap map = item->toMap();
+
+    QJsonObject ob;
+    ob[QStringLiteral("@version")] = QStringLiteral("1");
+
+    WRITEELEMENT(m_ushSongID);
+    WRITEELEMENT(m_iVersion);
+    WRITEELEMENT(m_szSongName);
+    WRITEELEMENT(m_szPath);
+    WRITEELEMENT(m_szArtist);
+    WRITEELEMENT(m_szComposer);
+    WRITEELEMENT(m_szSongTime);
+    WRITEELEMENT(m_iGameTime);
+    WRITEELEMENT(m_iRegion);
+    WRITEELEMENT(m_iStyle);
+    WRITEELEMENT(m_ucIsNew);
+    WRITEELEMENT(m_ucIsHot);
+    WRITEELEMENT(m_ucIsRecommend);
+    WRITEELEMENT(m_szBPM);
+    WRITEELEMENT(m_ucIsOpen);
+    WRITEELEMENT(m_ucCanBuy);
+    WRITEELEMENT(m_iOrderIndex);
+    WRITEELEMENT(m_bIsFree);
+    WRITEELEMENT(m_bSongPkg);
+    WRITEELEMENT(m_szFreeBeginTime);
+    WRITEELEMENT(m_szFreeEndTime);
+    WRITEELEMENT(m_ush4KeyEasy);
+    WRITEELEMENT(m_ush4KeyNormal);
+    WRITEELEMENT(m_ush4KeyHard);
+    WRITEELEMENT(m_ush5KeyEasy);
+    WRITEELEMENT(m_ush5KeyNormal);
+    WRITEELEMENT(m_ush5KeyHard);
+    WRITEELEMENT(m_ush6KeyEasy);
+    WRITEELEMENT(m_ush6KeyNormal);
+    WRITEELEMENT(m_ush6KeyHard);
+    WRITEELEMENT(m_iPrice);
+    WRITEELEMENT(m_szNoteNumber);
+    WRITEELEMENT(m_szProductID);
+    WRITEELEMENT(m_iVipFlag);
+    WRITEELEMENT(m_bIsHide);
+    WRITEELEMENT(m_bIsReward);
+    WRITEELEMENT(m_bIsLevelReward);
+    WRITEELEMENT(m_ushTypeMark);
+
+    m_jsonArray.append(ob);
+
+    return true;
+}
+
+bool RmeJsonWriter::writeClient(const RmePapaSongClientItemStruct *item)
+{
+    QVariantMap map = item->toMap();
+
+    QJsonObject ob;
+    ob[QStringLiteral("@version")] = QStringLiteral("1");
+
+    WRITEELEMENT(m_ushSongID);
+    WRITEELEMENT(m_iVersion);
+    WRITEELEMENT(m_szSongName);
+    WRITEELEMENT(m_cDifficulty);
+    WRITEELEMENT(m_cLevel);
+    WRITEELEMENT(m_szPath);
+    WRITEELEMENT(m_szArtist);
+    WRITEELEMENT(m_szSongTime);
+    WRITEELEMENT(m_iGameTime);
+    WRITEELEMENT(m_szRegion);
+    WRITEELEMENT(m_szStyle);
+    WRITEELEMENT(m_szBPM);
+    WRITEELEMENT(m_szNoteNumber);
+    WRITEELEMENT(m_iOrderIndex);
+    WRITEELEMENT(m_ucIsOpen);
+    WRITEELEMENT(m_ucIsFree);
+    WRITEELEMENT(m_ucIsHide);
+    WRITEELEMENT(m_ucIsReward);
+    WRITEELEMENT(m_ucIsLevelReward);
+    WRITEELEMENT(m_iSongType);
+
+    m_jsonArray.append(ob);
+
+    return true;
+}
+
+#undef WRITEELEMENT
+
+bool RmeJsonWriter::error() const
+{
+    return false;
+}
+
+}
+
 class RmeSong::RmeSongClientFilePrivate
 {
 public:
@@ -501,6 +829,18 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
                 d->m_songsList[ss->m_ushSongID] = ss;
             }
             return true;
+        } else if (format == JsonFormat) {
+            // Json song client file have no header.
+            RmeJsonReader reader(ba);
+            delete d->m_header;
+            d->m_header = new RmeSongClientHeaderStruct;
+            RmeSongClientItemStruct *ss = reader.readItem();
+            while (ss != nullptr) {
+                d->m_songsList[ss->m_ushSongID] = ss;
+                ss = reader.readItem();
+            }
+            d->m_header->Count = d->m_songsList.count();
+            return true;
         }
     }
     return false;
@@ -519,6 +859,11 @@ bool RmeSong::RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileForm
                 output->write(s->toByteArray(), 0x33e);
         } else if (format == XmlFormat) {
             RmeXmlWriter writer(output, false);
+            writer.writeHeader(d->m_header);
+            foreach (RmeSongClientItemStruct *s, d->m_songsList)
+                writer.writeClient(s);
+        } else if (format == JsonFormat) {
+            RmeJsonWriter writer(output, false);
             writer.writeHeader(d->m_header);
             foreach (RmeSongClientItemStruct *s, d->m_songsList)
                 writer.writeClient(s);
@@ -767,6 +1112,17 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                 d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
             }
             return true;
+        } else if (format == JsonFormat) {
+            RmeJsonReader reader(ba);
+            delete d->m_header;
+            d->m_header = new RmeSongClientHeaderStruct;
+            RmePapaSongClientItemStruct *ss = reader.readPapaItem();
+            while (ss != nullptr) {
+                d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
+                ss = reader.readPapaItem();
+            }
+            d->m_header->Count = d->m_songsList.count();
+            return true;
         }
     }
     return false;
@@ -784,7 +1140,12 @@ bool RmeSong::RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFile
             foreach (RmePapaSongClientItemStruct *s, d->m_songsList)
                 output->write(s->toByteArray(), 0x169);
         } else if (format == XmlFormat) {
-            RmeXmlWriter writer(output, false);
+            RmeXmlWriter writer(output, true);
+            writer.writeHeader(d->m_header);
+            foreach (RmePapaSongClientItemStruct *s, d->m_songsList)
+                writer.writeClient(s);
+        } else if (format == JsonFormat) {
+            RmeJsonWriter writer(output, true);
             writer.writeHeader(d->m_header);
             foreach (RmePapaSongClientItemStruct *s, d->m_songsList)
                 writer.writeClient(s);

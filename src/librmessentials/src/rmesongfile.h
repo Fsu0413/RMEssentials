@@ -16,7 +16,8 @@ enum RmeFileFormat
 {
     UnknownFormat,
     BinFormat,
-    XmlFormat
+    XmlFormat,
+    JsonFormat, // Leaked Rhythm Master Remastered internal data
 };
 
 class RmeSongClientFilePrivate;
