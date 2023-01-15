@@ -488,8 +488,8 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
         input->close();
         if (format == BinFormat) {
             if (ba.size() % 0x33e == 0x88) {
-                if (d->m_header == nullptr)
-                    d->m_header = new RmeSongClientHeaderStruct;
+                delete d->m_header;
+                d->m_header = new RmeSongClientHeaderStruct;
                 QByteArray fh = ba.mid(0, 0x88);
                 d->m_header->parseByteArray(fh);
                 for (int i = 0x88; i < ba.size(); i += 0x33e) {
@@ -502,10 +502,8 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
             }
         } else if (format == XmlFormat) {
             RmeXmlReader reader(ba);
-            if (d->m_header == nullptr)
-                d->m_header = new RmeSongClientHeaderStruct(reader.header());
-            else
-                (*d->m_header) = reader.header();
+            delete d->m_header;
+            d->m_header = new RmeSongClientHeaderStruct(reader.header());
             for (int32_t i = 0; i < d->m_header->Count; ++i) {
                 RmeSongClientItemStruct *ss = reader.readItem();
                 if (ss == nullptr)
@@ -756,8 +754,8 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
         input->close();
         if (format == BinFormat) {
             if (ba.size() % 0x169 == 0x88) {
-                if (d->m_header == nullptr)
-                    d->m_header = new RmeSongClientHeaderStruct;
+                delete d->m_header;
+                d->m_header = new RmeSongClientHeaderStruct;
                 QByteArray fh = ba.mid(0, 0x88);
                 d->m_header->parseByteArray(fh);
                 for (int i = 0x88; i < ba.size(); i += 0x169) {
@@ -770,10 +768,8 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
             }
         } else if (format == XmlFormat) {
             RmeXmlReader reader(ba);
-            if (d->m_header == nullptr)
-                d->m_header = new RmeSongClientHeaderStruct(reader.header());
-            else
-                (*d->m_header) = reader.header();
+            delete d->m_header;
+            d->m_header = new RmeSongClientHeaderStruct(reader.header());
             for (int32_t i = 0; i < d->m_header->Count; ++i) {
                 RmePapaSongClientItemStruct *ss = reader.readPapaItem();
                 if (ss == nullptr)
