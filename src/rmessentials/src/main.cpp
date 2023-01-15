@@ -29,12 +29,18 @@ MainDialog::MainDialog(QWidget *parent)
 
     QPushButton *download = new QPushButton(tr("File Downloader"));
     connect(download, &QPushButton::clicked, this, &MainDialog::showDownloadDialog);
+    // 2023.1.15: I don't know if the address is public.
+    // If the address is public I'd restart developing this item.
+    // Temporarily disable this one.
+    download->setEnabled(false);
 
     QPushButton *songclient = new QPushButton(tr("Song Client Editor"));
     connect(songclient, &QPushButton::clicked, this, &MainDialog::showSongClientEditDialog);
 
     QPushButton *papasongclient = new QPushButton(tr("Papa Song Client Editor"));
     connect(papasongclient, &QPushButton::clicked, this, &MainDialog::showPapaSongClientEditDialog);
+    // 2023.1.15: Papa mode is not supported temporarily in Rhythm Master Remastered
+    papasongclient->setEnabled(false);
 
     QHBoxLayout *aboutLayout = new QHBoxLayout;
     QPushButton *abouT = new QPushButton(tr("About..."));
