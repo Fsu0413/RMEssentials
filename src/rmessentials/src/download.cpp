@@ -226,7 +226,7 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
         downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
 
     if (m_downloadUnofficialBackground->isChecked() && m_unOfficialBackgroundList.contains(songname)) {
-        static QString unOffBgPrefix = QStringLiteral("http://x96v16.coding-pages.com/unofficialBg/");
+        static QString unOffBgPrefix = QStringLiteral("https://fsu0413.github.io/RMEssentials/unofficialBg/");
         static QStringList unOffBgSuffixs = {QStringLiteral(".png"), QStringLiteral("_title_ipad.png")};
         foreach (const QString &suf, unOffBgSuffixs)
             downloader << (unOffBgPrefix + songname + QStringLiteral("/") + songname + suf);
@@ -395,7 +395,7 @@ void DownloadDialog::downloadList()
     downloader << md5 << QPair<QString, QString>(bin, QStringLiteral("TableComBin_IOS.zip")) << andbin;
 #endif
 
-    static const QString unoffBgList = QStringLiteral("http://x96v16.coding-pages.com/unoffBgList.txt");
+    static const QString unoffBgList = QStringLiteral("https://fsu0413.github.io/RMEssentials/unoffBgList.txt");
 
     downloader << unoffBgList;
 
