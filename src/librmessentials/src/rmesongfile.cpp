@@ -644,7 +644,7 @@ RmeJsonWriter::~RmeJsonWriter()
 
     if (m_device != nullptr) {
         if ((m_device->isOpen() && m_device->isWritable()) || m_device->open(QIODevice::WriteOnly)) {
-            uint64_t written = m_device->write(*m_byteArray);
+            int64_t written = m_device->write(*m_byteArray);
             if (written < m_byteArray->length()) {
                 // what to do....
             }
@@ -666,7 +666,7 @@ bool RmeJsonWriter::writeHeader(const RmeSongClientHeaderStruct *)
         if (str.isEmpty())                                      \
             ob[QStringLiteral(#x)] = QJsonValue::Null;          \
         else                                                    \
-            ob[QStringLiteral(#x)] = str;                       \
+            ob[QStringLiteral(#x)] = str.trimmed();             \
     } while (0)
 
 bool RmeJsonWriter::writeClient(const RmeSongClientItemStruct *item)

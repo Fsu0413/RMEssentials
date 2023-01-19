@@ -580,5 +580,9 @@ void PapaSongClientEditDialog::showEvent(QShowEvent *e)
 {
     QDialog::showEvent(e);
 
+#ifndef MOBILE_DEVICES
+    resize(minimumSize());
+#endif
+
     loadFile();
 }
