@@ -84,6 +84,9 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     connect(cp, &QAction::triggered, this, &PapaSongClientEditDialog::createPatch);
     QAction *ap = m_popup->addAction(tr("Apply Patch File"));
     connect(ap, &QAction::triggered, this, &PapaSongClientEditDialog::applyPatch);
+    m_popup->addSeparator();
+    QAction *createWiki = m_popup->addAction(tr("Create WikiTable"));
+    connect(createWiki, &QAction::triggered, this, &PapaSongClientEditDialog::saveWikiTable);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
@@ -569,6 +572,24 @@ void PapaSongClientEditDialog::applyPatch()
         return;
     }
     readCurrent();
+}
+
+void PapaSongClientEditDialog::saveWikiTable()
+{
+    if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
+        return;
+
+    QString filepathToSave
+        = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("TXT files") + QStringLiteral(" (*.txt)"));
+
+    QFile f2(filepathToSave);
+    if (!m_file.saveWikiTable(&f2)) {
+        QMessageBox::warning(this, tr("RMEssentials"), tr("Save file failed"));
+        return;
+    }
 }
 
 void PapaSongClientEditDialog::contentEdited()

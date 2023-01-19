@@ -37,6 +37,8 @@ public:
     const RmeSongClientHeaderStruct &fileHeader() const;
     QList<int> search(const QString &cond) const;
 
+    bool saveWikiTable(QIODevice *output) const;
+
     bool savePatchToDevice(QIODevice *output, const RmeSongClientFile &orig) const;
     bool applyPatchFromDevice(QIODevice *input);
 
@@ -67,6 +69,8 @@ public:
 
     const RmeSongClientHeaderStruct &fileHeader() const;
     QList<int> search(const QString &cond) const;
+
+    bool saveWikiTable(QIODevice *output) const;
 
     bool savePatchToDevice(QIODevice *output, const RmePapaSongClientFile &orig) const;
     bool applyPatchFromDevice(QIODevice *input);

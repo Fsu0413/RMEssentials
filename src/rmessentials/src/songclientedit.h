@@ -49,6 +49,7 @@ private slots:
     void prepareForUserMakingNotes();
     void createPatch();
     void applyPatch();
+    void saveWikiTable();
 
     void contentEdited();
 

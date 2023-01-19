@@ -152,6 +152,9 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(cp, &QAction::triggered, this, &SongClientEditDialog::createPatch);
     QAction *ap = m_popup->addAction(tr("Apply Patch File"));
     connect(ap, &QAction::triggered, this, &SongClientEditDialog::applyPatch);
+    m_popup->addSeparator();
+    QAction *createWiki = m_popup->addAction(tr("Create WikiTable"));
+    connect(createWiki, &QAction::triggered, this, &SongClientEditDialog::saveWikiTable);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
@@ -850,6 +853,24 @@ void SongClientEditDialog::applyPatch()
     if (m_file.isUserMadeMode())
         setWindowTitle(tr("Rhythm Master Song Client Editor") + tr(" - User Made Notes Mode"));
     readCurrent();
+}
+
+void SongClientEditDialog::saveWikiTable()
+{
+    if (!m_isLoaded)
+        return;
+
+    if (!askForSaveModified())
+        return;
+
+    QString filepathToSave
+        = QFileDialog::getSaveFileName(this, tr("RMEssentials"), QStandardPaths::writableLocation(QStandardPaths::HomeLocation), tr("TXT files") + QStringLiteral(" (*.txt)"));
+
+    QFile f2(filepathToSave);
+    if (!m_file.saveWikiTable(&f2)) {
+        QMessageBox::warning(this, tr("RMEssentials"), tr("Save file failed"));
+        return;
+    }
 }
 
 void SongClientEditDialog::contentEdited()

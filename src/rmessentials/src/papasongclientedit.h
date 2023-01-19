@@ -46,6 +46,7 @@ private slots:
     void searchResultDblClicked(QListWidgetItem *index);
     void createPatch();
     void applyPatch();
+    void saveWikiTable();
 
     void contentEdited();
 
