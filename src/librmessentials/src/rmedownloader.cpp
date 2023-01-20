@@ -3,8 +3,11 @@
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QPixmap>
 #include <QTimer>
+
+#ifdef LIBRMESS_JPG2PNGHACK
+#include <QPixmap>
+#endif
 
 #ifdef Q_OS_OSX
 #include <QStandardPaths>
@@ -287,10 +290,13 @@ void RmeDownloaderPrivate::downloadSingleFile()
     m_currentDownloadingFile = m_downloadSequence.takeFirst();
     if (m_skipExisting) {
         QString filename = QUrl(m_currentDownloadingFile.first).fileName();
+
+#ifdef LIBRMESS_JPG2PNGHACK
         if (filename.endsWith(QStringLiteral(".jpg"))) { // important hack!!
             filename.chop(4);
             filename.append(QStringLiteral(".png"));
         }
+#endif
 
         if (m_downloadDir.exists(filename)) {
             emit m_downloader->singleFileCompleted(m_currentDownloadingFile.first);
@@ -341,6 +347,7 @@ void RmeDownloaderPrivate::singleFileFinished()
             file.write(m_currentDownloadingReply->readAll());
             file.close();
 
+#ifdef LIBRMESS_JPG2PNGHACK
             if (filename.endsWith(QStringLiteral(".jpg"))) { // important hack!!
                 QString new_filename = filename;
                 new_filename.chop(4);
@@ -360,6 +367,7 @@ void RmeDownloaderPrivate::singleFileFinished()
                 } else
                     qDebug() << "load jpg error " << filename;
             }
+#endif
 
             emit m_downloader->singleFileCompleted(m_currentDownloadingFile.first);
             downloadSingleFile();

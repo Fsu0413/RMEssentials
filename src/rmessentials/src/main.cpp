@@ -26,13 +26,10 @@ MainDialog::MainDialog(QWidget *parent)
 
     QPushButton *changename = new QPushButton(tr("Filename Changer"));
     connect(changename, &QPushButton::clicked, this, &MainDialog::showChangeNameDialog);
+    changename->setEnabled(false);
 
     QPushButton *download = new QPushButton(tr("File Downloader"));
     connect(download, &QPushButton::clicked, this, &MainDialog::showDownloadDialog);
-    // 2023.1.15: I don't know if the address is public.
-    // If the address is public I'd restart developing this item.
-    // Temporarily disable this one.
-    download->setEnabled(false);
 
     QPushButton *songclient = new QPushButton(tr("Song Client Editor"));
     connect(songclient, &QPushButton::clicked, this, &MainDialog::showSongClientEditDialog);

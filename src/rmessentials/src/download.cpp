@@ -9,6 +9,10 @@
 #include <QFontMetrics>
 #include <QFormLayout>
 #include <QHBoxLayout>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 #include <QListWidget>
 #include <QProgressBar>
 #include <QPushButton>
@@ -35,7 +39,9 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QTabWidget *tabWidget = new QTabWidget;
     tabWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     tabWidget->addTab(createDownloadSongTab(), tr("Song && IMDs"));
-    tabWidget->addTab(createDownloadRoleTab(), tr("Role"));
+    int tabN = tabWidget->addTab(createDownloadRoleTab(), tr("Role"));
+    tabWidget->setTabEnabled(tabN, false);
+
     m_list = new QListWidget;
     m_list->setSortingEnabled(false);
 
@@ -87,6 +93,8 @@ QWidget *DownloadDialog::createDownloadSongTab()
     downloadSongLayout->addLayout(flayout);
     downloadSongLayout->addLayout(layout2);
     downloadSongLayout->addWidget(m_downloadUnofficialBackground);
+    m_downloadUnofficialBackground->setChecked(false);
+    m_downloadUnofficialBackground->setEnabled(false);
 
     QWidget *downloadSongTab = new QWidget;
     downloadSongTab->setLayout(downloadSongLayout);
@@ -200,40 +208,40 @@ void DownloadDialog::startDownloadNextMissing()
 
 void DownloadDialog::startDownloadSong(DownloadMode mode)
 {
-    static QStringList suffixs = {QStringLiteral(".mp3"),
-                                  QStringLiteral("_ipad.jpg"),
-                                  QStringLiteral("_title_140_90.jpg"), // do not use .png here
-                                  QStringLiteral("_4k_ez.imd"),
-                                  QStringLiteral("_4k_nm.imd"),
-                                  QStringLiteral("_4k_hd.imd"),
+    static QStringList suffixs
+        = { QStringLiteral(".mp3"),
+            QStringLiteral("_ipad.jpg"),
+            QStringLiteral("_thumb.jpg"), // do not use .png here
+            QStringLiteral("_4k_ez.imd.json"),
+            QStringLiteral("_4k_nm.imd.json"),
+            QStringLiteral("_4k_hd.imd.json"),
 
-                                  QStringLiteral("_5k_ez.imd"),
-                                  QStringLiteral("_5k_nm.imd"),
-                                  QStringLiteral("_5k_hd.imd"),
+            QStringLiteral("_5k_ez.imd.json"),
+            QStringLiteral("_5k_nm.imd.json"),
+            QStringLiteral("_5k_hd.imd.json"),
 
-                                  QStringLiteral("_6k_ez.imd"),
-                                  QStringLiteral("_6k_nm.imd"),
-                                  QStringLiteral("_6k_hd.imd"),
-
+            QStringLiteral("_6k_ez.imd.json"),
+            QStringLiteral("_6k_nm.imd.json"),
+            QStringLiteral("_6k_hd.imd.json"),
+#if 0
                                   QStringLiteral("_Papa_Easy.mde"),
                                   QStringLiteral("_Papa_Normal.mde"),
-                                  QStringLiteral("_Papa_Hard.mde")};
-    static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/song/");
+                                  QStringLiteral("_Papa_Hard.mde")
+#endif
+          };
+    static QString prefix = QStringLiteral("http://res.ds.qq.com/Test_SongRes/song/");
 
     RmeDownloader *downloader = new RmeDownloader;
     QString songname = m_songNameCombo->currentText();
     foreach (const QString &suf, suffixs)
         downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
 
+    // TODO maintain it here once worked
     if (m_downloadUnofficialBackground->isChecked() && m_unOfficialBackgroundList.contains(songname)) {
         static QString unOffBgPrefix = QStringLiteral("https://fsu0413.github.io/RMEssentials/unofficialBg/");
         static QStringList unOffBgSuffixs = {QStringLiteral(".png"), QStringLiteral("_title_ipad.png")};
         foreach (const QString &suf, unOffBgSuffixs)
             downloader << (unOffBgPrefix + songname + QStringLiteral("/") + songname + suf);
-    } else {
-        static QStringList offBgSuffixs = {QStringLiteral(".jpg"), QStringLiteral("_title_ipad.jpg")}; // do not use .png here
-        foreach (const QString &suf, offBgSuffixs)
-            downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
     }
 
     downloader->setDownloadPath(RmeDownloader::songDownloadPath() + songname);
@@ -367,11 +375,10 @@ void DownloadDialog::startUncompress()
 {
 #ifdef RME_USE_QUAZIP
     RmeUncompresser *unc = new RmeUncompresser;
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("MD5List.zip"), QStringLiteral("MD5List.xml"));
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_song_client_android.bin"));
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"), QStringLiteral("mrock_papasong_client.bin"));
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin.zip"), QStringLiteral("mrock.character_client.bin"));
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComBin_IOS.zip"), QStringLiteral("mrock_song_client.bin"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("MD5List.json"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client_android.json"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client.json"));
+    // unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_papasong_client.json"));
 
     connect(unc, &RmeUncompresser::finished, this, &DownloadDialog::loadPaths);
     connect(unc, &RmeUncompresser::finished, unc, &RmeUncompresser::deleteLater);
@@ -388,16 +395,14 @@ void DownloadDialog::downloadList()
     RmeDownloader *downloader = new RmeDownloader;
     downloader->setDownloadPath(RmeDownloader::binDownloadPath());
 #ifdef RME_USE_QUAZIP
-    static const QString md5 = QStringLiteral("http://game.ds.qq.com/Com_SongRes/MD5List.zip");
-    static const QString bin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_IOS_Bin/TableComBin.zip");
-    static const QString andbin = QStringLiteral("http://game.ds.qq.com/Com_TableCom_Android_Bin/TableComBin.zip");
-
-    downloader << md5 << QPair<QString, QString>(bin, QStringLiteral("TableComBin_IOS.zip")) << andbin;
+    static const QString TableCom = QStringLiteral("http://res.ds.qq.com/Table/AlphaTest/17/TableCom.zip");
+    downloader << TableCom;
 #endif
 
+#if 0
     static const QString unoffBgList = QStringLiteral("https://fsu0413.github.io/RMEssentials/unoffBgList.txt");
-
     downloader << unoffBgList;
+#endif
 
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
@@ -427,16 +432,98 @@ void DownloadDialog::loadPaths()
 
     QSet<QString> paths;
 
+    // a simple MD5List.json extractor
+    if (dir.exists(QStringLiteral("MD5List.json"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("MD5List.json")));
+        bool op = f.open(QIODevice::ReadOnly);
+        if (op) {
+            QByteArray arr = f.readAll();
+            f.close();
+
+            QJsonDocument doc = QJsonDocument::fromJson(arr, nullptr);
+            if (doc.isArray()) {
+                QJsonArray arr = doc.array();
+                for (const QJsonValue &v : arr) {
+                    if (v.isObject()) {
+                        QJsonObject ob = v.toObject();
+                        if (ob.contains(QStringLiteral("filename"))) {
+                            QJsonValue filenamev = ob.value(QStringLiteral("filename"));
+                            if (filenamev.isString()) {
+                                QString s = filenamev.toString().trimmed();
+                                // clang-format off
+                                static QRegularExpression rx(QRegularExpression::anchoredPattern(QStringLiteral(R"r((.+)_[456]k_((ez)|(nm)|(hd))\.imd)r")));
+                                // clang-format on
+                                QRegularExpressionMatch match = rx.match(s);
+                                if (match.hasMatch())
+                                    paths.insert(match.capturedTexts().value(1));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // a simple mrock_song_client_android.json extractor
+    if (dir.exists(QStringLiteral("mrock_song_client_android.json"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_song_client_android.json")));
+        bool op = f.open(QIODevice::ReadOnly);
+        if (op) {
+            QByteArray arr = f.readAll();
+            f.close();
+
+            QJsonDocument doc = QJsonDocument::fromJson(arr, nullptr);
+            if (doc.isArray()) {
+                QJsonArray arr = doc.array();
+                for (const QJsonValue &v : arr) {
+                    if (v.isObject()) {
+                        QJsonObject ob = v.toObject();
+                        if (ob.contains(QStringLiteral("m_szPath"))) {
+                            QJsonValue pathv = ob.value(QStringLiteral("m_szPath"));
+                            if (pathv.isString())
+                                paths.insert(pathv.toString().trimmed());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (dir.exists(QStringLiteral("mrock_song_client.json"))) {
+        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_song_client.json")));
+        bool op = f.open(QIODevice::ReadOnly);
+        if (op) {
+            QByteArray arr = f.readAll();
+            f.close();
+
+            QJsonDocument doc = QJsonDocument::fromJson(arr, nullptr);
+            if (doc.isArray()) {
+                QJsonArray arr = doc.array();
+                for (const QJsonValue &v : arr) {
+                    if (v.isObject()) {
+                        QJsonObject ob = v.toObject();
+                        if (ob.contains(QStringLiteral("m_szPath"))) {
+                            QJsonValue pathv = ob.value(QStringLiteral("m_szPath"));
+                            if (pathv.isString())
+                                paths.insert(pathv.toString().trimmed());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+#if 0
     if (dir.exists(QStringLiteral("MD5List.xml"))) {
         QFile f(dir.absoluteFilePath(QStringLiteral("MD5List.xml")));
         f.open(QIODevice::ReadOnly | QIODevice::Text);
         while (!f.atEnd()) {
             QString s = QString::fromUtf8(f.readLine());
             s = s.trimmed();
-            QRegularExpression rx(QRegularExpression::anchoredPattern(QStringLiteral("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>")));
+            static QRegularExpression rx(QRegularExpression::anchoredPattern(QStringLiteral("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>")));
             QRegularExpressionMatch match = rx.match(s);
             if (match.hasMatch())
-                paths.insert(match.capturedTexts()[1]);
+                paths.insert(match.capturedTexts().value(1);
         }
         f.close();
         appendLog(QStringLiteral("MD5List.xml") + tr(" has been loaded"));
@@ -519,14 +606,17 @@ void DownloadDialog::loadPaths()
         f.close();
         appendLog(QStringLiteral("unoffBgList.txt") + tr(" has been loaded"));
     }
+#endif
 
     QStringList l = paths.values();
     std::sort(l.begin(), l.end());
 
     m_songNameCombo->addItems(l);
 
+#if 0
     foreach (int id, m_rolePadUiMap.keys())
         m_roleNameCombo->addItem(QString::number(id));
+#endif
 
 #ifdef QT_WINEXTRAS_LIB
     m_taskbarBtn->progress()->hide();

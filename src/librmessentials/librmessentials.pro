@@ -1,7 +1,7 @@
 
 include($$_PRO_FILE_PWD_/../../RMEssentials.pri)
 
-QT += core gui network
+QT += core network
 
 use_quazip {
     qtHaveModule("zlib-private") {
@@ -20,6 +20,13 @@ TEMPLATE = lib
 TARGET = RMEss
 
 !staticlib: DEFINES += LIBRMESSENTIALS_BUILD
+
+CONFIG += LIBRMESS_JPG2PNGHACK
+
+CONFIG(LIBRMESS_JPG2PNGHACK) {
+    QT += gui
+    DEFINES += LIBRMESS_JPG2PNGHACK
+}
 
 DESTDIR = $$OUT_PWD/../dist/lib
 DLLDESTDIR = $$OUT_PWD/../dist/bin
