@@ -485,11 +485,11 @@ bool SongClientEditDialog::loadFile()
     QDir d(RmeDownloader::binDownloadPath());
 
     QString filepath;
-    RmeFileFormat format = BinFormat;
-    if (d.exists() && d.exists(QStringLiteral("mrock_song_client_android.bin")))
-        filepath = d.absoluteFilePath(QStringLiteral("mrock_song_client_android.bin"));
+    RmeFileFormat format = JsonFormat;
+    if (d.exists() && d.exists(QStringLiteral("mrock_song_client_android.json")))
+        filepath = d.absoluteFilePath(QStringLiteral("mrock_song_client_android.json"));
     else {
-        QMessageBox::information(this, tr("RMEssentials"), tr("mrock_song_client_android.bin doesn't exist, please select the file to open."));
+        QMessageBox::information(this, tr("RMEssentials"), tr("mrock_song_client_android.json doesn't exist, please select the file to open."));
         format = getOpenFileName(this, filepath);
     }
     if (filepath.isNull())
