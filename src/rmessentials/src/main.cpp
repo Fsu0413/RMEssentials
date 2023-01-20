@@ -58,13 +58,13 @@ MainDialog::MainDialog(QWidget *parent)
     setMinimumWidth(200);
 
 #ifdef QT_NO_DEBUG
-    static const QString versioninfo = QStringLiteral("https://fsu0413.github.io/RMEssentials/versioninfo");
+    static const QString versioninfo = QStringLiteral("https://rmessentials.fsu0413.me/versioninfo");
 #else
-    static const QString versioninfo = QStringLiteral("https://fsu0413.github.io/RMEssentials/versioninfotest");
+    static const QString versioninfo = QStringLiteral("https://rmessentials.fsu0413.me/versioninfotest");
 #endif
-    static const QString whatsnew = QStringLiteral("https://fsu0413.github.io/RMEssentials/whatsnew");
-    static const QString dlurl = QStringLiteral("https://fsu0413.github.io/RMEssentials/dlurl");
-    static const QString dlpasswd = QStringLiteral("https://fsu0413.github.io/RMEssentials/dlpasswd");
+    static const QString whatsnew = QStringLiteral("https://rmessentials.fsu0413.me/whatsnew");
+    static const QString dlurl = QStringLiteral("https://rmessentials.fsu0413.me/dlurl");
+    static const QString dlpasswd = QStringLiteral("https://rmessentials.fsu0413.me/dlpasswd");
 
     RmeDownloader *downloader = new RmeDownloader;
     downloader << versioninfo << whatsnew << dlurl << dlpasswd;
