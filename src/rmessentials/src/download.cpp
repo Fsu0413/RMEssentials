@@ -523,7 +523,7 @@ void DownloadDialog::loadPaths()
             static QRegularExpression rx(QRegularExpression::anchoredPattern(QStringLiteral("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>")));
             QRegularExpressionMatch match = rx.match(s);
             if (match.hasMatch())
-                paths.insert(match.capturedTexts().value(1);
+                paths.insert(match.capturedTexts().value(1));
         }
         f.close();
         appendLog(QStringLiteral("MD5List.xml") + tr(" has been loaded"));
