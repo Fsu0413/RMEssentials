@@ -21,9 +21,9 @@
 
 软件更新：
 1、QuaZip 更新为 1.3
-2、Qt 6 版本使用 Qt 6.4.2，移除对 Windows 7、8.1 和 Windows 10 （1909及以前版本）的支持。
+2、Qt 6 版本使用 Qt 6.4.2，移除对 Windows 7、8.1 和 Windows 10 （1909及以前版本）的支持。仅有 64 位版。
    Qt 5 版本更新为 Qt 5.15.8。现在 RMEssentials 需要 Qt 5.15 及更新版本才能构建。Qt 5.14及以前的版本不再支持。
-3、OpenSSL 更新为 3.0.7 （Qt 6 版本） / 1.1.1s （Qt 5 版本，仅安卓版使用 OpenSSL）
+3、OpenSSL 更新为 3.0.7 （Qt 6 版本）
 
 功能倒退：
 1、由于 coding.net 服务调整，为中国大陆提供服务的 coding pages 服务现在需要备案。不需要备案的服务又建立在香港，速度比 GitHub Pages 还要慢，已弃用。现在又使用 GitHub Pages 提供检查更新的服务了。

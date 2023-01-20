@@ -57,7 +57,7 @@ MainDialog::MainDialog(QWidget *parent)
 
     setMinimumWidth(200);
 
-#ifdef QT_NO_DEBUG
+#if 1
     static const QString versioninfo = QStringLiteral("https://rmessentials.fsu0413.me/versioninfo");
 #else
     static const QString versioninfo = QStringLiteral("https://rmessentials.fsu0413.me/versioninfotest");
@@ -144,7 +144,7 @@ void MainDialog::about()
 
 void MainDialog::checkForUpdate()
 {
-#ifdef QT_NO_DEBUG
+#if 1
     QFile v(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/versioninfo"));
 #else
     QFile v(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/versioninfotest"));
@@ -209,6 +209,10 @@ int main(int argc, char *argv[])
     QTranslator qt_translator;
     (void)qt_translator.load(QStringLiteral(CURRENTDIRPREFIX "qt_zh_CN.qm"));
     qApp->installTranslator(&qt_translator);
+
+    QTranslator qtbase_translator;
+    (void)qtbase_translator.load(QStringLiteral(CURRENTDIRPREFIX "qtbase_zh_CN.qm"));
+    qApp->installTranslator(&qtbase_translator);
 
     QTranslator translator;
     (void)translator.load(QStringLiteral(CURRENTDIRPREFIX "rmessentials.qm"));
