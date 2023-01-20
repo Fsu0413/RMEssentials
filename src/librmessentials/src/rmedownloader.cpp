@@ -98,7 +98,7 @@ void RmeDownloaderPrivate::cancel()
 {
     m_canceled = true;
 
-    disconnect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);
+    disconnect(m_currentDownloadingReply, &QNetworkReply::errorOccurred, this, &RmeDownloaderPrivate::singleFileError);
     disconnect(m_currentDownloadingReply, &QNetworkReply::finished, this, &RmeDownloaderPrivate::singleFileFinished);
     disconnect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &RmeDownloaderPrivate::downloadProgress);
 
@@ -299,7 +299,7 @@ void RmeDownloaderPrivate::downloadSingleFile()
         }
     }
     m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(QUrl(m_currentDownloadingFile.first)));
-    connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);
+    connect(m_currentDownloadingReply, &QNetworkReply::errorOccurred, this, &RmeDownloaderPrivate::singleFileError);
     connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &RmeDownloaderPrivate::singleFileFinished);
     connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &RmeDownloaderPrivate::downloadProgress);
 
@@ -374,7 +374,7 @@ void RmeDownloaderPrivate::singleFileFinished()
             qDebug() << "redirect!!" << u;
             m_currentDownloadingFile.first = u.toString();
             m_currentDownloadingReply = m_networkAccessManager->get(QNetworkRequest(u));
-            connect(m_currentDownloadingReply, ((void (QNetworkReply::*)(QNetworkReply::NetworkError))(&QNetworkReply::error)), this, &RmeDownloaderPrivate::singleFileError);
+            connect(m_currentDownloadingReply, &QNetworkReply::errorOccurred, this, &RmeDownloaderPrivate::singleFileError);
             connect(m_currentDownloadingReply, &QNetworkReply::finished, this, &RmeDownloaderPrivate::singleFileFinished);
             connect(m_currentDownloadingReply, &QNetworkReply::downloadProgress, this, &RmeDownloaderPrivate::downloadProgress);
         }
