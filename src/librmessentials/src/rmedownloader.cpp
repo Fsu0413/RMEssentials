@@ -1,5 +1,6 @@
 #include "rmedownloader.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -156,8 +157,10 @@ QString RmeDownloader::binDownloadPath()
     QDir currentDir(QStringLiteral("/sdcard/RM/res"));
     if (!currentDir.exists()) {
         currentDir = QDir(QStringLiteral("/sdcard"));
-        if (!currentDir.mkpath(QStringLiteral("/sdcard/RM/res")))
+        if (!currentDir.mkpath(QStringLiteral("/sdcard/RM/res"))) {
+            qDebug() << "can't use /sdcard/RM/res for path";
             return QString();
+        }
         currentDir = QDir(QStringLiteral("/sdcard/RM/res"));
     }
 #endif

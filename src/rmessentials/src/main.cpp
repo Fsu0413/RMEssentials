@@ -17,27 +17,37 @@
 #include <QTranslator>
 #include <QVBoxLayout>
 
+#ifdef Q_OS_ANDROID
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+#include <QJniObject>
+#include <QtCore/private/qandroidextras_p.h>
+#endif
+#endif
+
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
+#ifdef Q_OS_ANDROID
+    , m_receiver(nullptr)
+#endif
 {
     setWindowTitle(tr("Rhythm Master Essensials  ") + QStringLiteral(RMEVERSION));
 
     QVBoxLayout *alllayout = new QVBoxLayout;
+    m_changeNameBtn = new QPushButton(tr("Filename Changer"));
+    connect(m_changeNameBtn, &QPushButton::clicked, this, &MainDialog::showChangeNameDialog);
+    m_changeNameBtn->setEnabled(false);
 
-    QPushButton *changename = new QPushButton(tr("Filename Changer"));
-    connect(changename, &QPushButton::clicked, this, &MainDialog::showChangeNameDialog);
-    changename->setEnabled(false);
+    m_downloadBtn = new QPushButton(tr("File Downloader"));
+    connect(m_downloadBtn, &QPushButton::clicked, this, &MainDialog::showDownloadDialog);
+    m_downloadBtn->setEnabled(false);
 
-    QPushButton *download = new QPushButton(tr("File Downloader"));
-    connect(download, &QPushButton::clicked, this, &MainDialog::showDownloadDialog);
+    m_songEditorBtn = new QPushButton(tr("Song Client Editor"));
+    connect(m_songEditorBtn, &QPushButton::clicked, this, &MainDialog::showSongClientEditDialog);
+    m_songEditorBtn->setEnabled(false);
 
-    QPushButton *songclient = new QPushButton(tr("Song Client Editor"));
-    connect(songclient, &QPushButton::clicked, this, &MainDialog::showSongClientEditDialog);
-
-    QPushButton *papasongclient = new QPushButton(tr("Papa Song Client Editor"));
-    connect(papasongclient, &QPushButton::clicked, this, &MainDialog::showPapaSongClientEditDialog);
-    // 2023.1.15: Papa mode is not supported temporarily in Rhythm Master Remastered
-    papasongclient->setEnabled(false);
+    m_papaSongEditorBtn = new QPushButton(tr("Papa Song Client Editor"));
+    connect(m_papaSongEditorBtn, &QPushButton::clicked, this, &MainDialog::showPapaSongClientEditDialog);
+    m_papaSongEditorBtn->setEnabled(false);
 
     QHBoxLayout *aboutLayout = new QHBoxLayout;
     QPushButton *abouT = new QPushButton(tr("About..."));
@@ -47,10 +57,10 @@ MainDialog::MainDialog(QWidget *parent)
     aboutLayout->addWidget(abouT);
     aboutLayout->addWidget(aboutQt);
 
-    alllayout->addWidget(changename);
-    alllayout->addWidget(download);
-    alllayout->addWidget(songclient);
-    alllayout->addWidget(papasongclient);
+    alllayout->addWidget(m_changeNameBtn);
+    alllayout->addWidget(m_downloadBtn);
+    alllayout->addWidget(m_songEditorBtn);
+    alllayout->addWidget(m_papaSongEditorBtn);
     alllayout->addLayout(aboutLayout);
 
     setLayout(alllayout);
@@ -186,6 +196,130 @@ void MainDialog::checkForUpdate()
             }
         }
     }
+}
+
+void MainDialog::permissionCheckOk()
+{
+    // ChangeName Dialog and Papa song editor Dialog are currently temporarily disabled due to technical restriction of Rhythm Master Remastered
+
+    m_changeNameBtn->setEnabled(false);
+    m_downloadBtn->setEnabled(true);
+    m_songEditorBtn->setEnabled(true);
+    m_papaSongEditorBtn->setEnabled(false);
+}
+
+#ifdef Q_OS_ANDROID
+
+class MainDialog::AndroidResultReceiver : public QAndroidActivityResultReceiver
+{
+public:
+    AndroidResultReceiver(MainDialog *dialog)
+        : m_dialog(dialog)
+    {
+    }
+    ~AndroidResultReceiver() override = default;
+
+public:
+    void handleActivityResult(int, int, const QJniObject &) override
+    {
+        m_dialog->permissionRequestCallback();
+    }
+
+private:
+    MainDialog *m_dialog;
+};
+
+bool MainDialog::checkPermission()
+{
+    QString s = RmeDownloader::binDownloadPath();
+    bool flag = false;
+    if (!s.isEmpty()) {
+        QDir d(s);
+        if (d.exists()) {
+            QFile f(d.absoluteFilePath(QStringLiteral("test.rmessentials")));
+            if (f.open(QFile::WriteOnly)) {
+                f.write(QByteArray("hello RMEssentials"));
+                f.close();
+
+                if (f.open(QFile::ReadOnly)) {
+                    QByteArray arr = f.readAll();
+                    f.close();
+                    if (arr == QByteArray("hello RMEssentials"))
+                        flag = true;
+                }
+            }
+        }
+    }
+
+    return flag;
+}
+
+void MainDialog::requestForLegacyPermission()
+{
+    QFuture<QtAndroidPrivate::PermissionResult> future = QtAndroidPrivate::checkPermission(QtAndroidPrivate::Storage);
+    future.waitForFinished();
+
+    if (future.result() != QtAndroidPrivate::Authorized) {
+        QFuture<QtAndroidPrivate::PermissionResult> future2 = QtAndroidPrivate::requestPermission(QtAndroidPrivate::Storage);
+        future2.waitForFinished();
+    }
+
+    legacyPermissionRequestCallback();
+}
+
+void MainDialog::legacyPermissionRequestCallback()
+{
+    if (checkPermission())
+        permissionCheckOk();
+    else if (QtAndroidPrivate::androidSdkVersion() >= 30)
+        requestForPermission();
+    else
+        QMessageBox::warning(this, tr("RMEssentials"),
+                             tr("External storage permission not granted. RMEssentials won't work without this permission. Please check your permission setting."),
+                             QMessageBox::Ok);
+}
+
+void MainDialog::requestForPermission()
+{
+    if (m_receiver == nullptr)
+        m_receiver = new AndroidResultReceiver(this);
+
+    QMessageBox::information(this, tr("RMEssentials"), tr("Please find RMEssentials and grant external storage permission. RMEssentials won't work without it."), QMessageBox::Ok);
+
+    QAndroidIntent indent(QStringLiteral("android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION"));
+    QtAndroidPrivate::startActivity(indent, 0, m_receiver);
+}
+
+void MainDialog::permissionRequestCallback()
+{
+    if (checkPermission())
+        permissionCheckOk();
+    else
+        QMessageBox::warning(this, tr("RMEssentials"),
+                             tr("External storage permission not granted. RMEssentials won't work without this permission. Please check your permission setting."),
+                             QMessageBox::Ok);
+}
+#endif
+
+MainDialog::~MainDialog()
+{
+#ifdef Q_OS_ANDROID
+    delete m_receiver;
+#endif
+}
+
+void MainDialog::showEvent(QShowEvent *event)
+{
+    QDialog::showEvent(event);
+
+#ifdef Q_OS_ANDROID
+    if (checkPermission())
+        permissionCheckOk();
+    else
+        requestForLegacyPermission();
+#else
+    permissionCheckOk();
+#endif
 }
 
 #ifdef Q_OS_ANDROID
