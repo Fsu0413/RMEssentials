@@ -13,8 +13,8 @@ android {
     CONFIG += mobility
     MOBILITY =
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-} else {
-    CONFIG += quazip
+
+    equals(QT_MAJOR_VERSION, 6): QT += core-private
 }
 
 TRANSLATIONS += translations/rmessentials.ts
@@ -45,7 +45,12 @@ SOURCES += \
     src/songclientedit.cpp \
     src/papasongclientedit.cpp
 
-LIBS += -L. -lRMEss
+LIBS += -L. -lRMEss$$qtPlatformTargetSuffix()
+
+staticlib: use_quazip {
+    QT += core5compat
+    LIBS += -lquazip$$qtPlatformTargetSuffix()
+}
 
 unix: !osx: !ios: !android: !install_build {
     !contains(QMAKE_HOST.arch, x86_64) {

@@ -1,5 +1,5 @@
 
-CONFIG += warn_on c++11
+CONFIG += warn_on c++17
 win32: CONFIG += skip_target_version_ext
 
 VERSION = 13.1.20
@@ -11,9 +11,9 @@ DEFINES += QT_NO_CAST_FROM_ASCII
 android || ios {
     CONFIG += staticlib
     DEFINES += MOBILE_DEVICES
-} else {
-    CONFIG += use_quazip
 }
+
+CONFIG += use_quazip
 
 staticlib: DEFINES += LIBRMESSENTIALS_STATIC
 
@@ -28,7 +28,7 @@ staticlib: DEFINES += LIBRMESSENTIALS_STATIC
 !win32-msvc* {
     # we use gcc/clang on unix-like systems and mingw
     QMAKE_CFLAGS += -Wpointer-to-int-cast
-    QMAKE_CXXFLAGS += -Wc++11-compat 
+    QMAKE_CXXFLAGS += -Wc++17-compat
     *-g++: QMAKE_CXXFLAGS += -Wzero-as-null-pointer-constant
     mac:QMAKE_LFLAGS += -Wl,-undefined -Wl,error
     else:QMAKE_LFLAGS += -Wl,--no-undefined

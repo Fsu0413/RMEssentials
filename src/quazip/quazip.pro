@@ -1,6 +1,6 @@
 # DO NOT INCLUDE $$_PRO_FILE_PWD_/../../RMEssentials.pri here
 
-CONFIG += warn_on c++11
+CONFIG += warn_on c++17
 win32: CONFIG += skip_target_version_ext
 
 QT = core
@@ -58,14 +58,14 @@ HEADERS += \
     src/zip.h \
     src/quazip_qt_compat.h
 
-generateHeaders.target = $$OUT_PWD/../dist/include/quazip/.timestamp
+generateHeaders.target = $$system_path($$OUT_PWD/../dist/include/quazip/.timestamp)
 !build_pass: mkpath($$OUT_PWD/../dist/include/quazip)
 
 contains(QMAKE_HOST.os, "Windows"): generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$OUT_PWD/../dist/include/quazip) -f $$system_path($$PWD/src/)
 else: generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$OUT_PWD/../dist/include/quazip -f $$PWD/src/
 
 HEADERS_ABSOLUTE =
-for (header, HEADERS): HEADERS_ABSOLUTE += $$absolute_path($$header)
+for (header, HEADERS): HEADERS_ABSOLUTE += $$system_path($$absolute_path($$header))
 
 generateHeaders.depends = $$HEADERS_ABSOLUTE
 
