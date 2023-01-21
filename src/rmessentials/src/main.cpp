@@ -18,7 +18,10 @@
 #include <QVBoxLayout>
 
 #ifdef Q_OS_ANDROID
-#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QAndroidJniObject>
+#include <QtAndroidExtras>
+#elif QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
 #include <QJniObject>
 #include <QtCore/private/qandroidextras_p.h>
 #endif
@@ -210,6 +213,13 @@ void MainDialog::permissionCheckOk()
 
 #ifdef Q_OS_ANDROID
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+namespace QtAndroidPrivate {
+using namespace QtAndroid;
+}
+using QJniObject = QAndroidJniObject;
+#endif
+
 class MainDialog::AndroidResultReceiver : public QAndroidActivityResultReceiver
 {
 public:
@@ -237,15 +247,17 @@ bool MainDialog::checkPermission()
         QDir d(s);
         if (d.exists()) {
             QFile f(d.absoluteFilePath(QStringLiteral("test.rmessentials")));
-            if (f.open(QFile::WriteOnly)) {
+            if (f.open(QFile::WriteOnly | QFile::Truncate)) {
                 f.write(QByteArray("hello RMEssentials"));
                 f.close();
 
                 if (f.open(QFile::ReadOnly)) {
                     QByteArray arr = f.readAll();
                     f.close();
-                    if (arr == QByteArray("hello RMEssentials"))
+                    if (arr == QByteArray("hello RMEssentials")) {
+                        d.remove(QStringLiteral("test.rmessentials"));
                         flag = true;
+                    }
                 }
             }
         }
@@ -256,6 +268,17 @@ bool MainDialog::checkPermission()
 
 void MainDialog::requestForLegacyPermission()
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QtAndroid::PermissionResult result = QtAndroid::checkPermission(QStringLiteral("android.permission.READ_EXTERNAL_STORAGE"));
+    if (result != QtAndroid::PermissionResult::Granted) {
+        QtAndroid::PermissionResultMap m
+            = QtAndroid::requestPermissionsSync({QStringLiteral("android.permission.READ_EXTERNAL_STORAGE"), QStringLiteral("android.permission.WRITE_EXTERNAL_STORAGE")});
+        foreach (QtAndroid::PermissionResult r, m) {
+            if (r != QtAndroid::PermissionResult::Granted)
+                break;
+        }
+    }
+#else
     QFuture<QtAndroidPrivate::PermissionResult> future = QtAndroidPrivate::checkPermission(QtAndroidPrivate::Storage);
     future.waitForFinished();
 
@@ -263,6 +286,7 @@ void MainDialog::requestForLegacyPermission()
         QFuture<QtAndroidPrivate::PermissionResult> future2 = QtAndroidPrivate::requestPermission(QtAndroidPrivate::Storage);
         future2.waitForFinished();
     }
+#endif
 
     legacyPermissionRequestCallback();
 }
@@ -275,7 +299,9 @@ void MainDialog::legacyPermissionRequestCallback()
         requestForPermission();
     else
         QMessageBox::warning(this, tr("RMEssentials"),
-                             tr("External storage permission not granted. RMEssentials won't work without this permission. Please check your permission setting."),
+                             tr("External storage permission not granted. "
+                                "RMEssentials' file download and client file mofification functionality won't work without this permission. "
+                                "Please check your permission setting."),
                              QMessageBox::Ok);
 }
 
@@ -284,7 +310,10 @@ void MainDialog::requestForPermission()
     if (m_receiver == nullptr)
         m_receiver = new AndroidResultReceiver(this);
 
-    QMessageBox::information(this, tr("RMEssentials"), tr("Please find RMEssentials and grant external storage permission. RMEssentials won't work without it."), QMessageBox::Ok);
+    QMessageBox::information(this, tr("RMEssentials"),
+                             tr("Please find RMEssentials in following UI and grant external storage permission. "
+                                "RMEssentials' file download and client file mofification functionality won't work without it."),
+                             QMessageBox::Ok);
 
     QAndroidIntent indent(QStringLiteral("android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION"));
     QtAndroidPrivate::startActivity(indent, 0, m_receiver);
@@ -296,7 +325,9 @@ void MainDialog::permissionRequestCallback()
         permissionCheckOk();
     else
         QMessageBox::warning(this, tr("RMEssentials"),
-                             tr("External storage permission not granted. RMEssentials won't work without this permission. Please check your permission setting."),
+                             tr("External storage permission not granted. "
+                                "RMEssentials' file download and client file mofification functionality won't work without this permission. "
+                                "Please check your permission setting."),
                              QMessageBox::Ok);
 }
 #endif

@@ -17,7 +17,9 @@ use_quazip {
 }
 
 TEMPLATE = lib
-TARGET = RMEss
+
+equals(QT_MAJOR_VERSION, 6):TARGET = RMEss
+else: TARGET = RMEss$$qtPlatformTargetSuffix()
 
 !staticlib: DEFINES += LIBRMESSENTIALS_BUILD
 

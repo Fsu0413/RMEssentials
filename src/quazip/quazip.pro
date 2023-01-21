@@ -16,7 +16,8 @@ equals(QT_MAJOR_VERSION, 6): QT += core5compat
 TEMPLATE = lib
 CONFIG += staticlib
 
-TARGET = quazip
+equals(QT_MAJOR_VERSION, 6): TARGET = quazip
+else: TARGET = quazip$$qtPlatformTargetSuffix()
 
 DEFINES += QUAZIP_STATIC
 

@@ -12,9 +12,11 @@ win32 {
 android {
     CONFIG += mobility
     MOBILITY =
-    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+    equals(QT_MAJOR_VERSION, 6): ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+    else: ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android5
 
     equals(QT_MAJOR_VERSION, 6): QT += core-private
+    else: QT += androidextras
 }
 
 TRANSLATIONS += translations/rmessentials.ts
@@ -48,7 +50,7 @@ SOURCES += \
 LIBS += -L. -lRMEss$$qtPlatformTargetSuffix()
 
 staticlib: use_quazip {
-    QT += core5compat
+    equals(QT_MAJOR_VERSION, 6): QT += core5compat
     LIBS += -lquazip$$qtPlatformTargetSuffix()
 }
 

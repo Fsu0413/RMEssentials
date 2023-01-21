@@ -290,37 +290,37 @@ Are you sure?</source>
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="../src/main.cpp" line="27"/>
+        <location filename="../src/main.cpp" line="39"/>
         <source>Filename Changer</source>
         <translation>文件改名器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="31"/>
+        <location filename="../src/main.cpp" line="43"/>
         <source>File Downloader</source>
         <translation>文件下载器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="34"/>
+        <location filename="../src/main.cpp" line="47"/>
         <source>Song Client Editor</source>
         <translation>客户端歌曲编辑器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="37"/>
+        <location filename="../src/main.cpp" line="51"/>
         <source>Papa Song Client Editor</source>
         <translation>星动模式客户端编辑器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="43"/>
+        <location filename="../src/main.cpp" line="56"/>
         <source>About...</source>
         <translation>关于...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="45"/>
+        <location filename="../src/main.cpp" line="58"/>
         <source>About Qt...</source>
         <translation>关于 Qt...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="128"/>
+        <location filename="../src/main.cpp" line="141"/>
         <source>The version of RMEssentials frontend is: %1.
 
 RMEssentials is a small software written by Fsu0413 (from Wings of Melody). 
@@ -339,61 +339,57 @@ This Program is linked against libRmEss %1, and loads libRMEss %4 to run.</sourc
 这个程序链接时使用 libRMEss %1，运行时加载libRMEss %4。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="142"/>
+        <location filename="../src/main.cpp" line="155"/>
         <source>About RMEssentials</source>
         <translation>关于节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="23"/>
+        <location filename="../src/main.cpp" line="302"/>
+        <location filename="../src/main.cpp" line="328"/>
+        <source>External storage permission not granted. RMEssentials&apos; file download and client file mofification functionality won&apos;t work without this permission. Please check your permission setting.</source>
+        <translation>没有授予外部存储器权限。节奏大师工具箱的文件下载及客户端歌曲编辑器功能在没有权限的情况下无法工作。请检查您的权限配置。</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="314"/>
+        <source>Please find RMEssentials in following UI and grant external storage permission. RMEssentials&apos; file download and client file mofification functionality won&apos;t work without it.</source>
+        <translation>请在随后的界面中找到 RMEssentials （节奏大师工具箱）并授予外部存储器权限。节奏大师工具箱的文件下载及客户端歌曲编辑器功能在没有权限的情况下无法工作。</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="36"/>
         <source>Rhythm Master Essensials  </source>
         <translation>节奏大师工具箱  </translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="158"/>
+        <location filename="../src/main.cpp" line="171"/>
         <source>Failed to load whatsnew from network</source>
         <translation>从网络获取更新信息失败</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="180"/>
+        <location filename="../src/main.cpp" line="193"/>
         <source>New version avaliable!! Version number: %1&lt;br /&gt;You can download the new version at &lt;a href=&apos;%2&apos;&gt;here&lt;/a&gt;, the password is &quot;%3&quot;&lt;br /&gt;&lt;br /&gt;What&apos;s new in version %1: &lt;br /&gt; %4</source>
         <translation>迎接新版本！！版本号： %1 &lt;br /&gt;可以在&lt;a href=&apos;%2&apos;&gt;这里&lt;/a&gt;下载，提取码是&quot;%3&quot; &lt;br /&gt;&lt;br /&gt;%1版本更新内容：&lt;br /&gt;%4</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="185"/>
+        <location filename="../src/main.cpp" line="198"/>
+        <location filename="../src/main.cpp" line="301"/>
+        <location filename="../src/main.cpp" line="313"/>
+        <location filename="../src/main.cpp" line="327"/>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="178"/>
+        <location filename="../src/main.cpp" line="191"/>
         <source>  new version %1 available</source>
         <translation>  新版本 %1 可用</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="137"/>
+        <location filename="../src/main.cpp" line="150"/>
         <source>
 This Program is linked against QuaZip %1.
 Since Quazip does not provide a way to detect version number, we cannot know which version we are loading when running.</source>
         <translation>
 这个程序链接时使用 Quazip %1。
 因为 Quazip 不提供检测版本号的方法，无法得知运行时加载的 Quazip 的版本号。</translation>
-    </message>
-    <message>
-        <source>The version of RMEssentials frontend is: %1.
-
-RMEssentials is a small software written by Fsu0413(from Wings of Melody). 
-It is used to operate the files for a game by Tencent: Rhythm Master. 
-It now contains 4 main features: ChangeName, Download, SongClientEdit, PapaSongClientEdit. 
-
-This Program is linked against Qt %2, and loads Qt %3 to run.
-This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 to run.</source>
-        <translation type="vanished">当前节奏大师工具箱前端的版本是：%1.
-
-节奏大师工具箱是由 Wom★Fsu0413 编写的小软件。
-用来操作节奏大师（一款由腾讯开发的游戏）相关的文件的软件。
-现在包含 4 个主要功能：修改名字，下载歌曲和谱面，客户端歌曲编辑，星动模式客户端歌曲编辑。
-
-这个程序链接时使用 Qt %2，运行时加载 Qt %3。
-这个程序链接时使用 libRMEss %1，运行时加载libRMEssentials %4。</translation>
     </message>
 </context>
 <context>
@@ -608,10 +604,6 @@ This Program is linked against libRMEssentials %1, and loads libRMEssentials %4 
         <location filename="../src/songclientedit.cpp" line="871"/>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
-    </message>
-    <message>
-        <source>mrock_song_client_android.bin doesn&apos;t exist, please select the file to open.</source>
-        <translation type="vanished">mrock_song_client_android.bin 不存在，请选择文件打开。</translation>
     </message>
     <message>
         <location filename="../src/songclientedit.cpp" line="34"/>
