@@ -766,6 +766,7 @@ class RmeSong::RmeSongClientFilePrivate
 {
 public:
     QMap<int16_t, RmeSongClientItemStruct *> m_songsList;
+    QList<int16_t > m_songKeys;
     RmeSongClientHeaderStruct *m_header;
     bool m_isUserMade;
     void cleanup();
@@ -791,6 +792,7 @@ void RmeSong::RmeSongClientFilePrivate::cleanup()
 {
     qDeleteAll(m_songsList);
     m_songsList.clear();
+    m_songKeys.clear();
 }
 
 bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat format)
@@ -816,6 +818,7 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
                     ss->parseByteArray(sp);
                     d->m_songsList[ss->m_ushSongID] = ss;
                 }
+                d->m_songKeys = d->m_songsList.keys();
                 return true;
             }
         } else if (format == XmlFormat) {
@@ -828,6 +831,7 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
                     continue;
                 d->m_songsList[ss->m_ushSongID] = ss;
             }
+            d->m_songKeys = d->m_songsList.keys();
             return true;
         } else if (format == JsonFormat) {
             // Json song client file have no header.
@@ -840,6 +844,8 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
                 ss = reader.readItem();
             }
             d->m_header->Count = d->m_songsList.count();
+
+            d->m_songKeys = d->m_songsList.keys();
             return true;
         }
     }
@@ -879,19 +885,17 @@ bool RmeSong::RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileForm
 RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n)
 {
     Q_D(RmeSongClientFile);
-    if (d->m_songsList.contains(n))
-        return d->m_songsList.value(n, nullptr);
 
-    return d->m_songsList.value(0, nullptr);
+    int16_t id = d->m_songKeys.value(n, 1);
+    return d->m_songsList.value(id, nullptr);
 }
 
 const RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n) const
 {
     Q_D(const RmeSongClientFile);
-    if (d->m_songsList.contains(n))
-        return d->m_songsList.value(n, nullptr);
 
-    return d->m_songsList.value(0, nullptr);
+    int16_t id = d->m_songKeys.value(n, 1);
+    return d->m_songsList.value(id, nullptr);
 }
 
 const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmeSongClientFile::fileHeader() const
@@ -1133,6 +1137,7 @@ class RmeSong::RmePapaSongClientFilePrivate
 {
 public:
     QMap<int32_t, RmePapaSongClientItemStruct *> m_songsList;
+    QList<int32_t > m_songKeys;
     RmeSongClientHeaderStruct *m_header;
     void cleanup();
 };
@@ -1156,6 +1161,7 @@ void RmeSong::RmePapaSongClientFilePrivate::cleanup()
 {
     qDeleteAll(m_songsList);
     m_songsList.clear();
+    m_songKeys.clear();
 }
 
 bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat format)
@@ -1181,6 +1187,8 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                     ss->parseByteArray(sp);
                     d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
                 }
+
+                d->m_songKeys = d->m_songsList.keys();
                 return true;
             }
         } else if (format == XmlFormat) {
@@ -1193,6 +1201,8 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                     continue;
                 d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
             }
+
+            d->m_songKeys = d->m_songsList.keys();
             return true;
         } else if (format == JsonFormat) {
             RmeJsonReader reader(ba);
@@ -1204,6 +1214,8 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
                 ss = reader.readPapaItem();
             }
             d->m_header->Count = d->m_songsList.count();
+
+            d->m_songKeys = d->m_songsList.keys();
             return true;
         }
     }
@@ -1243,19 +1255,17 @@ bool RmeSong::RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFile
 RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n)
 {
     Q_D(RmePapaSongClientFile);
-    if (d->m_songsList.contains(n))
-        return d->m_songsList.value(n, nullptr);
 
-    return d->m_songsList.value(0, nullptr);
+    int32_t id = d->m_songKeys.value(n, 1);
+    return d->m_songsList.value(id, nullptr);
 }
 
 const RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n) const
 {
     Q_D(const RmePapaSongClientFile);
-    if (d->m_songsList.contains(n))
-        return d->m_songsList.value(n, nullptr);
 
-    return d->m_songsList.value(0, nullptr);
+    int32_t id = d->m_songKeys.value(n, 1);
+    return d->m_songsList.value(id, nullptr);
 }
 
 const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmePapaSongClientFile::fileHeader() const
