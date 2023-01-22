@@ -140,8 +140,7 @@ void ChangeNameDialog::rename()
                               tr("You are now renaming %1 to %2.\n"
                                  "Caution!! All unrelated files will be deleted.\n"
                                  "Are you sure?")
-                                  .arg(originPath)
-                                  .arg(m_toRename->text()))
+                                  .arg(originPath, m_toRename->text()))
         == QMessageBox::Yes) {
         RmeRenamer renamer;
         renamer.setDir(QDir(m_folderName->text()));

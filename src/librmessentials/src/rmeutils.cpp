@@ -1,12 +1,13 @@
 #include "rmeutils.h"
 
 #include <QDir>
+#include <QGlobalStatic>
 #include <QMap>
 #include <QString>
 
 namespace {
-const QString suffix_hd = QStringLiteral("_title_hd");
-const QString suffix_ipad = QStringLiteral("_title_ipad");
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, suffix_hd, (QStringLiteral("_title_hd")))
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, suffix_ipad, (QStringLiteral("_title_ipad")))
 }
 
 bool RmeUtils::hasMp3(const QDir &dir)
@@ -52,11 +53,11 @@ bool RmeUtils::hasSmallPng(const QDir &dir, QString &suffix)
         s2.chop(4);
         if (s2.startsWith(dir.dirName().toLower())) {
             s2 = s2.mid(dir.dirName().length()).toLower();
-            if (s2 == suffix_hd) {
-                suffix = suffix_hd;
+            if (s2 == *suffix_hd) {
+                suffix = *suffix_hd;
                 return true;
-            } else if (s2 == suffix_ipad) {
-                suffix = suffix_ipad;
+            } else if (s2 == *suffix_ipad) {
+                suffix = *suffix_ipad;
                 return true;
             }
         }

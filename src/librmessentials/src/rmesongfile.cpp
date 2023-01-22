@@ -879,13 +879,19 @@ bool RmeSong::RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileForm
 RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n)
 {
     Q_D(RmeSongClientFile);
-    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
+    if (d->m_songsList.contains(n))
+        return d->m_songsList.value(n, nullptr);
+
+    return d->m_songsList.value(0, nullptr);
 }
 
 const RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n) const
 {
     Q_D(const RmeSongClientFile);
-    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
+    if (d->m_songsList.contains(n))
+        return d->m_songsList.value(n, nullptr);
+
+    return d->m_songsList.value(0, nullptr);
 }
 
 const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmeSongClientFile::fileHeader() const
@@ -903,11 +909,11 @@ QList<int> RmeSong::RmeSongClientFile::search(const QString &cond) const
     int i = 0;
     foreach (const RmeSongClientItemStruct *s, d->m_songsList) {
         bool flag = false;
-        if (s->m_szSongName.toLower().contains(cond.toLower()))
+        if (s->m_szSongName.contains(cond, Qt::CaseInsensitive))
             flag = true;
-        else if (s->m_szPath.toLower().contains(cond.toLower()))
+        else if (s->m_szPath.contains(cond, Qt::CaseInsensitive))
             flag = true;
-        else if (s->m_szArtist.toLower().contains(cond.toLower()))
+        else if (s->m_szArtist.contains(cond, Qt::CaseInsensitive))
             flag = true;
         else if (isNum) {
             if (s->m_ushSongID == num)
@@ -1237,13 +1243,19 @@ bool RmeSong::RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFile
 RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n)
 {
     Q_D(RmePapaSongClientFile);
-    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
+    if (d->m_songsList.contains(n))
+        return d->m_songsList.value(n, nullptr);
+
+    return d->m_songsList.value(0, nullptr);
 }
 
 const RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n) const
 {
     Q_D(const RmePapaSongClientFile);
-    return d->m_songsList.value(d->m_songsList.keys().value(n, 0), nullptr);
+    if (d->m_songsList.contains(n))
+        return d->m_songsList.value(n, nullptr);
+
+    return d->m_songsList.value(0, nullptr);
 }
 
 const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmePapaSongClientFile::fileHeader() const
@@ -1261,11 +1273,11 @@ QList<int> RmeSong::RmePapaSongClientFile::search(const QString &cond) const
     int i = 0;
     foreach (const RmePapaSongClientItemStruct *s, d->m_songsList) {
         bool flag = false;
-        if (s->m_szSongName.toLower().contains(cond.toLower()))
+        if (s->m_szSongName.contains(cond, Qt::CaseInsensitive))
             flag = true;
-        else if (s->m_szPath.toLower().contains(cond.toLower()))
+        else if (s->m_szPath.contains(cond, Qt::CaseInsensitive))
             flag = true;
-        else if (s->m_szArtist.toLower().contains(cond.toLower()))
+        else if (s->m_szArtist.contains(cond, Qt::CaseInsensitive))
             flag = true;
         else if (isNum) {
             if (s->m_ushSongID == num)
@@ -1326,13 +1338,7 @@ bool RmePapaSongClientFile::saveWikiTable(QIODevice *output) const
 
             QString line = QString(QStringLiteral("|-\n"
                                                   "|%1||%2||%3||%4||%5||%6||%7||\n"))
-                               .arg(song->m_ushSongID)
-                               .arg(song->m_szSongName)
-                               .arg(song->m_szArtist)
-                               .arg(gameTime)
-                               .arg(song->m_szBPM)
-                               .arg(difficulty)
-                               .arg(song->m_cLevel);
+                               .arg(QString::number(song->m_ushSongID), song->m_szSongName, song->m_szArtist, gameTime, song->m_szBPM, difficulty, QString::number(song->m_cLevel));
             output->write(line.toUtf8().constData());
         }
         QString tailLine = QStringLiteral("|}");

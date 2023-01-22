@@ -78,35 +78,35 @@ bool RmeRenamer::runToEasy()
 
 bool RmeRenamerPrivate::renameImdsToEasy()
 {
-    static QMap<ExistNote, QString> suffixs;
-    if (suffixs.isEmpty()) {
-        suffixs[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
-        suffixs[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
-        suffixs[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
-        suffixs[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
-        suffixs[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
-        suffixs[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
-        suffixs[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
-        suffixs[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
-        suffixs[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
-        suffixs[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
-        suffixs[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
-        suffixs[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
+    static QMap<ExistNote, QString> suffixes;
+    if (suffixes.isEmpty()) {
+        suffixes[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
+        suffixes[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
+        suffixes[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
+        suffixes[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
+        suffixes[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
+        suffixes[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
+        suffixes[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
+        suffixes[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
+        suffixes[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
+        suffixes[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
+        suffixes[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
+        suffixes[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
     }
 
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
-        file_name.append(m_dir.dirName()).append(suffixs[i]);
+        file_name.append(m_dir.dirName()).append(suffixes[i]);
         if (m_dir.exists(file_name)) {
             ExistNote i_easiest = i;
-            while (!suffixs[i_easiest].contains(QStringLiteral("ez")) && !suffixs[i_easiest].contains(QStringLiteral("Easy")))
+            while (!suffixes[i_easiest].contains(QStringLiteral("ez")) && !suffixes[i_easiest].contains(QStringLiteral("Easy")))
                 i_easiest = static_cast<ExistNote>(i_easiest >> 1);
 
-            while (m_dir.exists(m_dir.dirName() + suffixs[i_easiest]) && (m_dir.dirName() + suffixs[i_easiest]) != file_name)
+            while (m_dir.exists(m_dir.dirName() + suffixes[i_easiest]) && (m_dir.dirName() + suffixes[i_easiest]) != file_name)
                 i_easiest = static_cast<ExistNote>(i_easiest << 1);
 
-            if ((m_dir.dirName() + suffixs[i_easiest]) != file_name)
-                m_dir.rename(file_name, (m_dir.dirName() + suffixs[i_easiest]));
+            if ((m_dir.dirName() + suffixes[i_easiest]) != file_name)
+                m_dir.rename(file_name, (m_dir.dirName() + suffixes[i_easiest]));
         }
     }
 
@@ -209,27 +209,27 @@ bool RmeRenamerPrivate::renamePapaPngs()
 
 bool RmeRenamerPrivate::renameImds()
 {
-    static QMap<ExistNote, QString> suffixs;
-    if (suffixs.isEmpty()) {
-        suffixs[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
-        suffixs[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
-        suffixs[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
-        suffixs[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
-        suffixs[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
-        suffixs[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
-        suffixs[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
-        suffixs[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
-        suffixs[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
-        suffixs[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
-        suffixs[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
-        suffixs[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
+    static QMap<ExistNote, QString> suffixes;
+    if (suffixes.isEmpty()) {
+        suffixes[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
+        suffixes[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
+        suffixes[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
+        suffixes[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
+        suffixes[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
+        suffixes[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
+        suffixes[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
+        suffixes[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
+        suffixes[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
+        suffixes[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
+        suffixes[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
+        suffixes[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
     }
 
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
-        file_name.append(m_dir.dirName()).append(suffixs[i]);
+        file_name.append(m_dir.dirName()).append(suffixes[i]);
         if (m_dir.exists(file_name))
-            m_dir.rename(file_name, m_toRename + suffixs[i]);
+            m_dir.rename(file_name, m_toRename + suffixes[i]);
     }
 
     return true;
