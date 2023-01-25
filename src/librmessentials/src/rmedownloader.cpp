@@ -139,14 +139,7 @@ void RmeDownloader::start()
 
 QString RmeDownloader::binDownloadPath()
 {
-#if defined(Q_OS_WIN)
-    QDir currentDir = QDir::current();
-    if (!currentDir.cd(QStringLiteral("downloader"))) {
-        if (!currentDir.mkdir(QStringLiteral("downloader")))
-            return QString();
-        currentDir.cd(QStringLiteral("downloader"));
-    }
-#elif defined(Q_OS_OSX)
+#if defined(Q_OS_OSX)
     QDir currentDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
     if (!currentDir.cd(QStringLiteral("RMEssentials"))) {
         if (!currentDir.mkdir(QStringLiteral("RMEssentials")))
@@ -162,6 +155,13 @@ QString RmeDownloader::binDownloadPath()
             return QString();
         }
         currentDir = QDir(QStringLiteral("/sdcard/RM/res"));
+    }
+#else
+    QDir currentDir = QDir::current();
+    if (!currentDir.cd(QStringLiteral("downloader"))) {
+        if (!currentDir.mkdir(QStringLiteral("downloader")))
+            return QString();
+        currentDir.cd(QStringLiteral("downloader"));
     }
 #endif
 
