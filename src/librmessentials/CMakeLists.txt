@@ -109,7 +109,7 @@ if (Qt5_FOUND)
             PUBLIC Qt5::Gui
         )
     endif()
-    target_include_directories(RmEss5 PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+    target_include_directories(RmEss5 PUBLIC ${CMAKE_BINARY_DIR}/dist/include)
 endif()
 
 if(CMAKE_HOST_WIN32)
@@ -119,6 +119,6 @@ else()
 endif()
 add_custom_command(TARGET RmEss
     PRE_BUILD
-    COMMAND ${RMESSENTIALS_RMESS_GENERATE_HEADERS_EXECUTABLE} -o ${CMAKE_BINARY_DIR}/dist/include/RmEss -f ${CMAKE_CURRENT_LIST_DIR}/src
+    COMMAND ${RMESSENTIALS_RMESS_GENERATE_HEADERS_EXECUTABLE} -o ${CMAKE_BINARY_DIR}/dist/include/RMEss -f ${CMAKE_CURRENT_LIST_DIR}/src
     # BYPRODUCTS ${CMAKE_BINARY_DIR}/dist/include/quazip
 )

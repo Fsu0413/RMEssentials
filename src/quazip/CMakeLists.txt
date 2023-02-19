@@ -61,7 +61,8 @@ if (Qt6_FOUND)
         PUBLIC Qt6::Core5Compat
     )
     target_include_directories(quazip6 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
-elseif (Qt5_FOUND)
+endif()
+if (Qt5_FOUND)
     add_library(quazip5 STATIC ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
     add_dependencies(quazip quazip5)
 
