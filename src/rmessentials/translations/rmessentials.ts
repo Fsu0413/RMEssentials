@@ -120,7 +120,7 @@
     </message>
     <message>
         <location filename="../src/changename.cpp" line="70"/>
-        <location filename="../src/changename.cpp" line="182"/>
+        <location filename="../src/changename.cpp" line="181"/>
         <source>Missing</source>
         <translation>缺失</translation>
     </message>
@@ -131,8 +131,8 @@
     </message>
     <message>
         <location filename="../src/changename.cpp" line="117"/>
-        <location filename="../src/changename.cpp" line="152"/>
-        <location filename="../src/changename.cpp" line="171"/>
+        <location filename="../src/changename.cpp" line="151"/>
+        <location filename="../src/changename.cpp" line="170"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -147,19 +147,19 @@
         <translation>请输入新文件夹名</translation>
     </message>
     <message>
-        <location filename="../src/changename.cpp" line="181"/>
+        <location filename="../src/changename.cpp" line="180"/>
         <source>Exists</source>
         <translation>存在</translation>
     </message>
     <message>
-        <location filename="../src/changename.cpp" line="152"/>
-        <location filename="../src/changename.cpp" line="171"/>
+        <location filename="../src/changename.cpp" line="151"/>
+        <location filename="../src/changename.cpp" line="170"/>
         <source>unknown error</source>
         <translation>未知错误</translation>
     </message>
     <message>
-        <location filename="../src/changename.cpp" line="154"/>
-        <location filename="../src/changename.cpp" line="173"/>
+        <location filename="../src/changename.cpp" line="153"/>
+        <location filename="../src/changename.cpp" line="172"/>
         <source>Rename succeeded</source>
         <translation>重命名成功</translation>
     </message>
@@ -169,7 +169,7 @@
         <translation>重命名为简单</translation>
     </message>
     <message>
-        <location filename="../src/changename.cpp" line="165"/>
+        <location filename="../src/changename.cpp" line="164"/>
         <source>You are now renaming %1 to easy.
 Are you sure?</source>
         <translation>你正在将 %1 重命名为简单。
@@ -193,96 +193,106 @@ Are you sure?</source>
 <context>
     <name>DownloadDialog</name>
     <message>
-        <location filename="../src/download.cpp" line="342"/>
+        <location filename="../src/download.cpp" line="344"/>
         <source> download successful</source>
         <translation> 下载完成</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="348"/>
+        <location filename="../src/download.cpp" line="350"/>
         <source> download failed</source>
         <translation> 下载失败</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="37"/>
+        <location filename="../src/download.cpp" line="39"/>
         <source>Rhythm Master Downloader</source>
         <translation>节奏大师文件下载器</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="72"/>
-        <location filename="../src/download.cpp" line="114"/>
-        <location filename="../src/download.cpp" line="645"/>
-        <location filename="../src/download.cpp" line="646"/>
+        <location filename="../src/download.cpp" line="74"/>
+        <location filename="../src/download.cpp" line="116"/>
+        <location filename="../src/download.cpp" line="653"/>
+        <location filename="../src/download.cpp" line="654"/>
         <source>Download!</source>
         <translation>下载！</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="80"/>
+        <location filename="../src/download.cpp" line="82"/>
         <source>Filename:</source>
         <translation>文件名：</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="353"/>
+        <location filename="../src/download.cpp" line="355"/>
         <source>All files downloaded</source>
         <translation>全部文件已下载</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="371"/>
+        <location filename="../src/download.cpp" line="373"/>
         <source> has been uncompressed</source>
         <translation> 已解压</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="529"/>
-        <location filename="../src/download.cpp" line="543"/>
-        <location filename="../src/download.cpp" line="557"/>
-        <location filename="../src/download.cpp" line="571"/>
-        <location filename="../src/download.cpp" line="594"/>
-        <location filename="../src/download.cpp" line="607"/>
+        <location filename="../src/download.cpp" line="531"/>
+        <location filename="../src/download.cpp" line="545"/>
+        <location filename="../src/download.cpp" line="559"/>
+        <location filename="../src/download.cpp" line="573"/>
+        <location filename="../src/download.cpp" line="596"/>
+        <location filename="../src/download.cpp" line="609"/>
         <source> has been loaded</source>
         <translation> 已载入</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="625"/>
+        <location filename="../src/download.cpp" line="627"/>
         <source>All files loaded</source>
         <translation>全部文件已载入</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="82"/>
+        <location filename="../src/download.cpp" line="84"/>
         <source>Download All</source>
         <translation>下载全部</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="85"/>
+        <location filename="../src/download.cpp" line="87"/>
         <source>Download missing</source>
         <translation>下载缺失</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="362"/>
+        <location filename="../src/download.cpp" line="364"/>
         <source>Download canceled</source>
         <translation>下载已取消</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="634"/>
-        <location filename="../src/download.cpp" line="635"/>
+        <location filename="../src/download.cpp" line="631"/>
+        <source>RMEssentials</source>
+        <translation>节奏大师工具箱</translation>
+    </message>
+    <message>
+        <location filename="../src/download.cpp" line="632"/>
+        <source>Currently RM official provides only encrypted chart on file server.&lt;br /&gt;This program currently does not support decryption currently.</source>
+        <translation>当前节奏大师官方在服务器中只提供加密的谱面。&lt;br /&gt;此程序目前还不支持解密功能。</translation>
+    </message>
+    <message>
+        <location filename="../src/download.cpp" line="642"/>
+        <location filename="../src/download.cpp" line="643"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="41"/>
+        <location filename="../src/download.cpp" line="43"/>
         <source>Song &amp;&amp; IMDs</source>
         <translation>歌曲与 IMD</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="42"/>
+        <location filename="../src/download.cpp" line="44"/>
         <source>Role</source>
         <translation>角色</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="121"/>
+        <location filename="../src/download.cpp" line="123"/>
         <source>Role No:</source>
         <translation>角色编号：</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="91"/>
+        <location filename="../src/download.cpp" line="93"/>
         <source>Download Unofficial Background</source>
         <translation>下载非官方背景图片</translation>
     </message>
@@ -290,37 +300,37 @@ Are you sure?</source>
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="../src/main.cpp" line="39"/>
+        <location filename="../src/main.cpp" line="43"/>
         <source>Filename Changer</source>
         <translation>文件改名器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="43"/>
+        <location filename="../src/main.cpp" line="47"/>
         <source>File Downloader</source>
         <translation>文件下载器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="47"/>
+        <location filename="../src/main.cpp" line="51"/>
         <source>Song Client Editor</source>
         <translation>客户端歌曲编辑器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="51"/>
+        <location filename="../src/main.cpp" line="55"/>
         <source>Papa Song Client Editor</source>
         <translation>星动模式客户端编辑器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="56"/>
+        <location filename="../src/main.cpp" line="60"/>
         <source>About...</source>
         <translation>关于...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="58"/>
+        <location filename="../src/main.cpp" line="62"/>
         <source>About Qt...</source>
         <translation>关于 Qt...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="141"/>
+        <location filename="../src/main.cpp" line="148"/>
         <source>The version of RMEssentials frontend is: %1.
 
 RMEssentials is a small software written by Fsu0413 (from Wings of Melody). 
@@ -339,51 +349,57 @@ This Program is linked against libRmEss %1, and loads libRMEss %4 to run.</sourc
 这个程序链接时使用 libRMEss %1，运行时加载libRMEss %4。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="155"/>
+        <location filename="../src/main.cpp" line="162"/>
         <source>About RMEssentials</source>
         <translation>关于节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="302"/>
-        <location filename="../src/main.cpp" line="328"/>
+        <location filename="../src/main.cpp" line="236"/>
+        <source>Meta data file download failed and temporary values are used instead.&lt;br / &gt;Restart this program if you&apos;d like to retry.</source>
+        <translation>元数据下载失败，将使用临时值。&lt;br /&gt;如果要重试的话，请重启程序。</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="335"/>
+        <location filename="../src/main.cpp" line="361"/>
         <source>External storage permission not granted. RMEssentials&apos; file download and client file mofification functionality won&apos;t work without this permission. Please check your permission setting.</source>
         <translation>没有授予外部存储器权限。节奏大师工具箱的文件下载及客户端歌曲编辑器功能在没有权限的情况下无法工作。请检查您的权限配置。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="314"/>
+        <location filename="../src/main.cpp" line="347"/>
         <source>Please find RMEssentials in following UI and grant external storage permission. RMEssentials&apos; file download and client file mofification functionality won&apos;t work without it.</source>
         <translation>请在随后的界面中找到 RMEssentials （节奏大师工具箱）并授予外部存储器权限。节奏大师工具箱的文件下载及客户端歌曲编辑器功能在没有权限的情况下无法工作。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="36"/>
+        <location filename="../src/main.cpp" line="40"/>
         <source>Rhythm Master Essensials  </source>
         <translation>节奏大师工具箱  </translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="171"/>
+        <location filename="../src/main.cpp" line="179"/>
         <source>Failed to load whatsnew from network</source>
         <translation>从网络获取更新信息失败</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="193"/>
+        <location filename="../src/main.cpp" line="201"/>
         <source>New version avaliable!! Version number: %1&lt;br /&gt;You can download the new version at &lt;a href=&apos;%2&apos;&gt;here&lt;/a&gt;, the password is &quot;%3&quot;&lt;br /&gt;&lt;br /&gt;What&apos;s new in version %1: &lt;br /&gt; %4</source>
         <translation>迎接新版本！！版本号： %1 &lt;br /&gt;可以在&lt;a href=&apos;%2&apos;&gt;这里&lt;/a&gt;下载，提取码是&quot;%3&quot; &lt;br /&gt;&lt;br /&gt;%1版本更新内容：&lt;br /&gt;%4</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="198"/>
-        <location filename="../src/main.cpp" line="301"/>
-        <location filename="../src/main.cpp" line="313"/>
-        <location filename="../src/main.cpp" line="327"/>
+        <location filename="../src/main.cpp" line="206"/>
+        <location filename="../src/main.cpp" line="235"/>
+        <location filename="../src/main.cpp" line="334"/>
+        <location filename="../src/main.cpp" line="346"/>
+        <location filename="../src/main.cpp" line="360"/>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="191"/>
+        <location filename="../src/main.cpp" line="199"/>
         <source>  new version %1 available</source>
         <translation>  新版本 %1 可用</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="150"/>
+        <location filename="../src/main.cpp" line="157"/>
         <source>
 This Program is linked against QuaZip %1.
 Since Quazip does not provide a way to detect version number, we cannot know which version we are loading when running.</source>

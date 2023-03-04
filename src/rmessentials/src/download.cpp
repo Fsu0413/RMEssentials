@@ -1,4 +1,5 @@
 #include "download.h"
+#include "main.h"
 
 #include <RMEss/RmeDownloader>
 #include <RMEss/RmeUncompresser>
@@ -14,6 +15,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QListWidget>
+#include <QMessageBox>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QShowEvent>
@@ -212,17 +214,17 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
         = { QStringLiteral(".mp3"),
             QStringLiteral("_ipad.jpg"),
             QStringLiteral("_thumb.jpg"), // do not use .png here
-            QStringLiteral("_4k_ez.imd.json"),
-            QStringLiteral("_4k_nm.imd.json"),
-            QStringLiteral("_4k_hd.imd.json"),
+            QStringLiteral("_4k_ez.rmp"),
+            QStringLiteral("_4k_nm.rmp"),
+            QStringLiteral("_4k_hd.rmp"),
 
-            QStringLiteral("_5k_ez.imd.json"),
-            QStringLiteral("_5k_nm.imd.json"),
-            QStringLiteral("_5k_hd.imd.json"),
+            QStringLiteral("_5k_ez.rmp"),
+            QStringLiteral("_5k_nm.rmp"),
+            QStringLiteral("_5k_hd.rmp"),
 
-            QStringLiteral("_6k_ez.imd.json"),
-            QStringLiteral("_6k_nm.imd.json"),
-            QStringLiteral("_6k_hd.imd.json"),
+            QStringLiteral("_6k_ez.rmp"),
+            QStringLiteral("_6k_nm.rmp"),
+            QStringLiteral("_6k_hd.rmp"),
 #if 0
                                   QStringLiteral("_Papa_Easy.mde"),
                                   QStringLiteral("_Papa_Normal.mde"),
@@ -395,7 +397,7 @@ void DownloadDialog::downloadList()
     RmeDownloader *downloader = new RmeDownloader;
     downloader->setDownloadPath(RmeDownloader::binDownloadPath());
 #ifdef RME_USE_QUAZIP
-    static const QString TableCom = QStringLiteral("http://res.ds.qq.com/Table/AlphaTest/17/TableCom.zip");
+    QString TableCom = QString(QStringLiteral("http://res.ds.qq.com/Table/BetaTest/%1/TableCom.zip")).arg(currentNum());
     downloader << TableCom;
 #endif
 
@@ -623,6 +625,12 @@ void DownloadDialog::loadPaths()
 #endif
 
     appendLog(tr("All files loaded"));
+
+    // 2023.3.4 add message box for warning:
+    // currently we are downloading encrypted chart.
+    QMessageBox::information(this, tr("RMEssentials"),
+                             tr("Currently RM official provides only encrypted chart on file server.<br />"
+                                "This program currently does not support decryption currently."));
 
     emit busy(false);
 }

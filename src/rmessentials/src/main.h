@@ -20,9 +20,14 @@ private slots:
     void showPapaSongClientEditDialog();
     void about();
 
-    void checkForUpdate();
+    void metainfoDownloaded();
 
+public slots:
     void permissionCheckOk();
+    void enableButtons();
+
+private slots:
+    void oneMetainfoFileDownloaded(const QString &url);
 
 #ifdef Q_OS_ANDROID
 
@@ -41,6 +46,9 @@ private slots:
     void requestForPermission();
     void permissionRequestCallback();
 #endif
+private:
+    bool m_isPermissionOk;
+    bool m_isNumOk;
 
 private:
     QPushButton *m_changeNameBtn;
@@ -52,5 +60,7 @@ private:
 protected:
     void showEvent(QShowEvent *event) override;
 };
+
+extern QString currentNum();
 
 #endif
