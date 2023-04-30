@@ -5,6 +5,10 @@
 
 #include <QList>
 
+#if 0
+class LIBRMESSENTIALS_EXPORT RmeSongFile
+#endif
+
 class QIODevice;
 
 namespace RmeSong {

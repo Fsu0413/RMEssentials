@@ -231,7 +231,7 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
                                   QStringLiteral("_Papa_Hard.mde")
 #endif
           };
-    static QString prefix = QStringLiteral("http://res.ds.qq.com/Test_SongRes/song/");
+    static QString prefix = QStringLiteral("http://res.ds.qq.com/Test_SongRes_V2/song/");
 
     RmeDownloader *downloader = new RmeDownloader;
     QString songname = m_songNameCombo->currentText();
@@ -397,7 +397,7 @@ void DownloadDialog::downloadList()
     RmeDownloader *downloader = new RmeDownloader;
     downloader->setDownloadPath(RmeDownloader::binDownloadPath());
 #ifdef RME_USE_QUAZIP
-    QString TableCom = QString(QStringLiteral("http://res.ds.qq.com/Table/BetaTest/%1/TableCom.zip")).arg(currentNum());
+    QString TableCom = QString(QStringLiteral("http://res.ds.qq.com/Table/BetaTest_V2/%1/TableCom.zip")).arg(currentNum());
     downloader << TableCom;
 #endif
 

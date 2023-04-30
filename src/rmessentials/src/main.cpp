@@ -10,8 +10,13 @@
 #include <QApplication>
 #include <QDir>
 #include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStyleFactory>
+#include <QStringList>
 #include <QStandardPaths>
 #include <QTextStream>
 #include <QTranslator>
@@ -82,7 +87,7 @@ MainDialog::MainDialog(QWidget *parent)
     static const QString whatsnew = QStringLiteral("https://rmessentials.fsu0413.me/whatsnew");
     static const QString dlurl = QStringLiteral("https://rmessentials.fsu0413.me/dlurl");
     static const QString dlpasswd = QStringLiteral("https://rmessentials.fsu0413.me/dlpasswd");
-    static const QString num = QStringLiteral("https://rmessentials.fsu0413.me/num");
+    static const QString num = QStringLiteral("https://res.ds.qq.com/Table/BetaTest_V2/version.json");
 
     RmeDownloader *downloader = new RmeDownloader;
     downloader << num << versioninfo << whatsnew << dlurl << dlpasswd;
@@ -227,15 +232,30 @@ void MainDialog::enableButtons()
 
 void MainDialog::oneMetainfoFileDownloaded(const QString &url)
 {
-    if (url.endsWith(QStringLiteral("/num"))) {
-        QFile vNum(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/num"));
+    if (url.endsWith(QStringLiteral("/version.json"))) {
+        QFile vNum(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/version.json"));
+
+        bool ok = false;
         if (vNum.open(QIODevice::ReadOnly)) {
-            *num = QString::fromUtf8(vNum.readAll());
-        } else {
+            QByteArray arr = vNum.readAll();
+            QJsonDocument doc = QJsonDocument::fromJson(arr);
+            if (doc.isObject()) {
+                QJsonObject ob = doc.object();
+                if (ob.contains(QStringLiteral("version"))) {
+                    QJsonValue v = ob.value(QStringLiteral("version"));
+                    if (v.isDouble()) {
+                        (*num) = QString::number(v.toInt());
+                        ok = true;
+                    }
+                }
+            }
+        }
+
+        if (!ok) {
             QMessageBox::warning(this, tr("RMEssentials"),
                                  tr("Meta data file download failed and temporary values are used instead.<br / >"
                                     "Restart this program if you'd like to retry."));
-            *num = QStringLiteral("459");
+            *num = QStringLiteral("546");
         }
 
         (*num) = (*num).trimmed();
@@ -401,6 +421,11 @@ void MainDialog::showEvent(QShowEvent *event)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+#ifndef Q_OS_WIN32
+    if (QStyleFactory::keys().contains(QStringLiteral("Fusion"), Qt::CaseInsensitive))
+        QApplication::setStyle(QStringLiteral("Fusion"));
+#endif
 
     QDir::setCurrent(qApp->applicationDirPath());
 
