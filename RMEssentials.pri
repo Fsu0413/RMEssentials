@@ -2,8 +2,8 @@
 CONFIG += warn_on c++17
 win32: CONFIG += skip_target_version_ext
 
-VERSION = 13.5.1
-RMEVERSION = 20230501
+VERSION = 13.5.3
+RMEVERSION = 20230503
 DEFINES += "RMEVERSION=\\\"$$RMEVERSION\\\"" "RMEVERSIONNUMBER=\\\"$$VERSION\\\"" QT_DISABLE_DEPRECATED_BEFORE=0x70000
 
 DEFINES += QT_NO_CAST_FROM_ASCII
@@ -38,5 +38,5 @@ LIBS += -L$$OUT_PWD/../dist/lib
 INCLUDEPATH += $$OUT_PWD/../dist/include
 
 use_quazip {
-    DEFINES += "RME_USE_QUAZIP=\\\"1.3\\\""
+    DEFINES += "RME_USE_QUAZIP=\\\"1.4\\\""
 }

@@ -3,3 +3,4 @@
 /downloader/
 rmessentials.qm
 *.orig
+.DS_Store
