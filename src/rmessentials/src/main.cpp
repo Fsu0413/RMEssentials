@@ -15,9 +15,9 @@
 #include <QJsonValue>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QStyleFactory>
-#include <QStringList>
 #include <QStandardPaths>
+#include <QStringList>
+#include <QStyleFactory>
 #include <QTextStream>
 #include <QTranslator>
 #include <QVBoxLayout>
@@ -420,12 +420,12 @@ void MainDialog::showEvent(QShowEvent *event)
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-
 #ifndef Q_OS_WIN32
     if (QStyleFactory::keys().contains(QStringLiteral("Fusion"), Qt::CaseInsensitive))
         QApplication::setStyle(QStringLiteral("Fusion"));
 #endif
+
+    QApplication a(argc, argv);
 
     QDir::setCurrent(qApp->applicationDirPath());
 
