@@ -78,21 +78,22 @@ bool RmeRenamer::runToEasy()
 
 bool RmeRenamerPrivate::renameImdsToEasy()
 {
-    static QMap<ExistNote, QString> suffixes;
-    if (suffixes.isEmpty()) {
-        suffixes[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
-        suffixes[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
-        suffixes[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
-        suffixes[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
-        suffixes[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
-        suffixes[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
-        suffixes[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
-        suffixes[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
-        suffixes[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
-        suffixes[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
-        suffixes[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
-        suffixes[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
-    }
+    // clang-format off
+    static QMap<ExistNote, QString> suffixes = {
+        std::make_pair(IMD_4K_EZ, QStringLiteral("_4k_ez.imd")),
+        std::make_pair(IMD_4K_NM, QStringLiteral("_4k_nm.imd")),
+        std::make_pair(IMD_4K_HD, QStringLiteral("_4k_hd.imd")),
+        std::make_pair(IMD_5K_EZ, QStringLiteral("_5k_ez.imd")),
+        std::make_pair(IMD_5K_NM, QStringLiteral("_5k_nm.imd")),
+        std::make_pair(IMD_5K_HD, QStringLiteral("_5k_hd.imd")),
+        std::make_pair(IMD_6K_EZ, QStringLiteral("_6k_ez.imd")),
+        std::make_pair(IMD_6K_NM, QStringLiteral("_6k_nm.imd")),
+        std::make_pair(IMD_6K_HD, QStringLiteral("_6k_hd.imd")),
+        std::make_pair(MDE_EZ, QStringLiteral("_Papa_Easy.mde")),
+        std::make_pair(MDE_NM, QStringLiteral("_Papa_Normal.mde")),
+        std::make_pair(MDE_HD, QStringLiteral("_Papa_Hard.mde")),
+    };
+    // clang-format on
 
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
@@ -209,21 +210,22 @@ bool RmeRenamerPrivate::renamePapaPngs()
 
 bool RmeRenamerPrivate::renameImds()
 {
-    static QMap<ExistNote, QString> suffixes;
-    if (suffixes.isEmpty()) {
-        suffixes[IMD_4K_EZ] = QStringLiteral("_4k_ez.imd");
-        suffixes[IMD_4K_NM] = QStringLiteral("_4k_nm.imd");
-        suffixes[IMD_4K_HD] = QStringLiteral("_4k_hd.imd");
-        suffixes[IMD_5K_EZ] = QStringLiteral("_5k_ez.imd");
-        suffixes[IMD_5K_NM] = QStringLiteral("_5k_nm.imd");
-        suffixes[IMD_5K_HD] = QStringLiteral("_5k_hd.imd");
-        suffixes[IMD_6K_EZ] = QStringLiteral("_6k_ez.imd");
-        suffixes[IMD_6K_NM] = QStringLiteral("_6k_nm.imd");
-        suffixes[IMD_6K_HD] = QStringLiteral("_6k_hd.imd");
-        suffixes[MDE_EZ] = QStringLiteral("_Papa_Easy.mde");
-        suffixes[MDE_NM] = QStringLiteral("_Papa_Normal.mde");
-        suffixes[MDE_HD] = QStringLiteral("_Papa_Hard.mde");
-    }
+    // clang-format off
+    static QMap<ExistNote, QString> suffixes = {
+        std::make_pair(IMD_4K_EZ, QStringLiteral("_4k_ez.imd")),
+        std::make_pair(IMD_4K_NM, QStringLiteral("_4k_nm.imd")),
+        std::make_pair(IMD_4K_HD, QStringLiteral("_4k_hd.imd")),
+        std::make_pair(IMD_5K_EZ, QStringLiteral("_5k_ez.imd")),
+        std::make_pair(IMD_5K_NM, QStringLiteral("_5k_nm.imd")),
+        std::make_pair(IMD_5K_HD, QStringLiteral("_5k_hd.imd")),
+        std::make_pair(IMD_6K_EZ, QStringLiteral("_6k_ez.imd")),
+        std::make_pair(IMD_6K_NM, QStringLiteral("_6k_nm.imd")),
+        std::make_pair(IMD_6K_HD, QStringLiteral("_6k_hd.imd")),
+        std::make_pair(MDE_EZ, QStringLiteral("_Papa_Easy.mde")),
+        std::make_pair(MDE_NM, QStringLiteral("_Papa_Normal.mde")),
+        std::make_pair(MDE_HD, QStringLiteral("_Papa_Hard.mde")),
+    };
+    // clang-format on
 
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;

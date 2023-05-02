@@ -766,7 +766,7 @@ class RmeSong::RmeSongClientFilePrivate
 {
 public:
     QMap<int16_t, RmeSongClientItemStruct *> m_songsList;
-    QList<int16_t > m_songKeys;
+    QList<int16_t> m_songKeys;
     RmeSongClientHeaderStruct *m_header;
     bool m_isUserMade;
     void cleanup();
@@ -1137,7 +1137,7 @@ class RmeSong::RmePapaSongClientFilePrivate
 {
 public:
     QMap<int32_t, RmePapaSongClientItemStruct *> m_songsList;
-    QList<int32_t > m_songKeys;
+    QList<int32_t> m_songKeys;
     RmeSongClientHeaderStruct *m_header;
     void cleanup();
 };

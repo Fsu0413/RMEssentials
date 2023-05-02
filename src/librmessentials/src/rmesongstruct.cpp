@@ -297,7 +297,11 @@ void RmeSong::RmeSongClientItemStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString()
 #define GETINT(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().toInt()
-#define GETHEX(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().mid(2).toInt(nullptr, 16)
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#define GETHEX(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().midRef(2).toInt(nullptr, 16)
+#else
+#define GETHEX(name) this->m_##name = QStringView(map.value(QStringLiteral("m_" #name)).toString().trimmed()).sliced(2).toInt(nullptr, 16)
+#endif
 
     GETINT(ushSongID);
     GETINT(iVersion);
@@ -401,9 +405,19 @@ QVariantMap RmeSong::RmeSongClientItemStruct::toMap() const
 }
 
 namespace {
-const QStringList NoteNumSuffix
-    = {QStringLiteral("_4KeyEasy"), QStringLiteral("_4KeyNormal"), QStringLiteral("_4KeyHard"),   QStringLiteral("_5KeyEasy"), QStringLiteral("_5KeyNormal"),
-       QStringLiteral("_5KeyHard"), QStringLiteral("_6KeyEasy"),   QStringLiteral("_6KeyNormal"), QStringLiteral("_6KeyHard")};
+// clang-format off
+const char *NoteNumSuffix[] = {
+    "_4KeyEasy",
+    "_4KeyNormal",
+    "_4KeyHard",
+    "_5KeyEasy",
+    "_5KeyNormal",
+    "_5KeyHard",
+    "_6KeyEasy",
+    "_6KeyNormal",
+    "_6KeyHard",
+};
+// clang-format on
 }
 
 QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSongClientItemStruct &orig, bool userMade) const
@@ -485,7 +499,7 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
 
     for (int i = 0; i < 9; ++i) {
         if (userMade || (noteNums1.value(i) != noteNums2.value(i)))
-            ob[QStringLiteral("szNoteNumber") + NoteNumSuffix.value(i)] = QJsonValue(static_cast<int>(noteNums1.value(i)));
+            ob[QStringLiteral("szNoteNumber") + QString::fromLatin1(NoteNumSuffix[i])] = QJsonValue(static_cast<int>(noteNums1.value(i)));
     }
 
     if (ob.size() == 2)
@@ -554,7 +568,7 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
         noteNums1 = noteNums1.mid(0, 9);
 
     for (int i = 0; i < 9; ++i) {
-        QString key = QStringLiteral("szNoteNumber") + NoteNumSuffix.value(i);
+        QString key = QStringLiteral("szNoteNumber") + QString::fromLatin1(NoteNumSuffix[i]);
         if (patch.contains(key))
             noteNums1[i] = patch[key].toInt();
         else if (userMade)
@@ -714,8 +728,11 @@ void RmeSong::RmePapaSongClientItemStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString()
 #define GETINT(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().toInt()
-#define GETHEX(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().mid(2).toInt(nullptr, 16)
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#define GETHEX(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().midRef(2).toInt(nullptr, 16)
+#else
+#define GETHEX(name) this->m_##name = QStringView(map.value(QStringLiteral("m_" #name)).toString().trimmed()).sliced(2).toInt(nullptr, 16)
+#endif
     GETINT(ushSongID);
     GETINT(iVersion);
     GETSTR(szSongName);
