@@ -264,6 +264,33 @@ void MainDialog::oneMetainfoFileDownloaded(const QString &url)
     }
 }
 
+bool MainDialog::checkPermission()
+{
+    QString s = RmeDownloader::binDownloadPath();
+    bool flag = false;
+    if (!s.isEmpty()) {
+        QDir d(s);
+        if (d.exists()) {
+            QFile f(d.absoluteFilePath(QStringLiteral("test.rmessentials")));
+            if (f.open(QFile::WriteOnly | QFile::Truncate)) {
+                f.write(QByteArray("hello RMEssentials"));
+                f.close();
+
+                if (f.open(QFile::ReadOnly)) {
+                    QByteArray arr = f.readAll();
+                    f.close();
+                    if (arr == QByteArray("hello RMEssentials")) {
+                        d.remove(QStringLiteral("test.rmessentials"));
+                        flag = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return flag;
+}
+
 #ifdef Q_OS_ANDROID
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -291,33 +318,6 @@ public:
 private:
     MainDialog *m_dialog;
 };
-
-bool MainDialog::checkPermission()
-{
-    QString s = RmeDownloader::binDownloadPath();
-    bool flag = false;
-    if (!s.isEmpty()) {
-        QDir d(s);
-        if (d.exists()) {
-            QFile f(d.absoluteFilePath(QStringLiteral("test.rmessentials")));
-            if (f.open(QFile::WriteOnly | QFile::Truncate)) {
-                f.write(QByteArray("hello RMEssentials"));
-                f.close();
-
-                if (f.open(QFile::ReadOnly)) {
-                    QByteArray arr = f.readAll();
-                    f.close();
-                    if (arr == QByteArray("hello RMEssentials")) {
-                        d.remove(QStringLiteral("test.rmessentials"));
-                        flag = true;
-                    }
-                }
-            }
-        }
-    }
-
-    return flag;
-}
 
 void MainDialog::requestForLegacyPermission()
 {
@@ -396,13 +396,11 @@ void MainDialog::showEvent(QShowEvent *event)
 {
     QDialog::showEvent(event);
 
-#ifdef Q_OS_ANDROID
     if (checkPermission())
         permissionCheckOk();
+#ifdef Q_OS_ANDROID
     else
         requestForLegacyPermission();
-#else
-    permissionCheckOk();
 #endif
 }
 

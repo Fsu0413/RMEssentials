@@ -142,6 +142,7 @@ void DownloadDialog::showEvent(QShowEvent *e)
         prog->reset();
     }
 #endif
+    setWindowTitle(tr("Rhythm Master Downloader") + QStringLiteral("  ") + currentNum());
     downloadList();
 }
 

@@ -28,6 +28,7 @@ public slots:
 
 private slots:
     void oneMetainfoFileDownloaded(const QString &url);
+    bool checkPermission();
 
 #ifdef Q_OS_ANDROID
 
@@ -38,8 +39,6 @@ private:
     AndroidResultReceiver *m_receiver;
 
 private slots:
-    bool checkPermission();
-
     void requestForLegacyPermission();
     void legacyPermissionRequestCallback();
 
