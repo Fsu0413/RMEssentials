@@ -424,6 +424,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QString searchText = tr("Search");
 
     m_searchEdit = new QLineEdit;
+    m_searchEdit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     m_searchEdit->setPlaceholderText(searchText);
     m_searchEdit->setMinimumWidth(m_searchEdit->fontMetrics().horizontalAdvance(searchText) * 2);
     connect(m_searchEdit, &QLineEdit::returnPressed, this, &SongClientEditDialog::search);
@@ -435,6 +436,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(searchBtn, &QPushButton::clicked, this, &SongClientEditDialog::search);
 
     m_searchList = new QListWidget;
+    m_searchList->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Ignored);
     m_searchList->setSortingEnabled(false);
     connect(m_searchList, &QListWidget::itemDoubleClicked, this, &SongClientEditDialog::searchResultDblClicked);
 

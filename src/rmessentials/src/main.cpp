@@ -420,7 +420,11 @@ void MainDialog::showEvent(QShowEvent *event)
 
 int main(int argc, char *argv[])
 {
-#ifndef Q_OS_WIN32
+#ifdef Q_OS_MACOS
+    // macOS style sucks. It doesn't expand QLineEdit by default.
+    // I tried to set QSizePolicy but it doesn't work.
+    // so let's use Fusion style on macOS.
+
     if (QStyleFactory::keys().contains(QStringLiteral("Fusion"), Qt::CaseInsensitive))
         QApplication::setStyle(QStringLiteral("Fusion"));
 #endif
