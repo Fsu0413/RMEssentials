@@ -20,6 +20,7 @@ public:
 
     static QString binDownloadPath();
     static QString songDownloadPath();
+    static QString legacySongDownloadPath();
     static QString roleDownloadPath();
     static QString noteImageDownloadPath();
 

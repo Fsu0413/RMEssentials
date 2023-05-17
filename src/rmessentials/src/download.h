@@ -6,15 +6,33 @@
 #include <QDialog>
 #include <QDir>
 #include <QMap>
+#include <QPushButton>
 
 class QListWidget;
 class QComboBox;
-class QPushButton;
 class QProgressBar;
 class QCheckBox;
 #ifdef QT_WINEXTRAS_LIB
 class QWinTaskbarButton;
 #endif
+
+class DownloadButton : public QPushButton
+{
+    Q_OBJECT
+
+public:
+    explicit DownloadButton(QWidget *parent = nullptr);
+    ~DownloadButton() = default;
+
+    static QString startDownloadTitle;
+    static QString cancelDownloadTitle;
+
+public slots:
+    void setBusy(bool b);
+
+private:
+    Q_DISABLE_COPY(DownloadButton)
+};
 
 class DownloadDialog : public QDialog
 {
@@ -25,7 +43,10 @@ public:
     {
         One,
         All,
-        Mis
+        Mis,
+        OneLegacy,
+        AllLegacy,
+        MisLegacy,
     };
 
     explicit DownloadDialog(QWidget *parent = nullptr);
@@ -37,6 +58,11 @@ private:
 
     QWidget *createDownloadSongTab();
     QWidget *createDownloadRoleTab();
+    QWidget *createDownloadLegacySongTab();
+
+    QSet<QString> loadSongClientJson(const QString &fileName);
+    QSet<QString> loadMd5ListJson(const QString &fileName);
+    QSet<QString> loadMd5ListXml(const QString &fileName);
 
 signals:
     void busy(bool);
@@ -45,8 +71,11 @@ signals:
 private slots:
     void downloadSongClicked();
     void downloadRoleClicked();
+    void downloadLegacySongClicked();
 
-    void startDownloadSong(DownloadDialog::DownloadMode mode = One);
+    void warnEncryptedChart();
+
+    void startDownloadSong(DownloadDialog::DownloadMode mode);
     void startDownloadRole();
     void startDownloadNoteImage();
     void oneCompleted(const QString &url);
@@ -62,9 +91,15 @@ private slots:
     void startDownloadNext();
     void startDownloadAllMissingSong();
     void startDownloadNextMissing();
+
+    void startDownloadAllLegacySong();
+    void startDownloadNextLegacy();
+    void startDownloadAllMissingLegacySong();
+    void startDownloadNextMissingLegacy();
+
     void downloadProgress(quint64 downloaded, quint64 total);
 
-    void updateUnofficialBackgroundStatus(bool busy);
+    void updateUnofficialBackgroundStatus(bool b);
 
 protected:
     void closeEvent(QCloseEvent *e) override;
@@ -75,17 +110,19 @@ private:
     QProgressBar *m_progressBar;
 
     QComboBox *m_songNameCombo;
-    QPushButton *m_downloadSongBtn;
     QCheckBox *m_downloadUnofficialBackground;
 
     QComboBox *m_roleNameCombo;
-    QPushButton *m_downloadRoleBtn;
+
+    QComboBox *m_legacySongNameCombo;
 
     QMap<int, QStringList> m_rolePadUiMap;
     QSet<QString> m_unOfficialBackgroundList;
 
     bool m_busy;
     bool m_exitRequested;
+
+    bool m_encryptedChartWarned;
 
 #ifdef QT_WINEXTRAS_LIB
     QWinTaskbarButton *m_taskbarBtn;

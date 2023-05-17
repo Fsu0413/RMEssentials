@@ -189,6 +189,23 @@ QString RmeDownloader::songDownloadPath()
     return r;
 }
 
+QString RmeDownloader::legacySongDownloadPath()
+{
+    QDir currentDir(binDownloadPath());
+
+    if (!currentDir.cd(QStringLiteral("songLegacy"))) {
+        if (!currentDir.mkdir(QStringLiteral("songLegacy")))
+            return QString();
+        currentDir.cd(QStringLiteral("songLegacy"));
+    }
+
+    QString r = currentDir.absolutePath();
+    if (!r.endsWith(QStringLiteral("/")))
+        r.append(QStringLiteral("/"));
+
+    return r;
+}
+
 QString RmeDownloader::roleDownloadPath()
 {
     QDir currentDir(binDownloadPath());
