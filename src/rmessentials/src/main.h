@@ -19,6 +19,9 @@ private slots:
     void showSongClientEditDialog();
     void showPapaSongClientEditDialog();
     void about();
+#ifdef RME_USE_QUAZIP
+    void aboutQuaZip();
+#endif
 
     void metainfoDownloaded();
 

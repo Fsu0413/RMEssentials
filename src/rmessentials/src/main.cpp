@@ -62,12 +62,19 @@ MainDialog::MainDialog(QWidget *parent)
     m_papaSongEditorBtn->setEnabled(false);
 
     QHBoxLayout *aboutLayout = new QHBoxLayout;
-    QPushButton *abouT = new QPushButton(tr("About..."));
-    connect(abouT, &QPushButton::clicked, this, &MainDialog::about);
+    QPushButton *aboutBtn = new QPushButton(tr("About..."));
+    connect(aboutBtn, &QPushButton::clicked, this, &MainDialog::about);
     QPushButton *aboutQt = new QPushButton(tr("About Qt..."));
     connect(aboutQt, &QPushButton::clicked, qApp, &QApplication::aboutQt);
-    aboutLayout->addWidget(abouT);
+#ifdef RME_USE_QUAZIP
+    QPushButton *aboutQuaZip = new QPushButton(tr("About QuaZip..."));
+    connect(aboutQuaZip, &QPushButton::clicked, this, &MainDialog::aboutQuaZip);
+#endif
+    aboutLayout->addWidget(aboutBtn);
     aboutLayout->addWidget(aboutQt);
+#ifdef RME_USE_QUAZIP
+    aboutLayout->addWidget(aboutQuaZip);
+#endif
 
     alllayout->addWidget(m_changeNameBtn);
     alllayout->addWidget(m_downloadBtn);
@@ -160,12 +167,23 @@ void MainDialog::about()
                                .arg(QStringLiteral(RMEVERSION), QStringLiteral(QT_VERSION_STR), QString::fromUtf8(qVersion()), QString::fromUtf8(RmeVersion()));
 #ifdef RME_USE_QUAZIP
     aboutContent += tr("\nThis Program is linked against QuaZip %1.\n"
-                       "Since Quazip does not provide a way to detect version number, "
+                       "Since QuaZip does not provide a way to detect version number, "
                        "we cannot know which version we are loading when running.")
                         .arg(QStringLiteral(RME_USE_QUAZIP));
 #endif
     QMessageBox::about(this, tr("About RMEssentials"), aboutContent);
 }
+
+#ifdef RME_USE_QUAZIP
+void MainDialog::aboutQuaZip()
+{
+    QString aboutContent = tr("This program is linked against QuaZip %1, which is licensed under LGPL 2.1.<br />"
+                              "QuaZip GitHub page: <a href=\"%2\">%2</a>")
+                               .arg(QStringLiteral(RME_USE_QUAZIP), QStringLiteral("https://github.com/stachenov/quazip"));
+
+    QMessageBox::about(this, tr("About QuaZip"), aboutContent);
+}
+#endif
 
 void MainDialog::metainfoDownloaded()
 {
