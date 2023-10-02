@@ -14,12 +14,12 @@ qtHaveModule("zlib-private") {
 equals(QT_MAJOR_VERSION, 6): QT += core5compat
 
 TEMPLATE = lib
-CONFIG += staticlib
 
 equals(QT_MAJOR_VERSION, 6): TARGET = quazip
 else: TARGET = quazip$$qtPlatformTargetSuffix()
 
-DEFINES += QUAZIP_STATIC
+staticlib: DEFINES += QUAZIP_STATIC
+else: DEFINES += QUAZIP_BUILD
 
 DESTDIR = $$OUT_PWD/../dist/lib
 DLLDESTDIR = $$OUT_PWD/../dist/bin
