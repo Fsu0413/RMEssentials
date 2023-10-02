@@ -24,12 +24,13 @@ else: DEFINES += QUAZIP_BUILD
 DESTDIR = $$OUT_PWD/../dist/lib
 DLLDESTDIR = $$OUT_PWD/../dist/bin
 
+# quagzipfile.cpp / h omitted. Is of no use.
+
 SOURCES += \
     src/JlCompress.cpp \
     src/qioapi.cpp \
     src/quaadler32.cpp \
     src/quacrc32.cpp \
-    src/quagzipfile.cpp \
     src/quaziodevice.cpp \
     src/quazip.cpp \
     src/quazipdir.cpp \
@@ -47,7 +48,6 @@ HEADERS += \
     src/quaadler32.h \
     src/quachecksum32.h \
     src/quacrc32.h \
-    src/quagzipfile.h \
     src/quaziodevice.h \
     src/quazip.h \
     src/quazip_global.h \

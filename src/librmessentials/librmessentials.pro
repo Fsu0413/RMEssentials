@@ -13,7 +13,7 @@ use_quazip {
     equals(QT_MAJOR_VERSION, 6): QT += core5compat
 
     LIBS += -lquazip$$qtPlatformTargetSuffix()
-    DEFINES += QUAZIP_STATIC
+    staticlib: DEFINES += QUAZIP_STATIC
 }
 
 TEMPLATE = lib
