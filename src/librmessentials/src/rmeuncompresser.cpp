@@ -34,11 +34,6 @@ RmeUncompresser::~RmeUncompresser()
     delete d;
 }
 
-void RmeUncompresser::addFile(const QString &zipName, const QString &fileName)
-{
-    addFile(zipName, fileName, fileName);
-}
-
 void RmeUncompresser::addFile(const QString &zipName, const QString &fileName, const QString &extractedFileName)
 {
     Q_D(RmeUncompresser);
@@ -46,7 +41,7 @@ void RmeUncompresser::addFile(const QString &zipName, const QString &fileName, c
     Q_UNUSED(locker);
     d->zipNames << zipName;
     d->fileNames << fileName;
-    d->extractedFileNames << extractedFileName;
+    d->extractedFileNames << (extractedFileName.isEmpty() ? fileName : extractedFileName);
 }
 
 void RmeUncompresser::run()
@@ -95,7 +90,7 @@ RmeUncompresser::~RmeUncompresser()
 {
 }
 
-void RmeUncompresser::addFile(const QString &, const QString &)
+void RmeUncompresser::addFile(const QString &, const QString &, const QString &)
 {
     Q_UNIMPLEMENTED();
 }

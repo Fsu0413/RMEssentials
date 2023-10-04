@@ -16,10 +16,7 @@ public:
     explicit RmeUncompresser(QObject *parent = nullptr);
     ~RmeUncompresser() override;
 
-    // BC --> modify 2024XXXX, merge in to one
-    void addFile(const QString &zipName, const QString &fileName);
-    void addFile(const QString &zipName, const QString &fileName, const QString &extractedFileName);
-
+    void addFile(const QString &zipName, const QString &fileName, const QString &extractedFileName = QString());
     void run() override;
 
 signals:
