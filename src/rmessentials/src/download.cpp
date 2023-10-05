@@ -60,8 +60,6 @@ DownloadDialog::DownloadDialog(QWidget *parent)
     QTabWidget *tabWidget = new QTabWidget;
     tabWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     tabWidget->addTab(createDownloadSongTab(), tr("Song && RMPs"));
-    int tabN = tabWidget->addTab(createDownloadRoleTab(), tr("Role"));
-    tabWidget->setTabEnabled(tabN, false);
     tabWidget->addTab(createDownloadLegacySongTab(), tr("Legacy Song && IMDs"));
 
     m_list = new QListWidget;
@@ -117,30 +115,6 @@ QWidget *DownloadDialog::createDownloadSongTab()
     downloadSongTab->setLayout(downloadSongLayout);
 
     return downloadSongTab;
-}
-
-QWidget *DownloadDialog::createDownloadRoleTab()
-{
-    QFormLayout *flayout = new QFormLayout;
-    m_roleNameCombo = new QComboBox;
-    m_roleNameCombo->setEditable(true);
-#ifdef Q_OS_ANDROID
-    m_roleNameCombo->setStyleSheet(QStringLiteral("QComboBox{height:%1;}").arg(QFontMetrics(m_roleNameCombo->font()).height() * 1.7));
-#endif
-    connect(this, &DownloadDialog::busy, m_roleNameCombo, &QComboBox::setDisabled);
-    DownloadButton *downloadRoleBtn = new DownloadButton;
-    downloadRoleBtn->setFixedWidth(downloadRoleBtn->fontMetrics().horizontalAdvance(DownloadButton::startDownloadTitle) * 1.7);
-    connect(this, &DownloadDialog::busy, downloadRoleBtn, &DownloadButton::setBusy);
-    connect(downloadRoleBtn, &QPushButton::clicked, this, &DownloadDialog::downloadRoleClicked);
-    QHBoxLayout *layout1 = new QHBoxLayout;
-    layout1->addWidget(m_roleNameCombo);
-    layout1->addWidget(downloadRoleBtn);
-    flayout->addRow(tr("Role No:"), layout1);
-
-    QWidget *downloadRoleTab = new QWidget;
-    downloadRoleTab->setLayout(flayout);
-
-    return downloadRoleTab;
 }
 
 QWidget *DownloadDialog::createDownloadLegacySongTab()
@@ -334,14 +308,6 @@ void DownloadDialog::downloadSongClicked()
     } else {
         emit cancelDownload();
     }
-}
-
-void DownloadDialog::downloadRoleClicked()
-{
-    if (!m_busy)
-        startDownloadRole();
-    else
-        emit cancelDownload();
 }
 
 void DownloadDialog::downloadLegacySongClicked()
@@ -588,69 +554,6 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
     downloader->start();
 }
 
-void DownloadDialog::startDownloadRole()
-{
-    static QStringList suffixs = {QStringLiteral("_hd.png"), QStringLiteral("_head.png"), QStringLiteral("_cry.png")};
-    static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/icon/role/");
-
-    RmeDownloader *downloader = new RmeDownloader;
-    QString roleNum = m_roleNameCombo->currentText();
-    foreach (const QString &suf, suffixs)
-        downloader << (prefix + roleNum + suf);
-
-    downloader->setDownloadPath(RmeDownloader::roleDownloadPath());
-
-    connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
-    connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
-    connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-    connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
-    connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
-    connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNoteImage);
-    connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
-    connect(downloader, &RmeDownloader::canceled, downloader, &RmeDownloader::deleteLater);
-
-    emit busy(true);
-
-    downloader->start();
-}
-
-void DownloadDialog::startDownloadNoteImage()
-{
-    static QString suffix = QStringLiteral(".png");
-    static QString prefix = QStringLiteral("http://game.ds.qq.com/Com_SongRes/NoteImage/");
-
-    QString roleNum = m_roleNameCombo->currentText();
-    int id = roleNum.toInt();
-    QStringList l = m_rolePadUiMap[id];
-    bool download = false;
-    foreach (const QString &s, l) {
-        if (!s.isEmpty()) {
-            download = true;
-            break;
-        }
-    }
-    if (!download)
-        allCompleted();
-    else {
-        RmeDownloader *downloader = new RmeDownloader;
-        foreach (const QString &s, l)
-            downloader << (prefix + s + suffix);
-
-        downloader->setDownloadPath(RmeDownloader::noteImageDownloadPath());
-
-        connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
-        connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
-        connect(downloader, &RmeDownloader::canceled, this, &DownloadDialog::canceled);
-        connect(this, &DownloadDialog::cancelDownload, downloader, &RmeDownloader::cancel);
-        connect(downloader, &RmeDownloader::downloadProgress, this, &DownloadDialog::downloadProgress);
-        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::allCompleted);
-        connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
-        connect(downloader, &RmeDownloader::canceled, downloader, &RmeDownloader::deleteLater);
-
-        downloader->start();
-    }
-}
-
 void DownloadDialog::oneCompleted(const QString &url)
 {
     QString filename = QUrl(url).fileName();
@@ -750,75 +653,6 @@ void DownloadDialog::loadPaths()
         .unite(loadSongClientJson(QStringLiteral("mrock_song_client_android.json")))
         .unite(loadSongClientJson(QStringLiteral("mrock_song_client.json")));
 
-#if 0
-
-    if (dir.exists(QStringLiteral("mrock_song_client_android.bin"))) {
-        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_song_client_android.bin")));
-        f.open(QIODevice::ReadOnly);
-        f.seek(0xcel);
-        while (f.pos() < f.size()) {
-            QByteArray s = f.peek(0x40l);
-            QString path = QString::fromUtf8(s);
-            paths.insert(path);
-            f.seek(f.pos() + 0x33el);
-        }
-        f.close();
-        appendLog(QStringLiteral("mrock_song_client_android.bin") + tr(" has been loaded"));
-    }
-
-    if (dir.exists(QStringLiteral("mrock_papasong_client.bin"))) {
-        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_papasong_client.bin")));
-        f.open(QIODevice::ReadOnly);
-        f.seek(0xd0l);
-        while (f.pos() < f.size()) {
-            QByteArray s = f.peek(0x40l);
-            QString path = QString::fromUtf8(s);
-            paths.insert(path);
-            f.seek(f.pos() + 0x169l);
-        }
-        f.close();
-        appendLog(QStringLiteral("mrock_papasong_client.bin") + tr(" has been loaded"));
-    }
-
-    if (dir.exists(QStringLiteral("mrock_song_client.bin"))) {
-        QFile f(dir.absoluteFilePath(QStringLiteral("mrock_song_client.bin")));
-        f.open(QIODevice::ReadOnly);
-        f.seek(0xcel);
-        while (f.pos() < f.size()) {
-            QByteArray s = f.peek(0x40l);
-            QString path = QString::fromUtf8(s);
-            paths.insert(path);
-            f.seek(f.pos() + 0x33el);
-        }
-        f.close();
-        appendLog(QStringLiteral("mrock_song_client.bin") + tr(" has been loaded"));
-    }
-
-    if (dir.exists(QStringLiteral("mrock.character_client.bin"))) {
-        QFile f(dir.absoluteFilePath(QStringLiteral("mrock.character_client.bin")));
-        f.open(QIODevice::ReadOnly);
-        f.seek(0x30cl);
-        while (f.pos() < f.size()) {
-            QByteArray s = f.peek(0x2l);
-            int id = *reinterpret_cast<const int16_t *>(s.constData());
-            f.seek(f.pos() + 0x204l);
-            s = f.peek(0x20l);
-            QString padui1 = QString::fromUtf8(s);
-            f.seek(f.pos() + 0x20l);
-            s = f.peek(0x20l);
-            QString padui2 = QString::fromUtf8(s);
-            f.seek(f.pos() + 0x20l);
-            s = f.peek(0x20l);
-            QString padui3 = QString::fromUtf8(s);
-            f.seek(f.pos() + 0x40l);
-            m_rolePadUiMap[id] = QStringList {padui1, padui2, padui3};
-        }
-        f.close();
-        appendLog(QStringLiteral("mrock.character_client.bin") + tr(" has been loaded"));
-    }
-
-#endif
-
     QSet<QString> legacyPaths;
     legacyPaths.unite(loadMd5ListXml(QStringLiteral("MD5ListLegacy.xml")))
         .unite(loadMd5ListJson(QStringLiteral("MD5ListLegacy.json")))
@@ -829,11 +663,6 @@ void DownloadDialog::loadPaths()
     std::sort(l1.begin(), l1.end());
 
     m_songNameCombo->addItems(l1);
-
-#if 0
-    foreach (int id, m_rolePadUiMap.keys())
-        m_roleNameCombo->addItem(QString::number(id));
-#endif
 
     QStringList l2 = legacyPaths.values();
     std::sort(l2.begin(), l2.end());

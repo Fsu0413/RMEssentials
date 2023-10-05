@@ -206,46 +206,6 @@ QString RmeDownloader::legacySongDownloadPath()
     return r;
 }
 
-QString RmeDownloader::roleDownloadPath()
-{
-    QDir currentDir(binDownloadPath());
-
-    if (!currentDir.cd(QStringLiteral("icon"))) {
-        if (!currentDir.mkdir(QStringLiteral("icon")))
-            return QString();
-        currentDir.cd(QStringLiteral("icon"));
-    }
-
-    if (!currentDir.cd(QStringLiteral("role"))) {
-        if (!currentDir.mkdir(QStringLiteral("role")))
-            return QString();
-        currentDir.cd(QStringLiteral("role"));
-    }
-
-    QString r = currentDir.absolutePath();
-    if (!r.endsWith(QStringLiteral("/")))
-        r.append(QStringLiteral("/"));
-
-    return r;
-}
-
-QString RmeDownloader::noteImageDownloadPath()
-{
-    QDir currentDir(binDownloadPath());
-
-    if (!currentDir.cd(QStringLiteral("NoteImage"))) {
-        if (!currentDir.mkdir(QStringLiteral("NoteImage")))
-            return QString();
-        currentDir.cd(QStringLiteral("NoteImage"));
-    }
-
-    QString r = currentDir.absolutePath();
-    if (!r.endsWith(QStringLiteral("/")))
-        r.append(QStringLiteral("/"));
-
-    return r;
-}
-
 RmeDownloader &RmeDownloader::operator<<(const QString &filename)
 {
     Q_D(RmeDownloader);

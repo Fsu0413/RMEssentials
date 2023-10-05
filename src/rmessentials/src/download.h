@@ -57,7 +57,6 @@ private:
     void appendLog(const QString &log);
 
     QWidget *createDownloadSongTab();
-    QWidget *createDownloadRoleTab();
     QWidget *createDownloadLegacySongTab();
 
     QSet<QString> loadSongClientJsonImpl(const QByteArray &arr);
@@ -72,14 +71,11 @@ signals:
 
 private slots:
     void downloadSongClicked();
-    void downloadRoleClicked();
     void downloadLegacySongClicked();
 
     void warnEncryptedChart();
 
     void startDownloadSong(DownloadDialog::DownloadMode mode);
-    void startDownloadRole();
-    void startDownloadNoteImage();
     void oneCompleted(const QString &url);
     void oneUncompressed(const QString &filename);
     void oneFailed(const QString &url);
@@ -110,12 +106,7 @@ private:
     QProgressBar *m_progressBar;
 
     QComboBox *m_songNameCombo;
-
-    QComboBox *m_roleNameCombo;
-
     QComboBox *m_legacySongNameCombo;
-
-    QMap<int, QStringList> m_rolePadUiMap;
 
     bool m_busy;
     bool m_exitRequested;

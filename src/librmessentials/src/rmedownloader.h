@@ -21,8 +21,6 @@ public:
     static QString binDownloadPath();
     static QString songDownloadPath();
     static QString legacySongDownloadPath();
-    static QString roleDownloadPath();
-    static QString noteImageDownloadPath();
 
     RmeDownloader &operator<<(const QString &filename);
     RmeDownloader &operator<<(const QPair<QString, QString> &fileNames);
