@@ -96,19 +96,10 @@ bool RmeUtils::hasPapaSmallPng(const QDir &dir)
 
 RmeUtils::ExistNotes RmeUtils::existNotes(const QDir &dir)
 {
-    static const QMap<ExistNote, QString> suffixs {
-        std::make_pair(IMD_4K_EZ, QStringLiteral("_4k_ez.imd")),    std::make_pair(IMD_4K_NM, QStringLiteral("_4k_nm.imd")),
-        std::make_pair(IMD_4K_HD, QStringLiteral("_4k_hd.imd")),    std::make_pair(IMD_5K_EZ, QStringLiteral("_5k_ez.imd")),
-        std::make_pair(IMD_5K_NM, QStringLiteral("_5k_nm.imd")),    std::make_pair(IMD_5K_HD, QStringLiteral("_5k_hd.imd")),
-        std::make_pair(IMD_6K_EZ, QStringLiteral("_6k_ez.imd")),    std::make_pair(IMD_6K_NM, QStringLiteral("_6k_nm.imd")),
-        std::make_pair(IMD_6K_HD, QStringLiteral("_6k_hd.imd")),    std::make_pair(MDE_EZ, QStringLiteral("_Papa_Easy.mde")),
-        std::make_pair(MDE_NM, QStringLiteral("_Papa_Normal.mde")), std::make_pair(MDE_HD, QStringLiteral("_Papa_Hard.mde")),
-    };
-
     ExistNotes result;
-    for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
+    for (ExistNote i = IMD_4K_EZ; i <= RMP_6K_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
-        file_name.append(dir.dirName()).append(suffixs[i]);
+        file_name.append(dir.dirName()).append(noteFileNameSuffix(i));
         if (dir.exists(file_name))
             result |= i;
     }
@@ -124,4 +115,44 @@ QString RmeUtils::calculateSongTime(int gameTime)
 
     r = r.left(8);
     return r;
+}
+
+QString RmeUtils::noteFileNameSuffix(ExistNote note)
+{
+    // clang-format off
+    static const QMap<ExistNote, QString> suffixs {
+        std::make_pair(IMD_4K_EZ, QStringLiteral("_4k_ez.imd")),
+        std::make_pair(IMD_4K_NM, QStringLiteral("_4k_nm.imd")),
+        std::make_pair(IMD_4K_HD, QStringLiteral("_4k_hd.imd")),
+        std::make_pair(IMD_5K_EZ, QStringLiteral("_5k_ez.imd")),
+        std::make_pair(IMD_5K_NM, QStringLiteral("_5k_nm.imd")),
+        std::make_pair(IMD_5K_HD, QStringLiteral("_5k_hd.imd")),
+        std::make_pair(IMD_6K_EZ, QStringLiteral("_6k_ez.imd")),
+        std::make_pair(IMD_6K_NM, QStringLiteral("_6k_nm.imd")),
+        std::make_pair(IMD_6K_HD, QStringLiteral("_6k_hd.imd")),
+        std::make_pair(MDE_EZ, QStringLiteral("_Papa_Easy.mde")),
+        std::make_pair(MDE_NM, QStringLiteral("_Papa_Normal.mde")),
+        std::make_pair(MDE_HD, QStringLiteral("_Papa_Hard.mde")),
+        std::make_pair(IMDJSON_4K_EZ, QStringLiteral("_4k_ez.imd.json")),
+        std::make_pair(IMDJSON_4K_NM, QStringLiteral("_4k_nm.imd.json")),
+        std::make_pair(IMDJSON_4K_HD, QStringLiteral("_4k_hd.imd.json")),
+        std::make_pair(IMDJSON_5K_EZ, QStringLiteral("_5k_ez.imd.json")),
+        std::make_pair(IMDJSON_5K_NM, QStringLiteral("_5k_nm.imd.json")),
+        std::make_pair(IMDJSON_5K_HD, QStringLiteral("_5k_hd.imd.json")),
+        std::make_pair(IMDJSON_6K_EZ, QStringLiteral("_6k_ez.imd.json")),
+        std::make_pair(IMDJSON_6K_NM, QStringLiteral("_6k_nm.imd.json")),
+        std::make_pair(IMDJSON_6K_HD, QStringLiteral("_6k_hd.imd.json")),
+        std::make_pair(RMP_4K_EZ, QStringLiteral("_4k_ez.rmp")),
+        std::make_pair(RMP_4K_NM, QStringLiteral("_4k_nm.rmp")),
+        std::make_pair(RMP_4K_HD, QStringLiteral("_4k_hd.rmp")),
+        std::make_pair(RMP_5K_EZ, QStringLiteral("_5k_ez.rmp")),
+        std::make_pair(RMP_5K_NM, QStringLiteral("_5k_nm.rmp")),
+        std::make_pair(RMP_5K_HD, QStringLiteral("_5k_hd.rmp")),
+        std::make_pair(RMP_6K_EZ, QStringLiteral("_6k_ez.rmp")),
+        std::make_pair(RMP_6K_NM, QStringLiteral("_6k_nm.rmp")),
+        std::make_pair(RMP_6K_HD, QStringLiteral("_6k_hd.rmp")),
+    };
+    // clang-format on
+
+    return suffixs.value(note, {});
 }

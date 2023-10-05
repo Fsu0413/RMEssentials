@@ -78,36 +78,19 @@ bool RmeRenamer::runToEasy()
 
 bool RmeRenamerPrivate::renameImdsToEasy()
 {
-    // clang-format off
-    static QMap<ExistNote, QString> suffixes = {
-        std::make_pair(IMD_4K_EZ, QStringLiteral("_4k_ez.imd")),
-        std::make_pair(IMD_4K_NM, QStringLiteral("_4k_nm.imd")),
-        std::make_pair(IMD_4K_HD, QStringLiteral("_4k_hd.imd")),
-        std::make_pair(IMD_5K_EZ, QStringLiteral("_5k_ez.imd")),
-        std::make_pair(IMD_5K_NM, QStringLiteral("_5k_nm.imd")),
-        std::make_pair(IMD_5K_HD, QStringLiteral("_5k_hd.imd")),
-        std::make_pair(IMD_6K_EZ, QStringLiteral("_6k_ez.imd")),
-        std::make_pair(IMD_6K_NM, QStringLiteral("_6k_nm.imd")),
-        std::make_pair(IMD_6K_HD, QStringLiteral("_6k_hd.imd")),
-        std::make_pair(MDE_EZ, QStringLiteral("_Papa_Easy.mde")),
-        std::make_pair(MDE_NM, QStringLiteral("_Papa_Normal.mde")),
-        std::make_pair(MDE_HD, QStringLiteral("_Papa_Hard.mde")),
-    };
-    // clang-format on
-
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
-        file_name.append(m_dir.dirName()).append(suffixes[i]);
+        file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
         if (m_dir.exists(file_name)) {
             ExistNote i_easiest = i;
-            while (!suffixes[i_easiest].contains(QStringLiteral("ez")) && !suffixes[i_easiest].contains(QStringLiteral("Easy")))
+            while (!noteFileNameSuffix(i_easiest).contains(QStringLiteral("ez")) && !noteFileNameSuffix(i_easiest).contains(QStringLiteral("Easy")))
                 i_easiest = static_cast<ExistNote>(i_easiest >> 1);
 
-            while (m_dir.exists(m_dir.dirName() + suffixes[i_easiest]) && (m_dir.dirName() + suffixes[i_easiest]) != file_name)
+            while (m_dir.exists(m_dir.dirName() + noteFileNameSuffix(i_easiest)) && (m_dir.dirName() + noteFileNameSuffix(i_easiest)) != file_name)
                 i_easiest = static_cast<ExistNote>(i_easiest << 1);
 
-            if ((m_dir.dirName() + suffixes[i_easiest]) != file_name)
-                m_dir.rename(file_name, (m_dir.dirName() + suffixes[i_easiest]));
+            if ((m_dir.dirName() + noteFileNameSuffix(i_easiest)) != file_name)
+                m_dir.rename(file_name, (m_dir.dirName() + noteFileNameSuffix(i_easiest)));
         }
     }
 
@@ -210,28 +193,11 @@ bool RmeRenamerPrivate::renamePapaPngs()
 
 bool RmeRenamerPrivate::renameImds()
 {
-    // clang-format off
-    static QMap<ExistNote, QString> suffixes = {
-        std::make_pair(IMD_4K_EZ, QStringLiteral("_4k_ez.imd")),
-        std::make_pair(IMD_4K_NM, QStringLiteral("_4k_nm.imd")),
-        std::make_pair(IMD_4K_HD, QStringLiteral("_4k_hd.imd")),
-        std::make_pair(IMD_5K_EZ, QStringLiteral("_5k_ez.imd")),
-        std::make_pair(IMD_5K_NM, QStringLiteral("_5k_nm.imd")),
-        std::make_pair(IMD_5K_HD, QStringLiteral("_5k_hd.imd")),
-        std::make_pair(IMD_6K_EZ, QStringLiteral("_6k_ez.imd")),
-        std::make_pair(IMD_6K_NM, QStringLiteral("_6k_nm.imd")),
-        std::make_pair(IMD_6K_HD, QStringLiteral("_6k_hd.imd")),
-        std::make_pair(MDE_EZ, QStringLiteral("_Papa_Easy.mde")),
-        std::make_pair(MDE_NM, QStringLiteral("_Papa_Normal.mde")),
-        std::make_pair(MDE_HD, QStringLiteral("_Papa_Hard.mde")),
-    };
-    // clang-format on
-
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
-        file_name.append(m_dir.dirName()).append(suffixes[i]);
+        file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
         if (m_dir.exists(file_name))
-            m_dir.rename(file_name, m_toRename + suffixes[i]);
+            m_dir.rename(file_name, m_toRename + noteFileNameSuffix(i));
     }
 
     return true;
