@@ -63,7 +63,7 @@ if (Qt5_FOUND)
 endif()
 
 if(RMESSENTIALS_USE_QUAZIP)
-    set(RMESSENTIALS_QUAZIP_VERSION "1.3")
+    set(RMESSENTIALS_QUAZIP_VERSION "1.4")
 endif()
 
 add_subdirectory(src)
