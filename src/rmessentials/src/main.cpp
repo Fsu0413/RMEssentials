@@ -332,7 +332,7 @@ void MainDialog::legacyPermissionRequestCallback()
     else
         QMessageBox::warning(this, tr("RMEssentials"),
                              tr("External storage permission not granted. "
-                                "RMEssentials' file download and client file mofification functionality won't work without this permission. "
+                                "RMEssentials won't work without this permission. "
                                 "Please check your permission setting."),
                              QMessageBox::Ok);
 }
@@ -344,7 +344,7 @@ void MainDialog::requestForPermission()
 
     QMessageBox::information(this, tr("RMEssentials"),
                              tr("Please find RMEssentials in following UI and grant external storage permission. "
-                                "RMEssentials' file download and client file mofification functionality won't work without it."),
+                                "RMEssentials won't work without it."),
                              QMessageBox::Ok);
 
     QAndroidIntent indent(QStringLiteral("android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION"));
@@ -358,7 +358,7 @@ void MainDialog::permissionRequestCallback()
     else
         QMessageBox::warning(this, tr("RMEssentials"),
                              tr("External storage permission not granted. "
-                                "RMEssentials' file download and client file mofification functionality won't work without this permission. "
+                                "RMEssentials won't work without this permission. "
                                 "Please check your permission setting."),
                              QMessageBox::Ok);
 }
