@@ -1,0 +1,3 @@
+[submodule "quazip"]
+	path = src/quazip/quazip
+	url = ../quazip

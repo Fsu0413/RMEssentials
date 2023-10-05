@@ -27,43 +27,43 @@ DLLDESTDIR = $$OUT_PWD/../dist/bin
 # quagzipfile.cpp / h omitted. Is of no use.
 
 SOURCES += \
-    src/JlCompress.cpp \
-    src/qioapi.cpp \
-    src/quaadler32.cpp \
-    src/quacrc32.cpp \
-    src/quaziodevice.cpp \
-    src/quazip.cpp \
-    src/quazipdir.cpp \
-    src/quazipfile.cpp \
-    src/quazipfileinfo.cpp \
-    src/quazipnewinfo.cpp \
-    src/unzip.c \
-    src/zip.c \
-    src/quachecksum32.cpp
+    quazip/quazip/JlCompress.cpp \
+    quazip/quazip/qioapi.cpp \
+    quazip/quazip/quaadler32.cpp \
+    quazip/quazip/quacrc32.cpp \
+    quazip/quazip/quaziodevice.cpp \
+    quazip/quazip/quazip.cpp \
+    quazip/quazip/quazipdir.cpp \
+    quazip/quazip/quazipfile.cpp \
+    quazip/quazip/quazipfileinfo.cpp \
+    quazip/quazip/quazipnewinfo.cpp \
+    quazip/quazip/unzip.c \
+    quazip/quazip/zip.c \
+    quazip/quazip/quachecksum32.cpp
 
 HEADERS += \
-    src/minizip_crypt.h \
-    src/ioapi.h \
-    src/JlCompress.h \
-    src/quaadler32.h \
-    src/quachecksum32.h \
-    src/quacrc32.h \
-    src/quaziodevice.h \
-    src/quazip.h \
-    src/quazip_global.h \
-    src/quazipdir.h \
-    src/quazipfile.h \
-    src/quazipfileinfo.h \
-    src/quazipnewinfo.h \
-    src/unzip.h \
-    src/zip.h \
-    src/quazip_qt_compat.h
+    quazip/quazip/minizip_crypt.h \
+    quazip/quazip/ioapi.h \
+    quazip/quazip/JlCompress.h \
+    quazip/quazip/quaadler32.h \
+    quazip/quazip/quachecksum32.h \
+    quazip/quazip/quacrc32.h \
+    quazip/quazip/quaziodevice.h \
+    quazip/quazip/quazip.h \
+    quazip/quazip/quazip_global.h \
+    quazip/quazip/quazipdir.h \
+    quazip/quazip/quazipfile.h \
+    quazip/quazip/quazipfileinfo.h \
+    quazip/quazip/quazipnewinfo.h \
+    quazip/quazip/unzip.h \
+    quazip/quazip/zip.h \
+    quazip/quazip/quazip_qt_compat.h
 
 generateHeaders.target = $$system_path($$OUT_PWD/../dist/include/quazip/.timestamp)
 !build_pass: mkpath($$OUT_PWD/../dist/include/quazip)
 
-contains(QMAKE_HOST.os, "Windows"): generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$OUT_PWD/../dist/include/quazip) -f $$system_path($$PWD/src/)
-else: generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$OUT_PWD/../dist/include/quazip -f $$PWD/src/
+contains(QMAKE_HOST.os, "Windows"): generateHeaders.commands = cscript $$system_path($$PWD/../../tools/AutoGenerateHeader.vbs) -o $$system_path($$OUT_PWD/../dist/include/quazip) -f $$system_path($$PWD/quazip/quazip/)
+else: generateHeaders.commands = $$PWD/../../tools/AutoGenerateHeader.sh -o $$OUT_PWD/../dist/include/quazip -f $$PWD/quazip/quazip/
 
 HEADERS_ABSOLUTE =
 for (header, HEADERS): HEADERS_ABSOLUTE += $$system_path($$absolute_path($$header))
