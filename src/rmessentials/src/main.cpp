@@ -57,6 +57,7 @@ MainDialog::MainDialog(QWidget *parent)
     m_papaSongEditorBtn = new QPushButton(tr("Papa Song Client Editor"));
     connect(m_papaSongEditorBtn, &QPushButton::clicked, this, &MainDialog::showPapaSongClientEditDialog);
     m_papaSongEditorBtn->setEnabled(false);
+    m_papaSongEditorBtn->setVisible(false);
 
     QHBoxLayout *aboutLayout = new QHBoxLayout;
     QPushButton *aboutBtn = new QPushButton(tr("About..."));
