@@ -21,18 +21,24 @@ using namespace RmeUtils;
 QLayout *ChangeNameDialog::layFiles(QLabel *labels[18])
 {
     // clang-format off
-    static QStringList layDecriptions = {tr("MP3:"),          tr("Big PNG:"),        tr("Small PNG:"),
-                                         tr("Papa Big PNG:"), tr("Para Small PNG:"), QString(),
-                                         tr("4K Easy IMD:"),  tr("4K Normal IMD:"),  tr("4K Hard IMD:"),
-                                         tr("5K Easy IMD:"),  tr("5K Normal IMD:"),  tr("5K Hard IMD:"),
-                                         tr("6K Easy IMD:"),  tr("6K Normal IMD:"),  tr("6K Hard IMD:"),
-                                         tr("Easy MDE:"),     tr("Normal MDE:"),     tr("Hard MDE:")};
+    static QStringList layDecriptions = {tr("MP3:"),              tr("Big / Papa PNG:"),     tr("Small PNG:"),
+                                         tr("Old Big PNG:"),      tr("Old Small PNG:"),      tr("Papa Small PNG:"),
+                                         tr("4K Easy IMD:"),      tr("4K Normal IMD:"),      tr("4K Hard IMD:"),
+                                         tr("5K Easy IMD:"),      tr("5K Normal IMD:"),      tr("5K Hard IMD:"),
+                                         tr("6K Easy IMD:"),      tr("6K Normal IMD:"),      tr("6K Hard IMD:"),
+                                         tr("4K Easy IMDJson:"),  tr("4K Normal IMDJson:"),  tr("4K Hard IMDJson:"),
+                                         tr("5K Easy IMDJson:"),  tr("5K Normal IMDJson:"),  tr("5K Hard IMDJson:"),
+                                         tr("6K Easy IMDJson:"),  tr("6K Normal IMDJson:"),  tr("6K Hard IMDJson:"),
+                                         tr("4K Easy RMP:"),      tr("4K Normal RMP:"),      tr("4K Hard RMP:"),
+                                         tr("5K Easy RMP:"),      tr("5K Normal RMP:"),      tr("5K Hard RMP:"),
+                                         tr("6K Easy RMP:"),      tr("6K Normal RMP:"),      tr("6K Hard RMP:"),
+                                         tr("Easy MDE:"),         tr("Normal MDE:"),         tr("Hard MDE:")};
     // clang-format on
 
     QHBoxLayout *totalLayout = new QHBoxLayout;
     for (int i = 0; i < 3; ++i) {
         QFormLayout *rowLayout = new QFormLayout;
-        for (int j = i; j < 18; j += 3)
+        for (int j = i; j < 36; j += 3)
             rowLayout->addRow(layDecriptions[j], labels[j]);
 
         totalLayout->addLayout(rowLayout);
@@ -70,12 +76,12 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     int width = fm.horizontalAdvance(tr("Missing"));
     int titleWidth = fm.horizontalAdvance(QStringLiteral("_title_ipad"));
 
-    for (int i = 0; i < 18; ++i) {
+    for (int i = 0; i < 36; ++i) {
         m_filesLabels[i] = new QLabel;
-        if (i != 2)
+        if (i != 4)
             m_filesLabels[i]->setMinimumWidth(width);
         else
-            m_filesLabels[2]->setMinimumWidth(titleWidth);
+            m_filesLabels[4]->setMinimumWidth(titleWidth);
     }
     QLayout *filesLayout = layFiles(m_filesLabels);
     totalLayout->addLayout(filesLayout);
@@ -110,10 +116,11 @@ void ChangeNameDialog::selectFolder()
 
     QDir d(selected);
     bool bhasMp3 = hasMp3(d);
+    bool bhasNewBigPng = hasNewBigPng(d);
     bool bhasBigPng = hasBigPng(d);
     bool bhasNote = existNotes(d);
 
-    if (!(bhasMp3 && bhasBigPng && bhasNote)) {
+    if (!(bhasMp3 && (bhasNewBigPng || bhasBigPng) && bhasNote)) {
         QMessageBox::critical(this, tr("Error"), tr("The folder you selected is not usable in Rhythm Master, please select again."));
         return;
     }
@@ -183,10 +190,11 @@ void ChangeNameDialog::checkFiles(const QString &folder)
     QDir d(folder);
     bool exists[18] = {false};
     exists[0] = hasMp3(d);
-    exists[1] = hasBigPng(d);
+    exists[1] = hasNewBigPng(d);
+    exists[2] = hasNewSmallPng(d);
+    exists[3] = hasBigPng(d);
     QString smallPngSuffix;
-    exists[2] = hasSmallPng(d, smallPngSuffix);
-    exists[3] = hasPapaBigPng(d);
+    exists[4] = hasSmallPng(d, smallPngSuffix);
     exists[4] = hasPapaSmallPng(d);
 
     ExistNotes imds = existNotes(d);
@@ -199,18 +207,34 @@ void ChangeNameDialog::checkFiles(const QString &folder)
     exists[12] = imds & IMD_6K_EZ;
     exists[13] = imds & IMD_6K_NM;
     exists[14] = imds & IMD_6K_HD;
-    exists[15] = imds & MDE_EZ;
-    exists[16] = imds & MDE_NM;
-    exists[17] = imds & MDE_HD;
+    exists[15] = imds & IMDJSON_4K_EZ;
+    exists[16] = imds & IMDJSON_4K_NM;
+    exists[17] = imds & IMDJSON_4K_HD;
+    exists[18] = imds & IMDJSON_5K_EZ;
+    exists[19] = imds & IMDJSON_5K_NM;
+    exists[20] = imds & IMDJSON_5K_HD;
+    exists[21] = imds & IMDJSON_6K_EZ;
+    exists[22] = imds & IMDJSON_6K_NM;
+    exists[23] = imds & IMDJSON_6K_HD;
+    exists[24] = imds & RMP_4K_EZ;
+    exists[25] = imds & RMP_4K_NM;
+    exists[26] = imds & RMP_4K_HD;
+    exists[27] = imds & RMP_5K_EZ;
+    exists[28] = imds & RMP_5K_NM;
+    exists[29] = imds & RMP_5K_HD;
+    exists[30] = imds & RMP_6K_EZ;
+    exists[31] = imds & RMP_6K_NM;
+    exists[32] = imds & RMP_6K_HD;
+    exists[33] = imds & MDE_EZ;
+    exists[34] = imds & MDE_NM;
+    exists[35] = imds & MDE_HD;
 
-    for (int i = 0; i < 18; ++i) {
-        if (i == 5)
-            continue;
-        else if (!exists[i])
+    for (int i = 0; i < 36; ++i) {
+        if (!exists[i])
             m_filesLabels[i]->setText(strMissing);
-        else if (i != 2)
+        else if (i != 4)
             m_filesLabels[i]->setText(strExists);
         else
-            m_filesLabels[2]->setText(smallPngSuffix);
+            m_filesLabels[4]->setText(smallPngSuffix);
     }
 }

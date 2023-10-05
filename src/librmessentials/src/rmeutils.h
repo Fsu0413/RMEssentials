@@ -49,7 +49,12 @@ Q_DECLARE_FLAGS(ExistNotes, ExistNote)
 LIBRMESSENTIALS_EXPORT bool hasMp3(const QDir &dir);
 LIBRMESSENTIALS_EXPORT bool hasBigPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT bool hasSmallPng(const QDir &dir, QString &suffix);
-LIBRMESSENTIALS_EXPORT bool hasPapaBigPng(const QDir &dir);
+LIBRMESSENTIALS_EXPORT bool hasNewBigPng(const QDir &dir);
+LIBRMESSENTIALS_EXPORT bool hasNewSmallPng(const QDir &dir);
+LIBRMESSENTIALS_EXPORT inline bool hasPapaBigPng(const QDir &dir)
+{
+    return hasNewBigPng(dir);
+}
 LIBRMESSENTIALS_EXPORT bool hasPapaSmallPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT ExistNotes existNotes(const QDir &dir);
 

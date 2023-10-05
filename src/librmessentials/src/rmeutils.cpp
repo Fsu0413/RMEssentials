@@ -60,7 +60,7 @@ bool RmeUtils::hasSmallPng(const QDir &dir, QString &suffix)
     return false;
 }
 
-bool RmeUtils::hasPapaBigPng(const QDir &dir)
+bool RmeUtils::hasNewBigPng(const QDir &dir)
 {
     static const QStringList l {QStringLiteral("*.png")};
 
@@ -68,6 +68,23 @@ bool RmeUtils::hasPapaBigPng(const QDir &dir)
         QString s2 = s;
         s2.chop(4);
         if (s2.endsWith(QStringLiteral("_ipad"))) {
+            s2.chop(5);
+            if (s2.toLower() == dir.dirName().toLower())
+                return true;
+        }
+    }
+
+    return false;
+}
+
+bool RmeUtils::hasNewSmallPng(const QDir &dir)
+{
+    static const QStringList l {QStringLiteral("*.png")};
+
+    foreach (const QString &s, dir.entryList(l)) {
+        QString s2 = s;
+        s2.chop(4);
+        if (s2.endsWith(QStringLiteral("_thumb"))) {
             s2.chop(5);
             if (s2.toLower() == dir.dirName().toLower())
                 return true;

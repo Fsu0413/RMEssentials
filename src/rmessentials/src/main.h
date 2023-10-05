@@ -30,7 +30,6 @@ public slots:
     void enableButtons();
 
 private slots:
-    void oneMetainfoFileDownloaded(const QString &url);
     bool checkPermission();
 
 #ifdef Q_OS_ANDROID
@@ -50,7 +49,6 @@ private slots:
 #endif
 private:
     bool m_isPermissionOk;
-    bool m_isNumOk;
 
 private:
     QPushButton *m_changeNameBtn;

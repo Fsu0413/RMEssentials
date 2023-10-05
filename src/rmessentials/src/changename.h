@@ -20,7 +20,7 @@ private:
     QLineEdit *m_folderName;
     QLineEdit *m_toRename;
 
-    QLabel *m_filesLabels[18];
+    QLabel *m_filesLabels[36];
 
 private slots:
     void selectFolder();
@@ -32,7 +32,7 @@ signals:
     void folderSelected(const QString &folder);
 
 private:
-    static QLayout *layFiles(QLabel *labels[18]);
+    static QLayout *layFiles(QLabel *labels[36]);
 };
 
 #endif

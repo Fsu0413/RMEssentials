@@ -60,7 +60,9 @@ private:
     QWidget *createDownloadRoleTab();
     QWidget *createDownloadLegacySongTab();
 
+    QSet<QString> loadSongClientJsonImpl(const QByteArray &arr);
     QSet<QString> loadSongClientJson(const QString &fileName);
+    QSet<QString> loadMd5ListJsonImpl(const QByteArray &arr);
     QSet<QString> loadMd5ListJson(const QString &fileName);
     QSet<QString> loadMd5ListXml(const QString &fileName);
 

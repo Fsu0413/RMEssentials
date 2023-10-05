@@ -187,13 +187,33 @@ QWidget *DownloadDialog::createDownloadLegacySongTab()
     return downloadSongTab;
 }
 
+QSet<QString> DownloadDialog::loadSongClientJsonImpl(const QByteArray &arr)
+{
+    QSet<QString> paths;
+
+    QJsonDocument doc = QJsonDocument::fromJson(arr, nullptr);
+    if (doc.isArray()) {
+        QJsonArray arr = doc.array();
+        for (const QJsonValue &v : arr) {
+            if (v.isObject()) {
+                QJsonObject ob = v.toObject();
+                if (ob.contains(QStringLiteral("m_szPath"))) {
+                    QJsonValue pathv = ob.value(QStringLiteral("m_szPath"));
+                    if (pathv.isString())
+                        paths.insert(pathv.toString().trimmed());
+                }
+            }
+        }
+    }
+
+    return paths;
+}
+
 QSet<QString> DownloadDialog::loadSongClientJson(const QString &fileName)
 {
     QDir dir(RmeDownloader::binDownloadPath());
     if (!dir.exists())
         return {};
-
-    QSet<QString> paths;
 
     if (dir.exists(fileName)) {
         QFile f(dir.absoluteFilePath(fileName));
@@ -202,16 +222,42 @@ QSet<QString> DownloadDialog::loadSongClientJson(const QString &fileName)
             QByteArray arr = f.readAll();
             f.close();
 
-            QJsonDocument doc = QJsonDocument::fromJson(arr, nullptr);
-            if (doc.isArray()) {
-                QJsonArray arr = doc.array();
-                for (const QJsonValue &v : arr) {
-                    if (v.isObject()) {
-                        QJsonObject ob = v.toObject();
-                        if (ob.contains(QStringLiteral("m_szPath"))) {
-                            QJsonValue pathv = ob.value(QStringLiteral("m_szPath"));
-                            if (pathv.isString())
-                                paths.insert(pathv.toString().trimmed());
+            return loadSongClientJsonImpl(arr);
+        }
+    }
+
+    return {};
+}
+
+QSet<QString> DownloadDialog::loadMd5ListJsonImpl(const QByteArray &arr)
+{
+    QSet<QString> paths;
+
+    QJsonDocument doc = QJsonDocument::fromJson(arr, nullptr);
+    if (doc.isArray()) {
+        QJsonArray arr = doc.array();
+        for (const QJsonValue &v : arr) {
+            if (v.isObject()) {
+                QJsonObject ob = v.toObject();
+                if (ob.contains(QStringLiteral("filename"))) {
+                    QJsonValue filenamev = ob.value(QStringLiteral("filename"));
+                    if (filenamev.isString()) {
+                        QString s = filenamev.toString().trimmed();
+                        {
+                            // clang-format off
+                            static QRegularExpression rxImd(QRegularExpression::anchoredPattern(QStringLiteral(R"r((.+)_[456]k_((ez)|(nm)|(hd))\.imd)r")));
+                            // clang-format on
+                            QRegularExpressionMatch match = rxImd.match(s);
+                            if (match.hasMatch())
+                                paths.insert(match.capturedTexts().value(1));
+                        }
+                        {
+                            // clang-format off
+                            static QRegularExpression rxMp3(QRegularExpression::anchoredPattern(QStringLiteral(R"r((.+)\.mp3)r")));
+                            // clang-format on
+                            QRegularExpressionMatch match = rxMp3.match(s);
+                            if (match.hasMatch())
+                                paths.insert(match.capturedTexts().value(1));
                         }
                     }
                 }
@@ -228,8 +274,6 @@ QSet<QString> DownloadDialog::loadMd5ListJson(const QString &fileName)
     if (!dir.exists())
         return {};
 
-    QSet<QString> paths;
-
     if (dir.exists(fileName)) {
         QFile f(dir.absoluteFilePath(fileName));
         bool op = f.open(QIODevice::ReadOnly);
@@ -237,31 +281,11 @@ QSet<QString> DownloadDialog::loadMd5ListJson(const QString &fileName)
             QByteArray arr = f.readAll();
             f.close();
 
-            QJsonDocument doc = QJsonDocument::fromJson(arr, nullptr);
-            if (doc.isArray()) {
-                QJsonArray arr = doc.array();
-                for (const QJsonValue &v : arr) {
-                    if (v.isObject()) {
-                        QJsonObject ob = v.toObject();
-                        if (ob.contains(QStringLiteral("filename"))) {
-                            QJsonValue filenamev = ob.value(QStringLiteral("filename"));
-                            if (filenamev.isString()) {
-                                QString s = filenamev.toString().trimmed();
-                                // clang-format off
-                                static QRegularExpression rx(QRegularExpression::anchoredPattern(QStringLiteral(R"r((.+)_[456]k_((ez)|(nm)|(hd))\.imd)r")));
-                                // clang-format on
-                                QRegularExpressionMatch match = rx.match(s);
-                                if (match.hasMatch())
-                                    paths.insert(match.capturedTexts().value(1));
-                            }
-                        }
-                    }
-                }
-            }
+            return loadMd5ListJsonImpl(arr);
         }
     }
 
-    return paths;
+    return {};
 }
 
 QSet<QString> DownloadDialog::loadMd5ListXml(const QString &fileName)
@@ -747,20 +771,6 @@ void DownloadDialog::loadPaths()
         .unite(loadSongClientJson(QStringLiteral("mrock_song_client.json")));
 
 #if 0
-    if (dir.exists(QStringLiteral("MD5List.xml"))) {
-        QFile f(dir.absoluteFilePath(QStringLiteral("MD5List.xml")));
-        f.open(QIODevice::ReadOnly | QIODevice::Text);
-        while (!f.atEnd()) {
-            QString s = QString::fromUtf8(f.readLine());
-            s = s.trimmed();
-            static QRegularExpression rx(QRegularExpression::anchoredPattern(QStringLiteral("<([0-9a-z]+)\\.mp3\\ value=\\\"[0-9a-z]+\\\"\\ \\/>")));
-            QRegularExpressionMatch match = rx.match(s);
-            if (match.hasMatch())
-                paths.insert(match.capturedTexts().value(1));
-        }
-        f.close();
-        appendLog(QStringLiteral("MD5List.xml") + tr(" has been loaded"));
-    }
 
     if (dir.exists(QStringLiteral("mrock_song_client_android.bin"))) {
         QFile f(dir.absoluteFilePath(QStringLiteral("mrock_song_client_android.bin")));

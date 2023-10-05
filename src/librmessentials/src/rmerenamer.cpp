@@ -14,8 +14,14 @@ public:
     bool renameBigPng();
     bool renameSmallPng();
     bool renamePapaPngs();
+    bool renamePatterns();
     bool renameImds();
+    bool renameImdJsons();
+    bool renameRmps();
+    bool renamePatternsToEasy();
     bool renameImdsToEasy();
+    bool renameImdJsonsToEasy();
+    bool renameRmpsToEasy();
     bool renameSelf();
     bool deleteExtra();
 
@@ -45,8 +51,8 @@ bool RmeRenamer::run()
     if (d->m_dir.dirName() == d->m_toRename)
         return false;
 
-    QDir dotdotToRename(d->m_dir.absolutePath() + QStringLiteral("/../") + d->m_toRename);
-    if (dotdotToRename.exists())
+    QDir dotdotToRename = d->m_dir;
+    if (dotdotToRename.cdUp() && dotdotToRename.exists())
         return false;
 
     if (!hasMp3(d->m_dir))
@@ -55,7 +61,7 @@ bool RmeRenamer::run()
     if (!hasBigPng(d->m_dir))
         return false;
 
-    if (!(d->renameMp3() && d->renameBigPng() && d->renameImds() && d->renameSmallPng() && d->renamePapaPngs() && d->renameSelf()))
+    if (!(d->renameMp3() && d->renameBigPng() && d->renamePatterns() && d->renameSmallPng() && d->renamePapaPngs() && d->renameSelf()))
         return false;
 
     if (!d->deleteExtra())
@@ -70,7 +76,7 @@ bool RmeRenamer::runToEasy()
     if (!d->m_dir.exists())
         return false;
 
-    if (!d->renameImdsToEasy())
+    if (!d->renamePatternsToEasy())
         return false;
 
     return true;
@@ -79,6 +85,48 @@ bool RmeRenamer::runToEasy()
 bool RmeRenamerPrivate::renameImdsToEasy()
 {
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
+        QString file_name;
+        file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (m_dir.exists(file_name)) {
+            ExistNote i_easiest = i;
+            while (!noteFileNameSuffix(i_easiest).contains(QStringLiteral("ez")) && !noteFileNameSuffix(i_easiest).contains(QStringLiteral("Easy")))
+                i_easiest = static_cast<ExistNote>(i_easiest >> 1);
+
+            while (m_dir.exists(m_dir.dirName() + noteFileNameSuffix(i_easiest)) && (m_dir.dirName() + noteFileNameSuffix(i_easiest)) != file_name)
+                i_easiest = static_cast<ExistNote>(i_easiest << 1);
+
+            if ((m_dir.dirName() + noteFileNameSuffix(i_easiest)) != file_name)
+                m_dir.rename(file_name, (m_dir.dirName() + noteFileNameSuffix(i_easiest)));
+        }
+    }
+
+    return true;
+}
+
+bool RmeRenamerPrivate::renameImdJsonsToEasy()
+{
+    for (ExistNote i = IMDJSON_4K_EZ; i <= IMDJSON_6K_HD; i = static_cast<ExistNote>(i << 1)) {
+        QString file_name;
+        file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (m_dir.exists(file_name)) {
+            ExistNote i_easiest = i;
+            while (!noteFileNameSuffix(i_easiest).contains(QStringLiteral("ez")) && !noteFileNameSuffix(i_easiest).contains(QStringLiteral("Easy")))
+                i_easiest = static_cast<ExistNote>(i_easiest >> 1);
+
+            while (m_dir.exists(m_dir.dirName() + noteFileNameSuffix(i_easiest)) && (m_dir.dirName() + noteFileNameSuffix(i_easiest)) != file_name)
+                i_easiest = static_cast<ExistNote>(i_easiest << 1);
+
+            if ((m_dir.dirName() + noteFileNameSuffix(i_easiest)) != file_name)
+                m_dir.rename(file_name, (m_dir.dirName() + noteFileNameSuffix(i_easiest)));
+        }
+    }
+
+    return true;
+}
+
+bool RmeRenamerPrivate::renameRmpsToEasy()
+{
+    for (ExistNote i = RMP_4K_EZ; i <= RMP_6K_HD; i = static_cast<ExistNote>(i << 1)) {
         QString file_name;
         file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
         if (m_dir.exists(file_name)) {
@@ -191,6 +239,15 @@ bool RmeRenamerPrivate::renamePapaPngs()
     return true;
 }
 
+bool RmeRenamerPrivate::renamePatterns()
+{
+    bool i = renameImds();
+    bool ij = renameImdJsons();
+    bool r = renameRmps();
+
+    return i || ij || r;
+}
+
 bool RmeRenamerPrivate::renameImds()
 {
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
@@ -201,6 +258,39 @@ bool RmeRenamerPrivate::renameImds()
     }
 
     return true;
+}
+
+bool RmeRenamerPrivate::renameImdJsons()
+{
+    for (ExistNote i = IMDJSON_4K_EZ; i <= IMDJSON_6K_HD; i = static_cast<ExistNote>(i << 1)) {
+        QString file_name;
+        file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (m_dir.exists(file_name))
+            m_dir.rename(file_name, m_toRename + noteFileNameSuffix(i));
+    }
+
+    return true;
+}
+
+bool RmeRenamerPrivate::renameRmps()
+{
+    for (ExistNote i = RMP_4K_EZ; i <= RMP_6K_HD; i = static_cast<ExistNote>(i << 1)) {
+        QString file_name;
+        file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (m_dir.exists(file_name))
+            m_dir.rename(file_name, m_toRename + noteFileNameSuffix(i));
+    }
+
+    return true;
+}
+
+bool RmeRenamerPrivate::renamePatternsToEasy()
+{
+    bool i = renameImdsToEasy();
+    bool ij = renameImdJsonsToEasy();
+    bool r = renameRmpsToEasy();
+
+    return i || ij || r;
 }
 
 bool RmeRenamerPrivate::renameSelf()

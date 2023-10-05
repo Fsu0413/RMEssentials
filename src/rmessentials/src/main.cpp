@@ -32,15 +32,12 @@
 #endif
 #endif
 
-Q_GLOBAL_STATIC(QString, num)
-
 MainDialog::MainDialog(QWidget *parent)
     : QDialog(parent)
 #ifdef Q_OS_ANDROID
     , m_receiver(nullptr)
 #endif
     , m_isPermissionOk(false)
-    , m_isNumOk(false)
 {
     setWindowTitle(tr("Rhythm Master Essensials  ") + QStringLiteral(RMEVERSION));
 
@@ -94,16 +91,13 @@ MainDialog::MainDialog(QWidget *parent)
     static const QString whatsnew = QStringLiteral("https://rmessentials.fsu0413.me/whatsnew");
     static const QString dlurl = QStringLiteral("https://rmessentials.fsu0413.me/dlurl");
     static const QString dlpasswd = QStringLiteral("https://rmessentials.fsu0413.me/dlpasswd");
-    static const QString num = QStringLiteral("https://res.ds.qq.com/Table/BetaTest_V2/version.json");
 
     RmeDownloader *downloader = new RmeDownloader;
-    downloader << num << versioninfo << whatsnew << dlurl << dlpasswd;
+    downloader << versioninfo << whatsnew << dlurl << dlpasswd;
 
     downloader->setDownloadPath(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS"));
 
     connect(downloader, &RmeDownloader::allCompleted, this, &MainDialog::metainfoDownloaded);
-    connect(downloader, &RmeDownloader::singleFileCompleted, this, &MainDialog::oneMetainfoFileDownloaded);
-    connect(downloader, &RmeDownloader::singleFileFailed, this, &MainDialog::oneMetainfoFileDownloaded);
     connect(downloader, &RmeDownloader::allCompleted, downloader, &RmeDownloader::deleteLater);
     connect(downloader, &RmeDownloader::canceled, downloader, &RmeDownloader::deleteLater);
     connect(this, &MainDialog::finished, downloader, &RmeDownloader::cancel);
@@ -242,44 +236,10 @@ void MainDialog::enableButtons()
 {
     // ChangeName Dialog and Papa song editor Dialog are currently temporarily disabled due to technical restriction of Rhythm Master Remastered
 
-    m_changeNameBtn->setEnabled(false);
-    m_downloadBtn->setEnabled(m_isPermissionOk && m_isNumOk);
+    m_changeNameBtn->setEnabled(m_isPermissionOk);
+    m_downloadBtn->setEnabled(m_isPermissionOk);
     m_songEditorBtn->setEnabled(m_isPermissionOk);
     m_papaSongEditorBtn->setEnabled(false);
-}
-
-void MainDialog::oneMetainfoFileDownloaded(const QString &url)
-{
-    if (url.endsWith(QStringLiteral("/version.json"))) {
-        QFile vNum(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + QStringLiteral("/RMESSENTIALS/version.json"));
-
-        bool ok = false;
-        if (vNum.open(QIODevice::ReadOnly)) {
-            QByteArray arr = vNum.readAll();
-            QJsonDocument doc = QJsonDocument::fromJson(arr);
-            if (doc.isObject()) {
-                QJsonObject ob = doc.object();
-                if (ob.contains(QStringLiteral("version"))) {
-                    QJsonValue v = ob.value(QStringLiteral("version"));
-                    if (v.isDouble()) {
-                        (*num) = QString::number(v.toInt());
-                        ok = true;
-                    }
-                }
-            }
-        }
-
-        if (!ok) {
-            QMessageBox::warning(this, tr("RMEssentials"),
-                                 tr("Meta data file download failed and temporary values are used instead.<br / >"
-                                    "Restart this program if you'd like to retry."));
-            *num = QStringLiteral("546");
-        }
-
-        (*num) = (*num).trimmed();
-        m_isNumOk = true;
-        enableButtons();
-    }
 }
 
 bool MainDialog::checkPermission()
@@ -473,5 +433,5 @@ int main(int argc, char *argv[])
 
 QString currentNum()
 {
-    return *num;
+    return QStringLiteral("554");
 }
