@@ -1,6 +1,7 @@
 #ifndef RMEGLOBAL_H__INCLUDED
 #define RMEGLOBAL_H__INCLUDED
 
+#include <QVersionNumber>
 #include <QtGlobal>
 
 #ifdef __cplusplus
@@ -41,10 +42,13 @@ LIBRMESSENTIALS_EXPORT const char *RmeVersion();
 LIBRMESSENTIALS_EXPORT enum QuaZipUsage RmeQuaZipUsage();
 #ifdef __cplusplus
 }
-#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
-#include <QVersionNumber>
 LIBRMESSENTIALS_EXPORT QVersionNumber RmeVersionNumber();
 #endif
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#error "RMEssentials only support Qt >= 5.15"
+#elif QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && QT_VERSION < QT_VERSION_CHECK(6, 2, 0)
+#error "RMEssentials for Qt 6 only support Qt >= 6.2 since important functionality is missing in Qt 6.0 and 6.1"
 #endif
 
 #endif

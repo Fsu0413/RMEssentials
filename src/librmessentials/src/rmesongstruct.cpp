@@ -476,14 +476,9 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
     if (userMade || (songName1 != songName2))
         ob[QStringLiteral("szSongName")] = QJsonValue(songName1);
 
-        // NoteNumber split
-#if QT_VERSION <= QT_VERSION_CHECK(5, 15, 0)
-    QStringList noteNums1str = m_szNoteNumber.split(QLatin1Char(','), QString::SkipEmptyParts);
-    QStringList noteNums2str = orig.m_szNoteNumber.split(QLatin1Char(','), QString::SkipEmptyParts);
-#else
+    // NoteNumber split
     QStringList noteNums1str = m_szNoteNumber.split(QLatin1Char(','), Qt::SkipEmptyParts);
     QStringList noteNums2str = orig.m_szNoteNumber.split(QLatin1Char(','), Qt::SkipEmptyParts);
-#endif
 
     QList<int> noteNums1;
     QList<int> noteNums2;
@@ -553,11 +548,7 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
 #undef GETSTR
 #undef GETINT
 
-#if QT_VERSION <= QT_VERSION_CHECK(5, 15, 0)
-    QStringList noteNums1str = m_szNoteNumber.split(QLatin1Char(','), QString::SkipEmptyParts);
-#else
     QStringList noteNums1str = m_szNoteNumber.split(QLatin1Char(','), Qt::SkipEmptyParts);
-#endif
 
     QList<int> noteNums1;
     foreach (const QString &s, noteNums1str)
