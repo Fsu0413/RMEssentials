@@ -5,14 +5,14 @@ const char *RmeVersion()
     return RMEVERSION;
 }
 
-QuazipUsage RmeQuazipUsage()
+QuaZipUsage RmeQuaZipUsage()
 {
 #if !defined(RME_USE_QUAZIP)
-    return QuazipNotUsed;
+    return QuaZipNotUsed;
 #elif defined(QUAZIP_STATIC)
-    return QuazipBundled;
+    return QuaZipBundled;
 #else
-    return QuazipDynamicLinked;
+    return QuaZipDynamicLinked;
 #endif
 }
 
