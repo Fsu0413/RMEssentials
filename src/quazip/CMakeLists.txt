@@ -1,39 +1,37 @@
 
 set(QUAZIP_HEADERS
-    src/minizip_crypt.h
-    src/ioapi.h
-    src/JlCompress.h
-    src/quaadler32.h
-    src/quachecksum32.h
-    src/quacrc32.h
-    src/quagzipfile.h
-    src/quaziodevice.h
-    src/quazip.h
-    src/quazip_global.h
-    src/quazipdir.h
-    src/quazipfile.h
-    src/quazipfileinfo.h
-    src/quazipnewinfo.h
-    src/unzip.h
-    src/zip.h
-    src/quazip_qt_compat.h
+    quazip/quazip/minizip_crypt.h
+    quazip/quazip/ioapi.h
+    quazip/quazip/JlCompress.h
+    quazip/quazip/quaadler32.h
+    quazip/quazip/quachecksum32.h
+    quazip/quazip/quacrc32.h
+    quazip/quazip/quaziodevice.h
+    quazip/quazip/quazip.h
+    quazip/quazip/quazip_global.h
+    quazip/quazip/quazipdir.h
+    quazip/quazip/quazipfile.h
+    quazip/quazip/quazipfileinfo.h
+    quazip/quazip/quazipnewinfo.h
+    quazip/quazip/unzip.h
+    quazip/quazip/zip.h
+    quazip/quazip/quazip_qt_compat.h
 )
 
 set(QUAZIP_SOURCES
-    src/JlCompress.cpp
-    src/qioapi.cpp
-    src/quaadler32.cpp
-    src/quacrc32.cpp
-    src/quagzipfile.cpp
-    src/quaziodevice.cpp
-    src/quazip.cpp
-    src/quazipdir.cpp
-    src/quazipfile.cpp
-    src/quazipfileinfo.cpp
-    src/quazipnewinfo.cpp
-    src/unzip.c
-    src/zip.c
-    src/quachecksum32.cpp
+    quazip/quazip/JlCompress.cpp
+    quazip/quazip/qioapi.cpp
+    quazip/quazip/quaadler32.cpp
+    quazip/quazip/quacrc32.cpp
+    quazip/quazip/quaziodevice.cpp
+    quazip/quazip/quazip.cpp
+    quazip/quazip/quazipdir.cpp
+    quazip/quazip/quazipfile.cpp
+    quazip/quazip/quazipfileinfo.cpp
+    quazip/quazip/quazipnewinfo.cpp
+    quazip/quazip/unzip.c
+    quazip/quazip/zip.c
+    quazip/quazip/quachecksum32.cpp
 )
 
 add_custom_target(quazip)
@@ -96,6 +94,6 @@ endif()
 
 add_custom_command(TARGET quazip
     PRE_BUILD
-    COMMAND ${RMESSENTIALS_QUAZIP_GENERATE_HEADERS_EXECUTABLE} -o ${CMAKE_BINARY_DIR}/dist/include/quazip -f ${CMAKE_CURRENT_LIST_DIR}/src
+    COMMAND ${RMESSENTIALS_QUAZIP_GENERATE_HEADERS_EXECUTABLE} -o ${CMAKE_BINARY_DIR}/dist/include/quazip -f ${CMAKE_CURRENT_LIST_DIR}/quazip/quazip
     # BYPRODUCTS ${CMAKE_BINARY_DIR}/dist/include/quazip
 )
