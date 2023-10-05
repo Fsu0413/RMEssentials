@@ -24,7 +24,6 @@ public:
 
     RmeDownloader &operator<<(const QString &filename);
     RmeDownloader &operator<<(const QPair<QString, QString> &fileNames);
-    QStringList downloadSequence() const;
 
     QString downloadPath() const;
     void setDownloadPath(const QString &sp);

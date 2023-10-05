@@ -220,16 +220,6 @@ RmeDownloader &RmeDownloader::operator<<(const QPair<QString, QString> &filename
     return *this;
 }
 
-QStringList RmeDownloader::downloadSequence() const
-{
-    Q_D(const RmeDownloader);
-    QStringList r;
-    foreach (const auto &n, d->m_downloadSequence)
-        r << n.first;
-
-    return r;
-}
-
 QString RmeDownloader::downloadPath() const
 {
     Q_D(const RmeDownloader);
