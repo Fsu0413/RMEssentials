@@ -30,20 +30,32 @@
 #include <QWinTaskbarProgress>
 #endif
 
-QString DownloadButton::startDownloadTitle = DownloadButton::tr("Download!");
-QString DownloadButton::cancelDownloadTitle = DownloadButton::tr("Cancel");
+namespace {
+
+const QString &startDownloadTitle()
+{
+    static const QString title = DownloadButton::tr("Download!");
+    return title;
+}
+const QString &cancelDownloadTitle()
+{
+    static const QString title = DownloadButton::tr("Cancel");
+    return title;
+}
+
+}
 
 DownloadButton::DownloadButton(QWidget *parent)
-    : QPushButton(startDownloadTitle, parent)
+    : QPushButton(startDownloadTitle(), parent)
 {
 }
 
 void DownloadButton::setBusy(bool b)
 {
     if (b)
-        setText(cancelDownloadTitle);
+        setText(cancelDownloadTitle());
     else
-        setText(startDownloadTitle);
+        setText(startDownloadTitle());
 }
 
 DownloadDialog::DownloadDialog(QWidget *parent)
@@ -90,7 +102,7 @@ QWidget *DownloadDialog::createDownloadSongTab()
 #endif
     connect(this, &DownloadDialog::busy, m_songNameCombo, &QComboBox::setDisabled);
     DownloadButton *downloadSongBtn = new DownloadButton;
-    downloadSongBtn->setFixedWidth(downloadSongBtn->fontMetrics().horizontalAdvance(DownloadButton::startDownloadTitle) * 1.7);
+    downloadSongBtn->setFixedWidth(downloadSongBtn->fontMetrics().horizontalAdvance(startDownloadTitle()) * 1.7);
     connect(this, &DownloadDialog::busy, downloadSongBtn, &DownloadButton::setBusy);
     connect(downloadSongBtn, &QPushButton::clicked, this, &DownloadDialog::downloadSongClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;
@@ -129,7 +141,7 @@ QWidget *DownloadDialog::createDownloadLegacySongTab()
 #endif
     connect(this, &DownloadDialog::busy, m_legacySongNameCombo, &QComboBox::setDisabled);
     DownloadButton *downloadLegacySongBtn = new DownloadButton;
-    downloadLegacySongBtn->setFixedWidth(downloadLegacySongBtn->fontMetrics().horizontalAdvance(DownloadButton::startDownloadTitle) * 1.7);
+    downloadLegacySongBtn->setFixedWidth(downloadLegacySongBtn->fontMetrics().horizontalAdvance(startDownloadTitle()) * 1.7);
     connect(this, &DownloadDialog::busy, downloadLegacySongBtn, &DownloadButton::setBusy);
     connect(downloadLegacySongBtn, &QPushButton::clicked, this, &DownloadDialog::downloadLegacySongClicked);
     QHBoxLayout *layout1 = new QHBoxLayout;
@@ -156,7 +168,7 @@ QWidget *DownloadDialog::createDownloadLegacySongTab()
     return downloadSongTab;
 }
 
-QSet<QString> DownloadDialog::loadSongClientJsonImpl(const QByteArray &arr)
+QSet<QString> DownloadDialog::loadSongClientJsonImpl(const QByteArray &arr, const QString &fileName)
 {
     QSet<QString> paths;
 
@@ -175,6 +187,8 @@ QSet<QString> DownloadDialog::loadSongClientJsonImpl(const QByteArray &arr)
         }
     }
 
+    appendLog(fileName + tr(" has been loaded"));
+
     return paths;
 }
 
@@ -191,14 +205,14 @@ QSet<QString> DownloadDialog::loadSongClientJson(const QString &fileName)
             QByteArray arr = f.readAll();
             f.close();
 
-            return loadSongClientJsonImpl(arr);
+            return loadSongClientJsonImpl(arr, fileName);
         }
     }
 
     return {};
 }
 
-QSet<QString> DownloadDialog::loadMd5ListJsonImpl(const QByteArray &arr)
+QSet<QString> DownloadDialog::loadMd5ListJsonImpl(const QByteArray &arr, const QString &fileName)
 {
     QSet<QString> paths;
 
@@ -234,6 +248,8 @@ QSet<QString> DownloadDialog::loadMd5ListJsonImpl(const QByteArray &arr)
         }
     }
 
+    appendLog(fileName + tr(" has been loaded"));
+
     return paths;
 }
 
@@ -250,7 +266,7 @@ QSet<QString> DownloadDialog::loadMd5ListJson(const QString &fileName)
             QByteArray arr = f.readAll();
             f.close();
 
-            return loadMd5ListJsonImpl(arr);
+            return loadMd5ListJsonImpl(arr, fileName);
         }
     }
 
@@ -278,6 +294,8 @@ QSet<QString> DownloadDialog::loadMd5ListXml(const QString &fileName)
         }
         f.close();
     }
+
+    appendLog(fileName + tr(" has been loaded"));
 
     return paths;
 }
@@ -325,7 +343,7 @@ void DownloadDialog::warnEncryptedChart()
         // currently we are downloading encrypted chart.
         QMessageBox::information(this, tr("RMEssentials"),
                                  tr("Currently RM official provides only encrypted chart on file server.<br />"
-                                    "This program currently does not support decryption currently."));
+                                    "This program does not support decryption currently."));
 
         m_encryptedChartWarned = true;
     }
@@ -481,7 +499,7 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
         QStringLiteral("_Papa_Normal.mde"),
         QStringLiteral("_Papa_Hard.mde"),
     };
-    // clang-formt on
+    // clang-format on
 
     static QString prefix = QStringLiteral("http://res.ds.qq.com/Test_SongRes_V2/song/");
     static QString prefixLegacy = QStringLiteral("https://rm-1301553285.file.myqcloud.com/Com_SongRes/song/");
@@ -597,6 +615,7 @@ void DownloadDialog::startUncompress()
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client_android.json"));
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client.json"));
     // unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_papasong_client.json"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client_temp.json"));
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComLegacy.zip"), QStringLiteral("MD5List.json"), QStringLiteral("MD5ListLegacy.json"));
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComLegacy.zip"), QStringLiteral("MD5List.xml"), QStringLiteral("MD5ListLegacy.xml"));
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComLegacy.zip"), QStringLiteral("mrock_song_client_android.json"),
@@ -648,10 +667,10 @@ void DownloadDialog::appendLog(const QString &log)
 void DownloadDialog::loadPaths()
 {
     QSet<QString> paths;
-
     paths.unite(loadMd5ListJson(QStringLiteral("MD5List.json")))
         .unite(loadSongClientJson(QStringLiteral("mrock_song_client_android.json")))
-        .unite(loadSongClientJson(QStringLiteral("mrock_song_client.json")));
+        .unite(loadSongClientJson(QStringLiteral("mrock_song_client.json")))
+        .unite(loadSongClientJson(QStringLiteral("mrock_song_client_temp.json")));
 
     QSet<QString> legacyPaths;
     legacyPaths.unite(loadMd5ListXml(QStringLiteral("MD5ListLegacy.xml")))

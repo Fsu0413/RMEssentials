@@ -24,9 +24,6 @@ public:
     explicit DownloadButton(QWidget *parent = nullptr);
     ~DownloadButton() = default;
 
-    static QString startDownloadTitle;
-    static QString cancelDownloadTitle;
-
 public slots:
     void setBusy(bool b);
 
@@ -59,9 +56,9 @@ private:
     QWidget *createDownloadSongTab();
     QWidget *createDownloadLegacySongTab();
 
-    QSet<QString> loadSongClientJsonImpl(const QByteArray &arr);
+    QSet<QString> loadSongClientJsonImpl(const QByteArray &arr, const QString &fileName);
     QSet<QString> loadSongClientJson(const QString &fileName);
-    QSet<QString> loadMd5ListJsonImpl(const QByteArray &arr);
+    QSet<QString> loadMd5ListJsonImpl(const QByteArray &arr, const QString &fileName);
     QSet<QString> loadMd5ListJson(const QString &fileName);
     QSet<QString> loadMd5ListXml(const QString &fileName);
 
