@@ -263,14 +263,10 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QIntValidator *iVersionValidator = new QIntValidator(1, 2147483647, this);
     m_controls->iVersion->setValidator(iVersionValidator);
 
-// for QFormLayout
-#define AR(l, x) l->addRow(QStringLiteral(#x), m_controls->x)
-
     // 1st line
     QHBoxLayout *hlayout1 = new QHBoxLayout;
-    QFormLayout *flayout0 = new QFormLayout;
-    AR(flayout0, ushSongID);
-    hlayout1->addLayout(flayout0);
+    hlayout1->addWidget(new QLabel(QStringLiteral("ushSongID")));
+    hlayout1->addWidget(m_controls->ushSongID);
     hlayout1->addWidget(prevBtn);
     hlayout1->addWidget(nextBtn);
     hlayout1->addWidget(saveCurrentBtn);
@@ -280,85 +276,98 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
 #ifndef MOBILE_DEVICES
 
-    // 2nd, 3rd, 4th lines...
-    QHBoxLayout *hlayout234 = new QHBoxLayout;
-    QFormLayout *flayout2 = new QFormLayout;
-    AR(flayout2, szSongName);
-    AR(flayout2, szComposer);
-    AR(flayout2, iRegion);
-    QFormLayout *flayout3 = new QFormLayout;
-    AR(flayout3, szPath);
-    AR(flayout3, iGameTime);
-    AR(flayout3, iStyle);
-    QFormLayout *flayout4 = new QFormLayout;
-    AR(flayout4, szArtist);
-    AR(flayout4, szSongTime);
-    AR(flayout4, szBPM);
-    hlayout234->addLayout(flayout2);
-    hlayout234->addLayout(flayout3);
-    hlayout234->addLayout(flayout4);
+    QGridLayout *glayout = new QGridLayout;
+
+    // 2nd line...
+    glayout->addWidget(new QLabel(QStringLiteral("szSongName")), 0, 0, 1, 7);
+    glayout->addWidget(m_controls->szSongName, 0, 7, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("szPath")), 0, 35, 1, 7);
+    glayout->addWidget(m_controls->szPath, 0, 42, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("szArtist")), 0, 70, 1, 7);
+    glayout->addWidget(m_controls->szArtist, 0, 77, 1, 28);
+
+    // 3rd line...
+    glayout->addWidget(new QLabel(QStringLiteral("szComposer")), 1, 0, 1, 7);
+    glayout->addWidget(m_controls->szComposer, 1, 7, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("iGameTime")), 1, 35, 1, 7);
+    glayout->addWidget(m_controls->iGameTime, 1, 42, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("szSongTime")), 1, 70, 1, 7);
+    glayout->addWidget(m_controls->szSongTime, 1, 77, 1, 28);
+
+    // 4th line...
+    glayout->addWidget(new QLabel(QStringLiteral("iRegion")), 2, 0, 1, 7);
+    glayout->addWidget(m_controls->iRegion, 2, 7, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("iStyle")), 2, 35, 1, 7);
+    glayout->addWidget(m_controls->iStyle, 2, 42, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("szBPM")), 2, 70, 1, 7);
+    glayout->addWidget(m_controls->szBPM, 2, 77, 1, 28);
 
     // 5th line...
-    QHBoxLayout *hlayout5 = new QHBoxLayout;
-    hlayout5->addWidget(m_controls->ucIsNew);
-    hlayout5->addWidget(m_controls->ucIsHot);
-    hlayout5->addWidget(m_controls->ucIsRecommend);
-    hlayout5->addWidget(m_controls->ucIsOpen);
-    hlayout5->addWidget(m_controls->ucCanBuy);
-    hlayout5->addWidget(m_controls->bIsFree);
-    hlayout5->addWidget(m_controls->bSongPkg);
+    glayout->addWidget(m_controls->ucIsNew, 3, 0, 1, 15);
+    glayout->addWidget(m_controls->ucIsHot, 3, 15, 1, 15);
+    glayout->addWidget(m_controls->ucIsRecommend, 3, 30, 1, 15);
+    glayout->addWidget(m_controls->ucIsOpen, 3, 45, 1, 15);
+    glayout->addWidget(m_controls->ucCanBuy, 3, 60, 1, 15);
+    glayout->addWidget(m_controls->bIsFree, 3, 75, 1, 15);
+    glayout->addWidget(m_controls->bSongPkg, 3, 90, 1, 15);
 
-    // 6th, 7th, 8th, 9th lines...
-    QHBoxLayout *hlayout6789 = new QHBoxLayout;
-    QFormLayout *flayout5 = new QFormLayout;
-    AR(flayout5, iOrderIndex);
-    AR(flayout5, ush4KeyEasy);
-    AR(flayout5, ush5KeyEasy);
-    AR(flayout5, ush6KeyEasy);
-    QFormLayout *flayout6 = new QFormLayout;
-    AR(flayout6, szFreeBeginTime);
-    AR(flayout6, ush4KeyNormal);
-    AR(flayout6, ush5KeyNormal);
-    AR(flayout6, ush6KeyNormal);
-    QFormLayout *flayout7 = new QFormLayout;
-    AR(flayout7, szFreeEndTime);
-    AR(flayout7, ush4KeyHard);
-    AR(flayout7, ush5KeyHard);
-    AR(flayout7, ush6KeyHard);
-    hlayout6789->addLayout(flayout5);
-    hlayout6789->addLayout(flayout6);
-    hlayout6789->addLayout(flayout7);
+    // 6th line...
+    glayout->addWidget(new QLabel(QStringLiteral("iOrderIndex")), 4, 0, 1, 7);
+    glayout->addWidget(m_controls->iOrderIndex, 4, 7, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("szFreeBeginTime")), 4, 35, 1, 7);
+    glayout->addWidget(m_controls->szFreeBeginTime, 4, 42, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("szFreeEndTime")), 4, 70, 1, 7);
+    glayout->addWidget(m_controls->szFreeEndTime, 4, 77, 1, 28);
+
+    // 7th line...
+    glayout->addWidget(new QLabel(QStringLiteral("ush4KeyEasy")), 5, 0, 1, 7);
+    glayout->addWidget(m_controls->ush4KeyEasy, 5, 7, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("ush4KeyNormal")), 5, 35, 1, 7);
+    glayout->addWidget(m_controls->ush4KeyNormal, 5, 42, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("ush4KeyHard")), 5, 70, 1, 7);
+    glayout->addWidget(m_controls->ush4KeyHard, 5, 77, 1, 28);
+
+    // 8th line...
+    glayout->addWidget(new QLabel(QStringLiteral("ush5KeyEasy")), 6, 0, 1, 7);
+    glayout->addWidget(m_controls->ush5KeyEasy, 6, 7, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("ush5KeyNormal")), 6, 35, 1, 7);
+    glayout->addWidget(m_controls->ush5KeyNormal, 6, 42, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("ush5KeyHard")), 6, 70, 1, 7);
+    glayout->addWidget(m_controls->ush5KeyHard, 6, 77, 1, 28);
+
+    // 9th line...
+    glayout->addWidget(new QLabel(QStringLiteral("ush6KeyEasy")), 7, 0, 1, 7);
+    glayout->addWidget(m_controls->ush6KeyEasy, 7, 7, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("ush6KeyNormal")), 7, 35, 1, 7);
+    glayout->addWidget(m_controls->ush6KeyNormal, 7, 42, 1, 28);
+    glayout->addWidget(new QLabel(QStringLiteral("ush6KeyHard")), 7, 70, 1, 7);
+    glayout->addWidget(m_controls->ush6KeyHard, 7, 77, 1, 28);
 
     // 10th line...
-    QFormLayout *hlayout10 = new QFormLayout;
-    AR(hlayout10, szNoteNumber);
+    glayout->addWidget(new QLabel(QStringLiteral("szNoteNumber")), 8, 0, 1, 7);
+    glayout->addWidget(m_controls->szNoteNumber, 8, 7, 1, 98);
 
     // 11th line...
-    QHBoxLayout *hlayout11 = new QHBoxLayout;
-    QFormLayout *flayout8 = new QFormLayout;
-    AR(flayout8, iPrice);
-    QFormLayout *flayout9 = new QFormLayout;
-    AR(flayout9, szProductID);
-    hlayout11->addLayout(flayout8);
-    hlayout11->addLayout(flayout9);
-    hlayout11->addWidget(m_controls->iVipFlag);
+    glayout->addWidget(new QLabel(QStringLiteral("iPrice")), 9, 0, 1, 7);
+    glayout->addWidget(m_controls->iPrice, 9, 7, 1, 38);
+    glayout->addWidget(new QLabel(QStringLiteral("szProductID")), 9, 45, 1, 7);
+    glayout->addWidget(m_controls->szProductID, 9, 52, 1, 38);
+    glayout->addWidget(m_controls->iVipFlag, 9, 90, 1, 15);
 
     // 12th line...
-    QHBoxLayout *hlayout12 = new QHBoxLayout;
-    QFormLayout *flayout10 = new QFormLayout;
-    AR(flayout10, iVersion);
-    hlayout12->addWidget(m_controls->bIsHide);
-    hlayout12->addWidget(m_controls->bIsReward);
-    hlayout12->addWidget(m_controls->bIsLevelReward);
-    hlayout12->addLayout(flayout10);
+    glayout->addWidget(m_controls->bIsHide, 10, 0, 1, 15);
+    glayout->addWidget(m_controls->bIsReward, 10, 15, 1, 15);
+    glayout->addWidget(m_controls->bIsLevelReward, 10, 30, 1, 15);
+    glayout->addWidget(new QLabel(QStringLiteral("iVersion")), 10, 45, 1, 7);
+    glayout->addWidget(m_controls->iVersion, 10, 52, 1, 53);
 
-    leftLayout->addLayout(hlayout234);
-    leftLayout->addLayout(hlayout5);
-    leftLayout->addLayout(hlayout6789);
-    leftLayout->addLayout(hlayout10);
-    leftLayout->addLayout(hlayout11);
-    leftLayout->addLayout(hlayout12);
+    leftLayout->addLayout(glayout);
+
 #else
+
+// for QFormLayout
+#define AR(l, x) l->addRow(QStringLiteral(#x), m_controls->x)
+
     QVBoxLayout *vlayout = new QVBoxLayout;
     QFormLayout *flayout1 = new QFormLayout;
     AR(flayout1, szSongName);
@@ -416,10 +425,11 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     area->setWidget(widget);
 
     leftLayout->addWidget(area);
-#endif
 
 // OK, thank you
 #undef AR
+
+#endif
 
     QString searchText = tr("Search");
 
