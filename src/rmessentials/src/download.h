@@ -101,8 +101,6 @@ private slots:
 
     void downloadProgress(quint64 downloaded, quint64 total);
 
-    void updateUnofficialBackgroundStatus(bool b);
-
 protected:
     void closeEvent(QCloseEvent *e) override;
     void showEvent(QShowEvent *e) override;
@@ -112,14 +110,12 @@ private:
     QProgressBar *m_progressBar;
 
     QComboBox *m_songNameCombo;
-    QCheckBox *m_downloadUnofficialBackground;
 
     QComboBox *m_roleNameCombo;
 
     QComboBox *m_legacySongNameCombo;
 
     QMap<int, QStringList> m_rolePadUiMap;
-    QSet<QString> m_unOfficialBackgroundList;
 
     bool m_busy;
     bool m_exitRequested;

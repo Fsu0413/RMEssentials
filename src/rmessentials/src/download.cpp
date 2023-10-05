@@ -20,6 +20,8 @@
 #include <QPushButton>
 #include <QShowEvent>
 #include <QSizePolicy>
+#include <QString>
+#include <QStringList>
 #include <QTabWidget>
 #include <QVBoxLayout>
 
@@ -108,15 +110,8 @@ QWidget *DownloadDialog::createDownloadSongTab()
     layout2->addWidget(downloadAllSongBtn);
     layout2->addWidget(downloadMissingSongBtn);
 
-    m_downloadUnofficialBackground = new QCheckBox(tr("Download Unofficial Background"));
-    // not supported
-    // connect(this, &DownloadDialog::busy, this, &DownloadDialog::updateUnofficialBackgroundStatus);
-    m_downloadUnofficialBackground->setChecked(false);
-    m_downloadUnofficialBackground->setEnabled(false);
-
     downloadSongLayout->addLayout(flayout);
     downloadSongLayout->addLayout(layout2);
-    downloadSongLayout->addWidget(m_downloadUnofficialBackground);
 
     QWidget *downloadSongTab = new QWidget;
     downloadSongTab->setLayout(downloadSongLayout);
@@ -468,63 +463,61 @@ void DownloadDialog::startDownloadNextMissingLegacy()
 
 void DownloadDialog::startDownloadSong(DownloadMode mode)
 {
-    static QStringList suffixs
-        = { QStringLiteral(".mp3"),
-            QStringLiteral("_ipad.jpg"),
-            QStringLiteral("_thumb.jpg"), // do not use .png here
+    // clang-format off
+    static QStringList suffixs = {
+        QStringLiteral(".mp3"),
+        QStringLiteral("_ipad.jpg"),
+        QStringLiteral("_thumb.jpg"), // do not use .png here
 
-            QStringLiteral("_4k_ez.rmp"),
-            QStringLiteral("_4k_nm.rmp"),
-            QStringLiteral("_4k_hd.rmp"),
+        QStringLiteral("_4k_ez.rmp"),
+        QStringLiteral("_4k_nm.rmp"),
+        QStringLiteral("_4k_hd.rmp"),
 
-            QStringLiteral("_5k_ez.rmp"),
-            QStringLiteral("_5k_nm.rmp"),
-            QStringLiteral("_5k_hd.rmp"),
+        QStringLiteral("_5k_ez.rmp"),
+        QStringLiteral("_5k_nm.rmp"),
+        QStringLiteral("_5k_hd.rmp"),
 
-            QStringLiteral("_6k_ez.rmp"),
-            QStringLiteral("_6k_nm.rmp"),
-            QStringLiteral("_6k_hd.rmp"),
-#if 0
-            QStringLiteral("_Papa_Easy.mde"),
-            QStringLiteral("_Papa_Normal.mde"),
-            QStringLiteral("_Papa_Hard.mde")
-#endif
-          };
+        QStringLiteral("_6k_ez.rmp"),
+        QStringLiteral("_6k_nm.rmp"),
+        QStringLiteral("_6k_hd.rmp"),
+    };
+
+    static QStringList suffixsLegacy = {
+        QStringLiteral(".mp3"),
+        QStringLiteral(".jpg"),
+        QStringLiteral("_title_ipad.jpg"), // do not use .png here
+
+        QStringLiteral("_4k_ez.imd"),
+        QStringLiteral("_4k_nm.imd"),
+        QStringLiteral("_4k_hd.imd"),
+
+        QStringLiteral("_5k_ez.imd"),
+        QStringLiteral("_5k_nm.imd"),
+        QStringLiteral("_5k_hd.imd"),
+
+        QStringLiteral("_6k_ez.imd"),
+        QStringLiteral("_6k_nm.imd"),
+        QStringLiteral("_6k_hd.imd"),
+
+        QStringLiteral("_4k_ez.imd.json"),
+        QStringLiteral("_4k_nm.imd.json"),
+        QStringLiteral("_4k_hd.imd.json"),
+
+        QStringLiteral("_5k_ez.imd.json"),
+        QStringLiteral("_5k_nm.imd.json"),
+        QStringLiteral("_5k_hd.imd.json"),
+
+        QStringLiteral("_6k_ez.imd.json"),
+        QStringLiteral("_6k_nm.imd.json"),
+        QStringLiteral("_6k_hd.imd.json"),
+
+        QStringLiteral("_Papa_Easy.mde"),
+        QStringLiteral("_Papa_Normal.mde"),
+        QStringLiteral("_Papa_Hard.mde"),
+    };
+    // clang-formt on
 
     static QString prefix = QStringLiteral("http://res.ds.qq.com/Test_SongRes_V2/song/");
-
-    static QStringList suffixsLegacy = {QStringLiteral(".mp3"),
-                                        QStringLiteral(".jpg"),
-                                        QStringLiteral("_title_ipad.jpg"), // do not use .png here
-
-                                        QStringLiteral("_4k_ez.imd"),
-                                        QStringLiteral("_4k_nm.imd"),
-                                        QStringLiteral("_4k_hd.imd"),
-
-                                        QStringLiteral("_5k_ez.imd"),
-                                        QStringLiteral("_5k_nm.imd"),
-                                        QStringLiteral("_5k_hd.imd"),
-
-                                        QStringLiteral("_6k_ez.imd"),
-                                        QStringLiteral("_6k_nm.imd"),
-                                        QStringLiteral("_6k_hd.imd"),
-
-                                        QStringLiteral("_4k_ez.imd.json"),
-                                        QStringLiteral("_4k_nm.imd.json"),
-                                        QStringLiteral("_4k_hd.imd.json"),
-
-                                        QStringLiteral("_5k_ez.imd.json"),
-                                        QStringLiteral("_5k_nm.imd.json"),
-                                        QStringLiteral("_5k_hd.imd.json"),
-
-                                        QStringLiteral("_6k_ez.imd.json"),
-                                        QStringLiteral("_6k_nm.imd.json"),
-                                        QStringLiteral("_6k_hd.imd.json"),
-
-                                        QStringLiteral("_Papa_Easy.mde"),
-                                        QStringLiteral("_Papa_Normal.mde"),
-                                        QStringLiteral("_Papa_Hard.mde")};
-
     static QString prefixLegacy = QStringLiteral("https://rm-1301553285.file.myqcloud.com/Com_SongRes/song/");
 
     RmeDownloader *downloader = new RmeDownloader;
@@ -537,15 +530,7 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
         foreach (const QString &suf, suffixs)
             downloader << (prefix + songname + QStringLiteral("/") + songname + suf);
         downloader->setDownloadPath(RmeDownloader::songDownloadPath() + songname);
-#if 0
-        // TODO maintain it here once worked
-        if (m_downloadUnofficialBackground->isChecked() && m_unOfficialBackgroundList.contains(songname)) {
-            static QString unOffBgPrefix = QStringLiteral("https://rmessentials.fsu0413.me/unofficialBg/");
-            static QStringList unOffBgSuffixs = {QStringLiteral(".png"), QStringLiteral("_title_ipad.png")};
-            foreach (const QString &suf, unOffBgSuffixs)
-                downloader << (unOffBgPrefix + songname + QStringLiteral("/") + songname + suf);
-        }
-#endif
+
         break;
     }
     case OneLegacy:
@@ -737,11 +722,6 @@ void DownloadDialog::downloadList()
     downloader << qMakePair(TableComLegacy, QStringLiteral("TableComLegacy.zip"));
 #endif
 
-#if 0
-    static const QString unoffBgList = QStringLiteral("https://rmessentials.fsu0413.me/unoffBgList.txt");
-    downloader << unoffBgList;
-#endif
-
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);
     connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startUncompress);
@@ -837,18 +817,6 @@ void DownloadDialog::loadPaths()
         appendLog(QStringLiteral("mrock.character_client.bin") + tr(" has been loaded"));
     }
 
-    if (dir.exists(QStringLiteral("unoffBgList.txt"))) {
-        QFile f(dir.absoluteFilePath(QStringLiteral("unoffBgList.txt")));
-        f.open(QIODevice::ReadOnly | QIODevice::Text);
-        while (!f.atEnd()) {
-            QString s = QString::fromUtf8(f.readLine());
-            s = s.trimmed();
-            if (!s.isEmpty())
-                m_unOfficialBackgroundList << s;
-        }
-        f.close();
-        appendLog(QStringLiteral("unoffBgList.txt") + tr(" has been loaded"));
-    }
 #endif
 
     QSet<QString> legacyPaths;
@@ -916,12 +884,4 @@ void DownloadDialog::downloadProgress(quint64 downloaded, quint64 total)
         m_taskbarBtn->progress()->setValue(downloaded);
 #endif // Q_OS_WIN
     }
-}
-
-void DownloadDialog::updateUnofficialBackgroundStatus(bool b)
-{
-    if (b)
-        m_downloadUnofficialBackground->setDisabled(true);
-    else
-        m_downloadUnofficialBackground->setDisabled(m_unOfficialBackgroundList.isEmpty());
 }
