@@ -188,7 +188,7 @@ void ChangeNameDialog::checkFiles(const QString &folder)
     static const QString strMissing = tr("Missing");
 
     QDir d(folder);
-    bool exists[18] = {false};
+    bool exists[36] = {false};
     exists[0] = hasMp3(d);
     exists[1] = hasNewBigPng(d);
     exists[2] = hasNewSmallPng(d);
