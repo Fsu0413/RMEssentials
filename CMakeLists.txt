@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.19)
 
 project(RMEssentials
-    VERSION 13.2.18
+    VERSION 13.10.5
     DESCRIPTION "Program to manipulating RMEssentials files"
     HOMEPAGE_URL "https://github.com/Fsu0413/RMEssentials"
     LANGUAGES C CXX
 )
 
-set(RMEVERSION 20230218)
+set(RMEVERSION 20231005)
 
 set(CMAKE_CXX_STANDARD 17)
 

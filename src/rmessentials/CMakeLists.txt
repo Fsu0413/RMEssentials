@@ -29,6 +29,8 @@ if(Qt6_FOUND)
     set_property(TARGET RMEssentials6 PROPERTY AUTOUIC ON)
     set_property(TARGET RMEssentials6 PROPERTY AUTORCC ON)
 
+    set_property(TARGET RMEssentials6 PROPERTY VERSION ${RMEssentials_VERSION})
+
     if (ANDROID)
         set_property(TARGET RMEssentials6 QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/android)
     endif()
@@ -40,15 +42,24 @@ if(Qt6_FOUND)
         PUBLIC Qt6::Widgets
         PUBLIC Qt6::Network
     )
+
+    qt6_add_translations(RMEssentials6 TS_FILES translations/rmessentials.ts
+                        LUPDATE_OPTIONS -no-obsolete
+    )
 endif()
 
 if(Qt5_FOUND)
+    set(RMESSENTIALSAPP_QMFILES5)
+    if (NOT Qt6_FOUND)
+        qt5_add_translation(RMESSENTIALSAPP_QMFILES5 translations/rmessentials.ts)
+    endif()
+
     if(ANDROID)
         # How to build it?
-        add_library(RMEssentials5 MODULE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES})
+        add_library(RMEssentials5 MODULE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES} ${RMESSENTIALSAPP_QMFILES5})
         set_property(TARGET RMEssentials5 QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/android5)
     else()
-        add_executable(RMEssentials5 WIN32 MACOSX_BUNDLE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES})
+        add_executable(RMEssentials5 WIN32 MACOSX_BUNDLE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES} ${RMESSENTIALSAPP_QMFILES5})
     endif()
     add_dependencies(RMEssentials5 RmEss)
     add_dependencies(RMEssentials RMEssentials5)
@@ -56,6 +67,8 @@ if(Qt5_FOUND)
     set_property(TARGET RMEssentials5 PROPERTY AUTOMOC ON)
     set_property(TARGET RMEssentials5 PROPERTY AUTOUIC ON)
     set_property(TARGET RMEssentials5 PROPERTY AUTORCC ON)
+
+    set_property(TARGET RMEssentials5 PROPERTY VERSION ${RMEssentials_VERSION})
 
     target_link_libraries(RMEssentials5
         PUBLIC RmEss5

@@ -34,6 +34,8 @@ if (Qt6_FOUND)
     set_property(TARGET RmEss6 PROPERTY AUTOUIC ON)
     set_property(TARGET RmEss6 PROPERTY AUTORCC ON)
 
+    set_property(TARGET RmEss6 PROPERTY VERSION ${RMEssentials_VERSION})
+
     if (BUILD_SHARED_LIBS)
         target_compile_definitions(RmEss6 PRIVATE -DLIBRMESSENTIALS_BUILD)
     else()
@@ -77,6 +79,8 @@ if (Qt5_FOUND)
     set_property(TARGET RmEss5 PROPERTY AUTOMOC ON)
     set_property(TARGET RmEss5 PROPERTY AUTOUIC ON)
     set_property(TARGET RmEss5 PROPERTY AUTORCC ON)
+
+    set_property(TARGET RmEss5 PROPERTY VERSION ${RMEssentials_VERSION})
 
     if (BUILD_SHARED_LIBS)
         target_compile_definitions(RmEss5 PRIVATE -DLIBRMESSENTIALS_BUILD)

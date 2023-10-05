@@ -37,16 +37,24 @@ set(QUAZIP_SOURCES
 add_custom_target(quazip)
 
 if (Qt6_FOUND)
-    qt6_add_library(quazip6 STATIC ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
+    qt6_add_library(quazip6 ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
     add_dependencies(quazip quazip6)
 
-    target_compile_definitions(quazip6
-        PUBLIC -DQUAZIP_STATIC
-    )
+    if (BUILD_SHARED_LIBS)
+        target_compile_definitions(quazip6
+            PRIVATE -DQUAZIP_BUILD
+        )
+    else()
+        target_compile_definitions(quazip6
+            PUBLIC -DQUAZIP_STATIC
+        )
+    endif()
 
     set_property(TARGET quazip6 PROPERTY AUTOMOC ON)
     set_property(TARGET quazip6 PROPERTY AUTOUIC ON)
     set_property(TARGET quazip6 PROPERTY AUTORCC ON)
+
+    set_property(TARGET quazip6 PROPERTY VERSION ${RMESSENTIALS_QUAZIP_VERSION})
 
     if (Qt6ZlibPrivate_FOUND)
         target_link_libraries(quazip6 PUBLIC Qt6::ZlibPrivate)
@@ -61,16 +69,24 @@ if (Qt6_FOUND)
     target_include_directories(quazip6 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
 endif()
 if (Qt5_FOUND)
-    add_library(quazip5 STATIC ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
+    add_library(quazip5 ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
     add_dependencies(quazip quazip5)
 
-    target_compile_definitions(quazip5
-        PUBLIC -DQUAZIP_STATIC
-    )
+    if (BUILD_SHARED_LIBS)
+        target_compile_definitions(quazip5
+            PRIVATE -DQUAZIP_BUILD
+        )
+    else()
+        target_compile_definitions(quazip5
+            PUBLIC -DQUAZIP_STATIC
+        )
+    endif()
 
     set_property(TARGET quazip5 PROPERTY AUTOMOC ON)
     set_property(TARGET quazip5 PROPERTY AUTOUIC ON)
     set_property(TARGET quazip5 PROPERTY AUTORCC ON)
+
+    set_property(TARGET quazip5 PROPERTY VERSION ${RMESSENTIALS_QUAZIP_VERSION})
 
     if (Qt5Zlib_FOUND)
         target_link_libraries(quazip5 PUBLIC Qt5::Zlib)
