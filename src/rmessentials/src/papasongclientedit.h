@@ -1,7 +1,7 @@
 #ifndef PAPASONGCLIENTEDIT_H__INCLUDED
 #define PAPASONGCLIENTEDIT_H__INCLUDED
 
-#include <RMEss/RmeSongClientFile>
+#include <RmEss/RmeSongClientFile>
 
 #include <QDialog>
 

@@ -1,7 +1,7 @@
 #ifndef DOWNLOAD_H__INCLUDED
 #define DOWNLOAD_H__INCLUDED
 
-#include <RMEss/RmeGlobal>
+#include <RmEss/RmeGlobal>
 
 #include <QDialog>
 #include <QDir>

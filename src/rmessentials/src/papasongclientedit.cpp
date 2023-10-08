@@ -1,8 +1,8 @@
 #include "papasongclientedit.h"
 
-#include <RMEss/RmeDownloader>
-#include <RMEss/RmeSongClientStruct>
-#include <RMEss/RmeUtils>
+#include <RmEss/RmeDownloader>
+#include <RmEss/RmeSongClientStruct>
+#include <RmEss/RmeUtils>
 
 #include <QCheckBox>
 #include <QDoubleValidator>

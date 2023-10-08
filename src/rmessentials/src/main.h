@@ -1,7 +1,7 @@
 #ifndef MAIN_H__INCLUDED
 #define MAIN_H__INCLUDED
 
-#include <RMEss/RmeGlobal>
+#include <RmEss/RmeGlobal>
 
 #include <QDialog>
 

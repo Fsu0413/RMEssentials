@@ -1,7 +1,7 @@
 #ifndef SONGCLIENTEDIT_H__INCLUDED
 #define SONGCLIENTEDIT_H__INCLUDED
 
-#include <RMEss/RmeSongClientFile>
+#include <RmEss/RmeSongClientFile>
 
 #include <QDialog>
 

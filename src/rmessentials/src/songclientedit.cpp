@@ -1,8 +1,8 @@
 #include "songclientedit.h"
 
-#include <RMEss/RmeDownloader>
-#include <RMEss/RmeSongClientStruct>
-#include <RMEss/RmeUtils>
+#include <RmEss/RmeDownloader>
+#include <RmEss/RmeSongClientStruct>
+#include <RmEss/RmeUtils>
 
 #include <QCheckBox>
 #include <QDoubleValidator>
@@ -365,7 +365,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
 #else
 
-// for QFormLayout
+    // for QFormLayout
 #define AR(l, x) l->addRow(QStringLiteral(#x), m_controls->x)
 
     QVBoxLayout *vlayout = new QVBoxLayout;
@@ -426,7 +426,7 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
 
     leftLayout->addWidget(area);
 
-// OK, thank you
+    // OK, thank you
 #undef AR
 
 #endif

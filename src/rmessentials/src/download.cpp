@@ -1,8 +1,8 @@
 #include "download.h"
 #include "main.h"
 
-#include <RMEss/RmeDownloader>
-#include <RMEss/RmeUncompresser>
+#include <RmEss/RmeDownloader>
+#include <RmEss/RmeUncompresser>
 
 #include <QCheckBox>
 #include <QCloseEvent>
