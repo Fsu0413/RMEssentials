@@ -24,6 +24,8 @@ set(LIBRMESS_RESOURCES
 )
 
 add_custom_target(RmEss)
+rmessentials_auto_generate_header_file_for_target(RmEss "${LIBRMESS_HEADERS}")
+
 set(LIBRMESSENTIALS_JPG2PNGHACK true)
 
 if (Qt6_FOUND)
@@ -117,14 +119,3 @@ if (Qt5_FOUND)
     target_include_directories(RmEss5 PUBLIC ${CMAKE_BINARY_DIR}/dist/include)
     rmessentials_win32_rc(RmEss5 false "")
 endif()
-
-if(CMAKE_HOST_WIN32)
-    set(RMESSENTIALS_RMESS_GENERATE_HEADERS_EXECUTABLE cscript ${CMAKE_SOURCE_DIR}/tools/AutoGenerateHeader.vbs)
-else()
-    set(RMESSENTIALS_RMESS_GENERATE_HEADERS_EXECUTABLE ${CMAKE_SOURCE_DIR}/tools/AutoGenerateHeader.sh)
-endif()
-add_custom_command(TARGET RmEss
-    PRE_BUILD
-    COMMAND ${RMESSENTIALS_RMESS_GENERATE_HEADERS_EXECUTABLE} -o ${CMAKE_BINARY_DIR}/dist/include/RMEss -f ${CMAKE_CURRENT_LIST_DIR}/src
-    # BYPRODUCTS ${CMAKE_BINARY_DIR}/dist/include/quazip
-)

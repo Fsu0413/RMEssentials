@@ -35,6 +35,7 @@ set(QUAZIP_SOURCES
 )
 
 add_custom_target(quazip)
+rmessentials_auto_generate_header_file_for_target(quazip "${QUAZIP_HEADERS}")
 
 if (Qt6_FOUND)
     qt6_add_library(quazip6 ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
@@ -99,17 +100,3 @@ if (Qt5_FOUND)
     )
     target_include_directories(quazip5 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
 endif()
-
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/dist/include/quazip)
-
-if(CMAKE_HOST_WIN32)
-    set(RMESSENTIALS_QUAZIP_GENERATE_HEADERS_EXECUTABLE cscript ${CMAKE_SOURCE_DIR}/tools/AutoGenerateHeader.vbs)
-else()
-    set(RMESSENTIALS_QUAZIP_GENERATE_HEADERS_EXECUTABLE ${CMAKE_SOURCE_DIR}/tools/AutoGenerateHeader.sh)
-endif()
-
-add_custom_command(TARGET quazip
-    PRE_BUILD
-    COMMAND ${RMESSENTIALS_QUAZIP_GENERATE_HEADERS_EXECUTABLE} -o ${CMAKE_BINARY_DIR}/dist/include/quazip -f ${CMAKE_CURRENT_LIST_DIR}/quazip/quazip
-    # BYPRODUCTS ${CMAKE_BINARY_DIR}/dist/include/quazip
-)

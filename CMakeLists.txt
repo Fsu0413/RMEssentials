@@ -82,4 +82,6 @@ else()
     endfunction()
 endif()
 
+include(tools/AutoGenerateHeader.cmake)
+
 add_subdirectory(src)
