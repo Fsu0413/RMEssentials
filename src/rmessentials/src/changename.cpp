@@ -18,7 +18,7 @@
 
 using namespace RmeUtils;
 
-QLayout *ChangeNameDialog::layFiles(QLabel *labels[18])
+QLayout *ChangeNameDialog::layFiles(QLabel *labels[36])
 {
     // clang-format off
     static QStringList layDecriptions = {tr("MP3:"),              tr("Big / Papa PNG:"),     tr("Small PNG:"),
