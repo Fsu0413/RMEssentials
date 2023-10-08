@@ -51,7 +51,7 @@ LIBRMESSENTIALS_EXPORT bool hasBigPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT bool hasSmallPng(const QDir &dir, QString &suffix);
 LIBRMESSENTIALS_EXPORT bool hasNewBigPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT bool hasNewSmallPng(const QDir &dir);
-LIBRMESSENTIALS_EXPORT inline bool hasPapaBigPng(const QDir &dir)
+Q_ALWAYS_INLINE bool hasPapaBigPng(const QDir &dir)
 {
     return hasNewBigPng(dir);
 }

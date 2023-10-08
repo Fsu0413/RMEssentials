@@ -510,7 +510,7 @@ RmeJsonReader::RmeJsonReader(const char *str)
     : m_isPapa(false)
     , m_isError(false)
 {
-    QByteArray arr = QByteArray::fromRawData(str, (int)std::strlen(str));
+    QByteArray arr = QByteArray::fromRawData(str, (int)strlen(str));
     load(arr);
 }
 
