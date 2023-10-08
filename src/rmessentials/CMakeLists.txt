@@ -46,6 +46,7 @@ if(Qt6_FOUND)
     qt6_add_translations(RMEssentials6 TS_FILES translations/rmessentials.ts
                         LUPDATE_OPTIONS -no-obsolete
     )
+    rmessentials_win32_rc(RMEssentials6 true "")
 endif()
 
 if(Qt5_FOUND)
@@ -88,4 +89,5 @@ if(Qt5_FOUND)
             PUBLIC Qt5::AndroidExtras
         )
     endif()
+    rmessentials_win32_rc(RMEssentials5 true "")
 endif()

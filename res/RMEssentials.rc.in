@@ -1,0 +1,52 @@
+#if defined(UNDER_CE)
+#include <winbase.h>
+#else
+#include <windows.h>
+#endif
+
+#cmakedefine RMESSENTIALS_RC_IS_APP
+
+#ifdef RMESSENTIALS_RC_IS_APP
+IDI_ICON1 ICON DISCARDABLE "@RMESSENTIALS_RC_ICON@"
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+    FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+    FILEFLAGS VS_FF_DEBUG
+#else
+    FILEFLAGS 0x0L
+#endif
+    FILEOS VOS__WINDOWS32
+#ifdef RMESSENTIALS_RC_IS_APP
+    FILETYPE VFT_APP
+#else
+    FILETYPE VFT_DLL
+#endif
+    FILESUBTYPE 0x0L
+    FILEVERSION @PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@, 0
+    PRODUCTVERSION @PROJECT_VERSION_MAJOR@, @PROJECT_VERSION_MINOR@, @PROJECT_VERSION_PATCH@, 0
+    BEGIN
+        BLOCK "StringFileInfo"
+        BEGIN
+            BLOCK "040904b0"
+            BEGIN
+                VALUE "CompanyName", "@PROJECT_HOMEPAGE_URL@\0"
+                VALUE "FileDescription", "@RMESSENTIALS_RC_FILE_DESCRIPTION@\0"
+                VALUE "FileVersion", "@PROJECT_VERSION@\0"
+                VALUE "ProductVersion", "@PROJECT_VERSION@\0"
+                VALUE "ProductName", "@RMESSENTIALS_RC_TARGET_NAME@\0"
+#ifdef RMESSENTIALS_RC_IS_APP
+                VALUE "OriginalFilename", "@RMESSENTIALS_RC_TARGET_NAME@@CMAKE_EXECUTABLE_SUFFIX@\0"
+#else
+                VALUE "OriginalFilename", "@CMAKE_SHARED_LIBRARY_PREFIX@@RMESSENTIALS_RC_TARGET_NAME@@CMAKE_SHARED_LIBRARY_SUFFIX@\0"
+#endif
+            END
+        END
+        BLOCK "VarFileInfo"
+        BEGIN
+            VALUE "Translation", 0x0409, 1200
+        END
+    END
+/* End of Version info */
+

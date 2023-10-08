@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(RMEssentials
     VERSION 13.10.5
-    DESCRIPTION "Program to manipulating RMEssentials files"
+    DESCRIPTION "Program for manipulating Rhythm Master files"
     HOMEPAGE_URL "https://github.com/Fsu0413/RMEssentials"
     LANGUAGES C CXX
 )
@@ -59,6 +59,27 @@ endif()
 
 if(RMESSENTIALS_USE_QUAZIP)
     set(RMESSENTIALS_QUAZIP_VERSION "1.4")
+endif()
+
+if (WIN32)
+    get_filename_component(RMESSENTIALS_RC_IN_FILE "res/RMEssentials.rc.in" REALPATH BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+    get_filename_component(RMESSENTIALS_RC_ICON "res/RMEssentials.ico" REALPATH BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+    function(rmessentials_win32_rc target isApp description)
+        set(RMESSENTIALS_RC_TARGET_NAME "${target}")
+        set(RMESSENTIALS_RC_IS_APP "${isApp}")
+        string(LENGTH "${description}" description_LENGTH)
+        if (description_LENGTH EQUAL 0)
+            set(RMESSENTIALS_RC_FILE_DESCRIPTION "${PROJECT_DESCRIPTION}")
+        else()
+            set(RMESSENTIALS_RC_FILE_DESCRIPTION "${description}")
+        endif()
+        configure_file("${RMESSENTIALS_RC_IN_FILE}" "${target}-resource.rc" @ONLY)
+        target_sources("${target}" PRIVATE "${target}-resource.rc")
+    endfunction()
+else()
+    function(rmessentials_win32_rc)
+        # do nothing
+    endfunction()
 endif()
 
 add_subdirectory(src)
