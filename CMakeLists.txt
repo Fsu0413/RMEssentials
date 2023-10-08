@@ -24,14 +24,9 @@ endif()
 option(RMESSENTIALS_USE_QUAZIP "use QuaZip" true)
 option(BUILD_SHARED_LIBS "Build Shared Libraries" true)
 
-set(CMAKE_VERBOSE_MAKEFILE true)
-
-if(NOT MSVC)
+if (NOT MSVC)
     set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -Wpointer-to-int-cast)
     set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Wc++17-compat)
-    #    *-g++: QMAKE_CXXFLAGS += -Wzero-as-null-pointer-constant
-    #    mac:QMAKE_LFLAGS += -Wl,-undefined -Wl,error
-    #    else:QMAKE_LFLAGS += -Wl,--no-undefined
 endif()
 
 set(RMESSENTIALS_QT6_COMPONENTS Core Gui Widgets Network LinguistTools)

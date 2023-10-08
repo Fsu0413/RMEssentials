@@ -22,7 +22,7 @@ class DownloadButton : public QPushButton
 
 public:
     explicit DownloadButton(QWidget *parent = nullptr);
-    ~DownloadButton() = default;
+    ~DownloadButton() override = default;
 
 public slots:
     void setBusy(bool b);
