@@ -1,5 +1,6 @@
 
 set(LIBRMESS_HEADERS
+    src/rmechart.h
     src/rmedownloader.h
     src/rmeglobal.h
     src/rmerenamer.h
@@ -10,6 +11,7 @@ set(LIBRMESS_HEADERS
 )
 
 set(LIBRMESS_SOURCES
+    src/rmechart.cpp
     src/rmedownloader.cpp
     src/rmerenamer.cpp
     src/rmesongfile.cpp

@@ -9,9 +9,16 @@
 #endif
 // We assume the byte order is little endian.
 // Force a compile error when compiling for a machine of big endian.
-#if Q_BYTE_ORDER == Q_BIG_ENDIAN
-#error "Big endian is not supported"
-#endif
+static_assert(Q_BYTE_ORDER == Q_LITTLE_ENDIAN);
+
+// It seems all C / C++ compatible program should use an IEEE-754 compatible double implementation
+// The RM IMD registers BPM in IEEE-754 formaat so it seems like we can use memcpy and / or reinterpret_cast for converting it with double
+// We have no way to know if the underlying implementation of double is IEEE-754 compatible so we only static-assert the sizeof double is 8
+// although I don't think that this is the right thing we should do here
+static_assert(sizeof(double) == 8);
+
+// How to do this using static assert?
+// static_assert(memoryStorageIsSame((double)137., (uint64_t)0x4061200000000000ull));
 
 #if 0
 class LIBRMESSENTIALS_EXPORT RmeGlobal
