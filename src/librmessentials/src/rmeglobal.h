@@ -1,24 +1,30 @@
 #ifndef RMEGLOBAL_H__INCLUDED
 #define RMEGLOBAL_H__INCLUDED
 
-#include <QVersionNumber>
 #include <QtGlobal>
 
 #ifdef __cplusplus
 #include <QDebug>
-#endif
+#include <QVersionNumber>
+
+#include <limits>
+
 // We assume the byte order is little endian.
 // Force a compile error when compiling for a machine of big endian.
+#if __cplusplus >= 202002L
+#include <bit>
+static_assert(std::endian::native == std::endian::little);
+#else
 static_assert(Q_BYTE_ORDER == Q_LITTLE_ENDIAN);
+#endif
 
 // It seems all C / C++ compatible program should use an IEEE-754 compatible double implementation
 // The RM IMD registers BPM in IEEE-754 formaat so it seems like we can use memcpy and / or reinterpret_cast for converting it with double
-// We have no way to know if the underlying implementation of double is IEEE-754 compatible so we only static-assert the sizeof double is 8
-// although I don't think that this is the right thing we should do here
+// Static-asserting the double type is of size 8 and IEEE-754 compatible here for memcpy-ing or reinterpret_cast-ing
 static_assert(sizeof(double) == 8);
+static_assert(std::numeric_limits<double>::is_iec559);
 
-// How to do this using static assert?
-// static_assert(memoryStorageIsSame((double)137., (uint64_t)0x4061200000000000ull));
+#endif
 
 #if 0
 class LIBRMESSENTIALS_EXPORT RmeGlobal

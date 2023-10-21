@@ -462,12 +462,3 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
     *ok = true;
     return chart;
 }
-
-namespace RmeChartChecks {
-bool isDoubleIeee754()
-{
-    double checking = 137.;
-    uint64_t toBeChecked = 0x4061200000000000ull;
-    return *(reinterpret_cast<uint64_t *>(&checking)) == toBeChecked;
-}
-}

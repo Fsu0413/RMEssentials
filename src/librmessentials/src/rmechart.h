@@ -91,8 +91,4 @@ struct LIBRMESSENTIALS_EXPORT RmeChart
     static RmeChart fromJson(const QJsonObject &ob, bool *ok = nullptr);
 };
 
-namespace RmeChartChecks {
-LIBRMESSENTIALS_EXPORT bool isDoubleIeee754();
-}
-
 #endif

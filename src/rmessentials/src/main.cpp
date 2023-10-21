@@ -382,11 +382,6 @@ void MainDialog::showEvent(QShowEvent *event)
     else
         requestForLegacyPermission();
 #endif
-
-    bool doubleIsIeee754 = RmeChartChecks::isDoubleIeee754();
-    qDebug() << doubleIsIeee754;
-    if (!doubleIsIeee754)
-        QMessageBox::warning(this, QString(), QStringLiteral("Your system does not support IEEE-754 floating point. IMD conversion from / to IMDJson is impossible."));
 }
 
 #ifdef Q_OS_ANDROID
