@@ -34,11 +34,12 @@ if (Qt6_FOUND)
     qt6_add_library(RmEss6 ${LIBRMESS_HEADERS} ${LIBRMESS_SOURCES} ${LIBRMESS_RESOURCES})
     add_dependencies(RmEss RmEss6)
 
-    set_property(TARGET RmEss6 PROPERTY AUTOMOC ON)
-    set_property(TARGET RmEss6 PROPERTY AUTOUIC ON)
-    set_property(TARGET RmEss6 PROPERTY AUTORCC ON)
-
-    set_property(TARGET RmEss6 PROPERTY VERSION ${RMEssentials_VERSION})
+    set_target_properties(RmEss6 PROPERTIES
+        AUTOMOC ON
+        AUTOUIC ON
+        AUTORCC ON
+        VERSION "${RMEssentials_VERSION}"
+    )
 
     if (BUILD_SHARED_LIBS)
         target_compile_definitions(RmEss6 PRIVATE -DLIBRMESSENTIALS_BUILD)
@@ -83,11 +84,12 @@ if (Qt5_FOUND)
     add_library(RmEss5 ${LIBRMESS_HEADERS} ${LIBRMESS_SOURCES} ${LIBRMESS_RESOURCES})
     add_dependencies(RmEss RmEss5)
 
-    set_property(TARGET RmEss5 PROPERTY AUTOMOC ON)
-    set_property(TARGET RmEss5 PROPERTY AUTOUIC ON)
-    set_property(TARGET RmEss5 PROPERTY AUTORCC ON)
-
-    set_property(TARGET RmEss5 PROPERTY VERSION ${RMEssentials_VERSION})
+    set_target_properties(RmEss5 PROPERTIES
+        AUTOMOC ON
+        AUTOUIC ON
+        AUTORCC ON
+        VERSION "${RMEssentials_VERSION}"
+    )
 
     if (BUILD_SHARED_LIBS)
         target_compile_definitions(RmEss5 PRIVATE -DLIBRMESSENTIALS_BUILD)
