@@ -8,12 +8,14 @@
 #include <RmEss/RmeChart>
 #include <RmEss/RmeDownloader>
 
+#include <QAction>
 #include <QApplication>
 #include <QDir>
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStandardPaths>
@@ -60,26 +62,27 @@ MainDialog::MainDialog(QWidget *parent)
     m_papaSongEditorBtn->setEnabled(false);
     m_papaSongEditorBtn->setVisible(false);
 
-    QHBoxLayout *aboutLayout = new QHBoxLayout;
-    QPushButton *aboutBtn = new QPushButton(tr("About..."));
-    connect(aboutBtn, &QPushButton::clicked, this, &MainDialog::about);
-    QPushButton *aboutQt = new QPushButton(tr("About Qt..."));
-    connect(aboutQt, &QPushButton::clicked, qApp, &QApplication::aboutQt);
+    QMenu *popup = new QMenu(this);
+    QAction *aboutThis = popup->addAction(tr("About RMEssentials..."));
+    connect(aboutThis, &QAction::triggered, this, &MainDialog::about);
+    popup->addSeparator();
+    QAction *aboutQt = popup->addAction(tr("About Qt..."));
+    connect(aboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
 #ifdef RME_USE_QUAZIP
-    QPushButton *aboutQuaZip = new QPushButton(tr("About QuaZip..."));
-    connect(aboutQuaZip, &QPushButton::clicked, this, &MainDialog::aboutQuaZip);
+    QAction *aboutQuaZip = popup->addAction(tr("About QuaZip..."));
+    connect(aboutQuaZip, &QAction::triggered, this, &MainDialog::aboutQuaZip);
 #endif
-    aboutLayout->addWidget(aboutBtn);
-    aboutLayout->addWidget(aboutQt);
-#ifdef RME_USE_QUAZIP
-    aboutLayout->addWidget(aboutQuaZip);
-#endif
+
+    QPushButton *aboutBtn = new QPushButton(tr("About"));
+    aboutBtn->setAutoDefault(false);
+    aboutBtn->setDefault(false);
+    aboutBtn->setMenu(popup);
 
     alllayout->addWidget(m_changeNameBtn);
     alllayout->addWidget(m_downloadBtn);
     alllayout->addWidget(m_songEditorBtn);
     alllayout->addWidget(m_papaSongEditorBtn);
-    alllayout->addLayout(aboutLayout);
+    alllayout->addWidget(aboutBtn);
 
     setLayout(alllayout);
 
