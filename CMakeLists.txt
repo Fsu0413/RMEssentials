@@ -7,6 +7,13 @@ project(RMEssentials
     LANGUAGES C CXX
 )
 
+get_filename_component(RMESSENTIALS_SOURCE_DIR_ABSOLUTE "${CMAKE_SOURCE_DIR}" REALPATH BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+get_filename_component(RMESSENTIALS_BINARY_DIR_ABSOLUTE "${CMAKE_BINARY_DIR}" REALPATH BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
+if (RMESSENTIALS_SOURCE_DIR_ABSOLUTE STREQUAL RMESSENTIALS_BINARY_DIR_ABSOLUTE)
+    message(FATAL_ERROR "Please!!!!! Do not in-place build RMEssentials. Instead make a separate build directory and build from there. See CMake manual for details.")
+endif()
+
 set(RMEVERSION 20231005)
 
 set(CMAKE_CXX_STANDARD 17)
