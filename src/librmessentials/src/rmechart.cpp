@@ -245,7 +245,7 @@ RmeChartKey RmeChartKey::fromJsonKey(const QJsonObject &ob, unsigned char track,
         return key;
 
     if (ob.contains(QStringLiteral("key")))
-        key.key = ob.value(QStringLiteral("key")).toVariant().toULongLong();
+        key.key = ob.value(QStringLiteral("key")).toVariant().toInt();
     else
         return key;
 
@@ -265,7 +265,7 @@ RmeChartKey RmeChartKey::fromJsonKey(const QJsonObject &ob, unsigned char track,
         return key;
 
     if (ob.contains(QStringLiteral("attr")))
-        key.toTrack = ob.value(QStringLiteral("attr")).toVariant().toULongLong();
+        key.attr = ob.value(QStringLiteral("attr")).toVariant().toULongLong();
     else
         return key;
 
