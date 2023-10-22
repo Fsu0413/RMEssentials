@@ -1,7 +1,10 @@
 #include "rmeutils.h"
+#include "rmechart.h"
 
 #include <QDir>
 #include <QGlobalStatic>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMap>
 #include <QString>
 
@@ -121,6 +124,32 @@ RmeUtils::ExistNotes RmeUtils::existNotes(const QDir &dir)
             result |= i;
     }
     return result;
+}
+
+QString RmeUtils::existImdJsonVersion(const QDir &dir, ExistNote note)
+{
+    if (note < IMDJSON_4K_EZ || note > IMDJSON_6K_HD)
+        return QString();
+
+    QString file_name;
+    file_name.append(dir.dirName()).append(noteFileNameSuffix(note));
+    if (dir.exists(file_name)) {
+        QFile f(dir.absoluteFilePath(file_name));
+        if (f.open(QIODevice::ReadOnly)) {
+            QByteArray arr = f.readAll();
+            f.close();
+            QJsonDocument json = QJsonDocument::fromJson(arr);
+            if (json.isObject()) {
+                QJsonObject ob = json.object();
+                bool ok = false;
+                RmeChart chart = RmeChart::fromJson(ob, &ok);
+                if (ok)
+                    return chart.version.toString();
+            }
+        }
+    }
+
+    return QString();
 }
 
 QString RmeUtils::calculateSongTime(int gameTime)

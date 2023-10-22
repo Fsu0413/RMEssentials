@@ -13,6 +13,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartVersion
     enum v
     {
         vUnknown,
+        vImd = 0xffffffff,
 
         v1_2_1 = 0x121,
         v1_2_2 = 0x122,
@@ -20,7 +21,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartVersion
         v1_3_0 = 0x130,
     };
 
-    constexpr RmeChartVersion(v version)
+    constexpr RmeChartVersion(v version = vUnknown)
         : m_v(version)
     {
     }
@@ -83,6 +84,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChart
     unsigned int totalTick;
     double bpm; // OR QList<RmeBpm> bpms;
     QList<RmeChartNote> notes; // not keys by track!
+    RmeChartVersion version;
 
     QByteArray toImd() const;
     QJsonObject toJson(RmeChartVersion version = RmeChartVersion::v1_2_1) const;

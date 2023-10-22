@@ -5,6 +5,7 @@
 
 #include <QDialog>
 
+class QComboBox;
 class QLineEdit;
 class QLabel;
 class QLayout;
@@ -21,6 +22,8 @@ private:
     QLineEdit *m_toRename;
 
     QLabel *m_filesLabels[36];
+
+    QComboBox *m_convertToImdJsonVersion;
 
 private slots:
     void selectFolder();

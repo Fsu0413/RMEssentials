@@ -4,6 +4,7 @@
 #include <RmEss/RmeRenamer>
 #include <RmEss/RmeUtils>
 
+#include <QComboBox>
 #include <QFileDialog>
 #include <QFontMetrics>
 #include <QFormLayout>
@@ -14,7 +15,10 @@
 #include <QPushButton>
 #include <QRegularExpressionValidator>
 #include <QStandardPaths>
+#include <QTabWidget>
 #include <QVBoxLayout>
+
+#include <algorithm>
 
 using namespace RmeUtils;
 
@@ -35,13 +39,12 @@ QLayout *ChangeNameDialog::layFiles(QLabel *labels[36])
                                          tr("Easy MDE:"),         tr("Normal MDE:"),         tr("Hard MDE:")};
     // clang-format on
 
-    QHBoxLayout *totalLayout = new QHBoxLayout;
-    for (int i = 0; i < 3; ++i) {
-        QFormLayout *rowLayout = new QFormLayout;
-        for (int j = i; j < 36; j += 3)
-            rowLayout->addRow(layDecriptions[j], labels[j]);
+    QGridLayout *totalLayout = new QGridLayout;
+    for (int i = 0; i < 36; ++i) {
+        static constexpr const int LineInARow = 3;
 
-        totalLayout->addLayout(rowLayout);
+        totalLayout->addWidget(new QLabel(layDecriptions[i]), i / LineInARow, (i % LineInARow) * 2, Qt::AlignRight);
+        totalLayout->addWidget(labels[i], i / LineInARow, (i % LineInARow) * 2 + 1, Qt::AlignLeft);
     }
     return totalLayout;
 }
@@ -51,40 +54,22 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
 {
     setWindowTitle(tr("Rhythm Master Filename Changer"));
 
-    QVBoxLayout *totalLayout = new QVBoxLayout;
-
-    QFormLayout *flayout = new QFormLayout;
-
     m_folderName = new QLineEdit;
     m_folderName->setPlaceholderText(tr("Browse the folder using the Browse button"));
     m_folderName->setReadOnly(true);
     QPushButton *browseButton = new QPushButton(tr("Browse..."));
     connect(browseButton, &QPushButton::clicked, this, &ChangeNameDialog::selectFolder);
     QHBoxLayout *layout1 = new QHBoxLayout;
+    layout1->addWidget(new QLabel(tr("Folder:")));
     layout1->addWidget(m_folderName);
     layout1->addWidget(browseButton);
-    flayout->addRow(tr("Folder:"), layout1);
+
+    QTabWidget *tabWidget = new QTabWidget;
+    QWidget *tabRename = new QWidget;
 
     m_toRename = new QLineEdit;
     m_toRename->setPlaceholderText(tr("Input the name to rename"));
-    flayout->addRow(tr("Rename:"), m_toRename);
     m_toRename->setValidator(new QRegularExpressionValidator(QRegularExpression(QStringLiteral("[a-z0-9_]+"))));
-
-    totalLayout->addLayout(flayout);
-
-    QFontMetrics fm(font());
-    int width = fm.horizontalAdvance(tr("Missing"));
-    int titleWidth = fm.horizontalAdvance(QStringLiteral("_title_ipad"));
-
-    for (int i = 0; i < 36; ++i) {
-        m_filesLabels[i] = new QLabel;
-        if (i != 4)
-            m_filesLabels[i]->setMinimumWidth(width);
-        else
-            m_filesLabels[4]->setMinimumWidth(titleWidth);
-    }
-    QLayout *filesLayout = layFiles(m_filesLabels);
-    totalLayout->addLayout(filesLayout);
 
     QPushButton *renameButton = new QPushButton(tr("Rename!"));
     connect(renameButton, &QPushButton::clicked, this, &ChangeNameDialog::rename);
@@ -95,8 +80,66 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     QHBoxLayout *layout2 = new QHBoxLayout;
     layout2->addWidget(renameButton);
     layout2->addWidget(toEasyButton);
+    QVBoxLayout *layoutRenameWidget = new QVBoxLayout;
+    layoutRenameWidget->addWidget(new QLabel(tr("Rename:")));
+    layoutRenameWidget->addWidget(m_toRename);
+    layoutRenameWidget->addLayout(layout2);
+    layoutRenameWidget->addStretch();
+    tabRename->setLayout(layoutRenameWidget);
+    tabWidget->addTab(tabRename, tr("Rename"));
 
-    totalLayout->addLayout(layout2);
+    // synchroize with enum RmeChartVersions::v
+    m_convertToImdJsonVersion = new QComboBox;
+    m_convertToImdJsonVersion->addItem(QStringLiteral("1.2.1"));
+    m_convertToImdJsonVersion->addItem(QStringLiteral("1.2.2"));
+    m_convertToImdJsonVersion->addItem(QStringLiteral("1.2.3"));
+    m_convertToImdJsonVersion->addItem(QStringLiteral("1.3.0"));
+    QPushButton *convertToImdJsonBtn = new QPushButton(tr("Convert All IMDs to IMDJson"));
+    // connect(convertToImdJsonBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdToImdJson);
+    QHBoxLayout *convertToImdJsonLayout = new QHBoxLayout;
+    convertToImdJsonLayout->addWidget(m_convertToImdJsonVersion);
+    convertToImdJsonLayout->addWidget(convertToImdJsonBtn);
+    QPushButton *convertToImdBtn = new QPushButton(tr("Convert All IMDJsons to IMD"));
+    // connect(convertToImdBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdJsonToImd);
+    QPushButton *encryptImdJsonBtn = new QPushButton(tr("Convert All IMDJsons to RMP"));
+    encryptImdJsonBtn->setEnabled(false);
+    QPushButton *decryptImdJsonBtn = new QPushButton(tr("Convert All RMPs to IMDJson"));
+    decryptImdJsonBtn->setEnabled(false);
+
+    QVBoxLayout *layoutConvertWidget = new QVBoxLayout;
+    layoutConvertWidget->addLayout(convertToImdJsonLayout);
+    layoutConvertWidget->addWidget(convertToImdBtn);
+    layoutConvertWidget->addWidget(encryptImdJsonBtn);
+    layoutConvertWidget->addWidget(decryptImdJsonBtn);
+    layoutConvertWidget->addStretch();
+
+    QWidget *tabConvert = new QWidget;
+    tabConvert->setLayout(layoutConvertWidget);
+    tabWidget->addTab(tabConvert, tr("Convert"));
+
+    QFontMetrics fm(font());
+    int width = fm.horizontalAdvance(tr("Missing"));
+    int imdJsonChartWidth = std::max(width, fm.horizontalAdvance(QStringLiteral("1.2.3")));
+    int titleWidth = fm.horizontalAdvance(QStringLiteral("_title_ipad"));
+
+    for (int i = 0; i < 36; ++i) {
+        m_filesLabels[i] = new QLabel;
+        if (i == 4)
+            m_filesLabels[4]->setMinimumWidth(titleWidth);
+        else if (i >= 15 && i <= 23)
+            m_filesLabels[i]->setMinimumWidth(imdJsonChartWidth);
+        else
+            m_filesLabels[i]->setMinimumWidth(width);
+    }
+    QLayout *filesLayout = layFiles(m_filesLabels);
+
+    QHBoxLayout *downLayout = new QHBoxLayout;
+    downLayout->addWidget(tabWidget);
+    downLayout->addLayout(filesLayout);
+
+    QVBoxLayout *totalLayout = new QVBoxLayout;
+    totalLayout->addLayout(layout1);
+    totalLayout->addLayout(downLayout);
 
     setLayout(totalLayout);
 
@@ -114,13 +157,14 @@ void ChangeNameDialog::selectFolder()
 
     QString selected = QFileDialog::getExistingDirectory(this, QString(), dir);
 
+    if (selected.isEmpty())
+        return;
+
     QDir d(selected);
     bool bhasMp3 = hasMp3(d);
-    bool bhasNewBigPng = hasNewBigPng(d);
-    bool bhasBigPng = hasBigPng(d);
     bool bhasNote = existNotes(d);
 
-    if (!(bhasMp3 && (bhasNewBigPng || bhasBigPng) && bhasNote)) {
+    if (!(bhasMp3 && bhasNote)) {
         QMessageBox::critical(this, tr("Error"), tr("The folder you selected is not usable in Rhythm Master, please select again."));
         return;
     }
@@ -229,12 +273,22 @@ void ChangeNameDialog::checkFiles(const QString &folder)
     exists[34] = imds & MDE_NM;
     exists[35] = imds & MDE_HD;
 
+    QString existImdJsonVersion[9];
+    for (int i = 0; i < 9; ++i) {
+        if (exists[i + 15]) {
+            ExistNote note = static_cast<ExistNote>(1 << (i + 12));
+            existImdJsonVersion[i] = RmeUtils::existImdJsonVersion(d, note);
+        }
+    }
+
     for (int i = 0; i < 36; ++i) {
         if (!exists[i])
             m_filesLabels[i]->setText(strMissing);
-        else if (i != 4)
-            m_filesLabels[i]->setText(strExists);
-        else
+        else if (i == 4)
             m_filesLabels[4]->setText(smallPngSuffix);
+        else if (i >= 15 && i <= 23)
+            m_filesLabels[i]->setText(existImdJsonVersion[i - 15]);
+        else
+            m_filesLabels[i]->setText(strExists);
     }
 }

@@ -33,8 +33,8 @@ RmeChartVersion::RmeChartVersion(const QString &versionStr)
         m_v = v1_2_3;
     else if (versionStr == QStringLiteral("1.3.0"))
         m_v = v1_3_0;
-
-    m_v = vUnknown;
+    else
+        m_v = vUnknown;
 }
 
 QString RmeChartVersion::toString() const
@@ -48,6 +48,8 @@ QString RmeChartVersion::toString() const
         return QStringLiteral("1.2.3");
     case v1_3_0:
         return QStringLiteral("1.3.0");
+    case vImd:
+        return QStringLiteral("1.2.2");
     default:
         break;
     }
@@ -360,6 +362,8 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
     if (arr.size() < (8 + 12 + 6 + 11))
         return chart;
 
+    chart.version = RmeChartVersion::vImd;
+
     const uint32_t *totalTime = reinterpret_cast<const uint32_t *>(arr.data());
     const uint32_t *bpmCount = reinterpret_cast<const uint32_t *>(arr.data() + 4);
 
@@ -407,15 +411,15 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
 
     if (!ob.contains(QStringLiteral("version")))
         return chart;
-    QString chartVersion = ob.value("version").toString();
-    RmeChartVersion version(chartVersion);
-    if (version == RmeChartVersion::vUnknown)
+    QString chartVersion = ob.value(QStringLiteral("version")).toString();
+    chart.version = RmeChartVersion(chartVersion);
+    if (chart.version == RmeChartVersion::vUnknown)
         return chart;
 
     if (!ob.contains(QStringLiteral("tempo")))
         return chart;
     chart.bpm = ob.value(QStringLiteral("tempo")).toDouble();
-    if (version >= RmeChartVersion::v1_3_0) {
+    if (chart.version >= RmeChartVersion::v1_3_0) {
         if (!ob.contains(QStringLiteral("duration")))
             return chart;
         if (!ob.contains(QStringLiteral("durationtime")))
@@ -466,7 +470,7 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
     }
 
     // pre-1.3.0: calculate of totalTick is needed
-    if (version < RmeChartVersion::v1_3_0)
+    if (chart.version < RmeChartVersion::v1_3_0)
         chart.totalTick = maxTick;
 
     *ok = true;
