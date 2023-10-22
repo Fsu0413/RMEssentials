@@ -55,6 +55,7 @@ if (DEFINED PROJECT_NAME)
             add_custom_command(OUTPUT ${header_generated_paths}
                                COMMAND "${CMAKE_COMMAND}" -P "${RMESSENTIALS_AUTO_GENERATE_HEADER_CMAKE_FILE}" "${header_path_absolute}" ${header_generated_paths}
                                MAIN_DEPENDENCY "${header_file}"
+                               COMMENT "Generating header files \"${header_file}\"..."
             )
             target_sources("${target}" PRIVATE ${header_generated_paths})
         endforeach()
