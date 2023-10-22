@@ -29,7 +29,7 @@
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QAndroidJniObject>
 #include <QtAndroidExtras>
-#elif QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+#else
 #include <QJniObject>
 #include <QtCore/private/qandroidextras_p.h>
 #endif
@@ -159,8 +159,8 @@ void MainDialog::about()
     QString aboutContent = tr("The version of RMEssentials frontend is: %1.\n\n"
                               "RMEssentials is a small software written by Fsu0413 (from Wings of Melody). \n"
                               "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
-                              "It now contains 4 main features: ChangeName, Download, "
-                              "SongClientEdit, PapaSongClientEdit. \n\n"
+                              "It now contains 3 main features: ChangeName, Download and "
+                              "SongClientEdit. \n\n"
                               "This Program is linked against Qt %2, and loads Qt %3 to run.\n"
                               "This Program is linked against libRmEss %1, and loads libRMEss %4 to run.")
                                .arg(QStringLiteral(RMEVERSION), QStringLiteral(QT_VERSION_STR), QString::fromUtf8(qVersion()), QString::fromUtf8(RmeVersion()));
@@ -236,7 +236,7 @@ void MainDialog::permissionCheckOk()
 
 void MainDialog::enableButtons()
 {
-    // ChangeName Dialog and Papa song editor Dialog are currently temporarily disabled due to technical restriction of Rhythm Master Remastered
+    // Papa song editor Dialog are currently disabled due to no Papa mode in Rhythm Master Remastered for now
 
     m_changeNameBtn->setEnabled(m_isPermissionOk);
     m_downloadBtn->setEnabled(m_isPermissionOk);
@@ -272,7 +272,7 @@ bool MainDialog::checkPermission()
 }
 
 #ifdef Q_OS_ANDROID
-
+// TODO: CONSIDER MOVE FOLLOWING TO libRmEss
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 namespace QtAndroidPrivate {
 using namespace QtAndroid;
