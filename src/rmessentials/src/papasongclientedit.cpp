@@ -74,23 +74,23 @@ PapaSongClientEditDialog::PapaSongClientEditDialog(QWidget *parent)
     saveCurrentBtn->setDefault(false);
     connect(saveCurrentBtn, &QPushButton::clicked, this, &PapaSongClientEditDialog::saveCurrent);
     // functions...
-    m_popup = new QMenu(this);
-    QAction *openFileBtn = m_popup->addAction(tr("open an other file"));
+    QMenu *popup = new QMenu(this);
+    QAction *openFileBtn = popup->addAction(tr("open an other file"));
     connect(openFileBtn, &QAction::triggered, this, &PapaSongClientEditDialog::reloadFile);
-    QAction *saveFileBtn = m_popup->addAction(tr("save file"));
+    QAction *saveFileBtn = popup->addAction(tr("save file"));
     connect(saveFileBtn, &QAction::triggered, this, &PapaSongClientEditDialog::saveFile);
-    m_popup->addSeparator();
-    QAction *cp = m_popup->addAction(tr("Create Patch from another file base"));
+    popup->addSeparator();
+    QAction *cp = popup->addAction(tr("Create Patch from another file base"));
     connect(cp, &QAction::triggered, this, &PapaSongClientEditDialog::createPatch);
-    QAction *ap = m_popup->addAction(tr("Apply Patch File"));
+    QAction *ap = popup->addAction(tr("Apply Patch File"));
     connect(ap, &QAction::triggered, this, &PapaSongClientEditDialog::applyPatch);
-    m_popup->addSeparator();
-    QAction *createWiki = m_popup->addAction(tr("Create WikiTable"));
+    popup->addSeparator();
+    QAction *createWiki = popup->addAction(tr("Create WikiTable"));
     connect(createWiki, &QAction::triggered, this, &PapaSongClientEditDialog::saveWikiTable);
     QPushButton *funcBtn = new QPushButton(tr("Functions..."));
     funcBtn->setAutoDefault(false);
     funcBtn->setDefault(false);
-    funcBtn->setMenu(m_popup);
+    funcBtn->setMenu(popup);
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
 

@@ -55,7 +55,6 @@ protected:
 
 private:
     PapaSongClientEditDialogControls *m_controls;
-    QMenu *m_popup;
     QLineEdit *m_searchEdit;
     QListWidget *m_searchList;
 };
