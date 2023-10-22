@@ -77,6 +77,22 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     QPushButton *toEasyButton = new QPushButton(tr("Rename to Easy"));
     connect(toEasyButton, &QPushButton::clicked, this, &ChangeNameDialog::renameToEasy);
 
+    QLabel *changeNameRestrictionsLabel = new QLabel(
+        tr("1. The target path can contain only lower case letters, numbers and underscore (\"_\") for better compatibility with Rhythm Master.\n"
+           "2. For IMD and IMDJson formats the renamed files are guaranteed to work as they contains no path related information. "
+           "But for RMP format, since it is encrypted we have no way to know if RMP files still work after renaming until RMP format becomes publicly available someday."));
+    changeNameRestrictionsLabel->setVisible(false);
+    QPushButton *showChangeNameRestrictionsBtn = new QPushButton(tr("Show renaming restrictions"));
+    connect(showChangeNameRestrictionsBtn, &QPushButton::clicked, showChangeNameRestrictionsBtn, [changeNameRestrictionsLabel, showChangeNameRestrictionsBtn]() {
+        if (changeNameRestrictionsLabel->isVisible()) {
+            changeNameRestrictionsLabel->hide();
+            showChangeNameRestrictionsBtn->setText(tr("Show renaming restrictions"));
+        } else {
+            changeNameRestrictionsLabel->show();
+            showChangeNameRestrictionsBtn->setText(tr("Hide renaming restrictions"));
+        }
+    });
+
     QHBoxLayout *layout2 = new QHBoxLayout;
     layout2->addWidget(renameButton);
     layout2->addWidget(toEasyButton);
@@ -84,6 +100,8 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     layoutRenameWidget->addWidget(new QLabel(tr("Rename:")));
     layoutRenameWidget->addWidget(m_toRename);
     layoutRenameWidget->addLayout(layout2);
+    layoutRenameWidget->addWidget(showChangeNameRestrictionsBtn);
+    layoutRenameWidget->addWidget(changeNameRestrictionsLabel);
     layoutRenameWidget->addStretch();
     tabRename->setLayout(layoutRenameWidget);
     tabWidget->addTab(tabRename, tr("Rename"));
@@ -106,11 +124,36 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     QPushButton *decryptImdJsonBtn = new QPushButton(tr("Convert All RMPs to IMDJson"));
     decryptImdJsonBtn->setEnabled(false);
 
+    QLabel *conversionRestrictionsLabel = new QLabel(
+        tr("1. There is no property for total time in IMDJson 1.2.x format. It is calculated when loading the chart. The result may be incorrect.\n"
+           "2. The \"volume\" and \"pan\" properties of IMDJson notes are totally ignored. They are filled with their default value "
+           "(127/64 for 1.2.1 / 1.2.2 and 0/0 for 1.2.3 onwards) when saving to IMDJson.\n"
+           "3. The \"key\" property of IMDJson notes is not present in IMD format. It is ignored when saving to IMD and filled with default value (0) when reading from IMD.\n"
+           "4. The \"samples\" property of IMDJson charts is totally ignored. It is filled with an empty JSON array when saving to IMDJson 1.2.3 onwards.\n"
+           "5. The \"time\", \"time_dur\" and \"idx\" properties of IMDJson 1.2.3 onwards\' notes are totally ignored. "
+           "They are recalculated when saving to IMDJson 1.2.3 onwards or to IMD.\n"
+           "6. There are multiple BPM entries in IMD format. Only first entry of BPM is used during loading, while others are ignored. "
+           "All versions of IMDJson doesn\'t support dynamic BPM, while dynamic BPM in IMD only affects number of notes in long press. The speed of chart is not affected.\n"
+           "7. Other restrictions of Qt JSON processing, like member sorting of JSON objects, etc."));
+    conversionRestrictionsLabel->setVisible(false);
+    QPushButton *showConversionRestrictionsBtn = new QPushButton(tr("Show conversion restrictions"));
+    connect(showConversionRestrictionsBtn, &QPushButton::clicked, showConversionRestrictionsBtn, [conversionRestrictionsLabel, showConversionRestrictionsBtn]() {
+        if (conversionRestrictionsLabel->isVisible()) {
+            conversionRestrictionsLabel->hide();
+            showConversionRestrictionsBtn->setText(tr("Show conversion restrictions"));
+        } else {
+            conversionRestrictionsLabel->show();
+            showConversionRestrictionsBtn->setText(tr("Hide conversion restrictions"));
+        }
+    });
+
     QVBoxLayout *layoutConvertWidget = new QVBoxLayout;
     layoutConvertWidget->addLayout(convertToImdJsonLayout);
     layoutConvertWidget->addWidget(convertToImdBtn);
     layoutConvertWidget->addWidget(encryptImdJsonBtn);
     layoutConvertWidget->addWidget(decryptImdJsonBtn);
+    layoutConvertWidget->addWidget(showConversionRestrictionsBtn);
+    layoutConvertWidget->addWidget(conversionRestrictionsLabel);
     layoutConvertWidget->addStretch();
 
     QWidget *tabConvert = new QWidget;
