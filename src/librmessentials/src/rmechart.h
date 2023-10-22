@@ -47,7 +47,7 @@ private:
 };
 
 // based on imdjson 1.2.1 format
-struct LIBRMESSENTIALS_EXPORT RmeChartKey
+struct LIBRMESSENTIALS_EXPORT RmeChartNote
 {
     unsigned char track; // JSON track -> 3 / 4 / 5 / 6 / 7 / 8
     unsigned int tick; // JSON tick -> affected by BPM
@@ -57,32 +57,32 @@ struct LIBRMESSENTIALS_EXPORT RmeChartKey
     unsigned int dur;
     unsigned char attr;
 
-    RmeChartKey(const RmeChartKey &) = default;
-    RmeChartKey &operator=(const RmeChartKey &) = default;
-    RmeChartKey(RmeChartKey &&) = default;
-    RmeChartKey &operator=(RmeChartKey &&) = default;
+    RmeChartNote(const RmeChartNote &) = default;
+    RmeChartNote &operator=(const RmeChartNote &) = default;
+    RmeChartNote(RmeChartNote &&) = default;
+    RmeChartNote &operator=(RmeChartNote &&) = default;
 
-    QByteArray toImdKey(double bpm) const;
-    QJsonObject toJsonKey(RmeChartVersion version = RmeChartVersion::v1_2_1, double bpm = nan(nullptr), int idx = 0) const;
+    QByteArray toImdNote(double bpm) const;
+    QJsonObject toJsonNote(RmeChartVersion version = RmeChartVersion::v1_2_1, double bpm = nan(nullptr), int idx = 0) const;
 
-    constexpr inline bool operator<(const RmeChartKey &arg2) const
+    constexpr inline bool operator<(const RmeChartNote &arg2) const
     {
         return tick < arg2.tick || (tick == arg2.tick && track < arg2.track);
     }
-    constexpr inline bool operator==(const RmeChartKey &arg2) const
+    constexpr inline bool operator==(const RmeChartNote &arg2) const
     {
         return track == arg2.track && tick == arg2.tick && key == arg2.key && isEnd == arg2.isEnd && toTrack == arg2.toTrack && dur == arg2.dur && attr == arg2.attr;
     }
 
-    static RmeChartKey fromImdKey(const QByteArray &arr, double bpm, bool *ok = nullptr);
-    static RmeChartKey fromJsonKey(const QJsonObject &ob, unsigned char track, bool *ok = nullptr);
+    static RmeChartNote fromImdNote(const QByteArray &arr, double bpm, bool *ok = nullptr);
+    static RmeChartNote fromJsonNote(const QJsonObject &ob, unsigned char track, bool *ok = nullptr);
 };
 
 struct LIBRMESSENTIALS_EXPORT RmeChart
 {
     unsigned int totalTick;
     double bpm; // OR QList<RmeBpm> bpms;
-    QList<RmeChartKey> keys; // not keys by track!
+    QList<RmeChartNote> notes; // not keys by track!
 
     QByteArray toImd() const;
     QJsonObject toJson(RmeChartVersion version = RmeChartVersion::v1_2_1) const;

@@ -2,6 +2,16 @@
 
 #include <QJsonArray>
 
+// remaining issues for this conversion:
+// imdjson 1.2.x have no total time property. It is calculated when loading the chart and saved to imdjson 1.3.0 / imd.
+// imdjson note property "volume" and "pan" are totally ignored. They are filled with 127 / 64 for imdjson 1.2.1 and 1.2.2, and 0 / 0 for imdjson 1.2.3 onwards.
+// imdjson note property "key" is ignored when saving to imd, and is 0 when imported from imd.
+// imdjson chart property "samples" is totally ignored. An empty Json Array is filled when saving imdjson 1.2.3 onwards.
+// imdjson 1.2.3 / 1.3.0 note property "time", "time_dur", "idx" are totally ignored. They are recalculated during saving to imdjson 1.2.3 onwards / imd.
+// imd BPM contains multiple entries. Only first entry is used during loading. All versions of imdjson do not support dynamic BPM.
+
+// other Qt json restrictions like no manual sorting of QJsonObject, etc.
+
 namespace {
 inline uint32_t tick2timestamp(unsigned int tick, double bpm)
 {
@@ -46,7 +56,7 @@ QString RmeChartVersion::toString() const
     return QStringLiteral("1.2.1");
 }
 
-QByteArray RmeChartKey::toImdKey(double bpm) const
+QByteArray RmeChartNote::toImdNote(double bpm) const
 {
     QByteArray arr;
     arr.resize(11);
@@ -104,7 +114,7 @@ QByteArray RmeChartKey::toImdKey(double bpm) const
     return arr;
 }
 
-QJsonObject RmeChartKey::toJsonKey(RmeChartVersion version, double bpm, int idx) const
+QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int idx) const
 {
     // 1.2.1 is same as 1.2.2, while 1.2.3 is same as 1.3.0
 
@@ -143,9 +153,9 @@ QJsonObject RmeChartKey::toJsonKey(RmeChartVersion version, double bpm, int idx)
     return ob;
 }
 
-RmeChartKey RmeChartKey::fromImdKey(const QByteArray &arr, double bpm, bool *ok)
+RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *ok)
 {
-    RmeChartKey key {0};
+    RmeChartNote note {0};
 
     if (ok == nullptr) {
         static bool _ok;
@@ -155,82 +165,82 @@ RmeChartKey RmeChartKey::fromImdKey(const QByteArray &arr, double bpm, bool *ok)
     *ok = false;
 
     if (arr.length() != 11)
-        return key;
+        return note;
 
     const uint16_t *type = reinterpret_cast<const uint16_t *>(arr.data());
     const uint32_t *timestamp = reinterpret_cast<const uint32_t *>(arr.data() + 2);
     const uint8_t *track = reinterpret_cast<const uint8_t *>(arr.data() + 6);
     const int32_t *action = reinterpret_cast<const int32_t *>(arr.data() + 7);
 
-    key.track = *track + 3;
-    key.tick = timestamp2tick(*timestamp, bpm);
+    note.track = *track + 3;
+    note.tick = timestamp2tick(*timestamp, bpm);
 
     switch (*type) {
     case 0x0:
         break;
     case 0x1:
-        key.attr = 3;
-        key.dur = 0;
-        key.isEnd = true;
-        key.toTrack = key.track + *action;
+        note.attr = 3;
+        note.dur = 0;
+        note.isEnd = true;
+        note.toTrack = note.track + *action;
         break;
     case 0x2:
-        key.attr = 3;
-        key.dur = timestamp2tick(*timestamp + *action, bpm) - key.tick;
-        key.isEnd = true;
-        key.toTrack = 0;
+        note.attr = 3;
+        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.isEnd = true;
+        note.toTrack = 0;
         break;
     case 0x21:
-        key.attr = 4;
-        key.dur = 0;
-        key.isEnd = false;
-        key.toTrack = key.track + *action;
+        note.attr = 4;
+        note.dur = 0;
+        note.isEnd = false;
+        note.toTrack = note.track + *action;
         break;
     case 0x22:
-        key.attr = 4;
-        key.dur = timestamp2tick(*timestamp + *action, bpm) - key.tick;
-        key.isEnd = false;
-        key.toTrack = 0;
+        note.attr = 4;
+        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.isEnd = false;
+        note.toTrack = 0;
         break;
     case 0x61:
-        key.attr = 3;
-        key.dur = 0;
-        key.isEnd = true;
-        key.toTrack = key.track + *action;
+        note.attr = 3;
+        note.dur = 0;
+        note.isEnd = true;
+        note.toTrack = note.track + *action;
         break;
     case 0x62:
-        key.attr = 3;
-        key.dur = timestamp2tick(*timestamp + *action, bpm) - key.tick;
-        key.isEnd = true;
-        key.toTrack = 0;
+        note.attr = 3;
+        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.isEnd = true;
+        note.toTrack = 0;
         break;
     case 0xA1:
-        key.attr = 4;
-        key.dur = 0;
-        key.isEnd = false;
-        key.toTrack = key.track + *action;
+        note.attr = 4;
+        note.dur = 0;
+        note.isEnd = false;
+        note.toTrack = note.track + *action;
         break;
     case 0xA2:
-        key.attr = 4;
-        key.dur = timestamp2tick(*timestamp + *action, bpm) - key.tick;
-        key.isEnd = false;
-        key.toTrack = 0;
+        note.attr = 4;
+        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.isEnd = false;
+        note.toTrack = 0;
         break;
     default:
-        return key;
+        return note;
     }
 
     *ok = true;
-    return key;
+    return note;
 }
 
-RmeChartKey RmeChartKey::fromJsonKey(const QJsonObject &ob, unsigned char track, bool *ok)
+RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char track, bool *ok)
 {
     // ignore 1.2.3 time / time_dur / idx
     // ignore 1.2.1 volume / pan
 
-    RmeChartKey key {0};
-    key.track = track;
+    RmeChartNote note {0};
+    note.track = track;
 
     if (ok == nullptr) {
         static bool _ok;
@@ -240,37 +250,37 @@ RmeChartKey RmeChartKey::fromJsonKey(const QJsonObject &ob, unsigned char track,
     *ok = false;
 
     if (ob.contains(QStringLiteral("tick")))
-        key.tick = ob.value(QStringLiteral("tick")).toVariant().toULongLong();
+        note.tick = ob.value(QStringLiteral("tick")).toVariant().toULongLong();
     else
-        return key;
+        return note;
 
     if (ob.contains(QStringLiteral("key")))
-        key.key = ob.value(QStringLiteral("key")).toVariant().toInt();
+        note.key = ob.value(QStringLiteral("key")).toVariant().toInt();
     else
-        return key;
+        return note;
 
     if (ob.contains(QStringLiteral("dur")))
-        key.dur = ob.value(QStringLiteral("dur")).toVariant().toULongLong();
+        note.dur = ob.value(QStringLiteral("dur")).toVariant().toULongLong();
     else
-        return key;
+        return note;
 
     if (ob.contains(QStringLiteral("isEnd")))
-        key.isEnd = (ob.value(QStringLiteral("isEnd")).toVariant().toULongLong() != 0);
+        note.isEnd = (ob.value(QStringLiteral("isEnd")).toVariant().toULongLong() != 0);
     else
-        return key;
+        return note;
 
     if (ob.contains(QStringLiteral("toTrack")))
-        key.toTrack = ob.value(QStringLiteral("toTrack")).toVariant().toULongLong();
+        note.toTrack = ob.value(QStringLiteral("toTrack")).toVariant().toULongLong();
     else
-        return key;
+        return note;
 
     if (ob.contains(QStringLiteral("attr")))
-        key.attr = ob.value(QStringLiteral("attr")).toVariant().toULongLong();
+        note.attr = ob.value(QStringLiteral("attr")).toVariant().toULongLong();
     else
-        return key;
+        return note;
 
     *ok = true;
-    return key;
+    return note;
 }
 
 QByteArray RmeChart::toImd() const
@@ -278,11 +288,11 @@ QByteArray RmeChart::toImd() const
     uint32_t totalTime = tick2timestamp(totalTick, bpm);
     uint32_t nBpm = totalTime * bpm / 60000. + 1;
 
-    QList<RmeChartKey> sortedKeys = keys;
-    std::sort(sortedKeys.begin(), sortedKeys.end());
+    QList<RmeChartNote> sortedNotes = notes;
+    std::sort(sortedNotes.begin(), sortedNotes.end());
 
     QByteArray arr;
-    arr.resize(8 + nBpm * 12 + 6 + sortedKeys.length() * 11);
+    arr.resize(8 + nBpm * 12 + 6 + sortedNotes.length() * 11);
     *(reinterpret_cast<uint32_t *>(arr.data())) = totalTime;
     *(reinterpret_cast<uint32_t *>(arr.data() + 4)) = nBpm;
     for (int i = 0; i < nBpm; ++i) {
@@ -290,10 +300,10 @@ QByteArray RmeChart::toImd() const
         *(reinterpret_cast<double *>(arr.data() + 8 + i * 12 + 4)) = bpm;
     }
     *(reinterpret_cast<uint16_t *>(arr.data() + 8 + nBpm * 12)) = (uint16_t)0x0303;
-    *(reinterpret_cast<uint32_t *>(arr.data() + 8 + nBpm * 12 + 2)) = (uint32_t)sortedKeys.length();
-    for (int i = 0; i < sortedKeys.length(); ++i) {
-        QByteArray imdKey = sortedKeys.at(i).toImdKey(bpm);
-        memcpy(arr.data() + 8 + nBpm * 12 + 6 + i * 11, imdKey.data(), 11);
+    *(reinterpret_cast<uint32_t *>(arr.data() + 8 + nBpm * 12 + 2)) = (uint32_t)sortedNotes.length();
+    for (int i = 0; i < sortedNotes.length(); ++i) {
+        QByteArray imdNote = sortedNotes.at(i).toImdNote(bpm);
+        memcpy(arr.data() + 8 + nBpm * 12 + 6 + i * 11, imdNote.data(), 11);
     }
 
     return arr;
@@ -317,11 +327,11 @@ QJsonObject RmeChart::toJson(RmeChartVersion version) const
     QMap<unsigned char /* track */, QJsonArray /* notes */> trackNoteMap;
     QList<unsigned char> tracks;
 
-    QList<RmeChartKey> sortedKeys = keys;
-    std::sort(sortedKeys.begin(), sortedKeys.end());
-    for (int i = 0; i < sortedKeys.length(); ++i) {
-        tracks << sortedKeys.at(i).track;
-        trackNoteMap[sortedKeys.at(i).track].append(sortedKeys.at(i).toJsonKey(version, bpm, i));
+    QList<RmeChartNote> sortedNotes = notes;
+    std::sort(sortedNotes.begin(), sortedNotes.end());
+    for (int i = 0; i < sortedNotes.length(); ++i) {
+        tracks << sortedNotes.at(i).track;
+        trackNoteMap[sortedNotes.at(i).track].append(sortedNotes.at(i).toJsonNote(version, bpm, i));
     }
     std::sort(tracks.begin(), tracks.end());
     QJsonArray trackJson;
@@ -371,9 +381,9 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
 
     for (int i = 0; i < (int)(*noteCount); ++i) {
         QByteArray noteArr = QByteArray::fromRawData((arr.data() + 8 + (*bpmCount) * 12 + 2 + i * 11), 11);
-        bool keyOk = false;
-        chart.keys << RmeChartKey::fromImdKey(noteArr, chart.bpm, &keyOk);
-        if (!keyOk)
+        bool noteOk = false;
+        chart.notes << RmeChartNote::fromImdNote(noteArr, chart.bpm, &noteOk);
+        if (!noteOk)
             return chart;
     }
     *ok = true;
@@ -443,10 +453,10 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
                 return chart;
             QJsonObject noteOb = noteV.toObject();
             bool noteOk = false;
-            RmeChartKey k = RmeChartKey::fromJsonKey(noteOb, track, &noteOk);
+            RmeChartNote k = RmeChartNote::fromJsonNote(noteOb, track, &noteOk);
             if (!noteOk)
                 return chart;
-            chart.keys << k;
+            chart.notes << k;
 
             // pre-1.3.0: calculate of totalTick is needed
             unsigned int currentTick = k.tick + k.dur;
