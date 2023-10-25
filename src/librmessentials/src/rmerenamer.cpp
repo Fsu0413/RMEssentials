@@ -1,7 +1,10 @@
 #include "rmerenamer.h"
+#include "rmechart.h"
 #include "rmeutils.h"
 
 #include <QDir>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMap>
 #include <QString>
 
@@ -344,4 +347,132 @@ const QString &RmeRenamer::toRename() const
 {
     Q_D(const RmeRenamer);
     return d->m_toRename;
+}
+
+class RmeConverterPrivate
+{
+public:
+    QDir m_dir;
+};
+
+RmeConverter::RmeConverter()
+    : d_ptr(new RmeConverterPrivate)
+{
+}
+
+RmeConverter::~RmeConverter()
+{
+    delete d_ptr;
+}
+
+bool RmeConverter::convertImdToImdJson(const RmeChartVersion &version)
+{
+    Q_D(RmeConverter);
+    if (!d->m_dir.exists())
+        return false;
+
+    bool flag = true;
+
+    for (ExistNote i = IMD_4K_EZ; i <= IMD_6K_HD; i = static_cast<ExistNote>(i << 1)) {
+        QString file_name;
+        file_name.append(d->m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (d->m_dir.exists(file_name)) {
+            QFile f(d->m_dir.absoluteFilePath(file_name));
+            if (!f.open(QIODevice::ReadOnly)) {
+                flag = false;
+                continue;
+            }
+
+            QByteArray arr = f.readAll();
+            f.close();
+
+            bool ok = false;
+            RmeChart c = RmeChart::fromImd(arr, &ok);
+            if (!ok) {
+                flag = false;
+                continue;
+            }
+            QJsonObject ob = c.toJson(version);
+            QJsonDocument doc(ob);
+            QByteArray jsonArr = doc.toJson();
+            ExistNote converted = static_cast<ExistNote>(i << 12);
+            QString toFileName;
+            toFileName.append(d->m_dir.dirName()).append(noteFileNameSuffix(converted));
+            QFile fJson(d->m_dir.absoluteFilePath(toFileName));
+            if (!fJson.open(QFile::WriteOnly)) {
+                flag = false;
+                continue;
+            }
+            fJson.write(jsonArr);
+            fJson.close();
+        }
+    }
+
+    return flag;
+}
+
+bool RmeConverter::convertImdJsonToImd()
+{
+    Q_D(RmeConverter);
+    if (!d->m_dir.exists())
+        return false;
+
+    bool flag = true;
+
+    for (ExistNote i = IMDJSON_4K_EZ; i <= IMDJSON_6K_HD; i = static_cast<ExistNote>(i << 1)) {
+        QString file_name;
+        file_name.append(d->m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (d->m_dir.exists(file_name)) {
+            QFile f(d->m_dir.absoluteFilePath(file_name));
+            if (!f.open(QIODevice::ReadOnly)) {
+                flag = false;
+                continue;
+            }
+
+            QByteArray arr = f.readAll();
+            f.close();
+            QJsonParseError err;
+            QJsonDocument doc = QJsonDocument::fromJson(arr, &err);
+            if (err.error != QJsonParseError::NoError) {
+                flag = false;
+                continue;
+            }
+            if (!doc.isObject()) {
+                flag = false;
+                continue;
+            }
+            QJsonObject ob = doc.object();
+            bool ok = false;
+            RmeChart c = RmeChart::fromJson(ob, &ok);
+            if (!ok) {
+                flag = false;
+                continue;
+            }
+            QByteArray arrImd = c.toImd();
+            ExistNote converted = static_cast<ExistNote>(i >> 12);
+            QString toFileName;
+            toFileName.append(d->m_dir.dirName()).append(noteFileNameSuffix(converted));
+            QFile fImd(d->m_dir.absoluteFilePath(toFileName));
+            if (!fImd.open(QFile::WriteOnly)) {
+                flag = false;
+                continue;
+            }
+            fImd.write(arrImd);
+            fImd.close();
+        }
+    }
+
+    return flag;
+}
+
+void RmeConverter::setDir(const QDir &dir)
+{
+    Q_D(RmeConverter);
+    d->m_dir = dir;
+}
+
+const QDir &RmeConverter::dir() const
+{
+    Q_D(const RmeConverter);
+    return d->m_dir;
 }

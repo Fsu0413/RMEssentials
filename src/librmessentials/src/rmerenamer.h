@@ -6,6 +6,7 @@
 class QDir;
 class QString;
 class RmeRenamerPrivate;
+struct RmeChartVersion;
 
 class LIBRMESSENTIALS_EXPORT RmeRenamer
 {
@@ -25,6 +26,26 @@ private:
     Q_DISABLE_COPY(RmeRenamer)
     Q_DECLARE_PRIVATE(RmeRenamer)
     RmeRenamerPrivate *d_ptr;
+};
+
+class RmeConverterPrivate;
+
+class LIBRMESSENTIALS_EXPORT RmeConverter
+{
+public:
+    RmeConverter();
+    ~RmeConverter();
+
+    bool convertImdToImdJson(const RmeChartVersion &version);
+    bool convertImdJsonToImd();
+
+    void setDir(const QDir &d);
+    const QDir &dir() const;
+
+private:
+    Q_DISABLE_COPY(RmeConverter)
+    Q_DECLARE_PRIVATE(RmeConverter)
+    RmeConverterPrivate *d_ptr;
 };
 
 #endif

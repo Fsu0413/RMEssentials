@@ -31,6 +31,9 @@ private slots:
     void checkFiles(const QString &folder);
     void renameToEasy();
 
+    void convertImdToImdJson();
+    void convertImdJsonToImd();
+
 signals:
     void folderSelected(const QString &folder);
 

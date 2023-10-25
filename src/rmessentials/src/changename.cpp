@@ -1,5 +1,7 @@
 #include "changename.h"
 
+#include <RmEss/RmeChartVersion>
+#include <RmEss/RmeConverter>
 #include <RmEss/RmeDownloader>
 #include <RmEss/RmeRenamer>
 #include <RmEss/RmeUtils>
@@ -113,12 +115,12 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     m_convertToImdJsonVersion->addItem(QStringLiteral("1.2.3"));
     m_convertToImdJsonVersion->addItem(QStringLiteral("1.3.0"));
     QPushButton *convertToImdJsonBtn = new QPushButton(tr("Convert All IMDs to IMDJson"));
-    // connect(convertToImdJsonBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdToImdJson);
+    connect(convertToImdJsonBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdToImdJson);
     QHBoxLayout *convertToImdJsonLayout = new QHBoxLayout;
     convertToImdJsonLayout->addWidget(m_convertToImdJsonVersion);
     convertToImdJsonLayout->addWidget(convertToImdJsonBtn);
     QPushButton *convertToImdBtn = new QPushButton(tr("Convert All IMDJsons to IMD"));
-    // connect(convertToImdBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdJsonToImd);
+    connect(convertToImdBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdJsonToImd);
     QPushButton *encryptImdJsonBtn = new QPushButton(tr("Convert All IMDJsons to RMP"));
     encryptImdJsonBtn->setEnabled(false);
     QPushButton *decryptImdJsonBtn = new QPushButton(tr("Convert All RMPs to IMDJson"));
@@ -267,6 +269,42 @@ void ChangeNameDialog::renameToEasy()
             checkFiles(m_folderName->text());
         }
     }
+}
+
+void ChangeNameDialog::convertImdToImdJson()
+{
+    RmeConverter converter;
+    converter.setDir(QDir(m_folderName->text()));
+
+    RmeChartVersion v(m_convertToImdJsonVersion->currentText());
+    if (v == RmeChartVersion::vUnknown) {
+        QMessageBox::critical(this, tr("Error"), tr("Unknown error"));
+        return;
+    }
+
+    bool succeeded = converter.convertImdToImdJson(v);
+
+    if (!succeeded)
+        QMessageBox::critical(this, tr("Error"), tr("Some error occurred when converting"));
+    else
+        QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
+
+    checkFiles(m_folderName->text());
+}
+
+void ChangeNameDialog::convertImdJsonToImd()
+{
+    RmeConverter converter;
+    converter.setDir(QDir(m_folderName->text()));
+
+    bool succeeded = converter.convertImdJsonToImd();
+
+    if (!succeeded)
+        QMessageBox::critical(this, tr("Error"), tr("Some error occurred when converting"));
+    else
+        QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
+
+    checkFiles(m_folderName->text());
 }
 
 void ChangeNameDialog::checkFiles(const QString &folder)
