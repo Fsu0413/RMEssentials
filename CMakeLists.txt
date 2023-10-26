@@ -14,6 +14,8 @@ if (RMESSENTIALS_SOURCE_DIR_ABSOLUTE STREQUAL RMESSENTIALS_BINARY_DIR_ABSOLUTE)
     message(FATAL_ERROR "Please!!!!! Do not in-place build RMEssentials. Instead make a separate build directory and build from there. See CMake manual for details.")
 endif()
 
+include(.FsEnv.cmake OPTIONAL)
+
 set(RMEVERSION 20231005)
 
 set(CMAKE_CXX_STANDARD 17)

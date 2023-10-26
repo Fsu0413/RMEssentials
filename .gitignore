@@ -4,3 +4,4 @@
 rmessentials.qm
 *.orig
 .DS_Store
+.FsEnv.cmake
