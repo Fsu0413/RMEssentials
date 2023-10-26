@@ -190,7 +190,7 @@ RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *
         note.attr = 3;
         note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
         note.isEnd = true;
-        note.toTrack = 0;
+        note.toTrack = note.track;
         break;
     case 0x21:
         note.attr = 4;
@@ -202,7 +202,7 @@ RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *
         note.attr = 4;
         note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
         note.isEnd = false;
-        note.toTrack = 0;
+        note.toTrack = note.track;
         break;
     case 0x61:
         note.attr = 3;
@@ -214,7 +214,7 @@ RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *
         note.attr = 3;
         note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
         note.isEnd = true;
-        note.toTrack = 0;
+        note.toTrack = note.track;
         break;
     case 0xA1:
         note.attr = 4;
@@ -226,7 +226,7 @@ RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *
         note.attr = 4;
         note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
         note.isEnd = false;
-        note.toTrack = 0;
+        note.toTrack = note.track;
         break;
     default:
         return note;
@@ -332,8 +332,10 @@ QJsonObject RmeChart::toJson(RmeChartVersion version) const
     QList<RmeChartNote> sortedNotes = notes;
     std::sort(sortedNotes.begin(), sortedNotes.end());
     for (int i = 0; i < sortedNotes.length(); ++i) {
-        tracks << sortedNotes.at(i).track;
-        trackNoteMap[sortedNotes.at(i).track].append(sortedNotes.at(i).toJsonNote(version, bpm, i));
+        unsigned char track = sortedNotes.at(i).track;
+        if (!tracks.contains(track))
+            tracks << track;
+        trackNoteMap[track].append(sortedNotes.at(i).toJsonNote(version, bpm, i));
     }
     std::sort(tracks.begin(), tracks.end());
     QJsonArray trackJson;
@@ -384,7 +386,7 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
         return chart;
 
     for (int i = 0; i < (int)(*noteCount); ++i) {
-        QByteArray noteArr = QByteArray::fromRawData((arr.data() + 8 + (*bpmCount) * 12 + 2 + i * 11), 11);
+        QByteArray noteArr = QByteArray::fromRawData((arr.data() + 8 + (*bpmCount) * 12 + 2 + 4 + i * 11), 11);
         bool noteOk = false;
         chart.notes << RmeChartNote::fromImdNote(noteArr, chart.bpm, &noteOk);
         if (!noteOk)

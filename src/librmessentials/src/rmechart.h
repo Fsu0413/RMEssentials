@@ -68,7 +68,12 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
 
     constexpr inline bool operator<(const RmeChartNote &arg2) const
     {
-        return tick < arg2.tick || (tick == arg2.tick && track < arg2.track);
+        // if statement can't be in constexpr so use logical operators
+        return (tick < arg2.tick)
+            || (tick == arg2.tick
+                && ((attr != 0 && arg2.attr == 0) || (attr != 0 && arg2.attr != 0 && dur == 0 && arg2.dur != 0)
+                    || ((((attr == 0) && (arg2.attr == 0)) || ((attr != 0) && (arg2.attr != 0) && ((dur == 0 && arg2.dur == 0) || (dur != 0 && arg2.dur != 0))))
+                        && (track < arg2.track))));
     }
     constexpr inline bool operator==(const RmeChartNote &arg2) const
     {
