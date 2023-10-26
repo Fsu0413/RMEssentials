@@ -68,12 +68,33 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
 
     constexpr inline bool operator<(const RmeChartNote &arg2) const
     {
-        // if statement can't be in constexpr so use logical operators
-        return (tick < arg2.tick)
-            || (tick == arg2.tick
-                && ((attr != 0 && arg2.attr == 0) || (attr != 0 && arg2.attr != 0 && dur == 0 && arg2.dur != 0)
-                    || ((((attr == 0) && (arg2.attr == 0)) || ((attr != 0) && (arg2.attr != 0) && ((dur == 0 && arg2.dur == 0) || (dur != 0 && arg2.dur != 0))))
-                        && (track < arg2.track))));
+        // "one main rule": earlier note must be put before
+        if (tick < arg2.tick)
+            return true;
+
+        // only here: notes appear same time need sorting
+        if (tick == arg2.tick) {
+            // slide (0x01, 0x21, 0x61 and 0xA1 in imd) is put before long-press (0x02, 0x22, 0x62 and 0xA2 in imd). long-press is put before single-click (0x00 in imd)
+            // 0x*1 -> attr != 0, dur == 0, 0x*2 -> attr != 0, dur != 0, 0x00 -> attr == 0 in JSON data
+            // so...
+
+            if (attr != 0) {
+                // slide / long-press is put before single-click
+                if (arg2.attr == 0)
+                    return true;
+                // slide is put before long-press
+                if (dur == 0 && arg2.dur != 0)
+                    return true;
+            }
+            // slide / long-press is put before single-click
+            if (arg2.attr != 0)
+                return false;
+            // time is same, note type is same. sort by track
+            return track < arg2.track;
+        }
+
+        // still "one main rule": later note must be put afterwards
+        return false;
     }
     constexpr inline bool operator==(const RmeChartNote &arg2) const
     {
