@@ -30,6 +30,7 @@ if(Qt6_FOUND)
         AUTOUIC ON
         AUTORCC ON
         VERSION "${RMEssentials_VERSION}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.RMEssentials"
     )
 
     if (ANDROID)
@@ -53,6 +54,7 @@ if(Qt6_FOUND)
 
     install(TARGETS RMEssentials6
         RUNTIME
+        BUNDLE DESTINATION "${CMAKE_INSTALL_BINDIR}"
     )
 endif()
 
@@ -77,6 +79,7 @@ if(Qt5_FOUND)
         AUTOUIC ON
         AUTORCC ON
         VERSION "${RMEssentials_VERSION}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.RMEssentials"
     )
 
     if (ANDROID)
@@ -107,5 +110,6 @@ if(Qt5_FOUND)
 
     install(TARGETS RMEssentials5
         RUNTIME
+        BUNDLE DESTINATION "${CMAKE_INSTALL_BINDIR}"
     )
 endif()
