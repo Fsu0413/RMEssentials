@@ -69,6 +69,12 @@ if (Qt6_FOUND)
         PUBLIC Qt6::Core5Compat
     )
     target_include_directories(quazip6 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
+
+    install(TARGETS quazip6
+        RUNTIME
+        ARCHIVE
+        LIBRARY
+    )
 endif()
 if (Qt5_FOUND)
     add_library(quazip5 ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
@@ -101,4 +107,10 @@ if (Qt5_FOUND)
         PUBLIC Qt5::Core
     )
     target_include_directories(quazip5 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
+
+    install(TARGETS quazip5
+        RUNTIME
+        ARCHIVE
+        LIBRARY
+    )
 endif()

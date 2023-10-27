@@ -78,6 +78,12 @@ if (Qt6_FOUND)
     endif()
     target_include_directories(RmEss6 PUBLIC ${CMAKE_BINARY_DIR}/dist/include)
     rmessentials_win32_rc(RmEss6 false "")
+
+    install(TARGETS RmEss6
+        RUNTIME
+        ARCHIVE
+        LIBRARY
+    )
 endif()
 
 if (Qt5_FOUND)
@@ -126,4 +132,10 @@ if (Qt5_FOUND)
     endif()
     target_include_directories(RmEss5 PUBLIC ${CMAKE_BINARY_DIR}/dist/include)
     rmessentials_win32_rc(RmEss5 false "")
+
+    install(TARGETS RmEss5
+        RUNTIME
+        ARCHIVE
+        LIBRARY
+    )
 endif()

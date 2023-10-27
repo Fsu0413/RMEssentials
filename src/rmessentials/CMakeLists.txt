@@ -50,6 +50,10 @@ if(Qt6_FOUND)
                         LUPDATE_OPTIONS -no-obsolete
     )
     rmessentials_win32_rc(RMEssentials6 true "")
+
+    install(TARGETS RMEssentials6
+        RUNTIME
+    )
 endif()
 
 if(Qt5_FOUND)
@@ -100,4 +104,8 @@ if(Qt5_FOUND)
         )
     endif()
     rmessentials_win32_rc(RMEssentials5 true "")
+
+    install(TARGETS RMEssentials5
+        RUNTIME
+    )
 endif()

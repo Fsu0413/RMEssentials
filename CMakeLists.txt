@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 
+include(.FsEnv.cmake OPTIONAL)
+
 project(RMEssentials
     VERSION 13.10.5
     DESCRIPTION "Program for manipulating Rhythm Master files"
@@ -13,8 +15,6 @@ get_filename_component(RMESSENTIALS_BINARY_DIR_ABSOLUTE "${CMAKE_BINARY_DIR}" RE
 if (RMESSENTIALS_SOURCE_DIR_ABSOLUTE STREQUAL RMESSENTIALS_BINARY_DIR_ABSOLUTE)
     message(FATAL_ERROR "Please!!!!! Do not in-place build RMEssentials. Instead make a separate build directory and build from there. See CMake manual for details.")
 endif()
-
-include(.FsEnv.cmake OPTIONAL)
 
 set(RMEVERSION 20231005)
 
@@ -71,10 +71,6 @@ if (WIN32)
     set(CMAKE_SHARED_MODULE_PREFIX "")
 endif()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/dist/lib")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/dist/lib")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/dist/bin")
-
 if (WIN32)
     get_filename_component(RMESSENTIALS_RC_IN_FILE "res/RMEssentials.rc.in" REALPATH BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
     get_filename_component(RMESSENTIALS_RC_ICON "res/RMEssentials.ico" REALPATH BASE_DIR "${CMAKE_CURRENT_LIST_DIR}")
@@ -96,6 +92,7 @@ else()
     endfunction()
 endif()
 
+include(GNUInstallDirs)
 include(tools/AutoGenerateHeader.cmake)
 
 add_subdirectory(src)
