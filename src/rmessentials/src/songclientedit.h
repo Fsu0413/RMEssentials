@@ -24,7 +24,7 @@ public:
     bool loadFile();
 
 private:
-    RmeSong::RmeSongClientFile m_file;
+    RmeSongClientFile m_file;
 
     int m_currentIndex;
     bool m_isLoaded;

@@ -10,8 +10,6 @@ class LIBRMESSENTIALS_EXPORT RmeSongFile
 #endif
 
 class QIODevice;
-
-namespace RmeSong {
 struct RmeSongClientItemStruct;
 struct RmePapaSongClientItemStruct;
 struct RmeSongClientHeaderStruct;
@@ -86,6 +84,5 @@ private:
     Q_DECLARE_PRIVATE(RmePapaSongClientFile)
     RmePapaSongClientFilePrivate *d_ptr;
 };
-}
 
 #endif

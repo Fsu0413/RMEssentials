@@ -7,8 +7,6 @@
 #include <QMap>
 #include <QXmlStreamWriter>
 
-using namespace RmeSong;
-
 namespace {
 
 class RmeXmlReader
@@ -762,7 +760,7 @@ bool RmeJsonWriter::error() const
 
 }
 
-class RmeSong::RmeSongClientFilePrivate
+class RmeSongClientFilePrivate
 {
 public:
     QMap<int16_t, RmeSongClientItemStruct *> m_songsList;
@@ -772,7 +770,7 @@ public:
     void cleanup();
 };
 
-RmeSong::RmeSongClientFile::RmeSongClientFile()
+RmeSongClientFile::RmeSongClientFile()
     : d_ptr(new RmeSongClientFilePrivate)
 {
     Q_D(RmeSongClientFile);
@@ -780,7 +778,7 @@ RmeSong::RmeSongClientFile::RmeSongClientFile()
     d->m_isUserMade = false;
 }
 
-RmeSong::RmeSongClientFile::~RmeSongClientFile()
+RmeSongClientFile::~RmeSongClientFile()
 {
     Q_D(RmeSongClientFile);
     qDeleteAll(d->m_songsList);
@@ -788,14 +786,14 @@ RmeSong::RmeSongClientFile::~RmeSongClientFile()
     delete d;
 }
 
-void RmeSong::RmeSongClientFilePrivate::cleanup()
+void RmeSongClientFilePrivate::cleanup()
 {
     qDeleteAll(m_songsList);
     m_songsList.clear();
     m_songKeys.clear();
 }
 
-bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat format)
+bool RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat format)
 {
     Q_D(RmeSongClientFile);
     // treat the unknown format
@@ -852,7 +850,7 @@ bool RmeSong::RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFor
     return false;
 }
 
-bool RmeSong::RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileFormat format) const
+bool RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileFormat format) const
 {
     Q_D(const RmeSongClientFile);
     if (format == UnknownFormat || output == nullptr || d->m_header == nullptr)
@@ -882,7 +880,7 @@ bool RmeSong::RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileForm
     return false;
 }
 
-RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n)
+RmeSongClientItemStruct *RmeSongClientFile::song(int n)
 {
     Q_D(RmeSongClientFile);
 
@@ -890,7 +888,7 @@ RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n)
     return d->m_songsList.value(id, nullptr);
 }
 
-const RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n) const
+const RmeSongClientItemStruct *RmeSongClientFile::song(int n) const
 {
     Q_D(const RmeSongClientFile);
 
@@ -898,13 +896,13 @@ const RmeSong::RmeSongClientItemStruct *RmeSong::RmeSongClientFile::song(int n) 
     return d->m_songsList.value(id, nullptr);
 }
 
-const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmeSongClientFile::fileHeader() const
+const RmeSongClientHeaderStruct &RmeSongClientFile::fileHeader() const
 {
     Q_D(const RmeSongClientFile);
     return *d->m_header;
 }
 
-QList<int> RmeSong::RmeSongClientFile::search(const QString &cond) const
+QList<int> RmeSongClientFile::search(const QString &cond) const
 {
     Q_D(const RmeSongClientFile);
     QList<int> r;
@@ -1104,7 +1102,7 @@ bool RmeSongClientFile::applyPatchFromDevice(QIODevice *input)
     return true;
 }
 
-int RmeSong::RmeSongClientFile::songCount() const
+int RmeSongClientFile::songCount() const
 {
     Q_D(const RmeSongClientFile);
     return d->m_songsList.size();
@@ -1133,7 +1131,7 @@ bool RmeSongClientFile::isUserMadeMode() const
     return d->m_isUserMade;
 }
 
-class RmeSong::RmePapaSongClientFilePrivate
+class RmePapaSongClientFilePrivate
 {
 public:
     QMap<int32_t, RmePapaSongClientItemStruct *> m_songsList;
@@ -1142,14 +1140,14 @@ public:
     void cleanup();
 };
 
-RmeSong::RmePapaSongClientFile::RmePapaSongClientFile()
+RmePapaSongClientFile::RmePapaSongClientFile()
     : d_ptr(new RmePapaSongClientFilePrivate)
 {
     Q_D(RmePapaSongClientFile);
     d->m_header = nullptr;
 }
 
-RmeSong::RmePapaSongClientFile::~RmePapaSongClientFile()
+RmePapaSongClientFile::~RmePapaSongClientFile()
 {
     Q_D(RmePapaSongClientFile);
     qDeleteAll(d->m_songsList);
@@ -1157,14 +1155,14 @@ RmeSong::RmePapaSongClientFile::~RmePapaSongClientFile()
     delete d;
 }
 
-void RmeSong::RmePapaSongClientFilePrivate::cleanup()
+void RmePapaSongClientFilePrivate::cleanup()
 {
     qDeleteAll(m_songsList);
     m_songsList.clear();
     m_songKeys.clear();
 }
 
-bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat format)
+bool RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat format)
 {
     Q_D(RmePapaSongClientFile);
     // treat the unknown format
@@ -1222,7 +1220,7 @@ bool RmeSong::RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFil
     return false;
 }
 
-bool RmeSong::RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileFormat format) const
+bool RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileFormat format) const
 {
     Q_D(const RmePapaSongClientFile);
     if (format == UnknownFormat || output == nullptr || d->m_header == nullptr)
@@ -1252,7 +1250,7 @@ bool RmeSong::RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFile
     return false;
 }
 
-RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n)
+RmePapaSongClientItemStruct *RmePapaSongClientFile::song(int n)
 {
     Q_D(RmePapaSongClientFile);
 
@@ -1260,7 +1258,7 @@ RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n
     return d->m_songsList.value(id, nullptr);
 }
 
-const RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song(int n) const
+const RmePapaSongClientItemStruct *RmePapaSongClientFile::song(int n) const
 {
     Q_D(const RmePapaSongClientFile);
 
@@ -1268,13 +1266,13 @@ const RmeSong::RmePapaSongClientItemStruct *RmeSong::RmePapaSongClientFile::song
     return d->m_songsList.value(id, nullptr);
 }
 
-const RmeSong::RmeSongClientHeaderStruct &RmeSong::RmePapaSongClientFile::fileHeader() const
+const RmeSongClientHeaderStruct &RmePapaSongClientFile::fileHeader() const
 {
     Q_D(const RmePapaSongClientFile);
     return *d->m_header;
 }
 
-QList<int> RmeSong::RmePapaSongClientFile::search(const QString &cond) const
+QList<int> RmePapaSongClientFile::search(const QString &cond) const
 {
     Q_D(const RmePapaSongClientFile);
     QList<int> r;
@@ -1423,7 +1421,7 @@ bool RmePapaSongClientFile::applyPatchFromDevice(QIODevice *input)
     return true;
 }
 
-int RmeSong::RmePapaSongClientFile::songCount() const
+int RmePapaSongClientFile::songCount() const
 {
     Q_D(const RmePapaSongClientFile);
     return d->m_songsList.size();

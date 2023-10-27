@@ -24,8 +24,6 @@
 #include <QScrollArea>
 #endif
 
-using namespace RmeSong;
-
 struct PapaSongClientEditDialogControls
 {
     QLineEdit *ushSongID; // Readonly, User Making note better > 10800

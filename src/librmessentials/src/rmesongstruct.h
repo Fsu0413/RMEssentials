@@ -12,7 +12,6 @@
 class LIBRMESSENTIALS_EXPORT RmeSongClientStruct
 #endif
 
-namespace RmeSong {
 struct LIBRMESSENTIALS_EXPORT RmeSongClientHeaderStruct
 {
     int32_t Magic;
@@ -134,6 +133,5 @@ struct LIBRMESSENTIALS_EXPORT RmePapaSongClientItemStruct
 
     static bool sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b);
 };
-}
 
 #endif

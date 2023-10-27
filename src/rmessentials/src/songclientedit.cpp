@@ -24,8 +24,6 @@
 #include <QScrollArea>
 #endif
 
-using namespace RmeSong;
-
 namespace {
 RmeFileFormat getOpenFileName(QWidget *parent, QString &filepath)
 {

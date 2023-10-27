@@ -3,7 +3,7 @@
 
 #include <QFile>
 
-const QString RmeSong::RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
+const QString RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
 // use txt file with qrc to store the "limited time" chinese characters
 static inline const QString &strTemp()
@@ -23,7 +23,7 @@ static inline const QString &strTemp()
     return str;
 }
 
-RmeSong::RmeSongClientHeaderStruct::RmeSongClientHeaderStruct()
+RmeSongClientHeaderStruct::RmeSongClientHeaderStruct()
     : Magic(0)
     , Version(0)
     , Unit(0)
@@ -33,7 +33,7 @@ RmeSong::RmeSongClientHeaderStruct::RmeSongClientHeaderStruct()
 {
 }
 
-void RmeSong::RmeSongClientHeaderStruct::parseByteArray(const QByteArray &arr)
+void RmeSongClientHeaderStruct::parseByteArray(const QByteArray &arr)
 {
     Q_ASSERT(arr.length() == 0x88);
     const char *data = arr.constData();
@@ -55,7 +55,7 @@ void RmeSong::RmeSongClientHeaderStruct::parseByteArray(const QByteArray &arr)
 #undef GETX
 }
 
-QByteArray RmeSong::RmeSongClientHeaderStruct::toByteArray() const
+QByteArray RmeSongClientHeaderStruct::toByteArray() const
 {
     QByteArray arr;
     arr.resize(0x88);
@@ -97,7 +97,7 @@ QByteArray RmeSong::RmeSongClientHeaderStruct::toByteArray() const
     return arr;
 }
 
-void RmeSong::RmeSongClientHeaderStruct::parseMap(const QVariantMap &map)
+void RmeSongClientHeaderStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) this->name = map.value(QStringLiteral(#name)).toString()
 #define GETINT(name) this->name = map.value(QStringLiteral(#name)).toString().trimmed().toInt()
@@ -116,7 +116,7 @@ void RmeSong::RmeSongClientHeaderStruct::parseMap(const QVariantMap &map)
 #undef GETINT
 }
 
-QVariantMap RmeSong::RmeSongClientHeaderStruct::toMap() const
+QVariantMap RmeSongClientHeaderStruct::toMap() const
 {
     QVariantMap map;
 
@@ -140,7 +140,7 @@ QVariantMap RmeSong::RmeSongClientHeaderStruct::toMap() const
     return map;
 }
 
-RmeSong::RmeSongClientItemStruct::RmeSongClientItemStruct()
+RmeSongClientItemStruct::RmeSongClientItemStruct()
     : m_ushSongID(0)
     , m_iVersion(0)
     , m_iGameTime(0)
@@ -173,7 +173,7 @@ RmeSong::RmeSongClientItemStruct::RmeSongClientItemStruct()
 {
 }
 
-void RmeSong::RmeSongClientItemStruct::parseByteArray(const QByteArray &arr)
+void RmeSongClientItemStruct::parseByteArray(const QByteArray &arr)
 {
     Q_ASSERT(arr.length() == 0x33e);
     const char *data = arr.constData();
@@ -223,7 +223,7 @@ void RmeSong::RmeSongClientItemStruct::parseByteArray(const QByteArray &arr)
 #undef GETX
 }
 
-QByteArray RmeSong::RmeSongClientItemStruct::toByteArray() const
+QByteArray RmeSongClientItemStruct::toByteArray() const
 {
     QByteArray arr;
     arr.resize(0x33e);
@@ -293,7 +293,7 @@ QByteArray RmeSong::RmeSongClientItemStruct::toByteArray() const
     return arr;
 }
 
-void RmeSong::RmeSongClientItemStruct::parseMap(const QVariantMap &map)
+void RmeSongClientItemStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString()
 #define GETINT(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().toInt()
@@ -350,7 +350,7 @@ void RmeSong::RmeSongClientItemStruct::parseMap(const QVariantMap &map)
 #undef GETHEX
 }
 
-QVariantMap RmeSong::RmeSongClientItemStruct::toMap() const
+QVariantMap RmeSongClientItemStruct::toMap() const
 {
     QVariantMap map;
 
@@ -420,7 +420,7 @@ const char *NoteNumSuffix[] = {
 // clang-format on
 }
 
-QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSongClientItemStruct &orig, bool userMade) const
+QJsonObject RmeSongClientItemStruct::createPatch(const RmeSongClientItemStruct &orig, bool userMade) const
 {
     if (!userMade) {
         if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
@@ -503,7 +503,7 @@ QJsonObject RmeSong::RmeSongClientItemStruct::createPatch(const RmeSong::RmeSong
     return ob;
 }
 
-bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool userMade)
+bool RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool userMade)
 {
     if (!userMade) {
         if (!(static_cast<int>(m_ushSongID) == patch.value(QStringLiteral("ushSongID")).toInt() && m_szPath == patch.value(QStringLiteral("szPath")).toString()))
@@ -578,42 +578,42 @@ bool RmeSong::RmeSongClientItemStruct::applyPatch(const QJsonObject &patch, bool
     return true;
 }
 
-bool RmeSong::RmeSongClientItemStruct::isHidden() const
+bool RmeSongClientItemStruct::isHidden() const
 {
     return m_bIsHide;
 }
 
-bool RmeSong::RmeSongClientItemStruct::isReward() const
+bool RmeSongClientItemStruct::isReward() const
 {
     return m_bIsReward && !isLevel();
 }
 
-bool RmeSong::RmeSongClientItemStruct::isDown() const
+bool RmeSongClientItemStruct::isDown() const
 {
     return m_ucIsOpen == 0;
 }
 
-bool RmeSong::RmeSongClientItemStruct::isBuy() const
+bool RmeSongClientItemStruct::isBuy() const
 {
     return m_ucCanBuy || m_bSongPkg;
 }
 
-bool RmeSong::RmeSongClientItemStruct::isFree() const
+bool RmeSongClientItemStruct::isFree() const
 {
     return !isBuy() && !isDown() && !isHidden() && !isLevel() && !isReward() && !m_szSongName.startsWith(strTemp());
 }
 
-bool RmeSong::RmeSongClientItemStruct::isLevel() const
+bool RmeSongClientItemStruct::isLevel() const
 {
     return m_bIsLevelReward;
 }
 
-bool RmeSong::RmeSongClientItemStruct::sortByID(const RmeSong::RmeSongClientItemStruct &a, const RmeSong::RmeSongClientItemStruct &b)
+bool RmeSongClientItemStruct::sortByID(const RmeSongClientItemStruct &a, const RmeSongClientItemStruct &b)
 {
     return a.m_ushSongID < b.m_ushSongID;
 }
 
-RmeSong::RmePapaSongClientItemStruct::RmePapaSongClientItemStruct()
+RmePapaSongClientItemStruct::RmePapaSongClientItemStruct()
     : m_ushSongID(0)
     , m_iVersion(0)
     , m_cDifficulty(0)
@@ -629,7 +629,7 @@ RmeSong::RmePapaSongClientItemStruct::RmePapaSongClientItemStruct()
 {
 }
 
-void RmeSong::RmePapaSongClientItemStruct::parseByteArray(const QByteArray &arr)
+void RmePapaSongClientItemStruct::parseByteArray(const QByteArray &arr)
 {
     Q_ASSERT(arr.length() == 0x169);
     const char *data = arr.constData();
@@ -662,7 +662,7 @@ void RmeSong::RmePapaSongClientItemStruct::parseByteArray(const QByteArray &arr)
 #undef GETX
 }
 
-QByteArray RmeSong::RmePapaSongClientItemStruct::toByteArray() const
+QByteArray RmePapaSongClientItemStruct::toByteArray() const
 {
     QByteArray arr;
     arr.resize(0x169);
@@ -715,7 +715,7 @@ QByteArray RmeSong::RmePapaSongClientItemStruct::toByteArray() const
     return arr;
 }
 
-void RmeSong::RmePapaSongClientItemStruct::parseMap(const QVariantMap &map)
+void RmePapaSongClientItemStruct::parseMap(const QVariantMap &map)
 {
 #define GETSTR(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString()
 #define GETINT(name) this->m_##name = map.value(QStringLiteral("m_" #name)).toString().trimmed().toInt()
@@ -750,7 +750,7 @@ void RmeSong::RmePapaSongClientItemStruct::parseMap(const QVariantMap &map)
 #undef GETHEX
 }
 
-QVariantMap RmeSong::RmePapaSongClientItemStruct::toMap() const
+QVariantMap RmePapaSongClientItemStruct::toMap() const
 {
     QVariantMap map;
 
@@ -786,7 +786,7 @@ QVariantMap RmeSong::RmePapaSongClientItemStruct::toMap() const
     return map;
 }
 
-QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::RmePapaSongClientItemStruct &orig, bool userMade) const
+QJsonObject RmePapaSongClientItemStruct::createPatch(const RmePapaSongClientItemStruct &orig, bool userMade) const
 {
     if (!userMade) {
         if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
@@ -835,7 +835,7 @@ QJsonObject RmeSong::RmePapaSongClientItemStruct::createPatch(const RmeSong::Rme
     return ob;
 }
 
-bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, bool userMade)
+bool RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, bool userMade)
 {
     if (!userMade) {
         if (!(static_cast<int>(m_ushSongID) == patch.value(QStringLiteral("ushSongID")).toInt() && m_szPath == patch.value(QStringLiteral("szPath")).toString()))
@@ -882,7 +882,7 @@ bool RmeSong::RmePapaSongClientItemStruct::applyPatch(const QJsonObject &patch, 
     return true;
 }
 
-bool RmeSong::RmePapaSongClientItemStruct::sortByID(const RmeSong::RmePapaSongClientItemStruct &a, const RmeSong::RmePapaSongClientItemStruct &b)
+bool RmePapaSongClientItemStruct::sortByID(const RmePapaSongClientItemStruct &a, const RmePapaSongClientItemStruct &b)
 {
     return a.m_ushSongID < b.m_ushSongID;
 }
