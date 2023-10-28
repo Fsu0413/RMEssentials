@@ -61,7 +61,7 @@ if (Qt6_FOUND)
     if (Qt6ZlibPrivate_FOUND)
         target_link_libraries(quazip6 PUBLIC Qt6::ZlibPrivate)
     else()
-        target_link_libraries(quazip6 PUBLIC -lz)
+        target_link_libraries(quazip6 PUBLIC ZLIB::ZLIB)
     endif()
 
     target_link_libraries(quazip6
@@ -102,7 +102,7 @@ if (Qt5_FOUND)
     if (Qt5Zlib_FOUND)
         target_link_libraries(quazip5 PUBLIC Qt5::Zlib)
     else()
-        target_link_libraries(quazip5 PUBLIC -lz)
+        target_link_libraries(quazip5 PUBLIC ZLIB::ZLIB)
     endif()
 
     target_link_libraries(quazip5
