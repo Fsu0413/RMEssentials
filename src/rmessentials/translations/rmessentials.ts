@@ -606,135 +606,135 @@ This Program is linked against QuaZip %1.</source>
 <context>
     <name>PapaSongClientEditDialog</name>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="58"/>
+        <location filename="../src/papasongclientedit.cpp" line="59"/>
         <source>Rhythm Master PapaSong Client Editor</source>
         <translation>节奏大师星动模式客户端编辑器</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="62"/>
+        <location filename="../src/papasongclientedit.cpp" line="63"/>
         <source>prev</source>
         <translation>前一个</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="66"/>
+        <location filename="../src/papasongclientedit.cpp" line="67"/>
         <source>next</source>
         <translation>后一个</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="70"/>
+        <location filename="../src/papasongclientedit.cpp" line="71"/>
         <source>save current</source>
         <translation>保存当前</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="76"/>
+        <location filename="../src/papasongclientedit.cpp" line="77"/>
         <source>open an other file</source>
         <translation>打开一个其他文件</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="78"/>
+        <location filename="../src/papasongclientedit.cpp" line="79"/>
         <source>save file</source>
         <translation>保存文件</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="86"/>
+        <location filename="../src/papasongclientedit.cpp" line="87"/>
         <source>Create WikiTable</source>
         <translation>创建 Wiki 表格</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="288"/>
-        <location filename="../src/papasongclientedit.cpp" line="300"/>
-        <location filename="../src/papasongclientedit.cpp" line="313"/>
-        <location filename="../src/papasongclientedit.cpp" line="315"/>
-        <location filename="../src/papasongclientedit.cpp" line="328"/>
-        <location filename="../src/papasongclientedit.cpp" line="338"/>
+        <location filename="../src/papasongclientedit.cpp" line="289"/>
+        <location filename="../src/papasongclientedit.cpp" line="310"/>
+        <location filename="../src/papasongclientedit.cpp" line="323"/>
+        <location filename="../src/papasongclientedit.cpp" line="325"/>
+        <location filename="../src/papasongclientedit.cpp" line="347"/>
         <location filename="../src/papasongclientedit.cpp" line="357"/>
-        <location filename="../src/papasongclientedit.cpp" line="359"/>
-        <location filename="../src/papasongclientedit.cpp" line="363"/>
-        <location filename="../src/papasongclientedit.cpp" line="533"/>
-        <location filename="../src/papasongclientedit.cpp" line="541"/>
-        <location filename="../src/papasongclientedit.cpp" line="546"/>
-        <location filename="../src/papasongclientedit.cpp" line="550"/>
-        <location filename="../src/papasongclientedit.cpp" line="564"/>
-        <location filename="../src/papasongclientedit.cpp" line="571"/>
-        <location filename="../src/papasongclientedit.cpp" line="586"/>
+        <location filename="../src/papasongclientedit.cpp" line="376"/>
+        <location filename="../src/papasongclientedit.cpp" line="378"/>
+        <location filename="../src/papasongclientedit.cpp" line="382"/>
+        <location filename="../src/papasongclientedit.cpp" line="552"/>
+        <location filename="../src/papasongclientedit.cpp" line="560"/>
+        <location filename="../src/papasongclientedit.cpp" line="565"/>
+        <location filename="../src/papasongclientedit.cpp" line="569"/>
+        <location filename="../src/papasongclientedit.cpp" line="583"/>
         <location filename="../src/papasongclientedit.cpp" line="590"/>
+        <location filename="../src/papasongclientedit.cpp" line="605"/>
+        <location filename="../src/papasongclientedit.cpp" line="609"/>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="288"/>
-        <location filename="../src/papasongclientedit.cpp" line="315"/>
-        <location filename="../src/papasongclientedit.cpp" line="357"/>
-        <location filename="../src/papasongclientedit.cpp" line="533"/>
+        <location filename="../src/papasongclientedit.cpp" line="289"/>
+        <location filename="../src/papasongclientedit.cpp" line="325"/>
+        <location filename="../src/papasongclientedit.cpp" line="376"/>
+        <location filename="../src/papasongclientedit.cpp" line="552"/>
         <source>bin files</source>
         <translation>bin 文件</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="313"/>
+        <location filename="../src/papasongclientedit.cpp" line="323"/>
         <source>mrock_papasong_client.bin doesn&apos;t exist, please select the file to open.</source>
         <translation>mrock_papasong_client.bin 不存在，请选择文件打开。</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="359"/>
+        <location filename="../src/papasongclientedit.cpp" line="378"/>
         <source>File is already exists, do you want to overwrite?</source>
         <translation>文件已存在，覆盖？</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="586"/>
+        <location filename="../src/papasongclientedit.cpp" line="605"/>
         <source>TXT files</source>
         <translation>TXT 文件</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="88"/>
+        <location filename="../src/papasongclientedit.cpp" line="89"/>
         <source>Functions...</source>
         <translation>功能...</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="300"/>
-        <location filename="../src/papasongclientedit.cpp" line="328"/>
+        <location filename="../src/papasongclientedit.cpp" line="310"/>
+        <location filename="../src/papasongclientedit.cpp" line="347"/>
         <source>Read file failed</source>
         <translation>读取文件失败</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="363"/>
-        <location filename="../src/papasongclientedit.cpp" line="550"/>
-        <location filename="../src/papasongclientedit.cpp" line="590"/>
+        <location filename="../src/papasongclientedit.cpp" line="382"/>
+        <location filename="../src/papasongclientedit.cpp" line="569"/>
+        <location filename="../src/papasongclientedit.cpp" line="609"/>
         <source>Save file failed</source>
         <translation>保存文件失败</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="246"/>
+        <location filename="../src/papasongclientedit.cpp" line="247"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="81"/>
+        <location filename="../src/papasongclientedit.cpp" line="82"/>
         <source>Create Patch from another file base</source>
         <translation>与另一个基准文件比较，创建补丁</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="83"/>
+        <location filename="../src/papasongclientedit.cpp" line="84"/>
         <source>Apply Patch File</source>
         <translation>应用补丁文件</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="541"/>
+        <location filename="../src/papasongclientedit.cpp" line="560"/>
         <source>Load info from file failed.</source>
         <translation>从文件加载信息失败。</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="546"/>
-        <location filename="../src/papasongclientedit.cpp" line="564"/>
+        <location filename="../src/papasongclientedit.cpp" line="565"/>
+        <location filename="../src/papasongclientedit.cpp" line="583"/>
         <source>Json files</source>
         <translation>Json 文件</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="571"/>
+        <location filename="../src/papasongclientedit.cpp" line="590"/>
         <source>Apply patch from device failed</source>
         <translation>从设备应用补丁失败</translation>
     </message>
     <message>
-        <location filename="../src/papasongclientedit.cpp" line="338"/>
+        <location filename="../src/papasongclientedit.cpp" line="357"/>
         <source>Content of this page is modified.</source>
         <translation>本页的内容已经被修改了。</translation>
     </message>
@@ -742,176 +742,176 @@ This Program is linked against QuaZip %1.</source>
 <context>
     <name>SongClientEditDialog</name>
     <message>
-        <location filename="../src/songclientedit.cpp" line="117"/>
-        <location filename="../src/songclientedit.cpp" line="482"/>
-        <location filename="../src/songclientedit.cpp" line="513"/>
-        <location filename="../src/songclientedit.cpp" line="803"/>
-        <location filename="../src/songclientedit.cpp" line="864"/>
+        <location filename="../src/songclientedit.cpp" line="118"/>
+        <location filename="../src/songclientedit.cpp" line="483"/>
+        <location filename="../src/songclientedit.cpp" line="523"/>
+        <location filename="../src/songclientedit.cpp" line="822"/>
+        <location filename="../src/songclientedit.cpp" line="883"/>
         <source>Rhythm Master Song Client Editor</source>
         <translation>节奏大师客户端歌曲编辑器</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="123"/>
+        <location filename="../src/songclientedit.cpp" line="124"/>
         <source>prev</source>
         <translation>前一个</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="127"/>
+        <location filename="../src/songclientedit.cpp" line="128"/>
         <source>next</source>
         <translation>后一个</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="131"/>
+        <location filename="../src/songclientedit.cpp" line="132"/>
         <source>save current</source>
         <translation>保存当前</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="139"/>
+        <location filename="../src/songclientedit.cpp" line="140"/>
         <source>save file</source>
         <translation>保存文件</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="154"/>
+        <location filename="../src/songclientedit.cpp" line="155"/>
         <source>Create WikiTable</source>
         <translation>创建 Wiki 表格</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="210"/>
-        <location filename="../src/songclientedit.cpp" line="212"/>
-        <location filename="../src/songclientedit.cpp" line="251"/>
+        <location filename="../src/songclientedit.cpp" line="211"/>
+        <location filename="../src/songclientedit.cpp" line="213"/>
+        <location filename="../src/songclientedit.cpp" line="252"/>
         <source>Better keep empty</source>
         <translation>最好留空</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="249"/>
+        <location filename="../src/songclientedit.cpp" line="250"/>
         <source>Number only, Better keep empty</source>
         <translation>只能输入数字，最好留空</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="502"/>
+        <location filename="../src/songclientedit.cpp" line="512"/>
         <source>mrock_song_client_android.json doesn&apos;t exist, please select the file to open.</source>
         <translation>mrock_song_client_android.json 不存在，请选择文件打开。</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="877"/>
+        <location filename="../src/songclientedit.cpp" line="896"/>
         <source>TXT files</source>
         <translation>TXT 文件</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="31"/>
-        <location filename="../src/songclientedit.cpp" line="51"/>
-        <location filename="../src/songclientedit.cpp" line="488"/>
-        <location filename="../src/songclientedit.cpp" line="502"/>
-        <location filename="../src/songclientedit.cpp" line="519"/>
-        <location filename="../src/songclientedit.cpp" line="529"/>
-        <location filename="../src/songclientedit.cpp" line="555"/>
-        <location filename="../src/songclientedit.cpp" line="798"/>
-        <location filename="../src/songclientedit.cpp" line="829"/>
-        <location filename="../src/songclientedit.cpp" line="834"/>
-        <location filename="../src/songclientedit.cpp" line="838"/>
-        <location filename="../src/songclientedit.cpp" line="852"/>
-        <location filename="../src/songclientedit.cpp" line="859"/>
-        <location filename="../src/songclientedit.cpp" line="877"/>
-        <location filename="../src/songclientedit.cpp" line="881"/>
+        <location filename="../src/songclientedit.cpp" line="32"/>
+        <location filename="../src/songclientedit.cpp" line="52"/>
+        <location filename="../src/songclientedit.cpp" line="498"/>
+        <location filename="../src/songclientedit.cpp" line="512"/>
+        <location filename="../src/songclientedit.cpp" line="538"/>
+        <location filename="../src/songclientedit.cpp" line="548"/>
+        <location filename="../src/songclientedit.cpp" line="574"/>
+        <location filename="../src/songclientedit.cpp" line="817"/>
+        <location filename="../src/songclientedit.cpp" line="848"/>
+        <location filename="../src/songclientedit.cpp" line="853"/>
+        <location filename="../src/songclientedit.cpp" line="857"/>
+        <location filename="../src/songclientedit.cpp" line="871"/>
+        <location filename="../src/songclientedit.cpp" line="878"/>
+        <location filename="../src/songclientedit.cpp" line="896"/>
+        <location filename="../src/songclientedit.cpp" line="900"/>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="32"/>
-        <location filename="../src/songclientedit.cpp" line="52"/>
+        <location filename="../src/songclientedit.cpp" line="33"/>
+        <location filename="../src/songclientedit.cpp" line="53"/>
         <source>bin files</source>
         <translation>bin 文件</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="137"/>
+        <location filename="../src/songclientedit.cpp" line="138"/>
         <source>open an other file</source>
         <translation>打开一个其他文件</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="142"/>
+        <location filename="../src/songclientedit.cpp" line="143"/>
         <source>Convert All Songs to Free</source>
         <translation>将所有歌曲转为免费</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="156"/>
+        <location filename="../src/songclientedit.cpp" line="157"/>
         <source>Functions...</source>
         <translation>功能...</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="488"/>
-        <location filename="../src/songclientedit.cpp" line="519"/>
+        <location filename="../src/songclientedit.cpp" line="498"/>
+        <location filename="../src/songclientedit.cpp" line="538"/>
         <source>Read file failed</source>
         <translation>读取文件失败</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="555"/>
-        <location filename="../src/songclientedit.cpp" line="838"/>
-        <location filename="../src/songclientedit.cpp" line="881"/>
+        <location filename="../src/songclientedit.cpp" line="574"/>
+        <location filename="../src/songclientedit.cpp" line="857"/>
+        <location filename="../src/songclientedit.cpp" line="900"/>
         <source>Save file failed</source>
         <translation>保存文件失败</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="432"/>
+        <location filename="../src/songclientedit.cpp" line="433"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="144"/>
+        <location filename="../src/songclientedit.cpp" line="145"/>
         <source>All Song Unlock</source>
         <translation>所有歌曲解锁</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="146"/>
+        <location filename="../src/songclientedit.cpp" line="147"/>
         <source>Prepare for User Making Notes</source>
         <translation>为自制谱做准备</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="798"/>
+        <location filename="../src/songclientedit.cpp" line="817"/>
         <source>Please be sure that the current open file is the offical one from the server of RM!!!!&lt;br /&gt;Are you sure to proceed?</source>
         <translation>请确认当前打开的文件是从节奏大师官方服务器下载下来的！！！！&lt;br /&gt;确认执行么？</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="149"/>
+        <location filename="../src/songclientedit.cpp" line="150"/>
         <source>Create Patch from another file base</source>
         <translation>与另一个基准文件比较，创建补丁</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="151"/>
+        <location filename="../src/songclientedit.cpp" line="152"/>
         <source>Apply Patch File</source>
         <translation>应用补丁文件</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="829"/>
+        <location filename="../src/songclientedit.cpp" line="848"/>
         <source>Load info from file failed.</source>
         <translation>从文件加载信息失败。</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="32"/>
-        <location filename="../src/songclientedit.cpp" line="52"/>
-        <location filename="../src/songclientedit.cpp" line="834"/>
-        <location filename="../src/songclientedit.cpp" line="852"/>
+        <location filename="../src/songclientedit.cpp" line="33"/>
+        <location filename="../src/songclientedit.cpp" line="53"/>
+        <location filename="../src/songclientedit.cpp" line="853"/>
+        <location filename="../src/songclientedit.cpp" line="871"/>
         <source>Json files</source>
         <translation>Json 文件</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="859"/>
+        <location filename="../src/songclientedit.cpp" line="878"/>
         <source>Apply patch from device failed</source>
         <translation>从设备应用补丁失败</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="33"/>
-        <location filename="../src/songclientedit.cpp" line="53"/>
+        <location filename="../src/songclientedit.cpp" line="34"/>
+        <location filename="../src/songclientedit.cpp" line="54"/>
         <source>xml files</source>
         <translation>xml 文件</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="803"/>
-        <location filename="../src/songclientedit.cpp" line="864"/>
+        <location filename="../src/songclientedit.cpp" line="822"/>
+        <location filename="../src/songclientedit.cpp" line="883"/>
         <source> - User Made Notes Mode</source>
         <translation> - 自制谱模式</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="529"/>
+        <location filename="../src/songclientedit.cpp" line="548"/>
         <source>Content of this page is modified.</source>
         <translation>本页的内容已经被修改了。</translation>
     </message>
