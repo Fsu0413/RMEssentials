@@ -49,6 +49,7 @@ if(Qt6_FOUND)
 
     qt6_add_translations(RMEssentials6 TS_FILES translations/rmessentials.ts
                         LUPDATE_OPTIONS -no-obsolete
+                        QM_FILES_OUTPUT_VARIABLE RMESSENTIALS_QM
     )
     rmessentials_win32_rc(RMEssentials6 true "")
 
@@ -63,6 +64,7 @@ if(Qt5_FOUND)
     if (NOT Qt6_FOUND)
         # Generated file path is same as Qt 6 ones. Since Qt 6 generated file is compatible with Qt 5 so we ignore Qt 5 generated ones
         qt5_add_translation(RMESSENTIALSAPP_QMFILES5 translations/rmessentials.ts)
+        set(RMESSENTIALS_QM "${CMAKE_CURRENT_BINARY_DIR}/rmessentials.qm")
     endif()
 
     if(ANDROID)
@@ -111,5 +113,22 @@ if(Qt5_FOUND)
     install(TARGETS RMEssentials5
         RUNTIME
         BUNDLE DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    )
+endif()
+
+if (APPLE AND NOT IOS)
+    if (Qt5_FOUND)
+        install(FILES "${RMESSENTIALS_QM}"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}/RMEssentials5.app/Contents/MacOS/assets/"
+        )
+    endif()
+    if (Qt6_FOUND)
+        install(FILES "${RMESSENTIALS_QM}"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}/RMEssentials6.app/Contents/MacOS/assets/"
+        )
+    endif()
+else()
+    install(FILES "${RMESSENTIALS_QM}"
+        DESTINATION "${CMAKE_INSTALL_BINDIR}/assets/"
     )
 endif()
