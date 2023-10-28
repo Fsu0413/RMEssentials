@@ -1,5 +1,3 @@
-if (RMESSENTIALS_USE_QUAZIP)
-    add_subdirectory(quazip)
-endif()
+add_subdirectory(quazip)
 add_subdirectory(librmessentials)
 add_subdirectory(rmessentials)

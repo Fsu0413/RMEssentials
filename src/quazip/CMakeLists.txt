@@ -38,7 +38,7 @@ add_custom_target(quazip)
 rmessentials_auto_generate_header_file_for_target(quazip "${QUAZIP_HEADERS}")
 
 if (Qt6_FOUND)
-    qt6_add_library(quazip6 ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
+    qt6_add_library(quazip6 EXCLUDE_FROM_ALL ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
     add_dependencies(quazip quazip6)
 
     set_target_properties(quazip6 PROPERTIES
@@ -70,14 +70,16 @@ if (Qt6_FOUND)
     )
     target_include_directories(quazip6 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
 
-    install(TARGETS quazip6
-        RUNTIME
-        ARCHIVE
-        LIBRARY
-    )
+    if (RMESSENTIALS_USE_QUAZIP)
+        install(TARGETS quazip6
+            RUNTIME
+            ARCHIVE
+            LIBRARY
+        )
+    endif()
 endif()
 if (Qt5_FOUND)
-    add_library(quazip5 ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
+    add_library(quazip5 EXCLUDE_FROM_ALL ${QUAZIP_HEADERS} ${QUAZIP_SOURCES})
     add_dependencies(quazip quazip5)
 
     set_target_properties(quazip5 PROPERTIES
@@ -108,9 +110,11 @@ if (Qt5_FOUND)
     )
     target_include_directories(quazip5 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
 
-    install(TARGETS quazip5
-        RUNTIME
-        ARCHIVE
-        LIBRARY
-    )
+    if (RMESSENTIALS_USE_QUAZIP)
+        install(TARGETS quazip5
+            RUNTIME
+            ARCHIVE
+            LIBRARY
+        )
+    endif()
 endif()
