@@ -54,7 +54,7 @@ endif()
 
 if (Qt6_FOUND)
     if (NOT Qt6Core5Compat_FOUND)
-        set(RMESSENTIALS_USE_QUAZIP false)
+        set(RMESSENTIALS_USE_QUAZIP false CACHE BOOL "" FORCE)
         if (RMESSENTIALS_FORCE_USE_QUAZIP)
             message(FATAL_ERROR "QuaZip can't be used without Core5Compat on Qt6")
         endif()
