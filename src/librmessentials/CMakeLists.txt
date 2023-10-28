@@ -25,7 +25,7 @@ set(LIBRMESS_RESOURCES
     res/strtemp.qrc
 )
 
-add_custom_target(RmEss)
+add_custom_target(RmEss ALL)
 rmessentials_auto_generate_header_file_for_target(RmEss "${LIBRMESS_HEADERS}")
 
 set(LIBRMESSENTIALS_JPG2PNGHACK true)
@@ -165,3 +165,5 @@ if (Qt5_FOUND)
         LIBRARY
     )
 endif()
+
+add_subdirectory(test)
