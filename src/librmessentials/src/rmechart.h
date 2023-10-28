@@ -58,6 +58,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
     unsigned int dur;
     unsigned char attr;
 
+    RmeChartNote() = default;
     RmeChartNote(const RmeChartNote &) = default;
     RmeChartNote &operator=(const RmeChartNote &) = default;
     RmeChartNote(RmeChartNote &&) = default;
