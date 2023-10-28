@@ -45,7 +45,7 @@ MainDialog::MainDialog(QWidget *parent)
     setWindowTitle(tr("Rhythm Master Essensials  ") + QStringLiteral(RMEVERSION));
 
     QVBoxLayout *alllayout = new QVBoxLayout;
-    m_changeNameBtn = new QPushButton(tr("Filename Changer"));
+    m_changeNameBtn = new QPushButton(tr("Renamer and Converter"));
     connect(m_changeNameBtn, &QPushButton::clicked, this, &MainDialog::showChangeNameDialog);
     m_changeNameBtn->setEnabled(false);
 
@@ -159,7 +159,7 @@ void MainDialog::about()
     QString aboutContent = tr("The version of RMEssentials frontend is: %1.\n\n"
                               "RMEssentials is a small software written by Fsu0413 (from Wings of Melody). \n"
                               "It is used to operate the files for a game by Tencent: Rhythm Master. \n"
-                              "It now contains 3 main features: ChangeName, Download and "
+                              "It now contains 3 main features: Rename / Convert, Download and "
                               "SongClientEdit. \n\n"
                               "This Program is linked against Qt %2, and loads Qt %3 to run.\n"
                               "This Program is linked against libRmEss %1, and loads libRMEss %4 to run.")

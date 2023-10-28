@@ -54,7 +54,7 @@ QLayout *ChangeNameDialog::layFiles(QLabel *labels[36])
 ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(tr("Rhythm Master Filename Changer"));
+    setWindowTitle(tr("Rhythm Master Renamer and Converter"));
 
     m_folderName = new QLineEdit;
     m_folderName->setPlaceholderText(tr("Browse the folder using the Browse button"));
@@ -287,7 +287,7 @@ void ChangeNameDialog::convertImdToImdJson()
     if (!succeeded)
         QMessageBox::critical(this, tr("Error"), tr("Some error occurred when converting"));
     else
-        QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
+        QMessageBox::information(this, windowTitle(), tr("Conversion succeeded"));
 
     checkFiles(m_folderName->text());
 }
@@ -302,7 +302,7 @@ void ChangeNameDialog::convertImdJsonToImd()
     if (!succeeded)
         QMessageBox::critical(this, tr("Error"), tr("Some error occurred when converting"));
     else
-        QMessageBox::information(this, windowTitle(), tr("Rename succeeded"));
+        QMessageBox::information(this, windowTitle(), tr("Conversion succeeded"));
 
     checkFiles(m_folderName->text());
 }
