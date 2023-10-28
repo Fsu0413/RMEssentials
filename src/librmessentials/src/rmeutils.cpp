@@ -8,8 +8,6 @@
 #include <QMap>
 #include <QString>
 
-#include <tuple>
-
 bool RmeUtils::hasMp3(const QDir &dir)
 {
     static const QStringList l {QStringLiteral("*.mp3")};
