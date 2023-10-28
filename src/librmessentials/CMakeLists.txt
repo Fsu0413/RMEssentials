@@ -59,6 +59,10 @@ if (Qt6_FOUND)
         PUBLIC -DQT_CC_WARNINGS
     )
 
+    target_link_libraries(RmEss6
+        PUBLIC Qt6::Core
+        PUBLIC Qt6::Network
+    )
     if (RMESSENTIALS_USE_QUAZIP)
         add_dependencies(RmEss6 quazip)
         target_link_libraries(RmEss6 PUBLIC quazip6)
@@ -66,11 +70,11 @@ if (Qt6_FOUND)
         target_compile_definitions(RmEss6
             PUBLIC -DRME_USE_QUAZIP="${RMESSENTIALS_QUAZIP_VERSION}"
         )
+    else()
+        target_link_libraries(RmEss6
+            PRIVATE Qt6::GuiPrivate
+        )
     endif()
-    target_link_libraries(RmEss6
-        PUBLIC Qt6::Core
-        PUBLIC Qt6::Network
-    )
     if (LIBRMESSENTIALS_JPG2PNGHACK)
         target_link_libraries(RmEss6
             PUBLIC Qt6::Gui
@@ -114,17 +118,21 @@ if (Qt5_FOUND)
         PUBLIC -DQT_CC_WARNINGS
     )
 
+    target_link_libraries(RmEss5
+        PUBLIC Qt5::Core
+        PUBLIC Qt5::Network
+    )
     if (RMESSENTIALS_USE_QUAZIP)
         add_dependencies(RmEss5 quazip)
         target_link_libraries(RmEss5 PUBLIC quazip5)
         target_compile_definitions(RmEss5
             PUBLIC -DRME_USE_QUAZIP="${RMESSENTIALS_QUAZIP_VERSION}"
         )
+    else()
+        target_link_libraries(RmEss5
+            PRIVATE Qt5::GuiPrivate
+        )
     endif()
-    target_link_libraries(RmEss5
-        PUBLIC Qt5::Core
-        PUBLIC Qt5::Network
-    )
     if (LIBRMESSENTIALS_JPG2PNGHACK)
         target_link_libraries(RmEss5
             PUBLIC Qt5::Gui
