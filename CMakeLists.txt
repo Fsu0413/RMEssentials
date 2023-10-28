@@ -32,6 +32,7 @@ endif()
 
 option(RMESSENTIALS_USE_QUAZIP "use QuaZip" true)
 option(BUILD_SHARED_LIBS "Build Shared Libraries" true)
+option(BUILD_TESTING "enable testing" false)
 
 if (NOT MSVC)
     set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} -Wpointer-to-int-cast)
@@ -103,5 +104,6 @@ endif()
 
 include(GNUInstallDirs)
 include(tools/AutoGenerateHeader.cmake)
+include(CTest)
 
 add_subdirectory(src)

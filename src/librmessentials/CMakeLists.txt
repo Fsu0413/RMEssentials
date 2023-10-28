@@ -34,6 +34,15 @@ if (Qt6_FOUND)
     qt6_add_library(RmEss6 ${LIBRMESS_HEADERS} ${LIBRMESS_SOURCES} ${LIBRMESS_RESOURCES})
     add_dependencies(RmEss RmEss6)
 
+    if (BUILD_TESTING AND NOT MSVC)
+        target_compile_options(RmEss6
+            PRIVATE "--coverage"
+        )
+        target_link_options(RmEss6
+            PRIVATE "--coverage"
+        )
+    endif()
+
     set_target_properties(RmEss6 PROPERTIES
         AUTOMOC ON
         AUTOUIC ON
@@ -93,6 +102,15 @@ endif()
 if (Qt5_FOUND)
     add_library(RmEss5 ${LIBRMESS_HEADERS} ${LIBRMESS_SOURCES} ${LIBRMESS_RESOURCES})
     add_dependencies(RmEss RmEss5)
+
+    if (BUILD_TESTING AND NOT MSVC)
+        target_compile_options(RmEss5
+            PRIVATE "--coverage"
+        )
+        target_link_options(RmEss5
+            PRIVATE "--coverage"
+        )
+    endif()
 
     set_target_properties(RmEss5 PROPERTIES
         AUTOMOC ON
