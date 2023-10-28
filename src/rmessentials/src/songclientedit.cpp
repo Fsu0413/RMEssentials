@@ -2,6 +2,7 @@
 
 #include <RmEss/RmeDownloader>
 #include <RmEss/RmeSongClientStruct>
+#include <RmEss/RmeSongFile>
 #include <RmEss/RmeUtils>
 
 #include <QCheckBox>
@@ -482,6 +483,15 @@ bool SongClientEditDialog::reloadFile()
         setWindowTitle(tr("Rhythm Master Song Client Editor"));
         m_isLoaded = true;
         m_currentIndex = 0;
+
+        m_searchList->clear();
+        for (int i = 0; i < m_file.songCount(); ++i) {
+            const RmeSongClientItemStruct *song = m_file.song(i);
+            QListWidgetItem *item = new QListWidgetItem(song->m_szSongName);
+            item->setData(Qt::UserRole + 1, i);
+            m_searchList->addItem(item);
+        }
+
         readCurrent();
         return true;
     } else
@@ -513,6 +523,15 @@ bool SongClientEditDialog::loadFile()
         setWindowTitle(tr("Rhythm Master Song Client Editor"));
         m_isLoaded = true;
         m_currentIndex = 0;
+
+        m_searchList->clear();
+        for (int i = 0; i < m_file.songCount(); ++i) {
+            const RmeSongClientItemStruct *song = m_file.song(i);
+            QListWidgetItem *item = new QListWidgetItem(song->m_szSongName);
+            item->setData(Qt::UserRole + 1, i);
+            m_searchList->addItem(item);
+        }
+
         readCurrent();
         return true;
     } else
