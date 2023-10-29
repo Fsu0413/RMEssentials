@@ -207,25 +207,25 @@ RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *
     case 0x61:
         note.attr = 3;
         note.dur = 0;
-        note.isEnd = true;
+        note.isEnd = false;
         note.toTrack = note.track + *action;
         break;
     case 0x62:
         note.attr = 3;
         note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
-        note.isEnd = true;
+        note.isEnd = false;
         note.toTrack = note.track;
         break;
     case 0xA1:
         note.attr = 4;
         note.dur = 0;
-        note.isEnd = false;
+        note.isEnd = true;
         note.toTrack = note.track + *action;
         break;
     case 0xA2:
         note.attr = 4;
         note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
-        note.isEnd = false;
+        note.isEnd = true;
         note.toTrack = note.track;
         break;
     default:
