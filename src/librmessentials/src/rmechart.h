@@ -75,22 +75,25 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
 
         // only here: notes appear same time need sorting
         if (tick == arg2.tick) {
-            // slide (0x01, 0x21, 0x61 and 0xA1 in imd) is put before long-press (0x02, 0x22, 0x62 and 0xA2 in imd). long-press is put before single-click (0x00 in imd)
-            // 0x*1 -> attr != 0, dur == 0, 0x*2 -> attr != 0, dur != 0, 0x00 -> attr == 0 in JSON data
-            // so...
+            // make sure 0x21 / 0x61 appears before corresponding 0x22 / 0xA2
+            // (this) 0x21 / 0x61 -> attr != 0, dur == 0, isEnd == false, toTrack != track
+            // (arg2) 0x22 / 0xA2 -> attr == 4, dur != 0
+            // (and) if toTrack == arg2.track and all of above then return true!
+            if (attr != 0 && dur == 0 && !isEnd && toTrack != track && arg2.attr == 4 && arg2.dur != 0 && toTrack == arg2.track)
+                return true;
 
-            if (attr != 0) {
-                // slide / long-press is put before single-click
-                if (arg2.attr == 0)
-                    return true;
-                // slide is put before long-press
-                if (dur == 0 && arg2.dur != 0)
-                    return true;
-            }
-            // slide / long-press is put before single-click
-            if (arg2.attr != 0)
+            // strong sequence guarantee of above: reverse sequence is not allowed, so reverse arg2 and this for above judgement and return false
+            if (arg2.attr != 0 && arg2.dur == 0 && !arg2.isEnd && arg2.toTrack != arg2.track && attr == 4 && dur != 0 && arg2.toTrack == track)
                 return false;
-            // time is same, note type is same. sort by track
+
+            // slide / long-press is put before single-click
+            if (attr != 0 && arg2.attr == 0)
+                return true;
+            // strong sequence guarantee of above
+            if (arg2.attr != 0 && attr == 0)
+                return false;
+
+            // After all, sort by track
             return track < arg2.track;
         }
 
