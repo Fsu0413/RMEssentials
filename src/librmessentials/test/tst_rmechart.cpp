@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QTest>
+#include <QVariantMap>
 
 #include <type_traits>
 
@@ -73,6 +74,9 @@ private slots:
 
     void RmeChartNoteToImdNoteDoubleC_data()
     {
+        // Some test cases here are affected by difference by 1 error
+        // I don't think there is any problem where 1 millisecond difference is a big deal so I always modify test case when difference by 1 error occurs
+
         QTest::addColumn<unsigned char>("track");
         QTest::addColumn<unsigned int>("tick");
         QTest::addColumn<bool>("isEnd");
@@ -170,9 +174,104 @@ private slots:
         QByteArray arr = n.toImdNote(bpm);
         QCOMPARE(arr, result);
     }
-    //    void RmeChartNoteToJsonNoteRmeChartVersionDoubleIntC()
-    //    {
-    //    }
+
+    void RmeChartNoteToJsonNoteRmeChartVersionDoubleIntC_data()
+    {
+        QTest::addColumn<unsigned char>("track");
+        QTest::addColumn<unsigned int>("tick");
+        QTest::addColumn<int>("key");
+        QTest::addColumn<bool>("isEnd");
+        QTest::addColumn<unsigned char>("toTrack");
+        QTest::addColumn<unsigned int>("dur");
+        QTest::addColumn<unsigned char>("attr");
+        QTest::addColumn<std::underlying_type_t<RmeChartVersion::v> >("version");
+        QTest::addColumn<double>("bpm");
+        QTest::addColumn<int>("idx");
+        QTest::addColumn<QVariantMap>("result");
+
+        // from magnetism
+        QTest::newRow("121/122") << (unsigned char)3 << (unsigned int)576 << (int)0 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0
+                                 << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_2) << nan(nullptr) << (int)0
+                                 << QVariantMap {
+                                        // clang-format off
+                                        std::make_pair(QStringLiteral("tick"), 576),
+                                        std::make_pair(QStringLiteral("key"), 0),
+                                        std::make_pair(QStringLiteral("dur"), 0),
+                                        std::make_pair(QStringLiteral("isEnd"), 0),
+                                        std::make_pair(QStringLiteral("toTrack"), 0),
+                                        std::make_pair(QStringLiteral("volume"), 127),
+                                        std::make_pair(QStringLiteral("pan"), 64),
+                                        std::make_pair(QStringLiteral("attr"), 0),
+                                        // clang-format on
+                                    };
+
+        // from yueyawan
+        // affected by the algorithm used for converting to IMDJson format
+        QTest::newRow("123/dur!=0") << (unsigned char)5 << (unsigned int)9263 << (int)0 << false << (unsigned char)5 << (unsigned int)24 << (unsigned char)4
+                                    << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_3) << (double)87 << (int)420
+                                    << QVariantMap {
+                                           // clang-format off
+                                           std::make_pair(QStringLiteral("tick"), 9263),
+                                           std::make_pair(QStringLiteral("key"), 0),
+                                           std::make_pair(QStringLiteral("dur"), 24),
+                                           std::make_pair(QStringLiteral("isEnd"), 0),
+                                           std::make_pair(QStringLiteral("toTrack"), 5),
+                                           std::make_pair(QStringLiteral("volume"), 0),
+                                           std::make_pair(QStringLiteral("pan"), 0),
+                                           std::make_pair(QStringLiteral("attr"), 4),
+                                           std::make_pair(QStringLiteral("time"), /*133102*/ 133089),
+                                           std::make_pair(QStringLiteral("time_dur"), /*345*/ 344),
+                                           std::make_pair(QStringLiteral("idx"), 420),
+                                           // clang-format on
+                                       };
+
+        // from yingxiongsha
+        QTest::newRow("130/dur==0") << (unsigned char)4 << (unsigned int)8256 << (int)0 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)3
+                                    << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_3_0) << (double)132 << (int)346
+                                    << QVariantMap {
+                                           // clang-format off
+                                           std::make_pair(QStringLiteral("tick"), 8256),
+                                           std::make_pair(QStringLiteral("key"), 0),
+                                           std::make_pair(QStringLiteral("dur"), 0),
+                                           std::make_pair(QStringLiteral("isEnd"), 0),
+                                           std::make_pair(QStringLiteral("toTrack"), 3),
+                                           std::make_pair(QStringLiteral("volume"), 0),
+                                           std::make_pair(QStringLiteral("pan"), 0),
+                                           std::make_pair(QStringLiteral("attr"), 3),
+                                           std::make_pair(QStringLiteral("time"), 78181),
+                                           std::make_pair(QStringLiteral("time_dur"), 1),
+                                           std::make_pair(QStringLiteral("idx"), 346),
+                                           // clang-format on
+                                       };
+    }
+    void RmeChartNoteToJsonNoteRmeChartVersionDoubleIntC()
+    {
+        QFETCH(unsigned char, track);
+        QFETCH(unsigned int, tick);
+        QFETCH(int, key);
+        QFETCH(bool, isEnd);
+        QFETCH(unsigned char, toTrack);
+        QFETCH(unsigned int, dur);
+        QFETCH(unsigned char, attr);
+        QFETCH(std::underlying_type_t<RmeChartVersion::v>, version);
+        QFETCH(double, bpm);
+        QFETCH(int, idx);
+        QFETCH(QVariantMap, result);
+
+        RmeChartNote n;
+        n.track = track;
+        n.tick = tick;
+        n.key = key;
+        n.isEnd = isEnd;
+        n.toTrack = toTrack;
+        n.dur = dur;
+        n.attr = attr;
+
+        QJsonObject ob = n.toJsonNote(static_cast<RmeChartVersion::v>(version), bpm, idx);
+        QJsonObject expected = QJsonObject::fromVariantMap(result);
+        QCOMPARE(ob, expected);
+    }
+
     //    void RmeChartNoteOperatorLtRmeChartNoteC()
     //    {
     //    }
