@@ -272,9 +272,69 @@ private slots:
         QCOMPARE(ob, expected);
     }
 
-    //    void RmeChartNoteOperatorLtRmeChartNoteC()
-    //    {
-    //    }
+    void RmeChartNoteOperatorLtRmeChartNoteC_data()
+    {
+        QTest::addColumn<unsigned char>("track");
+        QTest::addColumn<unsigned int>("tick");
+        QTest::addColumn<bool>("isEnd");
+        QTest::addColumn<unsigned char>("toTrack");
+        QTest::addColumn<unsigned int>("dur");
+        QTest::addColumn<unsigned char>("attr");
+        QTest::addColumn<unsigned char>("track2");
+        QTest::addColumn<unsigned int>("tick2");
+        QTest::addColumn<bool>("isEnd2");
+        QTest::addColumn<unsigned char>("toTrack2");
+        QTest::addColumn<unsigned int>("dur2");
+        QTest::addColumn<unsigned char>("attr2");
+        QTest::addColumn<bool>("result");
+
+        // all data from takemyhand
+        // Since algorighm unknown the function needs to be modified. More test cases should be added when function modification is done.
+        QTest::newRow("tickLess") << (unsigned char)5 << (unsigned int)708 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (unsigned char)4
+                                  << (unsigned int)720 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << true;
+        QTest::newRow("tickMore") << (unsigned char)5 << (unsigned int)732 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (unsigned char)4
+                                  << (unsigned int)720 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << false;
+        QTest::newRow("tickEqualLess") << (unsigned char)4 << (unsigned int)768 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)3 << (unsigned char)3
+                                       << (unsigned int)768 << true << (unsigned char)3 << (unsigned int)96 << (unsigned char)4 << true;
+        QTest::newRow("tickEqualMore") << (unsigned char)6 << (unsigned int)768 << true << (unsigned char)6 << (unsigned int)96 << (unsigned char)4 << (unsigned char)5
+                                       << (unsigned int)768 << false << (unsigned char)6 << (unsigned int)0 << (unsigned char)3 << false;
+        QTest::newRow("tickEqualTrack") << (unsigned char)4 << (unsigned int)936 << true << (unsigned char)3 << (unsigned int)0 << (unsigned char)3 << (unsigned char)5
+                                        << (unsigned int)936 << true << (unsigned char)6 << (unsigned int)0 << (unsigned char)3 << true;
+    }
+    void RmeChartNoteOperatorLtRmeChartNoteC()
+    {
+        QFETCH(unsigned char, track);
+        QFETCH(unsigned int, tick);
+        QFETCH(bool, isEnd);
+        QFETCH(unsigned char, toTrack);
+        QFETCH(unsigned int, dur);
+        QFETCH(unsigned char, attr);
+        QFETCH(unsigned char, track2);
+        QFETCH(unsigned int, tick2);
+        QFETCH(bool, isEnd2);
+        QFETCH(unsigned char, toTrack2);
+        QFETCH(unsigned int, dur2);
+        QFETCH(unsigned char, attr2);
+        QFETCH(bool, result);
+
+        RmeChartNote n;
+        n.track = track;
+        n.tick = tick;
+        n.isEnd = isEnd;
+        n.toTrack = toTrack;
+        n.dur = dur;
+        n.attr = attr;
+        RmeChartNote n2;
+        n2.track = track2;
+        n2.tick = tick2;
+        n2.isEnd = isEnd2;
+        n2.toTrack = toTrack2;
+        n2.dur = dur2;
+        n2.attr = attr2;
+
+        QCOMPARE(n < n2, result);
+    }
+
     //    void RmeChartNoteOperatorEqRmeChartNoteC()
     //    {
     //    }
