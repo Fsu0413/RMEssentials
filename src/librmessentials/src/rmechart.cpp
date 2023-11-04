@@ -69,12 +69,12 @@ QByteArray RmeChartNote::toImdNote(double bpm) const
     int32_t *action = reinterpret_cast<int32_t *>(arr.data() + 7);
 
     *datatrack = track - 3;
-    *timestamp = tick2timestamp(tick, bpm);
+    *timestamp = this->timestamp;
 
     // attr == 3: long press start / single slide
     if (attr == 3) {
         // dur == 0: single slide / long press start with slide
-        if (dur == 0) {
+        if (timeDur == 0) {
             if (isEnd)
                 *type = 0x1;
             else
@@ -87,11 +87,10 @@ QByteArray RmeChartNote::toImdNote(double bpm) const
             else
                 *type = 0x62;
 
-            int endTimeStamp = tick2timestamp(tick + dur, bpm);
-            *action = endTimeStamp - *timestamp;
+            *action = (int32_t)(timeDur);
         }
     } else if (attr == 4) {
-        if (dur == 0) {
+        if (timeDur == 0) {
             if (isEnd)
                 *type = 0xA1;
             else
@@ -105,8 +104,7 @@ QByteArray RmeChartNote::toImdNote(double bpm) const
             else
                 *type = 0x22;
 
-            int endTimeStamp = tick2timestamp(tick + dur, bpm);
-            *action = endTimeStamp - *timestamp;
+            *action = (int32_t)(timeDur);
         }
     } else {
         *type = 0;
@@ -130,9 +128,12 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
     }
 
     QJsonObject ob;
-    ob.insert(QStringLiteral("tick"), (qint64)tick);
+    ob.insert(QStringLiteral("tick"), (qint64)(timestamp2tick(timestamp, bpm)));
     ob.insert(QStringLiteral("key"), key);
-    ob.insert(QStringLiteral("dur"), (qint64)dur);
+    if (attr != 0)
+        ob.insert(QStringLiteral("dur"), (qint64)(timestamp2tick(timestamp + timeDur, bpm) - timestamp2tick(timestamp, bpm)));
+    else
+        ob.insert(QStringLiteral("dur"), (qint64)0);
     ob.insert(QStringLiteral("isEnd"), isEnd ? 1 : 0);
     ob.insert(QStringLiteral("toTrack"), toTrack);
     ob.insert(QStringLiteral("volume"), volume);
@@ -140,15 +141,8 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
     ob.insert(QStringLiteral("attr"), attr);
 
     if (version >= RmeChartVersion::v1_2_3) {
-        uint32_t time = tick2timestamp(tick, bpm);
-        uint32_t timeEnd = tick2timestamp(tick + dur, bpm);
-        uint32_t timeDur = timeEnd - time;
-        if (toTrack != 0 && timeDur == 0)
-            timeDur = 1;
-
-        ob.insert(QStringLiteral("time"), (qint64)time);
+        ob.insert(QStringLiteral("time"), (qint64)timestamp);
         ob.insert(QStringLiteral("time_dur"), (qint64)timeDur);
-
         ob.insert(QStringLiteral("idx"), idx);
     }
 
@@ -175,56 +169,56 @@ RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *
     const int32_t *action = reinterpret_cast<const int32_t *>(arr.data() + 7);
 
     note.track = *track + 3;
-    note.tick = timestamp2tick(*timestamp, bpm);
+    note.timestamp = *timestamp;
 
     switch (*type) {
     case 0x0:
         break;
     case 0x1:
         note.attr = 3;
-        note.dur = 0;
+        note.timeDur = 0;
         note.isEnd = true;
         note.toTrack = note.track + *action;
         break;
     case 0x2:
         note.attr = 3;
-        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.timeDur = *action;
         note.isEnd = true;
         note.toTrack = note.track;
         break;
     case 0x21:
         note.attr = 4;
-        note.dur = 0;
+        note.timeDur = 0;
         note.isEnd = false;
         note.toTrack = note.track + *action;
         break;
     case 0x22:
         note.attr = 4;
-        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.timeDur = *action;
         note.isEnd = false;
         note.toTrack = note.track;
         break;
     case 0x61:
         note.attr = 3;
-        note.dur = 0;
+        note.timeDur = 0;
         note.isEnd = false;
         note.toTrack = note.track + *action;
         break;
     case 0x62:
         note.attr = 3;
-        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.timeDur = *action;
         note.isEnd = false;
         note.toTrack = note.track;
         break;
     case 0xA1:
         note.attr = 4;
-        note.dur = 0;
+        note.timeDur = 0;
         note.isEnd = true;
         note.toTrack = note.track + *action;
         break;
     case 0xA2:
         note.attr = 4;
-        note.dur = timestamp2tick(*timestamp + *action, bpm) - note.tick;
+        note.timeDur = *action;
         note.isEnd = true;
         note.toTrack = note.track;
         break;
@@ -236,10 +230,10 @@ RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *
     return note;
 }
 
-RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char track, bool *ok)
+RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char track, double bpm, bool *ok)
 {
-    // ignore 1.2.3 time / time_dur / idx
-    // ignore 1.2.1 volume / pan
+    // ignore 1.2.3+ idx
+    // ignore 1.2.1/2 volume / pan
 
     RmeChartNote note {0};
     note.track = track;
@@ -251,8 +245,11 @@ RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char tra
 
     *ok = false;
 
-    if (ob.contains(QStringLiteral("tick")))
-        note.tick = ob.value(QStringLiteral("tick")).toVariant().toULongLong();
+    // use 1.2.3+ time if possible
+    if (ob.contains(QStringLiteral("time")))
+        note.timestamp = ob.value(QStringLiteral("time")).toVariant().toULongLong();
+    else if (ob.contains(QStringLiteral("tick")))
+        note.timestamp = tick2timestamp(ob.value(QStringLiteral("tick")).toVariant().toULongLong(), bpm);
     else
         return note;
 
@@ -261,10 +258,15 @@ RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char tra
     else
         return note;
 
-    if (ob.contains(QStringLiteral("dur")))
-        note.dur = ob.value(QStringLiteral("dur")).toVariant().toULongLong();
-    else
+    if (ob.contains(QStringLiteral("time_dur"))) {
+        note.timeDur = ob.value(QStringLiteral("time_dur")).toVariant().toULongLong();
+    } else if (ob.contains(QStringLiteral("dur")) && ob.contains(QStringLiteral("tick"))) {
+        qulonglong tick = ob.value(QStringLiteral("tick")).toVariant().toULongLong();
+        qulonglong tickplusdur = tick + ob.value(QStringLiteral("dur")).toVariant().toULongLong();
+        note.timeDur = tick2timestamp(tickplusdur, bpm) - note.timestamp;
+    } else {
         return note;
+    }
 
     if (ob.contains(QStringLiteral("isEnd")))
         note.isEnd = (ob.value(QStringLiteral("isEnd")).toVariant().toULongLong() != 0);
@@ -459,13 +461,13 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
                 return chart;
             QJsonObject noteOb = noteV.toObject();
             bool noteOk = false;
-            RmeChartNote k = RmeChartNote::fromJsonNote(noteOb, track, &noteOk);
+            RmeChartNote k = RmeChartNote::fromJsonNote(noteOb, track, chart.bpm, &noteOk);
             if (!noteOk)
                 return chart;
             chart.notes << k;
 
             // pre-1.3.0: calculate of totalTick is needed
-            unsigned int currentTick = k.tick + k.dur;
+            unsigned int currentTick = k.timestamp + k.timeDur;
             if (maxTick < currentTick)
                 maxTick = currentTick;
         }

@@ -51,11 +51,11 @@ private:
 struct LIBRMESSENTIALS_EXPORT RmeChartNote
 {
     unsigned char track; // JSON track -> 3 / 4 / 5 / 6 / 7 / 8
-    unsigned int tick; // JSON tick -> affected by BPM
+    unsigned int timestamp; // IMD / IMDJSON 1.2.3+ time
     int key;
     bool isEnd;
     unsigned char toTrack;
-    unsigned int dur;
+    unsigned int timeDur; // IMD / IMDJSON 1.2.3+ time duration
     unsigned char attr;
 
     RmeChartNote() = default;
@@ -65,25 +65,25 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
     RmeChartNote &operator=(RmeChartNote &&) = default;
 
     QByteArray toImdNote(double bpm) const;
-    QJsonObject toJsonNote(RmeChartVersion version = RmeChartVersion::v1_2_1, double bpm = nan(nullptr), int idx = 0) const;
+    QJsonObject toJsonNote(RmeChartVersion version, double bpm, int idx = 0) const;
 
     constexpr inline bool operator<(const RmeChartNote &arg2) const
     {
         // "one main rule": earlier note must be put before
-        if (tick < arg2.tick)
+        if (timestamp < arg2.timestamp)
             return true;
 
         // only here: notes appear same time need sorting
-        if (tick == arg2.tick) {
+        if (timestamp == arg2.timestamp) {
             // make sure 0x21 / 0x61 appears before corresponding 0x22 / 0xA2
             // (this) 0x21 / 0x61 -> attr != 0, dur == 0, isEnd == false, toTrack != track
             // (arg2) 0x22 / 0xA2 -> attr == 4, dur != 0
             // (and) if toTrack == arg2.track and all of above then return true!
-            if (attr != 0 && dur == 0 && !isEnd && toTrack != track && arg2.attr == 4 && arg2.dur != 0 && toTrack == arg2.track)
+            if (attr != 0 && timeDur == 0 && !isEnd && toTrack != track && arg2.attr == 4 && arg2.timeDur != 0 && toTrack == arg2.track)
                 return true;
 
             // strong sequence guarantee of above: reverse sequence is not allowed, so reverse arg2 and this for above judgement and return false
-            if (arg2.attr != 0 && arg2.dur == 0 && !arg2.isEnd && arg2.toTrack != arg2.track && attr == 4 && dur != 0 && arg2.toTrack == track)
+            if (arg2.attr != 0 && arg2.timeDur == 0 && !arg2.isEnd && arg2.toTrack != arg2.track && attr == 4 && timeDur != 0 && arg2.toTrack == track)
                 return false;
 
             // slide / long-press is put before single-click
@@ -102,11 +102,12 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
     }
     constexpr inline bool operator==(const RmeChartNote &arg2) const
     {
-        return track == arg2.track && tick == arg2.tick && key == arg2.key && isEnd == arg2.isEnd && toTrack == arg2.toTrack && dur == arg2.dur && attr == arg2.attr;
+        return track == arg2.track && timestamp == arg2.timestamp && key == arg2.key && isEnd == arg2.isEnd && toTrack == arg2.toTrack && timeDur == arg2.timeDur
+            && attr == arg2.attr;
     }
 
     static RmeChartNote fromImdNote(const QByteArray &arr, double bpm, bool *ok = nullptr);
-    static RmeChartNote fromJsonNote(const QJsonObject &ob, unsigned char track, bool *ok = nullptr);
+    static RmeChartNote fromJsonNote(const QJsonObject &ob, unsigned char track, double bpm, bool *ok = nullptr);
 };
 
 struct LIBRMESSENTIALS_EXPORT RmeChart

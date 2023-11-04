@@ -78,10 +78,10 @@ private slots:
         // I don't think there is any problem where 1 millisecond difference is a big deal so I always modify test case when difference by 1 error occurs
 
         QTest::addColumn<unsigned char>("track");
-        QTest::addColumn<unsigned int>("tick");
+        QTest::addColumn<unsigned int>("timestamp");
         QTest::addColumn<bool>("isEnd");
         QTest::addColumn<unsigned char>("toTrack");
-        QTest::addColumn<unsigned int>("dur");
+        QTest::addColumn<unsigned int>("timeDur");
         QTest::addColumn<unsigned char>("attr");
         QTest::addColumn<double>("bpm");
         QTest::addColumn<QByteArray>("result");
@@ -90,86 +90,84 @@ private slots:
         const unsigned char SingleKeyResult[11] = {
             0x00U, 0x00U, 0x10U, 0x0EU, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("singleKey") << (unsigned char)3 << (unsigned int)576 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (double)200
+        QTest::newRow("singleKey") << (unsigned char)3 << (unsigned int)3600 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (double)200
                                    << QByteArray(reinterpret_cast<const char *>(SingleKeyResult), 11);
 
         // from jiangnanstyle, 5k
-        // affected by difference by 1 error
         const unsigned char SingleSlideResult[11] = {
-            0x01U, 0x00U, /*0x4DU*/ 0x4EU, 0x22U, 0x01U, 0x00U, 0x02U, 0x02U, 0x00U, 0x00U, 0x00U,
+            0x01U, 0x00U, 0x4DU, 0x22U, 0x01U, 0x00U, 0x02U, 0x02U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("singleSlide") << (unsigned char)5 << (unsigned int)7848 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)3 << (double)132
+        QTest::newRow("singleSlide") << (unsigned char)5 << (unsigned int)74317 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)3 << (double)132
                                      << QByteArray(reinterpret_cast<const char *>(SingleSlideResult), 11);
 
         // from buzaiyouyu
         const unsigned char SingleLongPressResult[11] = {
             0x02U, 0x00U, 0x03U, 0x15U, 0x00U, 0x00U, 0x00U, 0x50U, 0x01U, 0x00U, 0x00U,
         };
-        QTest::newRow("singleLongPress") << (unsigned char)3 << (unsigned int)576 << true << (unsigned char)3 << (unsigned int)36 << (unsigned char)3 << (double)133.85
+        QTest::newRow("singleLongPress") << (unsigned char)3 << (unsigned int)5379 << true << (unsigned char)3 << (unsigned int)336 << (unsigned char)3 << (double)133.85
                                          << QByteArray(reinterpret_cast<const char *>(SingleLongPressResult), 11);
 
         // from takemyhand
-        // affected by difference by 1 error
         const unsigned char LongPressMiddleChangeTrackResult[11] = {
-            0x21U, 0x00U, /*0x7BU*/ 0x7CU, 0x92U, 0x00U, 0x00U, 0x02U, 0x01U, 0x00U, 0x00U, 0x00U,
+            0x21U, 0x00U, 0x7BU, 0x92U, 0x00U, 0x00U, 0x02U, 0x01U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressMiddleChangeTrack") << (unsigned char)5 << (unsigned int)4644 << false << (unsigned char)6 << (unsigned int)0 << (unsigned char)4 << (double)154.8
+        QTest::newRow("longPressMiddleChangeTrack") << (unsigned char)5 << (unsigned int)37499 << false << (unsigned char)6 << (unsigned int)0 << (unsigned char)4 << (double)154.8
                                                     << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangeTrackResult), 11);
 
         // from friend63
         const unsigned char LongPressMiddleChangedTrackResult[11] = {
             0x22U, 0x00U, 0xD7U, 0x62U, 0x02U, 0x00U, 0x03U, 0xBBU, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressMiddleChangedTrack") << (unsigned char)6 << (unsigned int)20016 << false << (unsigned char)6 << (unsigned int)24 << (unsigned char)4 << (double)160
-                                                     << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangedTrackResult), 11);
+        QTest::newRow("longPressMiddleChangedTrack") << (unsigned char)6 << (unsigned int)156375 << false << (unsigned char)6 << (unsigned int)187 << (unsigned char)4
+                                                     << (double)160 << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangedTrackResult), 11);
 
         // from wuqingdeyu, 6k
         const unsigned char LongPressStartChangeTrackResult[11] = {
             0x61U, 0x00U, 0xA2U, 0xA9U, 0x01U, 0x00U, 0x04U, 0x01U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressStartChangeTrack") << (unsigned char)7 << (unsigned int)5184 << false << (unsigned char)8 << (unsigned int)0 << (unsigned char)3 << (double)59.47
+        QTest::newRow("longPressStartChangeTrack") << (unsigned char)7 << (unsigned int)108962 << false << (unsigned char)8 << (unsigned int)0 << (unsigned char)3 << (double)59.47
                                                    << QByteArray(reinterpret_cast<const char *>(LongPressStartChangeTrackResult), 11);
 
         // from friend01, NM
         const unsigned char LongPressStartNoChangeTrackResult[11] = {
             0x62U, 0x00U, 0xA0U, 0x8CU, 0x00U, 0x00U, 0x00U, 0x67U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressStartNoChangeTrack") << (unsigned char)3 << (unsigned int)8352 << false << (unsigned char)3 << (unsigned int)24 << (unsigned char)3 << (double)290
+        QTest::newRow("longPressStartNoChangeTrack") << (unsigned char)3 << (unsigned int)36000 << false << (unsigned char)3 << (unsigned int)103 << (unsigned char)3 << (double)290
                                                      << QByteArray(reinterpret_cast<const char *>(LongPressStartNoChangeTrackResult), 11);
 
         // from pingfanzhilu, 6k
         // affected by difference by 1 error
         const unsigned char LongPressEndChangeTrackResult[11] = {
-            0xA1U, 0x00U, /*0x2EU*/ 0x2FU, 0x04U, 0x01U, 0x00U, 0x05U, 0xFFU, 0xFFU, 0xFFU, 0xFFU,
+            0xA1U, 0x00U, 0x2EU, 0x04U, 0x01U, 0x00U, 0x05U, 0xFFU, 0xFFU, 0xFFU, 0xFFU,
         };
-        QTest::newRow("longPressEndChangeTrack") << (unsigned char)8 << (unsigned int)4476 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)4 << (double)84
+        QTest::newRow("longPressEndChangeTrack") << (unsigned char)8 << (unsigned int)66606 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)4 << (double)84
                                                  << QByteArray(reinterpret_cast<const char *>(LongPressEndChangeTrackResult), 11);
 
         // from burn
         // affected by difference by 1 error
         const unsigned char LongPressEndNoChangeTrackResult[11] = {
-            0xA2U, 0x00U, 0x29U, 0x10U, 0x00U, 0x00U, 0x01U, /*0x02U*/ 0x03U, 0x01U, 0x00U, 0x00U,
+            0xA2U, 0x00U, 0x29U, 0x10U, 0x00U, 0x00U, 0x01U, 0x02U, 0x01U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressEndNoChangeTrackResult") << (unsigned char)4 << (unsigned int)576 << true << (unsigned char)4 << (unsigned int)36 << (unsigned char)4 << (double)174
-                                                         << QByteArray(reinterpret_cast<const char *>(LongPressEndNoChangeTrackResult), 11);
+        QTest::newRow("longPressEndNoChangeTrackResult") << (unsigned char)4 << (unsigned int)4137 << true << (unsigned char)4 << (unsigned int)258 << (unsigned char)4
+                                                         << (double)174 << QByteArray(reinterpret_cast<const char *>(LongPressEndNoChangeTrackResult), 11);
     }
     void RmeChartNoteToImdNoteDoubleC()
     {
         QFETCH(unsigned char, track);
-        QFETCH(unsigned int, tick);
+        QFETCH(unsigned int, timestamp);
         QFETCH(bool, isEnd);
         QFETCH(unsigned char, toTrack);
-        QFETCH(unsigned int, dur);
+        QFETCH(unsigned int, timeDur);
         QFETCH(unsigned char, attr);
         QFETCH(double, bpm);
         QFETCH(QByteArray, result);
 
         RmeChartNote n;
         n.track = track;
-        n.tick = tick;
+        n.timestamp = timestamp;
         n.isEnd = isEnd;
         n.toTrack = toTrack;
-        n.dur = dur;
+        n.timeDur = timeDur;
         n.attr = attr;
         QByteArray arr = n.toImdNote(bpm);
         QCOMPARE(arr, result);
@@ -178,11 +176,11 @@ private slots:
     void RmeChartNoteToJsonNoteRmeChartVersionDoubleIntC_data()
     {
         QTest::addColumn<unsigned char>("track");
-        QTest::addColumn<unsigned int>("tick");
+        QTest::addColumn<unsigned int>("timestamp");
         QTest::addColumn<int>("key");
         QTest::addColumn<bool>("isEnd");
         QTest::addColumn<unsigned char>("toTrack");
-        QTest::addColumn<unsigned int>("dur");
+        QTest::addColumn<unsigned int>("timeDur");
         QTest::addColumn<unsigned char>("attr");
         QTest::addColumn<std::underlying_type_t<RmeChartVersion::v> >("version");
         QTest::addColumn<double>("bpm");
@@ -190,8 +188,8 @@ private slots:
         QTest::addColumn<QVariantMap>("result");
 
         // from magnetism
-        QTest::newRow("121/122") << (unsigned char)3 << (unsigned int)576 << (int)0 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0
-                                 << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_2) << nan(nullptr) << (int)0
+        QTest::newRow("121/122") << (unsigned char)3 << (unsigned int)4499 << (int)0 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0
+                                 << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_2) << (double)160.009995 << (int)0
                                  << QVariantMap {
                                         // clang-format off
                                         std::make_pair(QStringLiteral("tick"), 576),
@@ -207,7 +205,7 @@ private slots:
 
         // from yueyawan
         // affected by the algorithm used for converting to IMDJson format
-        QTest::newRow("123/dur!=0") << (unsigned char)5 << (unsigned int)9263 << (int)0 << false << (unsigned char)5 << (unsigned int)24 << (unsigned char)4
+        QTest::newRow("123/dur!=0") << (unsigned char)5 << (unsigned int)133102 << (int)0 << false << (unsigned char)5 << (unsigned int)345 << (unsigned char)4
                                     << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_3) << (double)87 << (int)420
                                     << QVariantMap {
                                            // clang-format off
@@ -219,14 +217,14 @@ private slots:
                                            std::make_pair(QStringLiteral("volume"), 0),
                                            std::make_pair(QStringLiteral("pan"), 0),
                                            std::make_pair(QStringLiteral("attr"), 4),
-                                           std::make_pair(QStringLiteral("time"), /*133102*/ 133089),
-                                           std::make_pair(QStringLiteral("time_dur"), /*345*/ 344),
+                                           std::make_pair(QStringLiteral("time"), 133102),
+                                           std::make_pair(QStringLiteral("time_dur"), 345),
                                            std::make_pair(QStringLiteral("idx"), 420),
                                            // clang-format on
                                        };
 
         // from yingxiongsha
-        QTest::newRow("130/dur==0") << (unsigned char)4 << (unsigned int)8256 << (int)0 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)3
+        QTest::newRow("130/dur==0") << (unsigned char)4 << (unsigned int)78181 << (int)0 << false << (unsigned char)3 << (unsigned int)1 << (unsigned char)3
                                     << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_3_0) << (double)132 << (int)346
                                     << QVariantMap {
                                            // clang-format off
@@ -247,11 +245,11 @@ private slots:
     void RmeChartNoteToJsonNoteRmeChartVersionDoubleIntC()
     {
         QFETCH(unsigned char, track);
-        QFETCH(unsigned int, tick);
+        QFETCH(unsigned int, timestamp);
         QFETCH(int, key);
         QFETCH(bool, isEnd);
         QFETCH(unsigned char, toTrack);
-        QFETCH(unsigned int, dur);
+        QFETCH(unsigned int, timeDur);
         QFETCH(unsigned char, attr);
         QFETCH(std::underlying_type_t<RmeChartVersion::v>, version);
         QFETCH(double, bpm);
@@ -260,11 +258,11 @@ private slots:
 
         RmeChartNote n;
         n.track = track;
-        n.tick = tick;
+        n.timestamp = timestamp;
         n.key = key;
         n.isEnd = isEnd;
         n.toTrack = toTrack;
-        n.dur = dur;
+        n.timeDur = timeDur;
         n.attr = attr;
 
         QJsonObject ob = n.toJsonNote(static_cast<RmeChartVersion::v>(version), bpm, idx);
@@ -275,61 +273,61 @@ private slots:
     void RmeChartNoteOperatorLtRmeChartNoteC_data()
     {
         QTest::addColumn<unsigned char>("track");
-        QTest::addColumn<unsigned int>("tick");
+        QTest::addColumn<unsigned int>("timestamp");
         QTest::addColumn<bool>("isEnd");
         QTest::addColumn<unsigned char>("toTrack");
-        QTest::addColumn<unsigned int>("dur");
+        QTest::addColumn<unsigned int>("timeDur");
         QTest::addColumn<unsigned char>("attr");
         QTest::addColumn<unsigned char>("track2");
-        QTest::addColumn<unsigned int>("tick2");
+        QTest::addColumn<unsigned int>("timestamp2");
         QTest::addColumn<bool>("isEnd2");
         QTest::addColumn<unsigned char>("toTrack2");
-        QTest::addColumn<unsigned int>("dur2");
+        QTest::addColumn<unsigned int>("timeDur2");
         QTest::addColumn<unsigned char>("attr2");
         QTest::addColumn<bool>("result");
 
         // all data from takemyhand
         // Since algorighm unknown the function needs to be modified. More test cases should be added when function modification is done.
-        QTest::newRow("tickLess") << (unsigned char)5 << (unsigned int)708 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (unsigned char)4
-                                  << (unsigned int)720 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << true;
-        QTest::newRow("tickMore") << (unsigned char)5 << (unsigned int)732 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (unsigned char)4
-                                  << (unsigned int)720 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << false;
-        QTest::newRow("tickEqualLess") << (unsigned char)4 << (unsigned int)768 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)3 << (unsigned char)3
-                                       << (unsigned int)768 << true << (unsigned char)3 << (unsigned int)96 << (unsigned char)4 << true;
-        QTest::newRow("tickEqualMore") << (unsigned char)6 << (unsigned int)768 << true << (unsigned char)6 << (unsigned int)96 << (unsigned char)4 << (unsigned char)5
-                                       << (unsigned int)768 << false << (unsigned char)6 << (unsigned int)0 << (unsigned char)3 << false;
-        QTest::newRow("tickEqualTrack") << (unsigned char)4 << (unsigned int)936 << true << (unsigned char)3 << (unsigned int)0 << (unsigned char)3 << (unsigned char)5
-                                        << (unsigned int)936 << true << (unsigned char)6 << (unsigned int)0 << (unsigned char)3 << true;
+        QTest::newRow("tickLess") << (unsigned char)5 << (unsigned int)5716 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (unsigned char)4
+                                  << (unsigned int)5813 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << true;
+        QTest::newRow("tickMore") << (unsigned char)5 << (unsigned int)5910 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (unsigned char)4
+                                  << (unsigned int)5813 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << false;
+        QTest::newRow("tickEqualLess") << (unsigned char)4 << (unsigned int)6201 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)3 << (unsigned char)3
+                                       << (unsigned int)6201 << true << (unsigned char)3 << (unsigned int)775 << (unsigned char)4 << true;
+        QTest::newRow("tickEqualMore") << (unsigned char)6 << (unsigned int)6201 << true << (unsigned char)6 << (unsigned int)775 << (unsigned char)4 << (unsigned char)5
+                                       << (unsigned int)6201 << false << (unsigned char)6 << (unsigned int)0 << (unsigned char)3 << false;
+        QTest::newRow("tickEqualTrack") << (unsigned char)4 << (unsigned int)7557 << true << (unsigned char)3 << (unsigned int)0 << (unsigned char)3 << (unsigned char)5
+                                        << (unsigned int)7557 << true << (unsigned char)6 << (unsigned int)0 << (unsigned char)3 << true;
     }
     void RmeChartNoteOperatorLtRmeChartNoteC()
     {
         QFETCH(unsigned char, track);
-        QFETCH(unsigned int, tick);
+        QFETCH(unsigned int, timestamp);
         QFETCH(bool, isEnd);
         QFETCH(unsigned char, toTrack);
-        QFETCH(unsigned int, dur);
+        QFETCH(unsigned int, timeDur);
         QFETCH(unsigned char, attr);
         QFETCH(unsigned char, track2);
-        QFETCH(unsigned int, tick2);
+        QFETCH(unsigned int, timestamp2);
         QFETCH(bool, isEnd2);
         QFETCH(unsigned char, toTrack2);
-        QFETCH(unsigned int, dur2);
+        QFETCH(unsigned int, timeDur2);
         QFETCH(unsigned char, attr2);
         QFETCH(bool, result);
 
         RmeChartNote n;
         n.track = track;
-        n.tick = tick;
+        n.timestamp = timestamp;
         n.isEnd = isEnd;
         n.toTrack = toTrack;
-        n.dur = dur;
+        n.timeDur = timeDur;
         n.attr = attr;
         RmeChartNote n2;
         n2.track = track2;
-        n2.tick = tick2;
+        n2.timestamp = timestamp2;
         n2.isEnd = isEnd2;
         n2.toTrack = toTrack2;
-        n2.dur = dur2;
+        n2.timeDur = timeDur2;
         n2.attr = attr2;
 
         QCOMPARE(n < n2, result);
