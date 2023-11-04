@@ -8,6 +8,8 @@
 
 #include <type_traits>
 
+// NOLINTBEGIN
+
 class tst_RmeChart : public QObject
 {
     Q_OBJECT
