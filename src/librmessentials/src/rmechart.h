@@ -106,7 +106,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
             && attr == arg2.attr;
     }
 
-    static RmeChartNote fromImdNote(const QByteArray &arr, double bpm, bool *ok = nullptr);
+    static RmeChartNote fromImdNote(const QByteArray &arr, bool *ok = nullptr);
     static RmeChartNote fromJsonNote(const QJsonObject &ob, unsigned char track, double bpm, bool *ok = nullptr);
 };
 

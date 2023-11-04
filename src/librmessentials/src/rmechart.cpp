@@ -149,7 +149,7 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
     return ob;
 }
 
-RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, double bpm, bool *ok)
+RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, bool *ok)
 {
     RmeChartNote note {0};
 
@@ -390,7 +390,7 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
     for (int i = 0; i < (int)(*noteCount); ++i) {
         QByteArray noteArr = QByteArray::fromRawData((arr.data() + 8 + (*bpmCount) * 12 + 2 + 4 + i * 11), 11);
         bool noteOk = false;
-        chart.notes << RmeChartNote::fromImdNote(noteArr, chart.bpm, &noteOk);
+        chart.notes << RmeChartNote::fromImdNote(noteArr, &noteOk);
         if (!noteOk)
             return chart;
     }
