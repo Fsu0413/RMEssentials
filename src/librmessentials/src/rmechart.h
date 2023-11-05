@@ -111,7 +111,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
 
 struct LIBRMESSENTIALS_EXPORT RmeChart
 {
-    unsigned int totalTick;
+    unsigned int totalTime;
     double bpm; // OR QList<RmeBpm> bpms;
     QList<RmeChartNote> notes; // not keys by track!
     RmeChartVersion version;

@@ -255,8 +255,7 @@ RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char tra
 
     if (ob.contains(QStringLiteral("key")))
         note.key = ob.value(QStringLiteral("key")).toVariant().toInt();
-    else
-        return note;
+    // silently accept data without "key". It is useless actually.
 
     if (ob.contains(QStringLiteral("time_dur"))) {
         note.timeDur = ob.value(QStringLiteral("time_dur")).toVariant().toULongLong();
@@ -289,7 +288,6 @@ RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char tra
 
 QByteArray RmeChart::toImd() const
 {
-    uint32_t totalTime = tick2timestamp(totalTick, bpm);
     uint32_t nBpm = totalTime * bpm / 60000. + 1;
 
     QList<RmeChartNote> sortedNotes = notes;
@@ -321,8 +319,8 @@ QJsonObject RmeChart::toJson(RmeChartVersion version) const
     out.insert(QStringLiteral("tempo"), bpm);
 
     if (version >= RmeChartVersion::v1_3_0) {
-        out.insert(QStringLiteral("duration"), (qint64)totalTick);
-        out.insert(QStringLiteral("durationtime"), (qint64)tick2timestamp(totalTick, bpm));
+        out.insert(QStringLiteral("duration"), (qint64)timestamp2tick(totalTime, bpm));
+        out.insert(QStringLiteral("durationtime"), (qint64)totalTime);
     }
 
     if (version >= RmeChartVersion::v1_2_3)
@@ -368,7 +366,7 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
 
     chart.version = RmeChartVersion::vImd;
 
-    const uint32_t *totalTime = reinterpret_cast<const uint32_t *>(arr.data());
+    chart.totalTime = *(reinterpret_cast<const uint32_t *>(arr.data()));
     const uint32_t *bpmCount = reinterpret_cast<const uint32_t *>(arr.data() + 4);
 
     if (arr.size() < (8 + 12 * (*bpmCount) + 6 + 11))
@@ -376,8 +374,6 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
 
     chart.bpm = *(reinterpret_cast<const double *>(arr.data() + 12));
     // only use first BPM as a whole!
-    chart.totalTick = timestamp2tick(*totalTime, chart.bpm);
-
     const uint16_t *separator = reinterpret_cast<const uint16_t *>(arr.data() + 8 + (*bpmCount) * 12);
     if ((*separator) != 0x0303)
         return chart;
@@ -428,13 +424,13 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
             return chart;
         if (!ob.contains(QStringLiteral("durationtime")))
             return chart;
-        chart.totalTick = ob.value("duration").toVariant().toULongLong();
+        chart.totalTime = ob.value("durationtime").toVariant().toULongLong();
     }
 
     // ignore "samples" totally?
 
-    // pre-1.3.0: calculate of totalTick is needed
-    unsigned int maxTick = 0;
+    // pre-1.3.0: calculate of totalTime is needed
+    unsigned int maxTime = 0;
 
     if (!ob.contains(QStringLiteral("tracks")))
         return chart;
@@ -467,15 +463,15 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
             chart.notes << k;
 
             // pre-1.3.0: calculate of totalTick is needed
-            unsigned int currentTick = k.timestamp + k.timeDur;
-            if (maxTick < currentTick)
-                maxTick = currentTick;
+            unsigned int currentTime = k.timestamp + k.timeDur;
+            if (maxTime < currentTime)
+                maxTime = currentTime;
         }
     }
 
-    // pre-1.3.0: calculate of totalTick is needed
+    // pre-1.3.0: calculate of totalTime is needed
     if (chart.version < RmeChartVersion::v1_3_0)
-        chart.totalTick = maxTick;
+        chart.totalTime = maxTime;
 
     *ok = true;
     return chart;
