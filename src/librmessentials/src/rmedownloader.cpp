@@ -10,7 +10,7 @@
 #include <QPixmap>
 #endif
 
-#ifdef Q_OS_OSX
+#ifdef Q_OS_MACOS
 #include <QStandardPaths>
 #endif
 
@@ -139,7 +139,7 @@ void RmeDownloader::start()
 
 QString RmeDownloader::binDownloadPath()
 {
-#if defined(Q_OS_OSX)
+#if defined(Q_OS_MACOS)
     QDir currentDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
     if (!currentDir.cd(QStringLiteral("RMEssentials"))) {
         if (!currentDir.mkdir(QStringLiteral("RMEssentials")))
