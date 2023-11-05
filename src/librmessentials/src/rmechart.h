@@ -102,8 +102,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
     }
     constexpr inline bool operator==(const RmeChartNote &arg2) const
     {
-        return track == arg2.track && timestamp == arg2.timestamp && key == arg2.key && isEnd == arg2.isEnd && toTrack == arg2.toTrack && timeDur == arg2.timeDur
-            && attr == arg2.attr;
+        return track == arg2.track && timestamp == arg2.timestamp && isEnd == arg2.isEnd && toTrack == arg2.toTrack && timeDur == arg2.timeDur && attr == arg2.attr;
     }
 
     static RmeChartNote fromImdNote(const QByteArray &arr, bool *ok = nullptr);
