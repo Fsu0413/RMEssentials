@@ -386,9 +386,13 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
     for (int i = 0; i < (int)(*noteCount); ++i) {
         QByteArray noteArr = QByteArray::fromRawData((arr.data() + 8 + (*bpmCount) * 12 + 2 + 4 + i * 11), 11);
         bool noteOk = false;
-        chart.notes << RmeChartNote::fromImdNote(noteArr, &noteOk);
+        RmeChartNote n = RmeChartNote::fromImdNote(noteArr, &noteOk);
         if (!noteOk)
             return chart;
+
+        // ignore incorrect track when loading
+        if (n.track <= 5)
+            chart.notes << n;
     }
     *ok = true;
     return chart;
@@ -460,7 +464,11 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
             RmeChartNote k = RmeChartNote::fromJsonNote(noteOb, track, chart.bpm, &noteOk);
             if (!noteOk)
                 return chart;
-            chart.notes << k;
+
+            // some 1.2.1 / 1.2.2 chart records start / stop time using invalid tracks
+            // so load notes from corresponding track but do not use them.
+            if ((track >= 3) && (track <= 8))
+                chart.notes << k;
 
             // pre-1.3.0: calculate of totalTick is needed
             unsigned int currentTime = k.timestamp + k.timeDur;
