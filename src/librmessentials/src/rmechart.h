@@ -64,7 +64,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
     RmeChartNote(RmeChartNote &&) = default;
     RmeChartNote &operator=(RmeChartNote &&) = default;
 
-    QByteArray toImdNote(double bpm) const;
+    QByteArray toImdNote() const;
     QJsonObject toJsonNote(RmeChartVersion version, double bpm, int idx = 0) const;
 
     constexpr inline bool operator<(const RmeChartNote &arg2) const

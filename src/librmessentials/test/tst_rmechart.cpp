@@ -85,35 +85,34 @@ private slots:
         QTest::addColumn<unsigned char>("toTrack");
         QTest::addColumn<unsigned int>("timeDur");
         QTest::addColumn<unsigned char>("attr");
-        QTest::addColumn<double>("bpm");
         QTest::addColumn<QByteArray>("result");
 
         // from canonrock
         const unsigned char SingleKeyResult[11] = {
             0x00U, 0x00U, 0x10U, 0x0EU, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("singleKey") << (unsigned char)3 << (unsigned int)3600 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0 << (double)200
+        QTest::newRow("singleKey") << (unsigned char)3 << (unsigned int)3600 << false << (unsigned char)0 << (unsigned int)0 << (unsigned char)0
                                    << QByteArray(reinterpret_cast<const char *>(SingleKeyResult), 11);
 
         // from jiangnanstyle, 5k
         const unsigned char SingleSlideResult[11] = {
             0x01U, 0x00U, 0x4DU, 0x22U, 0x01U, 0x00U, 0x02U, 0x02U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("singleSlide") << (unsigned char)5 << (unsigned int)74317 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)3 << (double)132
+        QTest::newRow("singleSlide") << (unsigned char)5 << (unsigned int)74317 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)3
                                      << QByteArray(reinterpret_cast<const char *>(SingleSlideResult), 11);
 
         // from buzaiyouyu
         const unsigned char SingleLongPressResult[11] = {
             0x02U, 0x00U, 0x03U, 0x15U, 0x00U, 0x00U, 0x00U, 0x50U, 0x01U, 0x00U, 0x00U,
         };
-        QTest::newRow("singleLongPress") << (unsigned char)3 << (unsigned int)5379 << true << (unsigned char)3 << (unsigned int)336 << (unsigned char)3 << (double)133.85
+        QTest::newRow("singleLongPress") << (unsigned char)3 << (unsigned int)5379 << true << (unsigned char)3 << (unsigned int)336 << (unsigned char)3
                                          << QByteArray(reinterpret_cast<const char *>(SingleLongPressResult), 11);
 
         // from takemyhand
         const unsigned char LongPressMiddleChangeTrackResult[11] = {
             0x21U, 0x00U, 0x7BU, 0x92U, 0x00U, 0x00U, 0x02U, 0x01U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressMiddleChangeTrack") << (unsigned char)5 << (unsigned int)37499 << false << (unsigned char)6 << (unsigned int)0 << (unsigned char)4 << (double)154.8
+        QTest::newRow("longPressMiddleChangeTrack") << (unsigned char)5 << (unsigned int)37499 << false << (unsigned char)6 << (unsigned int)0 << (unsigned char)4
                                                     << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangeTrackResult), 11);
 
         // from friend63
@@ -121,20 +120,20 @@ private slots:
             0x22U, 0x00U, 0xD7U, 0x62U, 0x02U, 0x00U, 0x03U, 0xBBU, 0x00U, 0x00U, 0x00U,
         };
         QTest::newRow("longPressMiddleChangedTrack") << (unsigned char)6 << (unsigned int)156375 << false << (unsigned char)6 << (unsigned int)187 << (unsigned char)4
-                                                     << (double)160 << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangedTrackResult), 11);
+                                                     << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangedTrackResult), 11);
 
         // from wuqingdeyu, 6k
         const unsigned char LongPressStartChangeTrackResult[11] = {
             0x61U, 0x00U, 0xA2U, 0xA9U, 0x01U, 0x00U, 0x04U, 0x01U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressStartChangeTrack") << (unsigned char)7 << (unsigned int)108962 << false << (unsigned char)8 << (unsigned int)0 << (unsigned char)3 << (double)59.47
+        QTest::newRow("longPressStartChangeTrack") << (unsigned char)7 << (unsigned int)108962 << false << (unsigned char)8 << (unsigned int)0 << (unsigned char)3
                                                    << QByteArray(reinterpret_cast<const char *>(LongPressStartChangeTrackResult), 11);
 
         // from friend01, NM
         const unsigned char LongPressStartNoChangeTrackResult[11] = {
             0x62U, 0x00U, 0xA0U, 0x8CU, 0x00U, 0x00U, 0x00U, 0x67U, 0x00U, 0x00U, 0x00U,
         };
-        QTest::newRow("longPressStartNoChangeTrack") << (unsigned char)3 << (unsigned int)36000 << false << (unsigned char)3 << (unsigned int)103 << (unsigned char)3 << (double)290
+        QTest::newRow("longPressStartNoChangeTrack") << (unsigned char)3 << (unsigned int)36000 << false << (unsigned char)3 << (unsigned int)103 << (unsigned char)3
                                                      << QByteArray(reinterpret_cast<const char *>(LongPressStartNoChangeTrackResult), 11);
 
         // from pingfanzhilu, 6k
@@ -142,7 +141,7 @@ private slots:
         const unsigned char LongPressEndChangeTrackResult[11] = {
             0xA1U, 0x00U, 0x2EU, 0x04U, 0x01U, 0x00U, 0x05U, 0xFFU, 0xFFU, 0xFFU, 0xFFU,
         };
-        QTest::newRow("longPressEndChangeTrack") << (unsigned char)8 << (unsigned int)66606 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)4 << (double)84
+        QTest::newRow("longPressEndChangeTrack") << (unsigned char)8 << (unsigned int)66606 << true << (unsigned char)7 << (unsigned int)0 << (unsigned char)4
                                                  << QByteArray(reinterpret_cast<const char *>(LongPressEndChangeTrackResult), 11);
 
         // from burn
@@ -151,7 +150,7 @@ private slots:
             0xA2U, 0x00U, 0x29U, 0x10U, 0x00U, 0x00U, 0x01U, 0x02U, 0x01U, 0x00U, 0x00U,
         };
         QTest::newRow("longPressEndNoChangeTrackResult") << (unsigned char)4 << (unsigned int)4137 << true << (unsigned char)4 << (unsigned int)258 << (unsigned char)4
-                                                         << (double)174 << QByteArray(reinterpret_cast<const char *>(LongPressEndNoChangeTrackResult), 11);
+                                                         << QByteArray(reinterpret_cast<const char *>(LongPressEndNoChangeTrackResult), 11);
     }
     void RmeChartNoteToImdNoteDoubleC()
     {
@@ -161,7 +160,6 @@ private slots:
         QFETCH(unsigned char, toTrack);
         QFETCH(unsigned int, timeDur);
         QFETCH(unsigned char, attr);
-        QFETCH(double, bpm);
         QFETCH(QByteArray, result);
 
         RmeChartNote n;
@@ -171,7 +169,7 @@ private slots:
         n.toTrack = toTrack;
         n.timeDur = timeDur;
         n.attr = attr;
-        QByteArray arr = n.toImdNote(bpm);
+        QByteArray arr = n.toImdNote();
         QCOMPARE(arr, result);
     }
 

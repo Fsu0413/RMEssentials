@@ -58,7 +58,7 @@ QString RmeChartVersion::toString() const
     return QStringLiteral("1.2.1");
 }
 
-QByteArray RmeChartNote::toImdNote(double bpm) const
+QByteArray RmeChartNote::toImdNote() const
 {
     QByteArray arr;
     arr.resize(11);
@@ -306,7 +306,7 @@ QByteArray RmeChart::toImd() const
     *(reinterpret_cast<uint16_t *>(arr.data() + 8 + nBpm * 12)) = (uint16_t)0x0303;
     *(reinterpret_cast<uint32_t *>(arr.data() + 8 + nBpm * 12 + 2)) = (uint32_t)sortedNotes.length();
     for (int i = 0; i < sortedNotes.length(); ++i) {
-        QByteArray imdNote = sortedNotes.at(i).toImdNote(bpm);
+        QByteArray imdNote = sortedNotes.at(i).toImdNote();
         memcpy(arr.data() + 8 + nBpm * 12 + 6 + i * 11, imdNote.data(), 11);
     }
 
