@@ -37,6 +37,8 @@ option(BUILD_TESTING "enable testing" false)
 if (NOT MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpointer-to-int-cast")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wc++17-compat")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Og")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og")
 endif()
 
 set(RMESSENTIALS_QT6_COMPONENTS Core Gui Widgets Network LinguistTools)
