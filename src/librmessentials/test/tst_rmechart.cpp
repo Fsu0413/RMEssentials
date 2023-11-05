@@ -1,3 +1,4 @@
+
 #include <RmEss/RmeChart>
 
 #include <QByteArray>
@@ -457,9 +458,127 @@ private slots:
         RmeChartNote::fromImdNote({});
     }
 
-    //    void RmeChartNoteFromJsonNoteQJsonObjectUnsignedCharBoolPS()
-    //    {
-    //    }
+    void RmeChartNoteFromJsonNoteQJsonObjectUnsignedCharBoolPS_data()
+    {
+        QTest::addColumn<QVariantMap>("data");
+        QTest::addColumn<unsigned char>("track"); // should be same value specified and read, so use same value.
+        QTest::addColumn<double>("bpm");
+        QTest::addColumn<unsigned int>("timestamp");
+        QTest::addColumn<int>("key");
+        QTest::addColumn<bool>("isEnd");
+        QTest::addColumn<unsigned char>("toTrack");
+        QTest::addColumn<unsigned int>("timeDur");
+        QTest::addColumn<unsigned char>("attr");
+        QTest::addColumn<bool>("ok");
+
+        // note:
+        // properties "volume", "pan" and (1.2.3+) "idx" are ignored.
+        // The test cases won't contain these data.
+        // property "key" is saved when existing.
+
+        // NG cases
+
+        // 1. data without time and tick
+        QTest::newRow("NG1") << QVariantMap() << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0
+                             << false;
+
+        // 2. data with time, without time_dur and dur
+        QTest::newRow("NG2") << QVariantMap {
+            // clang-format off
+            std::make_pair(QStringLiteral("time"), 0)
+            // clang-format on
+        } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
+
+        // 3. data with time and time_dur, without isEnd
+        QTest::newRow("NG3") << QVariantMap {
+            // clang-format off
+            std::make_pair(QStringLiteral("time"), 0),
+            std::make_pair(QStringLiteral("time_dur"), 0)
+            // clang-format on
+        } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
+
+        // 4. data with time, time_dur and isEnd, without toTrack
+        QTest::newRow("NG4") << QVariantMap {
+            // clang-format off
+            std::make_pair(QStringLiteral("time"), 0),
+            std::make_pair(QStringLiteral("time_dur"), 0),
+            std::make_pair(QStringLiteral("isEnd"), 0)
+            // clang-format on
+        } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
+
+        // 5. data with time, time_dur, isEnd and toTrack, without attr
+        QTest::newRow("NG5") << QVariantMap {
+            // clang-format off
+            std::make_pair(QStringLiteral("time"), 0),
+            std::make_pair(QStringLiteral("time_dur"), 0),
+            std::make_pair(QStringLiteral("isEnd"), 0),
+            std::make_pair(QStringLiteral("toTrack"), 0)
+            // clang-format on
+        } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
+
+        // OK cases
+
+        // 1. 1.2.1 / 1.2.2 notes: with tick / dur
+        // data from zuimeiqinglv (with property "key" replaced with 1)
+        QTest::newRow("OK/1.2.2") << QVariantMap {
+            // clang-format off
+            std::make_pair(QStringLiteral("tick"), 1512),
+            std::make_pair(QStringLiteral("dur"), 120),
+            std::make_pair(QStringLiteral("key"), 1),
+            std::make_pair(QStringLiteral("isEnd"), 1),
+            std::make_pair(QStringLiteral("toTrack"), 3),
+            std::make_pair(QStringLiteral("attr"), 4)
+            // clang-format on
+        } << (unsigned char)3 << (double)110 << (unsigned int)17181 << (int)1 << true << (unsigned char)3 << (unsigned int)1364 << (unsigned char)4 << true;
+
+        // 2. 1.2.3+ notes: with time / time_dur
+        // data from ouruola
+        QTest::newRow("OK/1.3.0") << QVariantMap {
+            // clang-format off
+            std::make_pair(QStringLiteral("tick"), 8064),
+            std::make_pair(QStringLiteral("dur"), 240),
+            std::make_pair(QStringLiteral("isEnd"), 1),
+            std::make_pair(QStringLiteral("toTrack"), 6),
+            std::make_pair(QStringLiteral("attr"), 3),
+            std::make_pair(QStringLiteral("time"),118672),
+            std::make_pair(QStringLiteral("time_dur"), 3531)
+            // clang-format on
+        } << (unsigned char)6 << (double)84.94 << (unsigned int)118672 << (int)0 << true << (unsigned char)6 << (unsigned int)3531 << (unsigned char)3 << true;
+    }
+    void RmeChartNoteFromJsonNoteQJsonObjectUnsignedCharBoolPS()
+    {
+        QFETCH(QVariantMap, data);
+        QFETCH(unsigned char, track); // should be same value specified and read, so use same value.
+        QFETCH(double, bpm);
+        QFETCH(unsigned int, timestamp);
+        QFETCH(int, key);
+        QFETCH(bool, isEnd);
+        QFETCH(unsigned char, toTrack);
+        QFETCH(unsigned int, timeDur);
+        QFETCH(unsigned char, attr);
+        QFETCH(bool, ok);
+
+        bool isOk = false;
+        RmeChartNote n = RmeChartNote::fromJsonNote(QJsonObject::fromVariantMap(data), track, bpm, &isOk);
+        QCOMPARE(isOk, ok);
+        if (ok) {
+            QCOMPARE(n.track, track); // should be same value specified and read, so use same value.
+            QCOMPARE(n.timestamp, timestamp);
+            QCOMPARE(n.key, key);
+            QCOMPARE(n.isEnd, isEnd);
+            QCOMPARE(n.toTrack, toTrack);
+            QCOMPARE(n.timeDur, timeDur);
+            QCOMPARE(n.attr, attr);
+        }
+    }
+
+    void RmeChartNoteFromJsonNoteQJsonObjectUnsignedCharBoolPNS()
+    {
+        // coverage for ok == nullptr
+        // since it can't be data driven so call it separately
+
+        RmeChartNote::fromJsonNote({}, 0, 0);
+    }
 
     //    void RmeChartToImdC()
     //    {
