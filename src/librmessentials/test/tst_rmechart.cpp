@@ -76,9 +76,6 @@ private slots:
 
     void RmeChartNoteToImdNoteDoubleC_data()
     {
-        // Some test cases here are affected by difference by 1 error
-        // I don't think there is any problem where 1 millisecond difference is a big deal so I always modify test case when difference by 1 error occurs
-
         QTest::addColumn<unsigned char>("track");
         QTest::addColumn<unsigned int>("timestamp");
         QTest::addColumn<bool>("isEnd");
@@ -137,7 +134,6 @@ private slots:
                                                      << QByteArray(reinterpret_cast<const char *>(LongPressStartNoChangeTrackResult), 11);
 
         // from pingfanzhilu, 6k
-        // affected by difference by 1 error
         const unsigned char LongPressEndChangeTrackResult[11] = {
             0xA1U, 0x00U, 0x2EU, 0x04U, 0x01U, 0x00U, 0x05U, 0xFFU, 0xFFU, 0xFFU, 0xFFU,
         };
@@ -145,7 +141,6 @@ private slots:
                                                  << QByteArray(reinterpret_cast<const char *>(LongPressEndChangeTrackResult), 11);
 
         // from burn
-        // affected by difference by 1 error
         const unsigned char LongPressEndNoChangeTrackResult[11] = {
             0xA2U, 0x00U, 0x29U, 0x10U, 0x00U, 0x00U, 0x01U, 0x02U, 0x01U, 0x00U, 0x00U,
         };
@@ -204,7 +199,6 @@ private slots:
                                     };
 
         // from yueyawan
-        // affected by the algorithm used for converting to IMDJson format
         QTest::newRow("123/dur!=0") << (unsigned char)5 << (unsigned int)133102 << (int)0 << false << (unsigned char)5 << (unsigned int)345 << (unsigned char)4
                                     << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_3) << (double)87 << (int)420
                                     << QVariantMap {
@@ -333,12 +327,136 @@ private slots:
         QCOMPARE(n < n2, result);
     }
 
-    //    void RmeChartNoteOperatorEqRmeChartNoteC()
-    //    {
-    //    }
-    //    void RmeChartNoteFromImdNoteQByteArrayDoubleBoolPS()
-    //    {
-    //    }
+    void RmeChartNoteOperatorEqRmeChartNoteC()
+    {
+        // complexity 1
+        // data from takemyhand
+
+        RmeChartNote n;
+        n.track = 5;
+        n.timestamp = 141278;
+        n.isEnd = true;
+        n.toTrack = 6;
+        n.timeDur = 0;
+        n.attr = 3;
+        RmeChartNote n2;
+        n2.track = 5;
+        n2.timestamp = 141278;
+        n2.isEnd = true;
+        n2.toTrack = 6;
+        n2.timeDur = 0;
+        n2.attr = 3;
+
+        QVERIFY(n == n2);
+    }
+
+    void RmeChartNoteFromImdNoteQByteArrayDoubleBoolPS_data()
+    {
+        QTest::addColumn<QByteArray>("note");
+        QTest::addColumn<unsigned char>("track");
+        QTest::addColumn<unsigned int>("timestamp");
+        QTest::addColumn<bool>("isEnd");
+        QTest::addColumn<unsigned char>("toTrack");
+        QTest::addColumn<unsigned int>("timeDur");
+        QTest::addColumn<unsigned char>("attr");
+        QTest::addColumn<bool>("ok");
+
+        QTest::newRow("invalid/length") << QByteArray() << (unsigned char)1 << (unsigned int)1 << false << (unsigned char)1 << (unsigned int)1 << (unsigned char)1 << false;
+
+        const unsigned char InvalidType[11] = {
+            0x11U, 0x00U, 0x62U, 0x12U, 0x00U, 0x00U, 0x03U, 0x00U, 0x00U, 0x00U, 0x00U,
+        };
+        QTest::newRow("invalid/type") << QByteArray(reinterpret_cast<const char *>(InvalidType), 11) << (unsigned char)6 << (unsigned int)4706 << false << (unsigned char)0
+                                      << (unsigned int)0 << (unsigned char)0 << false;
+
+        // following data are from buzaiyouyu
+
+        const unsigned char SingleKey[11] = {
+            0x00U, 0x00U, 0x62U, 0x12U, 0x00U, 0x00U, 0x03U, 0x00U, 0x00U, 0x00U, 0x00U,
+        };
+        QTest::newRow("singleKey") << QByteArray(reinterpret_cast<const char *>(SingleKey), 11) << (unsigned char)6 << (unsigned int)4706 << false << (unsigned char)0
+                                   << (unsigned int)0 << (unsigned char)0 << true;
+
+        const unsigned char SingleSlide[11] = {
+            0x01U, 0x00U, 0xE4U, 0x1CU, 0x00U, 0x00U, 0x02U, 0x01U, 0x00U, 0x00U, 0x00U,
+        };
+        QTest::newRow("singleSlide") << QByteArray(reinterpret_cast<const char *>(SingleSlide), 11) << (unsigned char)5 << (unsigned int)7396 << true << (unsigned char)6
+                                     << (unsigned int)0 << (unsigned char)3 << true;
+
+        const unsigned char SingleLongPress[11] = {
+            0x02U, 0x00U, 0x03U, 0x15U, 0x00U, 0x00U, 0x00U, 0x50U, 0x01U, 0x00U, 0x00U,
+        };
+        QTest::newRow("singleLongPress") << QByteArray(reinterpret_cast<const char *>(SingleLongPress), 11) << (unsigned char)3 << (unsigned int)5379 << true << (unsigned char)3
+                                         << (unsigned int)336 << (unsigned char)3 << true;
+
+        const unsigned char LongPressMiddleChangeTrack[11] = {
+            0x21U, 0x00U, 0xB1U, 0x0CU, 0x00U, 0x00U, 0x03U, 0xFFU, 0xFFU, 0xFFU, 0xFFU,
+        };
+        QTest::newRow("longPressMiddleChangeTrack") << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangeTrack), 11) << (unsigned char)6 << (unsigned int)3249 << false
+                                                    << (unsigned char)5 << (unsigned int)0 << (unsigned char)4 << true;
+
+        const unsigned char LongPressMiddleChangedTrack[11] = {
+            0x22U, 0x00U, 0x21U, 0x0DU, 0x00U, 0x00U, 0x01U, 0x70U, 0x00U, 0x00U, 0x00U,
+        };
+        QTest::newRow("longPressMiddleChangedTrack") << QByteArray(reinterpret_cast<const char *>(LongPressMiddleChangedTrack), 11) << (unsigned char)4 << (unsigned int)3361
+                                                     << false << (unsigned char)4 << (unsigned int)112 << (unsigned char)4 << true;
+
+        const unsigned char LongPressStartChangeTrack[11] = {
+            0x61U, 0x00U, 0xA6U, 0x2CU, 0x00U, 0x00U, 0x01U, 0xFFU, 0xFFU, 0xFFU, 0xFFU,
+        };
+        QTest::newRow("longPressStartChangeTrack") << QByteArray(reinterpret_cast<const char *>(LongPressStartChangeTrack), 11) << (unsigned char)4 << (unsigned int)11430 << false
+                                                   << (unsigned char)3 << (unsigned int)0 << (unsigned char)3 << true;
+
+        const unsigned char LongPressStartNoChangeTrack[11] = {
+            0x62U, 0x00U, 0x41U, 0x0CU, 0x00U, 0x00U, 0x03U, 0x70U, 0x00U, 0x00U, 0x00U,
+        };
+        QTest::newRow("longPressStartNoChangeTrack") << QByteArray(reinterpret_cast<const char *>(LongPressStartNoChangeTrack), 11) << (unsigned char)6 << (unsigned int)3137
+                                                     << false << (unsigned char)6 << (unsigned int)112 << (unsigned char)3 << true;
+
+        const unsigned char LongPressEndChangeTrack[11] = {
+            0xA1U, 0x00U, 0x73U, 0x82U, 0x00U, 0x00U, 0x02U, 0x01U, 0x00U, 0x00U, 0x00U,
+        };
+        QTest::newRow("longPressEndChangeTrack") << QByteArray(reinterpret_cast<const char *>(LongPressEndChangeTrack), 11) << (unsigned char)5 << (unsigned int)33395 << true
+                                                 << (unsigned char)6 << (unsigned int)0 << (unsigned char)4 << true;
+
+        const unsigned char LongPressEndNoChangeTrack[11] = {
+            0xA2U, 0x00U, 0x35U, 0x92U, 0x00U, 0x00U, 0x03U, 0x11U, 0x03U, 0x00U, 0x00U,
+        };
+        QTest::newRow("longPressEndNoChangeTrack") << QByteArray(reinterpret_cast<const char *>(LongPressEndNoChangeTrack), 11) << (unsigned char)6 << (unsigned int)37429 << true
+                                                   << (unsigned char)6 << (unsigned int)785 << (unsigned char)4 << true;
+    }
+    void RmeChartNoteFromImdNoteQByteArrayDoubleBoolPS()
+    {
+        QFETCH(QByteArray, note);
+        QFETCH(unsigned char, track);
+        QFETCH(unsigned int, timestamp);
+        QFETCH(bool, isEnd);
+        QFETCH(unsigned char, toTrack);
+        QFETCH(unsigned int, timeDur);
+        QFETCH(unsigned char, attr);
+        QFETCH(bool, ok);
+
+        bool isOk = false;
+        RmeChartNote n = RmeChartNote::fromImdNote(note, &isOk);
+        QCOMPARE(isOk, ok);
+        if (ok) {
+            QCOMPARE(n.track, track);
+            QCOMPARE(n.timestamp, timestamp);
+            QCOMPARE(n.isEnd, isEnd);
+            QCOMPARE(n.toTrack, toTrack);
+            QCOMPARE(n.timeDur, timeDur);
+            QCOMPARE(n.attr, attr);
+        }
+    }
+
+    void RmeChartNoteFromImdNoteQByteArrayDoubleBoolPNS()
+    {
+        // coverage for ok == nullptr
+        // since it can't be data driven so call it separately
+
+        RmeChartNote::fromImdNote({});
+    }
+
     //    void RmeChartNoteFromJsonNoteQJsonObjectUnsignedCharBoolPS()
     //    {
     //    }
