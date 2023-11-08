@@ -541,16 +541,16 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
         connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::allCompleted);
         break;
     case All:
-        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNext);
+        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNext, Qt::QueuedConnection);
         break;
     case AllLegacy:
-        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNextLegacy);
+        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNextLegacy, Qt::QueuedConnection);
         break;
     case Mis:
-        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNextMissing);
+        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNextMissing, Qt::QueuedConnection);
         break;
     case MisLegacy:
-        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNextMissingLegacy);
+        connect(downloader, &RmeDownloader::allCompleted, this, &DownloadDialog::startDownloadNextMissingLegacy, Qt::QueuedConnection);
         break;
     }
 
