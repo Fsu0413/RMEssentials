@@ -3,6 +3,8 @@
 
 #include <QTest>
 
+// NOLINTBEGIN
+
 extern "C" {
 const char *tstRmeVersion();
 QuaZipUsage tstRmeQuaZipUsage();
