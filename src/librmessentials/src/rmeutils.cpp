@@ -51,7 +51,8 @@ bool RmeUtils::hasSmallPng(const QDir &dir, QString &suffix)
             if (s2 == suffix_hd) {
                 suffix = suffix_hd;
                 return true;
-            } else if (s2 == suffix_ipad) {
+            }
+            if (s2 == suffix_ipad) {
                 suffix = suffix_ipad;
                 return true;
             }
@@ -127,7 +128,7 @@ RmeUtils::ExistNotes RmeUtils::existNotes(const QDir &dir)
 QString RmeUtils::existImdJsonVersion(const QDir &dir, ExistNote note)
 {
     if (note < IMDJSON_4K_EZ || note > IMDJSON_6K_HD)
-        return QString();
+        return {};
 
     QString file_name;
     file_name.append(dir.dirName()).append(noteFileNameSuffix(note));
@@ -147,7 +148,7 @@ QString RmeUtils::existImdJsonVersion(const QDir &dir, ExistNote note)
         }
     }
 
-    return QString();
+    return {};
 }
 
 QString RmeUtils::calculateSongTime(int gameTime)
