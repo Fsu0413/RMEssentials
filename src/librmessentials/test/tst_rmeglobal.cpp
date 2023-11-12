@@ -19,20 +19,20 @@ private slots:
     // all these functions have complexity 1...
     // following 2 functions are called from C interface and C++ interface
 
-    void testRmeVersion()
+    void RmeGlobalRmeVersion()
     {
         const char *version = tstRmeVersion();
         QCOMPARE(QString::fromLatin1(version), QString::fromLatin1(RmeVersion()));
     }
 
-    void testRmeQuaZipUsage()
+    void RmeGlobalRmeQuaZipUsage()
     {
         QuaZipUsage usage = tstRmeQuaZipUsage();
         QCOMPARE(usage, RmeQuaZipUsage());
     }
 
     // C++ only interface, called for coverage
-    void testRmeVersionNumber()
+    void RmeGlobalRmeVersionNumber()
     {
         QVersionNumber v = RmeVersionNumber();
         Q_UNUSED(v);
