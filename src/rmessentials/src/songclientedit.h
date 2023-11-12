@@ -41,12 +41,9 @@ private slots:
     void calculateSongTime();
     void saveCurrent();
     void saveFile();
-    void convertToFree();
-    void allSongUnlock();
     bool reloadFile();
     void search();
     void searchResultDblClicked(QListWidgetItem *index);
-    void prepareForUserMakingNotes();
     void createPatch();
     void applyPatch();
     void saveWikiTable();

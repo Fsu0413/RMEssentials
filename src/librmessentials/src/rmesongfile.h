@@ -46,9 +46,6 @@ public:
 
     int songCount() const;
 
-    void prepareForUserMadeNotes();
-    bool isUserMadeMode() const;
-
 private:
     Q_DISABLE_COPY(RmeSongClientFile)
     Q_DECLARE_PRIVATE(RmeSongClientFile)

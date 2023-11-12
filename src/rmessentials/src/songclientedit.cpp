@@ -140,13 +140,6 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QAction *saveFileBtn = popup->addAction(tr("save file"));
     connect(saveFileBtn, &QAction::triggered, this, &SongClientEditDialog::saveFile);
     popup->addSeparator();
-    QAction *castf = popup->addAction(tr("Convert All Songs to Free"));
-    connect(castf, &QAction::triggered, this, &SongClientEditDialog::convertToFree);
-    QAction *asul = popup->addAction(tr("All Song Unlock"));
-    connect(asul, &QAction::triggered, this, &SongClientEditDialog::allSongUnlock);
-    QAction *pfumn = popup->addAction(tr("Prepare for User Making Notes"));
-    connect(pfumn, &QAction::triggered, this, &SongClientEditDialog::prepareForUserMakingNotes);
-    popup->addSeparator();
     QAction *cp = popup->addAction(tr("Create Patch from another file base"));
     connect(cp, &QAction::triggered, this, &SongClientEditDialog::createPatch);
     QAction *ap = popup->addAction(tr("Apply Patch File"));
@@ -657,46 +650,6 @@ void SongClientEditDialog::readCurrent()
     m_isContentEdited = false;
 }
 
-void SongClientEditDialog::convertToFree()
-{
-    if (!m_isLoaded)
-        return;
-
-    if (!askForSaveModified())
-        return;
-
-    for (int i = 0; i < m_file.songCount(); ++i) {
-        RmeSongClientItemStruct *c = m_file.song(i);
-        if (!c->isLevel()) {
-            c->m_ucIsOpen = true;
-            c->m_bIsHide = false;
-            c->m_bIsLevelReward = false;
-            c->m_bIsReward = false;
-            c->m_ucCanBuy = false;
-            c->m_bIsFree = false;
-        }
-    }
-
-    readCurrent();
-}
-
-void SongClientEditDialog::allSongUnlock()
-{
-    if (!m_isLoaded)
-        return;
-
-    if (!askForSaveModified())
-        return;
-
-    for (int i = 0; i < m_file.songCount(); ++i) {
-        RmeSongClientItemStruct *c = m_file.song(i);
-        if (!c->isLevel())
-            c->m_bIsFree = false;
-    }
-
-    readCurrent();
-}
-
 void SongClientEditDialog::calculateSongTime()
 {
     int gameTime = m_controls->iGameTime->text().toInt();
@@ -806,24 +759,6 @@ void SongClientEditDialog::searchResultDblClicked(QListWidgetItem *index)
     readCurrent();
 }
 
-void SongClientEditDialog::prepareForUserMakingNotes()
-{
-    if (!m_isLoaded)
-        return;
-
-    if (!askForSaveModified())
-        return;
-
-    if (QMessageBox::question(this, tr("RMEssentials"), tr("Please be sure that the current open file is the offical one from the server of RM!!!!<br />Are you sure to proceed?"))
-        == QMessageBox::No)
-        return;
-
-    m_file.prepareForUserMadeNotes();
-    setWindowTitle(tr("Rhythm Master Song Client Editor") + tr(" - User Made Notes Mode"));
-
-    readCurrent();
-}
-
 void SongClientEditDialog::createPatch()
 {
     if (!m_isLoaded)
@@ -879,8 +814,6 @@ void SongClientEditDialog::applyPatch()
         return;
     }
 
-    if (m_file.isUserMadeMode())
-        setWindowTitle(tr("Rhythm Master Song Client Editor") + tr(" - User Made Notes Mode"));
     readCurrent();
 }
 
