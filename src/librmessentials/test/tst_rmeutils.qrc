@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>tst_rmeutils/bigpng/bigpng.png</file>
+        <file>tst_rmeutils/empty/placeholder.txt</file>
+        <file>tst_rmeutils/existnotes/existnotes_4k_ez.imd</file>
+        <file>tst_rmeutils/existnotes/existnotes_5k_ez.imd.json</file>
+        <file>tst_rmeutils/existnotes/existnotes_5k_hd.imd.json</file>
+        <file>tst_rmeutils/existnotes/existnotes_5k_nm.imd.json</file>
+        <file>tst_rmeutils/existnotes/existnotes_6k_ez.imd.json</file>
+        <file>tst_rmeutils/existnotes/existnotes_6k_hd.rmp</file>
+        <file>tst_rmeutils/existnotes/existnotes_Papa_Normal.mde</file>
+        <file>tst_rmeutils/mp3/mp3.mp3</file>
+        <file>tst_rmeutils/newbigpng/newbigpng_ipad.png</file>
+        <file>tst_rmeutils/newsmallpng/newsmallpng_thumb.png</file>
+        <file>tst_rmeutils/papasmallpng/papasmallpng_title_140_90.png</file>
+        <file>tst_rmeutils/smallpnghd/smallpnghd_title_hd.png</file>
+        <file>tst_rmeutils/smallpngipad/smallpngipad_title_ipad.png</file>
+    </qresource>
+</RCC>

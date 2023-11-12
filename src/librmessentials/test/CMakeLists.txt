@@ -29,3 +29,4 @@ endfunction()
 
 add_librmess_test(RmeChart tst_rmechart.cpp)
 add_librmess_test(RmeGlobal tst_rmeglobal_c.c tst_rmeglobal.cpp)
+add_librmess_test(RmeUtils tst_rmeutils.cpp tst_rmeutils.qrc)
