@@ -37,7 +37,7 @@ public:
     RmeDownloader *m_downloader;
 
     // public to RmeDownloader only since this class is always an incomplete type outside rmedownloader.cpp
-    QList<QPair<QString, QString> > m_downloadSequence;
+    QList<std::pair<QString, QString> > m_downloadSequence;
     QString m_downloadPath;
     bool m_skipExisting;
     bool m_canceled;
@@ -46,7 +46,7 @@ public:
 private:
     // private to RmeDownloaderPrivate only.
     QStringList m_failedList;
-    QPair<QString, QString> m_currentDownloadingFile;
+    std::pair<QString, QString> m_currentDownloadingFile;
     QDir m_downloadDir;
     QNetworkReply *m_currentDownloadingReply;
     QNetworkAccessManager *m_networkAccessManager;
@@ -209,16 +209,25 @@ QString RmeDownloader::legacySongDownloadPath()
 RmeDownloader &RmeDownloader::operator<<(const QString &filename)
 {
     Q_D(RmeDownloader);
-    d->m_downloadSequence << QPair<QString, QString>(filename, QString());
+    d->m_downloadSequence << std::make_pair(filename, QString());
     return *this;
 }
 
-RmeDownloader &RmeDownloader::operator<<(const QPair<QString, QString> &filename)
+RmeDownloader &RmeDownloader::operator<<(const std::pair<QString, QString> &filename)
 {
     Q_D(RmeDownloader);
     d->m_downloadSequence << filename;
     return *this;
 }
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+RmeDownloader &RmeDownloader::operator<<(const QPair<QString, QString> &filename)
+{
+    Q_D(RmeDownloader);
+    d->m_downloadSequence << std::make_pair(filename.first, filename.second);
+    return *this;
+}
+#endif
 
 QString RmeDownloader::downloadPath() const
 {
@@ -371,10 +380,18 @@ RmeDownloader *operator<<(RmeDownloader *downloader, const QString &filename)
     return downloader;
 }
 
+RmeDownloader *operator<<(RmeDownloader *downloader, const std::pair<QString, QString> &filename)
+{
+    (*downloader) << filename;
+    return downloader;
+}
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 RmeDownloader *operator<<(RmeDownloader *downloader, const QPair<QString, QString> &filename)
 {
     (*downloader) << filename;
     return downloader;
 }
+#endif
 
 #include "rmedownloader.moc"

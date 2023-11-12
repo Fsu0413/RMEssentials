@@ -30,6 +30,8 @@
 #include <QWinTaskbarProgress>
 #endif
 
+#include <tuple>
+
 namespace {
 
 const QString &startDownloadTitle()
@@ -637,7 +639,7 @@ void DownloadDialog::downloadList()
     QString TableCom = QString(QStringLiteral("http://res.ds.qq.com/Table/BetaTest_V2/%1/TableCom.zip")).arg(currentNum());
     downloader << TableCom;
     QString TableComLegacy = QStringLiteral("https://rm-1301553285.file.myqcloud.com/Table/Dev/32/TableCom.zip");
-    downloader << qMakePair(TableComLegacy, QStringLiteral("TableComLegacy.zip"));
+    downloader << std::make_pair(TableComLegacy, QStringLiteral("TableComLegacy.zip"));
 
     connect(downloader, &RmeDownloader::singleFileCompleted, this, &DownloadDialog::oneCompleted);
     connect(downloader, &RmeDownloader::singleFileFailed, this, &DownloadDialog::oneFailed);

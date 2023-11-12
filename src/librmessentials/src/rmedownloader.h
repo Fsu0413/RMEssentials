@@ -8,6 +8,8 @@
 #include <QString>
 #include <QStringList>
 
+#include <tuple>
+
 class RmeDownloaderPrivate;
 
 class LIBRMESSENTIALS_EXPORT RmeDownloader : public QObject
@@ -23,7 +25,11 @@ public:
     static QString legacySongDownloadPath();
 
     RmeDownloader &operator<<(const QString &filename);
+    RmeDownloader &operator<<(const std::pair<QString, QString> &fileNames);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    // since Qt 6 QPair is typedef to std::pair
     RmeDownloader &operator<<(const QPair<QString, QString> &fileNames);
+#endif
 
     QString downloadPath() const;
     void setDownloadPath(const QString &sp);
@@ -49,6 +55,9 @@ private:
 };
 
 LIBRMESSENTIALS_EXPORT RmeDownloader *operator<<(RmeDownloader *downloader, const QString &filename);
+LIBRMESSENTIALS_EXPORT RmeDownloader *operator<<(RmeDownloader *downloader, const std::pair<QString, QString> &filename);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 LIBRMESSENTIALS_EXPORT RmeDownloader *operator<<(RmeDownloader *downloader, const QPair<QString, QString> &filename);
+#endif
 
 #endif
