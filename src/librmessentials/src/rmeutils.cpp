@@ -87,7 +87,7 @@ bool RmeUtils::hasNewSmallPng(const QDir &dir)
         QString s2 = s;
         s2.chop(4);
         if (s2.endsWith(QStringLiteral("_thumb"))) {
-            s2.chop(5);
+            s2.chop(6);
             if (s2.toLower() == dir.dirName().toLower())
                 return true;
         }
