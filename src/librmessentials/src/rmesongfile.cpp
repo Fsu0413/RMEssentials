@@ -964,7 +964,7 @@ bool RmeSongClientFile::saveWikiTable(QIODevice *output) const
 !|d6e
 !|d6m
 !|d6h
-!|type
+!|appendix
 )r"));
 
         output->write(titleline.toUtf8().constData());
@@ -980,18 +980,6 @@ bool RmeSongClientFile::saveWikiTable(QIODevice *output) const
             if (second < 10)
                 gameTime = QString(QStringLiteral("%1:0%2")).arg(minute).arg(second);
 
-            QString type;
-            if (song->m_ushSongID >= 251 && song->m_ushSongID <= 262)
-                type = QStringLiteral("level");
-            else if (song->m_bIsHide && (song->m_ucIsOpen || song->m_bIsFree))
-                type = QStringLiteral("hide");
-            else if (song->m_bIsReward && (song->m_ucIsOpen || song->m_bIsFree))
-                type = QStringLiteral("reward");
-            else if (song->m_ucIsOpen && song->m_bIsFree)
-                type = QStringLiteral("free");
-            else if (song->m_ucCanBuy)
-                type = QStringLiteral("buy");
-
             QString difficultyLine = QString(QStringLiteral("%1||%2||%3||%4||%5||%6||%7||%8||%9"))
                                          .arg((song->m_ush4KeyEasy == 0 ? QStringLiteral("{{N/A}}") : QString::number(song->m_ush4KeyEasy)),
                                               (song->m_ush4KeyNormal == 0 ? QStringLiteral("{{N/A}}") : QString::number(song->m_ush4KeyNormal)),
@@ -1004,8 +992,8 @@ bool RmeSongClientFile::saveWikiTable(QIODevice *output) const
                                               (song->m_ush6KeyHard == 0 ? QStringLiteral("{{N/A}}") : QString::number(song->m_ush6KeyHard)));
 
             QString line = QString(QStringLiteral("|-\n"
-                                                  "|%7||%1||%2||%3||%4||%5||%6\n"))
-                               .arg(song->m_szSongName, song->m_szArtist, gameTime, song->m_szBPM, difficultyLine, type, QString::number(song->m_ushSongID));
+                                                  "|%6||%1||%2||%3||%4||%5||\n"))
+                               .arg(song->m_szSongName, song->m_szArtist, gameTime, song->m_szBPM, difficultyLine, QString::number(song->m_ushSongID));
             output->write(line.toUtf8().constData());
         }
         QString tailLine = QStringLiteral("|}");
@@ -1290,11 +1278,9 @@ bool RmePapaSongClientFile::saveWikiTable(QIODevice *output) const
             // deal with game time
             int32_t second = song->m_iGameTime % 60;
             int32_t minute = song->m_iGameTime / 60;
-            QString secondStr = QString::number(second);
-            if (secondStr.length() == 1)
-                secondStr.prepend(QStringLiteral("0"));
-
-            QString gameTime = QString(QStringLiteral("%1:%2")).arg(minute).arg(secondStr);
+            QString gameTime = QString(QStringLiteral("%1:%2")).arg(minute).arg(second);
+            if (second < 10)
+                gameTime = QString(QStringLiteral("%1:0%2")).arg(minute).arg(second);
 
             QString difficulty = QStringLiteral("hd");
             if (song->m_cDifficulty == 2)
