@@ -59,8 +59,7 @@ LIBRMESSENTIALS_EXPORT bool hasPapaSmallPng(const QDir &dir);
 LIBRMESSENTIALS_EXPORT ExistNotes existNotes(const QDir &dir);
 LIBRMESSENTIALS_EXPORT QString existImdJsonVersion(const QDir &dir, ExistNote note);
 
-LIBRMESSENTIALS_EXPORT QString calculateSongTime(int gameTime);
-LIBRMESSENTIALS_EXPORT QString calculateSongTime(int gameTime, bool remastered);
+LIBRMESSENTIALS_EXPORT QString calculateSongTime(int gameTime, bool remastered = false);
 LIBRMESSENTIALS_EXPORT QString noteFileNameSuffix(ExistNote note);
 }
 

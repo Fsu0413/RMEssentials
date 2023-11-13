@@ -137,7 +137,7 @@ private slots:
     {
         QDir d(resourcePrefix + QStringLiteral("existnotes"));
 
-        // Why? Why????? the first enumation value need explicit constructor call
+        // Due to integer promotion the first enumation value need explicit constructor call
         RmeUtils::ExistNotes result = RmeUtils::ExistNotes(RmeUtils::IMD_4K_EZ) | RmeUtils::MDE_NM | RmeUtils::IMDJSON_5K_EZ | RmeUtils::IMDJSON_5K_NM | RmeUtils::IMDJSON_5K_HD
             | RmeUtils::IMDJSON_6K_EZ | RmeUtils::RMP_6K_HD;
 
@@ -169,40 +169,27 @@ private slots:
         QCOMPARE(r, result);
     }
 
-    void RmeUtilsCalculateSongTimeInt_data()
-    {
-        // Song from Rhythm Master Remastered have different calculation for this value. Need to calculate both.
-        // This is the old algorithm.
-        QTest::addColumn<int>("arg");
-        QTest::addColumn<QString>("result");
-
-        QTest::newRow("133") << 133 << QStringLiteral("0.092361");
-        QTest::newRow("144") << 144 << QStringLiteral("0.1");
-    }
-    void RmeUtilsCalculateSongTimeInt()
-    {
-        QFETCH(int, arg);
-        QFETCH(QString, result);
-
-        QString r = RmeUtils::calculateSongTime(arg);
-        QCOMPARE(r, result);
-    }
-
     void RmeUtilsCalculateSongTimeIntBool_data()
     {
-        // This is the new algorithm.
+        // Song from Rhythm Master Remastered have different calculation for this value. Need to calculate both.
+        // "remastered" false -> old algorithm
+        // "remastered" true  -> new algorithm
         QTest::addColumn<int>("arg");
+        QTest::addColumn<bool>("remastered");
         QTest::addColumn<QString>("result");
 
-        QTest::newRow("121") << 121 << QStringLiteral("0.0014");
-        QTest::newRow("253") << 253 << QStringLiteral("0.002928");
+        QTest::newRow("133") << 133 << false << QStringLiteral("0.092361");
+        QTest::newRow("144") << 144 << false << QStringLiteral("0.1");
+        QTest::newRow("121") << 121 << true << QStringLiteral("0.0014");
+        QTest::newRow("253") << 253 << true << QStringLiteral("0.002928");
     }
     void RmeUtilsCalculateSongTimeIntBool()
     {
         QFETCH(int, arg);
+        QFETCH(bool, remastered);
         QFETCH(QString, result);
 
-        QString r = RmeUtils::calculateSongTime(arg, true);
+        QString r = RmeUtils::calculateSongTime(arg, remastered);
         QCOMPARE(r, result);
     }
 
