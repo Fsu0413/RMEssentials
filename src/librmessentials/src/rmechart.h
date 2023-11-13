@@ -67,7 +67,7 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
     QByteArray toImdNote() const;
     QJsonObject toJsonNote(RmeChartVersion version, double bpm, int idx = 0) const;
 
-    constexpr inline bool operator<(const RmeChartNote &arg2) const
+    constexpr bool operator<(const RmeChartNote &arg2) const
     {
         // "one main rule": earlier note must be put before
         if (timestamp < arg2.timestamp)

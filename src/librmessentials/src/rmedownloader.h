@@ -27,7 +27,7 @@ public:
     RmeDownloader &operator<<(const QString &filename);
     RmeDownloader &operator<<(const std::pair<QString, QString> &fileNames);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    // since Qt 6 QPair is typedef to std::pair
+    // since Qt 6 QPair is typedef to std::pair so no QPair overload anymore.
     RmeDownloader &operator<<(const QPair<QString, QString> &fileNames);
 #endif
 

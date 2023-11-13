@@ -7,104 +7,285 @@
 #include <QMap>
 #include <QXmlStreamWriter>
 
+#include <cstring>
+
 namespace {
 
-class RmeXmlReader
+class RmeFileReader
 {
 public:
-    explicit RmeXmlReader(QIODevice *device);
-    explicit RmeXmlReader(const QByteArray &array);
-    explicit RmeXmlReader(const QString &str);
-    explicit RmeXmlReader(const char *str);
+    static RmeFileReader *createFileReader(RmeFileFormat format, const QByteArray &arr);
 
-    bool isPapa() const;
-    bool error() const;
-    const RmeSongClientHeaderStruct &header() const;
+    constexpr RmeFileReader()
+        : m_isPapa(false)
+        , m_isError(false)
+    {
+    }
+    virtual ~RmeFileReader()
+    {
+    }
 
-    RmeSongClientItemStruct *readItem();
-    RmePapaSongClientItemStruct *readPapaItem();
+    constexpr inline bool isPapa() const
+    {
+        return m_isPapa;
+    }
+    constexpr inline void setIsPapa(bool isPapa)
+    {
+        m_isPapa = isPapa;
+    }
+
+    constexpr inline bool isError() const
+    {
+        return m_isError;
+    }
+    constexpr inline void setIsError(bool isError)
+    {
+        m_isError = isError;
+    }
+
+    virtual RmeSongClientHeaderStruct *readHeader() = 0;
+    virtual RmeSongClientItemStruct *readItem() = 0;
+    virtual RmePapaSongClientItemStruct *readPapaItem() = 0;
 
 private:
-    bool readHeader();
-
     bool m_isPapa;
     bool m_isError;
 
-    QXmlStreamReader m_reader;
-    RmeSongClientHeaderStruct m_header;
-
-    Q_DISABLE_COPY(RmeXmlReader)
-    RmeXmlReader() = delete;
+    Q_DISABLE_COPY_MOVE(RmeFileReader)
 };
 
-class RmeXmlWriter
+class RmeFileWriter
+{
+public:
+    static RmeFileWriter *createFileWriter(RmeFileFormat format, bool isPapa, QIODevice *device);
+
+    RmeFileWriter() = delete;
+    constexpr explicit RmeFileWriter(bool isPapa)
+        : m_isPapa(isPapa)
+    {
+    }
+    virtual ~RmeFileWriter()
+    {
+    }
+
+    constexpr inline bool isPapa() const
+    {
+        return m_isPapa;
+    }
+    constexpr inline void setIsPapa(bool isPapa)
+    {
+        m_isPapa = isPapa;
+    }
+
+    virtual bool writeHeader(const RmeSongClientHeaderStruct *header) = 0;
+    virtual bool writeClient(const RmeSongClientItemStruct *item) = 0;
+    virtual bool writeClient(const RmePapaSongClientItemStruct *item) = 0;
+
+private:
+    bool m_isPapa;
+
+    Q_DISABLE_COPY_MOVE(RmeFileWriter)
+};
+
+class RmeBinReader : public RmeFileReader
+{
+public:
+    explicit RmeBinReader(const QByteArray &array);
+    ~RmeBinReader() override = default;
+
+    RmeSongClientHeaderStruct *readHeader() override;
+    RmeSongClientItemStruct *readItem() override;
+    RmePapaSongClientItemStruct *readPapaItem() override;
+
+private:
+    QByteArray arr;
+    bool isPapaSet;
+};
+
+class RmeBinWriter : public RmeFileWriter
+{
+public:
+    explicit RmeBinWriter(QIODevice *device, bool isPapa);
+    ~RmeBinWriter() override = default;
+
+    bool writeHeader(const RmeSongClientHeaderStruct *header) override;
+    bool writeClient(const RmeSongClientItemStruct *item) override;
+    bool writeClient(const RmePapaSongClientItemStruct *item) override;
+
+private:
+    QIODevice *m_device;
+
+    qint64 writeByteArray(const QByteArray &arr);
+};
+
+RmeBinReader::RmeBinReader(const QByteArray &array)
+    : arr(array)
+    , isPapaSet(false)
+{
+    setIsError(arr.size() < 0x88);
+}
+
+RmeSongClientHeaderStruct *RmeBinReader::readHeader()
+{
+    if (isError())
+        return nullptr;
+
+    setIsError(true);
+
+    RmeSongClientHeaderStruct *header = new RmeSongClientHeaderStruct;
+    QByteArray fh = arr.left(0x88);
+    header->parseByteArray(fh);
+    arr = arr.mid(0x88);
+
+    if (arr.size() % 0x33e == 0) {
+        if (arr.size() % 0x169 != 0) {
+            isPapaSet = true;
+            setIsPapa(false);
+        }
+    } else if (arr.size() % 0x169 == 0) {
+        isPapaSet = true;
+        setIsPapa(true);
+    } else {
+        delete header;
+        return nullptr;
+    }
+
+    setIsError(false);
+
+    return header;
+}
+
+RmeSongClientItemStruct *RmeBinReader::readItem()
+{
+    setIsError(arr.size() % 0x33e != 0);
+    if (isError())
+        return nullptr;
+
+    setIsError(true);
+
+    if (!isPapaSet) {
+        setIsPapa(false);
+        isPapaSet = true;
+    }
+    if (isPapa())
+        return nullptr;
+
+    if (arr.isEmpty())
+        return nullptr;
+
+    QByteArray sp = arr.left(0x33e);
+    arr = arr.mid(0x33e);
+
+    RmeSongClientItemStruct *ss = new RmeSongClientItemStruct;
+    ss->parseByteArray(sp);
+
+    setIsError(false);
+
+    return ss;
+}
+
+RmePapaSongClientItemStruct *RmeBinReader::readPapaItem()
+{
+    setIsError(arr.size() % 0x169 != 0);
+    if (isError())
+        return nullptr;
+
+    setIsError(true);
+
+    if (!isPapaSet) {
+        setIsPapa(true);
+        isPapaSet = true;
+    }
+    if (!isPapa())
+        return nullptr;
+
+    if (arr.isEmpty())
+        return nullptr;
+
+    QByteArray sp = arr.left(0x169);
+    arr = arr.mid(0x169);
+
+    RmePapaSongClientItemStruct *ss = new RmePapaSongClientItemStruct;
+    ss->parseByteArray(sp);
+
+    setIsError(false);
+
+    return ss;
+}
+
+RmeBinWriter::RmeBinWriter(QIODevice *device, bool isPapa)
+    : RmeFileWriter(isPapa)
+    , m_device(device)
+{
+}
+
+bool RmeBinWriter::writeHeader(const RmeSongClientHeaderStruct *header)
+{
+    return writeByteArray(header->toByteArray()) == 0x88;
+}
+
+bool RmeBinWriter::writeClient(const RmeSongClientItemStruct *item)
+{
+    return writeByteArray(item->toByteArray()) == 0x33e;
+}
+
+bool RmeBinWriter::writeClient(const RmePapaSongClientItemStruct *item)
+{
+    return writeByteArray(item->toByteArray()) == 0x169;
+}
+
+qint64 RmeBinWriter::writeByteArray(const QByteArray &arr)
+{
+    const char *data = arr.constData();
+    int64_t length = arr.length();
+    int64_t total = 0;
+    int64_t written = m_device->write(data, length);
+    while (written > 0) {
+        total += written;
+        length -= written;
+        if (length <= 0)
+            return total;
+
+        // Unreachable for QFile, but probably reachable for other QIODevice -s.
+        written = m_device->write(data + total, length);
+    }
+
+    return written;
+}
+
+class RmeXmlReader : public RmeFileReader
+{
+public:
+    explicit RmeXmlReader(const QByteArray &array);
+    ~RmeXmlReader() override = default;
+
+    RmeSongClientHeaderStruct *readHeader() override;
+    RmeSongClientItemStruct *readItem() override;
+    RmePapaSongClientItemStruct *readPapaItem() override;
+
+private:
+    QXmlStreamReader m_reader;
+};
+
+class RmeXmlWriter : public RmeFileWriter
 {
 public:
     explicit RmeXmlWriter(QIODevice *device, bool isPapa);
-    explicit RmeXmlWriter(QByteArray *array, bool isPapa);
-    explicit RmeXmlWriter(QString *string, bool isPapa);
-    ~RmeXmlWriter();
+    ~RmeXmlWriter() override;
 
-    bool writeHeader(const RmeSongClientHeaderStruct *header);
-    bool writeClient(const RmeSongClientItemStruct *item);
-    bool writeClient(const RmePapaSongClientItemStruct *item);
-
-    bool error() const;
+    bool writeHeader(const RmeSongClientHeaderStruct *header) override;
+    bool writeClient(const RmeSongClientItemStruct *item) override;
+    bool writeClient(const RmePapaSongClientItemStruct *item) override;
 
 private:
     bool startWriting(bool isPapa);
 
     QXmlStreamWriter m_writer;
-
-    Q_DISABLE_COPY(RmeXmlWriter)
-    RmeXmlWriter() = delete;
 };
 
-RmeXmlReader::RmeXmlReader(QIODevice *device)
-    : m_isPapa(false)
-    , m_isError(false)
-    , m_reader(device)
-{
-    m_isError = !readHeader();
-}
-
 RmeXmlReader::RmeXmlReader(const QByteArray &array)
-    : m_isPapa(false)
-    , m_isError(false)
-    , m_reader(array)
+    : m_reader(array)
 {
-    m_isError = !readHeader();
-}
-
-RmeXmlReader::RmeXmlReader(const QString &str)
-    : m_isPapa(false)
-    , m_isError(false)
-    , m_reader(str)
-{
-    m_isError = !readHeader();
-}
-
-RmeXmlReader::RmeXmlReader(const char *str)
-    : m_isPapa(false)
-    , m_isError(false)
-    , m_reader(str)
-{
-    m_isError = !readHeader();
-}
-
-bool RmeXmlReader::isPapa() const
-{
-    return m_isPapa;
-}
-
-bool RmeXmlReader::error() const
-{
-    return m_isError || (m_reader.hasError());
-}
-
-const RmeSongClientHeaderStruct &RmeXmlReader::header() const
-{
-    return m_header;
 }
 
 #define READNEXT(retvalue)       \
@@ -114,23 +295,109 @@ const RmeSongClientHeaderStruct &RmeXmlReader::header() const
             return retvalue;     \
     } while (m_reader.isWhitespace())
 
-RmeSongClientItemStruct *RmeXmlReader::readItem()
+RmeSongClientHeaderStruct *RmeXmlReader::readHeader()
 {
-    if (m_isPapa)
+    if (isError())
         return nullptr;
-    if (error())
+
+    setIsError(true);
+
+    READNEXT(nullptr);
+
+    if (!m_reader.isStartDocument())
         return nullptr;
 
     READNEXT(nullptr);
 
-    if (!m_reader.isStartElement()) {
-        m_isError = true;
+    if (!m_reader.isStartElement())
         return nullptr;
-    }
-    if (m_reader.name() != QStringLiteral("SongConfig_Client")) {
-        m_isError = true;
+    if (!m_reader.name().endsWith(QStringLiteral("SongConfig_Client_Tab")))
         return nullptr;
+    if (m_reader.name().startsWith(QStringLiteral("Papa")))
+        setIsPapa(true);
+
+    READNEXT(nullptr);
+
+    if (!m_reader.isStartElement())
+        return nullptr;
+    if (m_reader.name() != QStringLiteral("TResHeadAll"))
+        return nullptr;
+    READNEXT(nullptr);
+
+    if (!m_reader.isStartElement())
+        return nullptr;
+    if (m_reader.name() != QStringLiteral("resHead"))
+        return nullptr;
+
+    READNEXT(nullptr);
+
+    QVariantMap map;
+    while (m_reader.isStartElement()) {
+        map[m_reader.name().toString()] = m_reader.readElementText();
+        if (m_reader.hasError())
+            return nullptr;
+
+        READNEXT(nullptr);
     }
+
+    if (!m_reader.isEndElement())
+        return nullptr;
+    if (m_reader.name() != QStringLiteral("resHead"))
+        return nullptr;
+
+    READNEXT(nullptr);
+
+    if (!m_reader.isStartElement())
+        return nullptr;
+    if (m_reader.name() != QStringLiteral("resHeadExt"))
+        return nullptr;
+
+    READNEXT(nullptr);
+
+    while (m_reader.isStartElement()) {
+        map[m_reader.name().toString()] = m_reader.readElementText();
+        if (m_reader.hasError())
+            return nullptr;
+
+        READNEXT(nullptr);
+    }
+
+    if (!m_reader.isEndElement())
+        return nullptr;
+    if (m_reader.name() != QStringLiteral("resHeadExt"))
+        return nullptr;
+
+    READNEXT(nullptr);
+
+    if (!m_reader.isEndElement())
+        return nullptr;
+    if (m_reader.name() != QStringLiteral("TResHeadAll"))
+        return nullptr;
+
+    RmeSongClientHeaderStruct *header = new RmeSongClientHeaderStruct;
+    header->parseMap(map);
+
+    setIsError(false);
+    return header;
+}
+
+RmeSongClientItemStruct *RmeXmlReader::readItem()
+{
+    if (isError())
+        return nullptr;
+
+    setIsError(true);
+
+    if (isPapa())
+        return nullptr;
+
+    READNEXT(nullptr);
+
+    if (!m_reader.isStartElement())
+        return nullptr;
+
+    if (m_reader.name() != QStringLiteral("SongConfig_Client"))
+        return nullptr;
 
     READNEXT(nullptr);
 
@@ -150,26 +417,28 @@ RmeSongClientItemStruct *RmeXmlReader::readItem()
 
     RmeSongClientItemStruct *item = new RmeSongClientItemStruct;
     item->parseMap(map);
+
+    setIsError(false);
     return item;
 }
 
 RmePapaSongClientItemStruct *RmeXmlReader::readPapaItem()
 {
-    if (!m_isPapa)
+    if (isError())
         return nullptr;
-    if (error())
+
+    setIsError(true);
+
+    if (!isPapa())
         return nullptr;
 
     READNEXT(nullptr);
 
-    if (!m_reader.isStartElement()) {
-        m_isError = true;
+    if (!m_reader.isStartElement())
         return nullptr;
-    }
-    if (m_reader.name() != QStringLiteral("PapaSongConfig_Client_Tab")) {
-        m_isError = true;
+
+    if (m_reader.name() != QStringLiteral("PapaSongConfig_Client_Tab"))
         return nullptr;
-    }
 
     READNEXT(nullptr);
 
@@ -189,103 +458,17 @@ RmePapaSongClientItemStruct *RmeXmlReader::readPapaItem()
 
     RmePapaSongClientItemStruct *item = new RmePapaSongClientItemStruct;
     item->parseMap(map);
+
+    setIsError(false);
+
     return item;
-}
-
-bool RmeXmlReader::readHeader()
-{
-    READNEXT(false);
-
-    if (!m_reader.isStartDocument())
-        return false;
-
-    READNEXT(false);
-
-    if (!m_reader.isStartElement())
-        return false;
-    if (!m_reader.name().endsWith(QStringLiteral("SongConfig_Client_Tab")))
-        return false;
-    if (m_reader.name().startsWith(QStringLiteral("Papa")))
-        m_isPapa = true;
-
-    READNEXT(false);
-
-    if (!m_reader.isStartElement())
-        return false;
-    if (m_reader.name() != QStringLiteral("TResHeadAll"))
-        return false;
-    READNEXT(false);
-
-    if (!m_reader.isStartElement())
-        return false;
-    if (m_reader.name() != QStringLiteral("resHead"))
-        return false;
-
-    READNEXT(false);
-
-    QVariantMap map;
-    while (m_reader.isStartElement()) {
-        map[m_reader.name().toString()] = m_reader.readElementText();
-        if (m_reader.hasError())
-            return false;
-
-        READNEXT(false);
-    }
-
-    if (!m_reader.isEndElement())
-        return false;
-    if (m_reader.name() != QStringLiteral("resHead"))
-        return false;
-
-    READNEXT(false);
-
-    if (!m_reader.isStartElement())
-        return false;
-    if (m_reader.name() != QStringLiteral("resHeadExt"))
-        return false;
-
-    READNEXT(false);
-
-    while (m_reader.isStartElement()) {
-        map[m_reader.name().toString()] = m_reader.readElementText();
-        if (m_reader.hasError())
-            return false;
-
-        READNEXT(false);
-    }
-
-    if (!m_reader.isEndElement())
-        return false;
-    if (m_reader.name() != QStringLiteral("resHeadExt"))
-        return false;
-
-    READNEXT(false);
-
-    if (!m_reader.isEndElement())
-        return false;
-    if (m_reader.name() != QStringLiteral("TResHeadAll"))
-        return false;
-
-    m_header.parseMap(map);
-    return true;
 }
 
 #undef READNEXT
 
 RmeXmlWriter::RmeXmlWriter(QIODevice *device, bool isPapa)
-    : m_writer(device)
-{
-    startWriting(isPapa);
-}
-
-RmeXmlWriter::RmeXmlWriter(QByteArray *array, bool isPapa)
-    : m_writer(array)
-{
-    startWriting(isPapa);
-}
-
-RmeXmlWriter::RmeXmlWriter(QString *string, bool isPapa)
-    : m_writer(string)
+    : RmeFileWriter(isPapa)
+    , m_writer(device)
 {
     startWriting(isPapa);
 }
@@ -412,11 +595,6 @@ bool RmeXmlWriter::writeClient(const RmePapaSongClientItemStruct *item)
 
 #undef WRITEELEMENT
 
-bool RmeXmlWriter::error() const
-{
-    return m_writer.hasError();
-}
-
 bool RmeXmlWriter::startWriting(bool isPapa)
 {
     // Todo: find a way to control indent, Auto formating is.......
@@ -434,111 +612,71 @@ bool RmeXmlWriter::startWriting(bool isPapa)
     return !m_writer.hasError();
 }
 
-class RmeJsonReader
+class RmeJsonReader : public RmeFileReader
 {
 public:
-    explicit RmeJsonReader(QIODevice *device);
     explicit RmeJsonReader(const QByteArray &array);
-    explicit RmeJsonReader(const char *str);
+    ~RmeJsonReader() override = default;
 
-    bool error() const;
-    const RmeSongClientHeaderStruct &header() const;
-
-    RmeSongClientItemStruct *readItem();
-    RmePapaSongClientItemStruct *readPapaItem();
+    RmeSongClientHeaderStruct *readHeader() override;
+    RmeSongClientItemStruct *readItem() override;
+    RmePapaSongClientItemStruct *readPapaItem() override;
 
 private:
-    bool load(const QByteArray &data);
-
-    bool m_isPapa;
-    bool m_isError;
-
     QJsonArray m_jsonArray;
     QJsonParseError m_jsonError;
 
-    RmeSongClientHeaderStruct m_header;
-
-    Q_DISABLE_COPY(RmeJsonReader)
-    RmeJsonReader() = delete;
+    bool load(const QByteArray &data);
 };
 
-// This class is different by design from RmeXmlWriter since all data are written to Json Array
-// the IODevice or Array can only be updated in destructor
-class RmeJsonWriter
+class RmeJsonWriter : public RmeFileWriter
 {
 public:
     explicit RmeJsonWriter(QIODevice *device, bool isPapa);
-    explicit RmeJsonWriter(QByteArray *array, bool isPapa);
-    ~RmeJsonWriter();
+    ~RmeJsonWriter() override;
 
-    bool writeHeader(const RmeSongClientHeaderStruct *header);
-    bool writeClient(const RmeSongClientItemStruct *item);
-    bool writeClient(const RmePapaSongClientItemStruct *item);
-
-    bool error() const;
+    bool writeHeader(const RmeSongClientHeaderStruct *header) override;
+    bool writeClient(const RmeSongClientItemStruct *item) override;
+    bool writeClient(const RmePapaSongClientItemStruct *item) override;
 
 private:
     QJsonArray m_jsonArray;
 
     QIODevice *m_device;
-    QByteArray *m_byteArray;
 
     Q_DISABLE_COPY(RmeJsonWriter)
     RmeJsonWriter() = delete;
 };
 
-RmeJsonReader::RmeJsonReader(QIODevice *device)
-    : m_isPapa(false)
-    , m_isError(false)
-{
-    if ((device->isOpen() && device->isReadable()) || device->open(QIODevice::ReadOnly)) {
-        QByteArray arr = device->readAll();
-        load(arr);
-    }
-}
-
 RmeJsonReader::RmeJsonReader(const QByteArray &array)
-    : m_isPapa(false)
-    , m_isError(false)
 {
     load(array);
 }
 
-RmeJsonReader::RmeJsonReader(const char *str)
-    : m_isPapa(false)
-    , m_isError(false)
+RmeSongClientHeaderStruct *RmeJsonReader::readHeader()
 {
-    QByteArray arr = QByteArray::fromRawData(str, (int)strlen(str));
-    load(arr);
-}
-
-bool RmeJsonReader::error() const
-{
-    return m_isError;
-}
-
-const RmeSongClientHeaderStruct &RmeJsonReader::header() const
-{
-    return m_header;
+    RmeSongClientHeaderStruct *r = new RmeSongClientHeaderStruct;
+    r->Count = m_jsonArray.size();
+    return r;
 }
 
 RmeSongClientItemStruct *RmeJsonReader::readItem()
 {
-    if (m_isPapa)
+    if (isError())
         return nullptr;
-    if (error())
+
+    setIsError(true);
+
+    if (isPapa())
         return nullptr;
-    if (m_jsonArray.isEmpty()) {
-        m_isError = true;
+
+    if (m_jsonArray.isEmpty())
         return nullptr;
-    }
 
     QJsonValue v = m_jsonArray.takeAt(0);
 
-    if (!v.isObject()) {
-        m_isError = true;
+    if (!v.isObject())
         return nullptr;
-    }
 
     QJsonObject ob = v.toObject();
 
@@ -546,38 +684,39 @@ RmeSongClientItemStruct *RmeJsonReader::readItem()
     QVariantMap map;
     for (auto it = ob.begin(); it != ob.end(); ++it) {
         QString value;
-        if (it.value().isString()) {
+        if (it.value().isString())
             value = it.value().toString();
-        } else if (!it.value().isNull()) {
-            m_isError = true;
+        else if (!it.value().isNull())
             return nullptr;
-        }
 
         map[it.key()] = value;
     }
 
     RmeSongClientItemStruct *item = new RmeSongClientItemStruct;
     item->parseMap(map);
+
+    setIsError(false);
+
     return item;
 }
 
 RmePapaSongClientItemStruct *RmeJsonReader::readPapaItem()
 {
-    if (!m_isPapa)
+    if (isError())
         return nullptr;
-    if (error())
+
+    setIsError(true);
+
+    if (!isPapa())
         return nullptr;
-    if (m_jsonArray.isEmpty()) {
-        m_isError = true;
+
+    if (m_jsonArray.isEmpty())
         return nullptr;
-    }
 
     QJsonValue v = m_jsonArray.takeAt(0);
 
-    if (!v.isObject()) {
-        m_isError = true;
+    if (!v.isObject())
         return nullptr;
-    }
 
     QJsonObject ob = v.toObject();
 
@@ -585,70 +724,69 @@ RmePapaSongClientItemStruct *RmeJsonReader::readPapaItem()
     QVariantMap map;
     for (auto it = ob.begin(); it != ob.end(); ++it) {
         QString value;
-        if (it.value().isString()) {
+        if (it.value().isString())
             value = it.value().toString();
-        } else if (!it.value().isNull()) {
-            m_isError = true;
+        else if (!it.value().isNull())
             return nullptr;
-        }
 
         map[it.key()] = value;
     }
 
     RmePapaSongClientItemStruct *item = new RmePapaSongClientItemStruct;
     item->parseMap(map);
+
+    setIsError(false);
+
     return item;
 }
 
 bool RmeJsonReader::load(const QByteArray &data)
 {
-    QJsonDocument doc = QJsonDocument::fromJson(data, &m_jsonError);
-    if (m_jsonError.error != QJsonParseError::NoError) {
-        m_isError = true;
+    if (isError())
         return false;
-    }
 
-    if (!doc.isArray()) {
-        m_isError = true;
+    setIsError(true);
+
+    QJsonDocument doc = QJsonDocument::fromJson(data, &m_jsonError);
+    if (m_jsonError.error != QJsonParseError::NoError)
         return false;
-    }
+
+    if (!doc.isArray())
+        return false;
 
     m_jsonArray = doc.array();
+
+    if (m_jsonArray.isEmpty())
+        return false;
 
     // distinguish it is Papa struct or not
     // Papa struct has an "m_cLevel" in each element while normal mode does not
     QJsonValue v = m_jsonArray.at(0);
     if (v.isObject() && v.toObject().contains(QStringLiteral("m_cLevel"))) // assuming it is papa struct
-        m_isPapa = true;
+        setIsPapa(true);
+
+    setIsError(false);
 
     return true;
 }
 
-RmeJsonWriter::RmeJsonWriter(QIODevice *device, bool)
-    : m_device(device)
-{
-    m_byteArray = new QByteArray;
-}
-
-RmeJsonWriter::RmeJsonWriter(QByteArray *array, bool)
-    : m_byteArray(array)
+RmeJsonWriter::RmeJsonWriter(QIODevice *device, bool isPapa)
+    : RmeFileWriter(isPapa)
+    , m_device(device)
 {
 }
 
 RmeJsonWriter::~RmeJsonWriter()
 {
     QJsonDocument doc(m_jsonArray);
-    *m_byteArray = doc.toJson(QJsonDocument::Indented);
+    QByteArray byteArray = doc.toJson(QJsonDocument::Indented);
 
-    if (m_device != nullptr) {
-        if ((m_device->isOpen() && m_device->isWritable()) || m_device->open(QIODevice::WriteOnly)) {
-            int64_t written = m_device->write(*m_byteArray);
-            if (written < m_byteArray->length()) {
-                // what to do....
-            }
+    if ((m_device->isOpen() && m_device->isWritable()) || m_device->open(QIODevice::WriteOnly)) {
+        int64_t written = m_device->write(byteArray);
+        if (written < byteArray.length()) {
+            // what to do....
+            // I don't want to copy RmeBinWriter code here
         }
-
-        delete m_byteArray;
     }
 }
 
@@ -753,9 +891,32 @@ bool RmeJsonWriter::writeClient(const RmePapaSongClientItemStruct *item)
 
 #undef WRITEELEMENT
 
-bool RmeJsonWriter::error() const
+RmeFileReader *RmeFileReader::createFileReader(RmeFileFormat format, const QByteArray &arr)
 {
-    return false;
+    switch (format) {
+    case BinFormat:
+        return new RmeBinReader(arr);
+    case XmlFormat:
+        return new RmeXmlReader(arr);
+    case JsonFormat:
+        return new RmeJsonReader(arr);
+    }
+
+    return nullptr;
+}
+
+RmeFileWriter *RmeFileWriter::createFileWriter(RmeFileFormat format, bool isPapa, QIODevice *device)
+{
+    switch (format) {
+    case BinFormat:
+        return new RmeBinWriter(device, isPapa);
+    case XmlFormat:
+        return new RmeXmlWriter(device, isPapa);
+    case JsonFormat:
+        return new RmeJsonWriter(device, isPapa);
+    }
+
+    return nullptr;
 }
 
 }
@@ -802,48 +963,20 @@ bool RmeSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat forma
         d->cleanup();
         QByteArray ba = input->readAll();
         input->close();
-        if (format == BinFormat) {
-            if (ba.size() % 0x33e == 0x88) {
-                delete d->m_header;
-                d->m_header = new RmeSongClientHeaderStruct;
-                QByteArray fh = ba.mid(0, 0x88);
-                d->m_header->parseByteArray(fh);
-                for (int i = 0x88; i < ba.size(); i += 0x33e) {
-                    QByteArray sp = ba.mid(i, 0x33e);
-                    RmeSongClientItemStruct *ss = new RmeSongClientItemStruct;
-                    ss->parseByteArray(sp);
-                    d->m_songsList[ss->m_ushSongID] = ss;
-                }
-                d->m_songKeys = d->m_songsList.keys();
-                return true;
-            }
-        } else if (format == XmlFormat) {
-            RmeXmlReader reader(ba);
-            delete d->m_header;
-            d->m_header = new RmeSongClientHeaderStruct(reader.header());
-            for (int32_t i = 0; i < d->m_header->Count; ++i) {
-                RmeSongClientItemStruct *ss = reader.readItem();
-                if (ss == nullptr)
-                    continue;
-                d->m_songsList[ss->m_ushSongID] = ss;
-            }
-            d->m_songKeys = d->m_songsList.keys();
-            return true;
-        } else if (format == JsonFormat) {
-            // Json song client file have no header.
-            RmeJsonReader reader(ba);
-            delete d->m_header;
-            d->m_header = new RmeSongClientHeaderStruct;
-            RmeSongClientItemStruct *ss = reader.readItem();
-            while (ss != nullptr) {
-                d->m_songsList[ss->m_ushSongID] = ss;
-                ss = reader.readItem();
-            }
-            d->m_header->Count = d->m_songsList.count();
 
-            d->m_songKeys = d->m_songsList.keys();
-            return true;
+        std::unique_ptr<RmeFileReader> reader(RmeFileReader::createFileReader(format, ba));
+        if (reader == nullptr)
+            return false;
+
+        d->m_header = reader->readHeader();
+        for (int32_t i = 0; i < d->m_header->Count; ++i) {
+            RmeSongClientItemStruct *ss = reader->readItem();
+            if (ss == nullptr)
+                return false;
+            d->m_songsList[ss->m_ushSongID] = ss;
         }
+        d->m_songKeys = d->m_songsList.keys();
+        return true;
     }
     return false;
 }
@@ -855,22 +988,16 @@ bool RmeSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileFormat format
         return false;
 
     if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        if (format == BinFormat) {
-            output->write(d->m_header->toByteArray(), 0x88);
-            foreach (RmeSongClientItemStruct *s, d->m_songsList)
-                output->write(s->toByteArray(), 0x33e);
-        } else if (format == XmlFormat) {
-            RmeXmlWriter writer(output, false);
-            writer.writeHeader(d->m_header);
-            foreach (RmeSongClientItemStruct *s, d->m_songsList)
-                writer.writeClient(s);
-        } else if (format == JsonFormat) {
-            RmeJsonWriter writer(output, false);
-            writer.writeHeader(d->m_header);
-            foreach (RmeSongClientItemStruct *s, d->m_songsList)
-                writer.writeClient(s);
+        {
+            // All the writer writes their data during destructor so make the writer out of scope when writing done
+            std::unique_ptr<RmeFileWriter> writer(RmeFileWriter::createFileWriter(format, false, output));
+            if (!writer->writeHeader(d->m_header))
+                return false;
+            foreach (RmeSongClientItemStruct *s, d->m_songsList) {
+                if (!writer->writeClient(s))
+                    return false;
+            }
         }
-
         output->close();
         return true;
     }
@@ -1119,49 +1246,20 @@ bool RmePapaSongClientFile::readInfoFromDevice(QIODevice *input, RmeFileFormat f
         d->cleanup();
         QByteArray ba = input->readAll();
         input->close();
-        if (format == BinFormat) {
-            if (ba.size() % 0x169 == 0x88) {
-                delete d->m_header;
-                d->m_header = new RmeSongClientHeaderStruct;
-                QByteArray fh = ba.mid(0, 0x88);
-                d->m_header->parseByteArray(fh);
-                for (int i = 0x88; i < ba.size(); i += 0x169) {
-                    QByteArray sp = ba.mid(i, 0x169);
-                    RmePapaSongClientItemStruct *ss = new RmePapaSongClientItemStruct;
-                    ss->parseByteArray(sp);
-                    d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
-                }
 
-                d->m_songKeys = d->m_songsList.keys();
-                return true;
-            }
-        } else if (format == XmlFormat) {
-            RmeXmlReader reader(ba);
-            delete d->m_header;
-            d->m_header = new RmeSongClientHeaderStruct(reader.header());
-            for (int32_t i = 0; i < d->m_header->Count; ++i) {
-                RmePapaSongClientItemStruct *ss = reader.readPapaItem();
-                if (ss == nullptr)
-                    continue;
-                d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
-            }
+        std::unique_ptr<RmeFileReader> reader(RmeFileReader::createFileReader(format, ba));
+        if (reader == nullptr)
+            return false;
 
-            d->m_songKeys = d->m_songsList.keys();
-            return true;
-        } else if (format == JsonFormat) {
-            RmeJsonReader reader(ba);
-            delete d->m_header;
-            d->m_header = new RmeSongClientHeaderStruct;
-            RmePapaSongClientItemStruct *ss = reader.readPapaItem();
-            while (ss != nullptr) {
-                d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
-                ss = reader.readPapaItem();
-            }
-            d->m_header->Count = d->m_songsList.count();
-
-            d->m_songKeys = d->m_songsList.keys();
-            return true;
+        d->m_header = reader->readHeader();
+        for (int32_t i = 0; i < d->m_header->Count; ++i) {
+            RmePapaSongClientItemStruct *ss = reader->readPapaItem();
+            if (ss == nullptr)
+                return false;
+            d->m_songsList[(int32_t)(ss->m_ushSongID) * 10 + ss->m_cLevel] = ss;
         }
+        d->m_songKeys = d->m_songsList.keys();
+        return true;
     }
     return false;
 }
@@ -1173,22 +1271,16 @@ bool RmePapaSongClientFile::saveInfoToDevice(QIODevice *output, RmeFileFormat fo
         return false;
 
     if (output->open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        if (format == BinFormat) {
-            output->write(d->m_header->toByteArray(), 0x88);
-            foreach (RmePapaSongClientItemStruct *s, d->m_songsList)
-                output->write(s->toByteArray(), 0x169);
-        } else if (format == XmlFormat) {
-            RmeXmlWriter writer(output, true);
-            writer.writeHeader(d->m_header);
-            foreach (RmePapaSongClientItemStruct *s, d->m_songsList)
-                writer.writeClient(s);
-        } else if (format == JsonFormat) {
-            RmeJsonWriter writer(output, true);
-            writer.writeHeader(d->m_header);
-            foreach (RmePapaSongClientItemStruct *s, d->m_songsList)
-                writer.writeClient(s);
+        {
+            // All the writer writes their data during destructor so make the writer out of scope when writing done
+            std::unique_ptr<RmeFileWriter> writer(RmeFileWriter::createFileWriter(format, true, output));
+            if (!writer->writeHeader(d->m_header))
+                return false;
+            foreach (RmePapaSongClientItemStruct *s, d->m_songsList) {
+                if (!writer->writeClient(s))
+                    return false;
+            }
         }
-
         output->close();
         return true;
     }
