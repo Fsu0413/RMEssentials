@@ -75,7 +75,7 @@ struct SongClientEditDialogControls
     QLineEdit *szPath;
     QLineEdit *szArtist;
     QLineEdit *szComposer;
-    QLabel *szSongTime; // Auto Generate
+    QCheckBox *szSongTime; // Auto Generate
     QLineEdit *iGameTime; // Number only
     QLineEdit *iRegion; // QComboBox?
     QLineEdit *iStyle; // QComboBox?
@@ -167,7 +167,9 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     QIntValidator *iGameTimeValidator = new QIntValidator(1, 2147483647, this);
     m_controls->iGameTime->setValidator(iGameTimeValidator);
     connect(m_controls->iGameTime, &QLineEdit::textEdited, this, &SongClientEditDialog::calculateSongTime);
-    m_controls->szSongTime = new QLabel;
+    m_controls->szSongTime = new QCheckBox;
+    connect(m_controls->szSongTime, &QCheckBox::toggled, this, &SongClientEditDialog::calculateSongTime);
+    connect(m_controls->szSongTime, &QCheckBox::toggled, this, &SongClientEditDialog::contentEdited);
     m_controls->iRegion = new QLineEdit;
     connect(m_controls->iRegion, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
     QIntValidator *iRegionValidator = new QIntValidator(0, 11, this);
@@ -613,6 +615,7 @@ void SongClientEditDialog::readCurrent()
     RP_ST(szComposer);
     RP_ST(szSongTime);
     RP_NM(iGameTime);
+    m_controls->szSongTime->setChecked(RmeUtils::calculateSongTime(c.m_iGameTime, true) == c.m_szSongTime);
     RP_NM(iRegion);
     RP_NM(iStyle);
     RP_ST(szBPM);
@@ -653,7 +656,7 @@ void SongClientEditDialog::readCurrent()
 void SongClientEditDialog::calculateSongTime()
 {
     int gameTime = m_controls->iGameTime->text().toInt();
-    m_controls->szSongTime->setText(RmeUtils::calculateSongTime(gameTime));
+    m_controls->szSongTime->setText(RmeUtils::calculateSongTime(gameTime, m_controls->szSongTime->isChecked()));
 }
 
 void SongClientEditDialog::saveCurrent()

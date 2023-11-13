@@ -153,12 +153,20 @@ QString RmeUtils::existImdJsonVersion(const QDir &dir, ExistNote note)
 
 QString RmeUtils::calculateSongTime(int gameTime)
 {
-    double songTime = gameTime / 1440.;
+    return RmeUtils::calculateSongTime(gameTime, false);
+}
+
+QString RmeUtils::calculateSongTime(int gameTime, bool remastered)
+{
+    double songTime = gameTime / (remastered ? 86400. : 1440.);
     int songTimeInt = (int)songTime;
 
     QString r = QString::number(songTime, 'f', qMax(7 - QString::number(songTimeInt).length(), 0));
 
     r = r.left(8);
+    while (r.endsWith(QStringLiteral("0")))
+        r.chop(1);
+
     return r;
 }
 
