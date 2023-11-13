@@ -169,16 +169,40 @@ private slots:
         QCOMPARE(r, result);
     }
 
-    void RmeUtilsCalculateSongTimeInt()
+    void RmeUtilsCalculateSongTimeInt_data()
     {
         // Song from Rhythm Master Remastered have different calculation for this value. Need to calculate both.
-        // Algorithm is (not currently) under investigation.
-
         // This is the old algorithm.
+        QTest::addColumn<int>("arg");
+        QTest::addColumn<QString>("result");
 
-        QString r = RmeUtils::calculateSongTime(133);
-        QString result = QStringLiteral("0.092361");
+        QTest::newRow("133") << 133 << QStringLiteral("0.092361");
+        QTest::newRow("144") << 144 << QStringLiteral("0.1");
+    }
+    void RmeUtilsCalculateSongTimeInt()
+    {
+        QFETCH(int, arg);
+        QFETCH(QString, result);
 
+        QString r = RmeUtils::calculateSongTime(arg);
+        QCOMPARE(r, result);
+    }
+
+    void RmeUtilsCalculateSongTimeIntBool_data()
+    {
+        // This is the new algorithm.
+        QTest::addColumn<int>("arg");
+        QTest::addColumn<QString>("result");
+
+        QTest::newRow("121") << 121 << QStringLiteral("0.0014");
+        QTest::newRow("253") << 253 << QStringLiteral("0.002928");
+    }
+    void RmeUtilsCalculateSongTimeIntBool()
+    {
+        QFETCH(int, arg);
+        QFETCH(QString, result);
+
+        QString r = RmeUtils::calculateSongTime(arg, true);
         QCOMPARE(r, result);
     }
 
