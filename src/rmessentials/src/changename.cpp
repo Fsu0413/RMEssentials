@@ -122,9 +122,9 @@ ChangeNameDialog::ChangeNameDialog(QWidget *parent)
     QPushButton *convertToImdBtn = new QPushButton(tr("Convert All IMDJsons to IMD"));
     connect(convertToImdBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdJsonToImd);
     QPushButton *encryptImdJsonBtn = new QPushButton(tr("Convert All IMDJsons to RMP"));
-    encryptImdJsonBtn->setEnabled(false);
+    connect(encryptImdJsonBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertImdJsonToRmp);
     QPushButton *decryptImdJsonBtn = new QPushButton(tr("Convert All RMPs to IMDJson"));
-    decryptImdJsonBtn->setEnabled(false);
+    connect(decryptImdJsonBtn, &QPushButton::clicked, this, &ChangeNameDialog::convertRmpToImdJson);
 
     QLabel *conversionRestrictionsLabel = new QLabel(
         tr("1. There is no property for total time in IMDJson 1.2.x format. It is calculated when loading the chart. The result may be incorrect.\n"
@@ -298,6 +298,36 @@ void ChangeNameDialog::convertImdJsonToImd()
     converter.setDir(QDir(m_folderName->text()));
 
     bool succeeded = converter.convertImdJsonToImd();
+
+    if (!succeeded)
+        QMessageBox::critical(this, tr("Error"), tr("Some error occurred when converting"));
+    else
+        QMessageBox::information(this, windowTitle(), tr("Conversion succeeded"));
+
+    checkFiles(m_folderName->text());
+}
+
+void ChangeNameDialog::convertImdJsonToRmp()
+{
+    RmeConverter converter;
+    converter.setDir(QDir(m_folderName->text()));
+
+    bool succeeded = converter.convertImdJsonToRmp();
+
+    if (!succeeded)
+        QMessageBox::critical(this, tr("Error"), tr("Some error occurred when converting"));
+    else
+        QMessageBox::information(this, windowTitle(), tr("Conversion succeeded"));
+
+    checkFiles(m_folderName->text());
+}
+
+void ChangeNameDialog::convertRmpToImdJson()
+{
+    RmeConverter converter;
+    converter.setDir(QDir(m_folderName->text()));
+
+    bool succeeded = converter.convertRmpToImdJson();
 
     if (!succeeded)
         QMessageBox::critical(this, tr("Error"), tr("Some error occurred when converting"));

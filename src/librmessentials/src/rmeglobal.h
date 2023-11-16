@@ -54,11 +54,20 @@ enum QuaZipUsage
     QuaZipDynamicLinked = 0x12
 };
 
+enum XxteaUsage
+{
+    XxteaNotUsed = 0x00,
+    XxteaUsing = 0x01,
+    XxteaBundled = 0x11,
+    XxteaDynamicLinked = 0x12,
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 LIBRMESSENTIALS_EXPORT const char *RmeVersion();
 LIBRMESSENTIALS_EXPORT enum QuaZipUsage RmeQuaZipUsage();
+LIBRMESSENTIALS_EXPORT enum XxteaUsage RmeXxteaUsage();
 #ifdef __cplusplus
 }
 LIBRMESSENTIALS_EXPORT QVersionNumber RmeVersionNumber();

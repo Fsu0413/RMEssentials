@@ -16,6 +16,15 @@ QuaZipUsage RmeQuaZipUsage()
 #endif
 }
 
+XxteaUsage RmeXxteaUsage()
+{
+#ifdef RMESSENTIALS_BUILD_STATIC_XXTEA
+    return XxteaBundled;
+#else
+    return XxteaDynamicLinked;
+#endif
+}
+
 QVersionNumber RmeVersionNumber()
 {
     return QVersionNumber::fromString(QStringLiteral(RMEVERSIONNUMBER));

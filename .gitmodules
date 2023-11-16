@@ -1,3 +1,6 @@
 [submodule "quazip"]
 	path = src/quazip/quazip
 	url = ../quazip
+[submodule "xxtea-c"]
+	path = src/xxtea/xxtea-c
+	url = ../xxtea-c

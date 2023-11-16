@@ -58,8 +58,10 @@ private:
 
     QSet<QString> loadSongClientJsonImpl(const QByteArray &arr, const QString &fileName);
     QSet<QString> loadSongClientJson(const QString &fileName);
+    QSet<QString> loadSongClientJsonEncrypted(const QString &fileName);
     QSet<QString> loadMd5ListJsonImpl(const QByteArray &arr, const QString &fileName);
     QSet<QString> loadMd5ListJson(const QString &fileName);
+    QSet<QString> loadMd5ListJsonEncrypted(const QString &fileName);
     QSet<QString> loadMd5ListXml(const QString &fileName);
 
 signals:

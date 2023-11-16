@@ -1,6 +1,7 @@
 #include "download.h"
 #include "main.h"
 
+#include <RmEss/RmeCrypt>
 #include <RmEss/RmeDownloader>
 #include <RmEss/RmeUncompresser>
 
@@ -214,6 +215,40 @@ QSet<QString> DownloadDialog::loadSongClientJson(const QString &fileName)
     return {};
 }
 
+QSet<QString> DownloadDialog::loadSongClientJsonEncrypted(const QString &fileName)
+{
+    QDir dir(RmeDownloader::binDownloadPath());
+    if (!dir.exists())
+        return {};
+
+    if (dir.exists(fileName)) {
+        QFile f(dir.absoluteFilePath(fileName));
+        bool op = f.open(QIODevice::ReadOnly);
+        if (op) {
+            QByteArray arr = f.readAll();
+            f.close();
+
+            QByteArray decrypted = RmeCrypt::decryptFull(arr, currentHash());
+            if (!decrypted.isEmpty()) {
+                if (fileName.endsWith(QStringLiteral(".encrypted"))) {
+                    QString decryptedFileName = fileName.chopped(10).append(QStringLiteral(".decrypted"));
+
+                    QFile fd(dir.absoluteFilePath(decryptedFileName));
+                    bool opd = fd.open(QIODevice::WriteOnly | QIODevice::Truncate);
+                    if (opd) {
+                        fd.write(decrypted);
+                        fd.close();
+                    }
+                }
+
+                return loadSongClientJsonImpl(decrypted, fileName);
+            }
+        }
+    }
+
+    return {};
+}
+
 QSet<QString> DownloadDialog::loadMd5ListJsonImpl(const QByteArray &arr, const QString &fileName)
 {
     QSet<QString> paths;
@@ -269,6 +304,40 @@ QSet<QString> DownloadDialog::loadMd5ListJson(const QString &fileName)
             f.close();
 
             return loadMd5ListJsonImpl(arr, fileName);
+        }
+    }
+
+    return {};
+}
+
+QSet<QString> DownloadDialog::loadMd5ListJsonEncrypted(const QString &fileName)
+{
+    QDir dir(RmeDownloader::binDownloadPath());
+    if (!dir.exists())
+        return {};
+
+    if (dir.exists(fileName)) {
+        QFile f(dir.absoluteFilePath(fileName));
+        bool op = f.open(QIODevice::ReadOnly);
+        if (op) {
+            QByteArray arr = f.readAll();
+            f.close();
+
+            QByteArray decrypted = RmeCrypt::decryptFull(arr, currentHash());
+            if (!decrypted.isEmpty()) {
+                if (fileName.endsWith(QStringLiteral(".encrypted"))) {
+                    QString decryptedFileName = fileName.chopped(10).append(QStringLiteral(".decrypted"));
+
+                    QFile fd(dir.absoluteFilePath(decryptedFileName));
+                    bool opd = fd.open(QIODevice::WriteOnly | QIODevice::Truncate);
+                    if (opd) {
+                        fd.write(decrypted);
+                        fd.close();
+                    }
+                }
+
+                return loadMd5ListJsonImpl(decrypted, fileName);
+            }
         }
     }
 
@@ -345,7 +414,7 @@ void DownloadDialog::warnEncryptedChart()
         // currently we are downloading encrypted chart.
         QMessageBox::information(this, tr("RMEssentials"),
                                  tr("Currently RM official provides only encrypted chart on file server.<br />"
-                                    "This program does not support decryption currently."));
+                                    "Decryption will be implemented elsewhere in this program (TBD)."));
 
         m_encryptedChartWarned = true;
     }
@@ -503,7 +572,7 @@ void DownloadDialog::startDownloadSong(DownloadMode mode)
     };
     // clang-format on
 
-    static QString prefix = QStringLiteral("http://res.ds.qq.com/Test_SongRes_V2/song/");
+    static QString prefix = QStringLiteral("https://res.ds.qq.com/SongRes/song/");
     static QString prefixLegacy = QStringLiteral("https://rm-1301553285.file.myqcloud.com/Com_SongRes/song/");
 
     RmeDownloader *downloader = new RmeDownloader;
@@ -612,11 +681,12 @@ void DownloadDialog::oneUncompressed(const QString &filename)
 void DownloadDialog::startUncompress()
 {
     RmeUncompresser *unc = new RmeUncompresser;
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("MD5List.json"));
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client_android.json"));
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client.json"));
-    // unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_papasong_client.json"));
-    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableCom.zip"), QStringLiteral("mrock_song_client_temp.json"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableEnc.zip"), QStringLiteral("MD5List.json"), QStringLiteral("MD5List.json.encrypted"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableEnc.zip"), QStringLiteral("mrock_song_client_android.json"),
+                 QStringLiteral("mrock_song_client_android.json.encrypted"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableEnc.zip"), QStringLiteral("mrock_song_client.json"), QStringLiteral("mrock_song_client.json.encrypted"));
+    unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableEnc.zip"), QStringLiteral("mrock_song_client_temp.json"),
+                 QStringLiteral("mrock_song_client_temp.json.encrypted"));
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComLegacy.zip"), QStringLiteral("MD5List.json"), QStringLiteral("MD5ListLegacy.json"));
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComLegacy.zip"), QStringLiteral("MD5List.xml"), QStringLiteral("MD5ListLegacy.xml"));
     unc->addFile(RmeDownloader::binDownloadPath() + QStringLiteral("TableComLegacy.zip"), QStringLiteral("mrock_song_client_android.json"),
@@ -636,8 +706,8 @@ void DownloadDialog::downloadList()
     RmeDownloader *downloader = new RmeDownloader;
     downloader->setDownloadPath(RmeDownloader::binDownloadPath());
 
-    QString TableCom = QString(QStringLiteral("http://res.ds.qq.com/Table/BetaTest_V2/%1/TableCom.zip")).arg(currentNum());
-    downloader << TableCom;
+    QString TableEnc = QString(QStringLiteral("https://res.ds.qq.com/Table/Release/%1/TableEnc.zip")).arg(currentNum());
+    downloader << TableEnc;
     QString TableComLegacy = QStringLiteral("https://rm-1301553285.file.myqcloud.com/Table/Dev/32/TableCom.zip");
     downloader << std::make_pair(TableComLegacy, QStringLiteral("TableComLegacy.zip"));
 
@@ -664,10 +734,10 @@ void DownloadDialog::appendLog(const QString &log)
 void DownloadDialog::loadPaths()
 {
     QSet<QString> paths;
-    paths.unite(loadMd5ListJson(QStringLiteral("MD5List.json")))
-        .unite(loadSongClientJson(QStringLiteral("mrock_song_client_android.json")))
-        .unite(loadSongClientJson(QStringLiteral("mrock_song_client.json")))
-        .unite(loadSongClientJson(QStringLiteral("mrock_song_client_temp.json")));
+    paths.unite(loadMd5ListJsonEncrypted(QStringLiteral("MD5List.json.encrypted")))
+        .unite(loadSongClientJsonEncrypted(QStringLiteral("mrock_song_client_android.json.encrypted")))
+        .unite(loadSongClientJsonEncrypted(QStringLiteral("mrock_song_client.json.encrypted")))
+        .unite(loadSongClientJsonEncrypted(QStringLiteral("mrock_song_client_temp.json.encrypted")));
 
     QSet<QString> legacyPaths;
     legacyPaths.unite(loadMd5ListXml(QStringLiteral("MD5ListLegacy.xml")))

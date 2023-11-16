@@ -8,6 +8,7 @@ set(LIBRMESS_HEADERS
     src/rmesongstruct.h
     src/rmeuncompresser.h
     src/rmeutils.h
+    src/rmecrypt.h
 )
 
 set(LIBRMESS_SOURCES
@@ -19,6 +20,7 @@ set(LIBRMESS_SOURCES
     src/rmeuncompresser.cpp
     src/rmeutils.cpp
     src/rmeglobal.cpp
+    src/rmecrypt.cpp
 )
 
 set(LIBRMESS_RESOURCES
@@ -71,6 +73,7 @@ if (Qt6_FOUND)
     target_link_libraries(RmEss6
         PUBLIC Qt6::Core
         PUBLIC Qt6::Network
+        PRIVATE xxtea
     )
     if (RMESSENTIALS_USE_QUAZIP)
         add_dependencies(RmEss6 quazip)
@@ -139,6 +142,7 @@ if (Qt5_FOUND)
     target_link_libraries(RmEss5
         PUBLIC Qt5::Core
         PUBLIC Qt5::Network
+        PRIVATE xxtea
     )
     if (RMESSENTIALS_USE_QUAZIP)
         add_dependencies(RmEss5 quazip)

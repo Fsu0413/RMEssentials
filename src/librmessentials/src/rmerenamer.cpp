@@ -1,5 +1,6 @@
 #include "rmerenamer.h"
 #include "rmechart.h"
+#include "rmecrypt.h"
 #include "rmeutils.h"
 
 #include <QDir>
@@ -13,6 +14,8 @@ using namespace RmeUtils;
 class RmeRenamerPrivate
 {
 public:
+    bool renameSingleRmp(const QString &oldName, const QString &newName);
+
     bool renameMp3();
     bool renameBigPng();
     bool renameSmallPng();
@@ -85,6 +88,38 @@ bool RmeRenamer::runToEasy()
     return true;
 }
 
+bool RmeRenamerPrivate::renameSingleRmp(const QString &oldName, const QString &newName)
+{
+    static const QByteArray rmpKeyPrefix("RMP4TT3RN");
+
+    QFileInfo fi(m_dir.absoluteFilePath(oldName));
+    QFile f(fi.absolutePath());
+    if (!f.open(QFile::ReadOnly))
+        return false;
+
+    QByteArray arr = f.readAll();
+    f.close();
+
+    QByteArray rmpKeyOld = rmpKeyPrefix + fi.baseName().toLatin1();
+    rmpKeyOld.resize(16);
+    QByteArray decryptedArr = RmeCrypt::decryptXxteaOnly(arr, rmpKeyOld);
+
+    QFileInfo fiNew(m_dir.absoluteFilePath(newName));
+    QByteArray rmpKeyNew = rmpKeyPrefix + fiNew.baseName().toLatin1();
+    rmpKeyNew.resize(16);
+    QByteArray encryptedArr = RmeCrypt::encryptXxteaOnly(decryptedArr, rmpKeyNew);
+
+    QFile fNew(fiNew.absolutePath());
+    if (!fNew.open(QFile::WriteOnly | QFile::Truncate))
+        return false;
+    fNew.write(encryptedArr);
+    fNew.close();
+
+    m_dir.remove(oldName);
+
+    return true;
+}
+
 bool RmeRenamerPrivate::renameImdsToEasy()
 {
     for (ExistNote i = IMD_4K_EZ; i <= MDE_HD; i = static_cast<ExistNote>(i << 1)) {
@@ -141,7 +176,7 @@ bool RmeRenamerPrivate::renameRmpsToEasy()
                 i_easiest = static_cast<ExistNote>(i_easiest << 1);
 
             if ((m_dir.dirName() + noteFileNameSuffix(i_easiest)) != file_name)
-                m_dir.rename(file_name, (m_dir.dirName() + noteFileNameSuffix(i_easiest)));
+                renameSingleRmp(file_name, (m_dir.dirName() + noteFileNameSuffix(i_easiest)));
         }
     }
 
@@ -281,7 +316,7 @@ bool RmeRenamerPrivate::renameRmps()
         QString file_name;
         file_name.append(m_dir.dirName()).append(noteFileNameSuffix(i));
         if (m_dir.exists(file_name))
-            m_dir.rename(file_name, m_toRename + noteFileNameSuffix(i));
+            renameSingleRmp(file_name, m_toRename + noteFileNameSuffix(i));
     }
 
     return true;
@@ -459,6 +494,92 @@ bool RmeConverter::convertImdJsonToImd()
             }
             fImd.write(arrImd);
             fImd.close();
+        }
+    }
+
+    return flag;
+}
+
+bool RmeConverter::convertRmpToImdJson()
+{
+    Q_D(RmeConverter);
+    if (!d->m_dir.exists())
+        return false;
+
+    bool flag = true;
+
+    for (ExistNote i = RMP_4K_EZ; i <= RMP_6K_HD; i = static_cast<ExistNote>(i << 1)) {
+        static const QByteArray rmpKeyPrefix("RMP4TT3RN");
+
+        QString file_name;
+        file_name.append(d->m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (d->m_dir.exists(file_name)) {
+            QFile f(d->m_dir.absoluteFilePath(file_name));
+            if (!f.open(QIODevice::ReadOnly)) {
+                flag = false;
+                continue;
+            }
+
+            QByteArray arr = f.readAll();
+            f.close();
+
+            ExistNote converted = static_cast<ExistNote>(i >> 9);
+            QString toFileName;
+            toFileName.append(d->m_dir.dirName()).append(noteFileNameSuffix(converted));
+
+            QByteArray rmpKeySuffix = file_name.chopped(4).toLatin1();
+            QByteArray imdjson = RmeCrypt::decryptFull(arr, rmpKeyPrefix + rmpKeySuffix);
+
+            QFile fImdJson(d->m_dir.absoluteFilePath(toFileName));
+            if (!fImdJson.open(QFile::WriteOnly)) {
+                flag = false;
+                continue;
+            }
+            fImdJson.write(imdjson);
+            fImdJson.close();
+        }
+    }
+
+    return flag;
+}
+
+bool RmeConverter::convertImdJsonToRmp()
+{
+    Q_D(RmeConverter);
+    if (!d->m_dir.exists())
+        return false;
+
+    bool flag = true;
+
+    for (ExistNote i = IMDJSON_4K_EZ; i <= IMDJSON_6K_HD; i = static_cast<ExistNote>(i << 1)) {
+        static const QByteArray rmpKeyPrefix("RMP4TT3RN");
+
+        QString file_name;
+        file_name.append(d->m_dir.dirName()).append(noteFileNameSuffix(i));
+        if (d->m_dir.exists(file_name)) {
+            QFile f(d->m_dir.absoluteFilePath(file_name));
+            if (!f.open(QIODevice::ReadOnly)) {
+                flag = false;
+                continue;
+            }
+
+            QByteArray arr = f.readAll();
+            f.close();
+
+            ExistNote converted = static_cast<ExistNote>(i << 9);
+            QString toFileName;
+            toFileName.append(d->m_dir.dirName()).append(noteFileNameSuffix(converted));
+
+            QByteArray rmpKeySuffix = toFileName.chopped(4).toLatin1();
+            QByteArray rmp = RmeCrypt::encryptFull(arr, rmpKeyPrefix + rmpKeySuffix);
+
+            QFile fRmp(d->m_dir.absoluteFilePath(toFileName));
+            if (!fRmp.open(QFile::WriteOnly)) {
+                flag = false;
+                continue;
+            }
+            fRmp.write(rmp);
+            fRmp.close();
         }
     }
 

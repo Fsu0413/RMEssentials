@@ -501,10 +501,10 @@ bool SongClientEditDialog::loadFile()
 
     QString filepath;
     RmeFileFormat format = JsonFormat;
-    if (d.exists() && d.exists(QStringLiteral("mrock_song_client_android.json")))
-        filepath = d.absoluteFilePath(QStringLiteral("mrock_song_client_android.json"));
+    if (d.exists() && d.exists(QStringLiteral("mrock_song_client_android.json.decrypted")))
+        filepath = d.absoluteFilePath(QStringLiteral("mrock_song_client_android.json.decrypted"));
     else {
-        QMessageBox::information(this, tr("RMEssentials"), tr("mrock_song_client_android.json doesn't exist, please select the file to open."));
+        QMessageBox::information(this, tr("RMEssentials"), tr("mrock_song_client_android.json.decrypted doesn't exist, please select the file to open."));
         format = getOpenFileName(this, filepath);
     }
     if (filepath.isNull())

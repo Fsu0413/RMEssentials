@@ -33,6 +33,8 @@ private slots:
 
     void convertImdToImdJson();
     void convertImdJsonToImd();
+    void convertImdJsonToRmp();
+    void convertRmpToImdJson();
 
 signals:
     void folderSelected(const QString &folder);

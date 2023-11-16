@@ -38,6 +38,8 @@ public:
 
     bool convertImdToImdJson(const RmeChartVersion &version);
     bool convertImdJsonToImd();
+    bool convertRmpToImdJson();
+    bool convertImdJsonToRmp();
 
     void setDir(const QDir &d);
     const QDir &dir() const;

@@ -266,7 +266,7 @@
     </message>
     <message>
         <location filename="../src/changename.cpp" line="166"/>
-        <location filename="../src/changename.cpp" line="313"/>
+        <location filename="../src/changename.cpp" line="343"/>
         <source>Missing</source>
         <translation>缺失</translation>
     </message>
@@ -287,6 +287,8 @@
         <location filename="../src/changename.cpp" line="281"/>
         <location filename="../src/changename.cpp" line="288"/>
         <location filename="../src/changename.cpp" line="303"/>
+        <location filename="../src/changename.cpp" line="318"/>
+        <location filename="../src/changename.cpp" line="333"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -308,17 +310,21 @@
     <message>
         <location filename="../src/changename.cpp" line="288"/>
         <location filename="../src/changename.cpp" line="303"/>
+        <location filename="../src/changename.cpp" line="318"/>
+        <location filename="../src/changename.cpp" line="333"/>
         <source>Some error occurred when converting</source>
         <translation>在转换过程中发生错误</translation>
     </message>
     <message>
         <location filename="../src/changename.cpp" line="290"/>
         <location filename="../src/changename.cpp" line="305"/>
+        <location filename="../src/changename.cpp" line="320"/>
+        <location filename="../src/changename.cpp" line="335"/>
         <source>Conversion succeeded</source>
         <translation>转换成功</translation>
     </message>
     <message>
-        <location filename="../src/changename.cpp" line="312"/>
+        <location filename="../src/changename.cpp" line="342"/>
         <source>Exists</source>
         <translation>存在</translation>
     </message>
@@ -384,12 +390,12 @@ Are you sure?</source>
 <context>
     <name>DownloadButton</name>
     <message>
-        <location filename="../src/download.cpp" line="37"/>
+        <location filename="../src/download.cpp" line="38"/>
         <source>Download!</source>
         <translation>下载！</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="42"/>
+        <location filename="../src/download.cpp" line="43"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -397,83 +403,83 @@ Are you sure?</source>
 <context>
     <name>DownloadDialog</name>
     <message>
-        <location filename="../src/download.cpp" line="578"/>
+        <location filename="../src/download.cpp" line="647"/>
         <source> download successful</source>
         <translation> 下载完成</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="584"/>
+        <location filename="../src/download.cpp" line="653"/>
         <source> download failed</source>
         <translation> 下载失败</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="70"/>
-        <location filename="../src/download.cpp" line="317"/>
+        <location filename="../src/download.cpp" line="71"/>
+        <location filename="../src/download.cpp" line="386"/>
         <source>Rhythm Master Downloader</source>
         <translation>节奏大师文件下载器</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="111"/>
-        <location filename="../src/download.cpp" line="150"/>
+        <location filename="../src/download.cpp" line="112"/>
+        <location filename="../src/download.cpp" line="151"/>
         <source>Filename:</source>
         <translation>文件名：</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="345"/>
-        <source>Currently RM official provides only encrypted chart on file server.&lt;br /&gt;This program does not support decryption currently.</source>
-        <translation>当前节奏大师官方在服务器中只提供加密的谱面。&lt;br /&gt;此程序目前还不支持解密功能。</translation>
-    </message>
-    <message>
-        <location filename="../src/download.cpp" line="589"/>
+        <location filename="../src/download.cpp" line="658"/>
         <source>All files downloaded</source>
         <translation>全部文件已下载</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="607"/>
+        <location filename="../src/download.cpp" line="676"/>
         <source> has been uncompressed</source>
         <translation> 已解压</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="190"/>
-        <location filename="../src/download.cpp" line="251"/>
-        <location filename="../src/download.cpp" line="298"/>
+        <location filename="../src/download.cpp" line="191"/>
+        <location filename="../src/download.cpp" line="286"/>
+        <location filename="../src/download.cpp" line="367"/>
         <source> has been loaded</source>
         <translation> 已载入</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="690"/>
+        <location filename="../src/download.cpp" line="760"/>
         <source>All files loaded</source>
         <translation>全部文件已载入</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="113"/>
-        <location filename="../src/download.cpp" line="152"/>
+        <location filename="../src/download.cpp" line="114"/>
+        <location filename="../src/download.cpp" line="153"/>
         <source>Download All</source>
         <translation>下载全部</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="74"/>
+        <location filename="../src/download.cpp" line="75"/>
         <source>Song &amp;&amp; RMPs</source>
         <translation>歌曲与 RMP 谱面</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="75"/>
+        <location filename="../src/download.cpp" line="76"/>
         <source>Legacy Song &amp;&amp; IMDs</source>
         <translation>旧歌曲与 IMD 谱面</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="116"/>
-        <location filename="../src/download.cpp" line="155"/>
+        <location filename="../src/download.cpp" line="117"/>
+        <location filename="../src/download.cpp" line="156"/>
         <source>Download missing</source>
         <translation>下载缺失</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="598"/>
+        <location filename="../src/download.cpp" line="414"/>
+        <source>Currently RM official provides only encrypted chart on file server.&lt;br /&gt;Decryption will be implemented elsewhere in this program (TBD).</source>
+        <translation>当前节奏大师官方在服务器中只提供加密的谱面。&lt;br /&gt;解密功能将在以后另外实现（暂未确定）。</translation>
+    </message>
+    <message>
+        <location filename="../src/download.cpp" line="667"/>
         <source>Download canceled</source>
         <translation>下载已取消</translation>
     </message>
     <message>
-        <location filename="../src/download.cpp" line="344"/>
+        <location filename="../src/download.cpp" line="413"/>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
     </message>
@@ -481,78 +487,104 @@ Are you sure?</source>
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="../src/main.cpp" line="52"/>
+        <location filename="../src/main.cpp" line="56"/>
         <source>File Downloader</source>
         <translation>文件下载器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="56"/>
+        <location filename="../src/main.cpp" line="60"/>
         <source>Song Client Editor</source>
         <translation>客户端歌曲编辑器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="60"/>
+        <location filename="../src/main.cpp" line="64"/>
         <source>Papa Song Client Editor</source>
         <translation>星动模式客户端编辑器</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="69"/>
+        <location filename="../src/main.cpp" line="73"/>
         <source>About Qt...</source>
         <translation>关于 Qt...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="72"/>
+        <location filename="../src/main.cpp" line="76"/>
         <source>About QuaZip...</source>
         <translation>关于 QuaZip...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="170"/>
+        <location filename="../src/main.cpp" line="179"/>
+        <source>
+
+This Program is linked against XXTEA-c %1.
+</source>
+        <translation>
+
+这个程序链接时使用 XXTEA-c %1。
+</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="180"/>
         <source>About RMEssentials</source>
         <translation>关于节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="176"/>
+        <location filename="../src/main.cpp" line="186"/>
         <source>This program is linked against QuaZip %1, which is licensed under LGPL 2.1.&lt;br /&gt;QuaZip GitHub page: &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;</source>
         <translation>这个程序链接时使用 QuaZip %1，它通过 LGPL 2.1 许可证授权。&lt;br /&gt;QuaZip 的 GitHub 页面： &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="180"/>
+        <location filename="../src/main.cpp" line="190"/>
         <source>About QuaZip</source>
         <translation>关于 QuaZip</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="335"/>
-        <location filename="../src/main.cpp" line="361"/>
+        <location filename="../src/main.cpp" line="200"/>
+        <source>About XXTEA</source>
+        <translation>关于 XXTEA</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="299"/>
+        <source>Meta data file download failed and temporary values are used instead.&lt;br / &gt;Restart this program if you&apos;d like to retry.</source>
+        <translation>元数据下载失败，将使用临时值。&lt;br /&gt;如果要重试的话，请重启程序。</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="399"/>
+        <location filename="../src/main.cpp" line="425"/>
         <source>External storage permission not granted. RMEssentials won&apos;t work without this permission. Please check your permission setting.</source>
         <translation>没有授予外部存储器权限。节奏大师工具箱在没有权限的情况下无法工作。请检查您的权限配置。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="347"/>
+        <location filename="../src/main.cpp" line="411"/>
         <source>Please find RMEssentials in following UI and grant external storage permission. RMEssentials won&apos;t work without it.</source>
         <translation>请在随后的界面中找到 RMEssentials （节奏大师工具箱）并授予外部存储器权限。节奏大师工具箱在没有权限的情况下无法工作。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="45"/>
+        <location filename="../src/main.cpp" line="49"/>
         <source>Rhythm Master Essensials  </source>
         <translation>节奏大师工具箱  </translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="48"/>
+        <location filename="../src/main.cpp" line="52"/>
         <source>Renamer and Converter</source>
         <translation>文件改名器 / 转换工具</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="66"/>
+        <location filename="../src/main.cpp" line="70"/>
         <source>About RMEssentials...</source>
         <translation>关于节奏大师工具箱...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="76"/>
+        <location filename="../src/main.cpp" line="79"/>
+        <source>About XXTEA...</source>
+        <translation>关于 XXTEA...</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="82"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="159"/>
+        <location filename="../src/main.cpp" line="168"/>
         <source>The version of RMEssentials frontend is: %1.
 
 RMEssentials is a small software written by Fsu0413 (from Wings of Melody). 
@@ -571,7 +603,7 @@ This Program is linked against libRmEss %1, and loads libRMEss %4 to run.</sourc
 这个程序链接时使用 libRMEss %1，运行时加载libRMEss %4。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="168"/>
+        <location filename="../src/main.cpp" line="177"/>
         <source>
 
 This Program is linked against QuaZip %1.</source>
@@ -580,25 +612,31 @@ This Program is linked against QuaZip %1.</source>
 这个程序链接时使用 QuaZip %1。</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="198"/>
+        <location filename="../src/main.cpp" line="196"/>
+        <source>This program is linked against XXTEA-c %1, which is licensed under MIT.&lt;br /&gt;XXTEA-c GitHub page: &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;</source>
+        <translation>这个程序链接时使用 XXTEA-c %1，它通过 MIT 许可证授权。&lt;br /&gt;XXTEA-c 的 GitHub 页面： &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="217"/>
         <source>Failed to load whatsnew from network</source>
         <translation>从网络获取更新信息失败</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="220"/>
+        <location filename="../src/main.cpp" line="239"/>
         <source>New version avaliable!! Version number: %1&lt;br /&gt;You can download the new version at &lt;a href=&apos;%2&apos;&gt;here&lt;/a&gt;, the password is &quot;%3&quot;&lt;br /&gt;&lt;br /&gt;What&apos;s new in version %1: &lt;br /&gt; %4</source>
         <translation>迎接新版本！！版本号： %1 &lt;br /&gt;可以在&lt;a href=&apos;%2&apos;&gt;这里&lt;/a&gt;下载，提取码是&quot;%3&quot; &lt;br /&gt;&lt;br /&gt;%1版本更新内容：&lt;br /&gt;%4</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="225"/>
-        <location filename="../src/main.cpp" line="334"/>
-        <location filename="../src/main.cpp" line="346"/>
-        <location filename="../src/main.cpp" line="360"/>
+        <location filename="../src/main.cpp" line="244"/>
+        <location filename="../src/main.cpp" line="298"/>
+        <location filename="../src/main.cpp" line="398"/>
+        <location filename="../src/main.cpp" line="410"/>
+        <location filename="../src/main.cpp" line="424"/>
         <source>RMEssentials</source>
         <translation>节奏大师工具箱</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="218"/>
+        <location filename="../src/main.cpp" line="237"/>
         <source>  new version %1 available</source>
         <translation>  新版本 %1 可用</translation>
     </message>
@@ -788,11 +826,6 @@ This Program is linked against QuaZip %1.</source>
         <translation>只能输入数字，最好留空</translation>
     </message>
     <message>
-        <location filename="../src/songclientedit.cpp" line="512"/>
-        <source>mrock_song_client_android.json doesn&apos;t exist, please select the file to open.</source>
-        <translation>mrock_song_client_android.json 不存在，请选择文件打开。</translation>
-    </message>
-    <message>
         <location filename="../src/songclientedit.cpp" line="896"/>
         <source>TXT files</source>
         <translation>TXT 文件</translation>
@@ -842,6 +875,11 @@ This Program is linked against QuaZip %1.</source>
         <location filename="../src/songclientedit.cpp" line="538"/>
         <source>Read file failed</source>
         <translation>读取文件失败</translation>
+    </message>
+    <message>
+        <location filename="../src/songclientedit.cpp" line="512"/>
+        <source>mrock_song_client_android.json.decrypted doesn&apos;t exist, please select the file to open.</source>
+        <translation>mrock_song_client_android.json.decrypted 不存在，请选择文件打开。</translation>
     </message>
     <message>
         <location filename="../src/songclientedit.cpp" line="574"/>
