@@ -264,7 +264,8 @@ bool RmeRenamerPrivate::renamePapaPngs()
         if (s.toLower() == (m_dir.dirName() + QStringLiteral("_title_140_90.png")).toLower()) {
             origname_small = s;
             break;
-        } else if (s.toLower() == (m_dir.dirName() + QStringLiteral("_ipad.png")).toLower()) {
+        }
+        if (s.toLower() == (m_dir.dirName() + QStringLiteral("_ipad.png")).toLower()) {
             origname_big = s;
         }
     }

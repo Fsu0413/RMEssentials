@@ -21,9 +21,7 @@ public:
         , m_isError(false)
     {
     }
-    virtual ~RmeFileReader()
-    {
-    }
+    virtual ~RmeFileReader() = default;
 
     constexpr inline bool isPapa() const
     {
@@ -64,9 +62,7 @@ public:
         : m_isPapa(isPapa)
     {
     }
-    virtual ~RmeFileWriter()
-    {
-    }
+    virtual ~RmeFileWriter() = default;
 
     constexpr inline bool isPapa() const
     {
@@ -645,7 +641,6 @@ private:
     QIODevice *m_device;
 
     Q_DISABLE_COPY(RmeJsonWriter)
-    RmeJsonWriter() = delete;
 };
 
 RmeJsonReader::RmeJsonReader(const QByteArray &array)

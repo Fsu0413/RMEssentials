@@ -41,7 +41,8 @@ QByteArray RmeCrypt::decryptFull(const QByteArray &encrypted, const QByteArray &
             if (err == Z_OK) {
                 finalBa.resize(destLen);
                 break;
-            } else if (err != Z_BUF_ERROR) {
+            }
+            if (err != Z_BUF_ERROR) {
                 finalBa.clear();
                 break;
             }

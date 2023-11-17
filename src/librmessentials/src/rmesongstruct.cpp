@@ -406,7 +406,7 @@ QVariantMap RmeSongClientItemStruct::toMap() const
 
 namespace {
 // clang-format off
-const char *NoteNumSuffix[] = {
+std::array<const char *, 9> NoteNumSuffix = {
     "_4KeyEasy",
     "_4KeyNormal",
     "_4KeyHard",
@@ -423,7 +423,7 @@ const char *NoteNumSuffix[] = {
 QJsonObject RmeSongClientItemStruct::createPatch(const RmeSongClientItemStruct &orig) const
 {
     if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath))
-        return QJsonObject();
+        return {};
 
     QJsonObject ob;
 
@@ -491,7 +491,7 @@ QJsonObject RmeSongClientItemStruct::createPatch(const RmeSongClientItemStruct &
     }
 
     if (ob.size() == 2)
-        return QJsonObject();
+        return {};
 
     return ob;
 }
@@ -767,7 +767,7 @@ QVariantMap RmePapaSongClientItemStruct::toMap() const
 QJsonObject RmePapaSongClientItemStruct::createPatch(const RmePapaSongClientItemStruct &orig) const
 {
     if (!(m_ushSongID == orig.m_ushSongID && m_szPath == orig.m_szPath && m_cDifficulty == orig.m_cDifficulty))
-        return QJsonObject();
+        return {};
 
     QJsonObject ob;
 
@@ -804,7 +804,7 @@ QJsonObject RmePapaSongClientItemStruct::createPatch(const RmePapaSongClientItem
         ob[QStringLiteral("szNoteNumber")] = QJsonValue(static_cast<int>(noteNum));
 
     if (ob.size() == 2)
-        return QJsonObject();
+        return {};
 
     return ob;
 }

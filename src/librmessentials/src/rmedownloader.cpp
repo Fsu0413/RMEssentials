@@ -64,7 +64,7 @@ RmeDownloaderPrivate::RmeDownloaderPrivate(RmeDownloader *downloader)
     , m_currentDownloadingReply(nullptr)
     , m_networkAccessManager(nullptr)
     , m_timer(nullptr)
-    , m_lastRecordedDownloadProgress(0u)
+    , m_lastRecordedDownloadProgress(0U)
 {
 }
 
@@ -143,7 +143,7 @@ QString RmeDownloader::binDownloadPath()
     QDir currentDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
     if (!currentDir.cd(QStringLiteral("RMEssentials"))) {
         if (!currentDir.mkdir(QStringLiteral("RMEssentials")))
-            return QString();
+            return {};
         currentDir.cd(QStringLiteral("RMEssentials"));
     }
 #elif defined(Q_OS_ANDROID)
@@ -152,7 +152,7 @@ QString RmeDownloader::binDownloadPath()
         currentDir = QDir(QStringLiteral("/sdcard"));
         if (!currentDir.mkpath(QStringLiteral("/sdcard/RM/res"))) {
             qDebug() << "can't use /sdcard/RM/res for path";
-            return QString();
+            return {};
         }
         currentDir = QDir(QStringLiteral("/sdcard/RM/res"));
     }
@@ -160,7 +160,7 @@ QString RmeDownloader::binDownloadPath()
     QDir currentDir = QDir::current();
     if (!currentDir.cd(QStringLiteral("downloader"))) {
         if (!currentDir.mkdir(QStringLiteral("downloader")))
-            return QString();
+            return {};
         currentDir.cd(QStringLiteral("downloader"));
     }
 #endif
@@ -178,7 +178,7 @@ QString RmeDownloader::songDownloadPath()
 
     if (!currentDir.cd(QStringLiteral("song"))) {
         if (!currentDir.mkdir(QStringLiteral("song")))
-            return QString();
+            return {};
         currentDir.cd(QStringLiteral("song"));
     }
 
@@ -195,7 +195,7 @@ QString RmeDownloader::legacySongDownloadPath()
 
     if (!currentDir.cd(QStringLiteral("songLegacy"))) {
         if (!currentDir.mkdir(QStringLiteral("songLegacy")))
-            return QString();
+            return {};
         currentDir.cd(QStringLiteral("songLegacy"));
     }
 
@@ -259,7 +259,8 @@ void RmeDownloaderPrivate::downloadSingleFile()
         m_running = false;
         emit m_downloader->allCompleted();
         return;
-    } else if (m_canceled) {
+    }
+    if (m_canceled) {
         m_running = false;
         m_canceled = false;
         emit m_downloader->canceled();
