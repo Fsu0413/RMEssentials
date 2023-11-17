@@ -149,6 +149,40 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
     return ob;
 }
 
+bool RmeChartNote::operator<(const RmeChartNote &arg2) const
+{
+    // "one main rule": earlier note must be put before
+    if (timestamp < arg2.timestamp)
+        return true;
+
+    // only here: notes appear same time need sorting
+    if (timestamp == arg2.timestamp) {
+        // make sure 0x21 / 0x61 appears before corresponding 0x22 / 0xA2
+        // (this) 0x21 / 0x61 -> attr != 0, dur == 0, isEnd == false, toTrack != track
+        // (arg2) 0x22 / 0xA2 -> attr == 4, dur != 0
+        // (and) if toTrack == arg2.track and all of above then return true!
+        if (attr != 0 && timeDur == 0 && !isEnd && toTrack != track && arg2.attr == 4 && arg2.timeDur != 0 && toTrack == arg2.track)
+            return true;
+
+        // strong sequence guarantee of above: reverse sequence is not allowed, so reverse arg2 and this for above judgement and return false
+        if (arg2.attr != 0 && arg2.timeDur == 0 && !arg2.isEnd && arg2.toTrack != arg2.track && attr == 4 && timeDur != 0 && arg2.toTrack == track)
+            return false;
+
+        //            // slide / long-press is put before single-click
+        //            if (attr != 0 && arg2.attr == 0)
+        //                return true;
+        //            // strong sequence guarantee of above
+        //            if (arg2.attr != 0 && attr == 0)
+        //                return false;
+
+        // After all, sort by track
+        return track < arg2.track;
+    }
+
+    // still "one main rule": later note must be put afterwards
+    return false;
+}
+
 RmeChartNote RmeChartNote::fromImdNote(const QByteArray &arr, bool *ok)
 {
     RmeChartNote note {0};
