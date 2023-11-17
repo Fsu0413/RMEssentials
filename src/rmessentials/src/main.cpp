@@ -298,8 +298,8 @@ void MainDialog::oneMetainfoFileDownloaded(const QString &url)
             QMessageBox::warning(this, tr("RMEssentials"),
                                  tr("Meta data file download failed and temporary values are used instead.<br / >"
                                     "Restart this program if you'd like to retry."));
-            (*num) = QStringLiteral("666");
-            (*decryptKey) = "8AzYBn8t7ZXpls0y";
+            (*num) = QStringLiteral("786");
+            (*decryptKey) = "t31lIexkaCtEX6Nt";
         }
 
         (*num) = (*num).trimmed();
