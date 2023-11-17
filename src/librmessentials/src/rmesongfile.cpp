@@ -900,6 +900,8 @@ RmeFileReader *RmeFileReader::createFileReader(RmeFileFormat format, const QByte
         return new RmeXmlReader(arr);
     case JsonFormat:
         return new RmeJsonReader(arr);
+    default:
+        break;
     }
 
     return nullptr;
@@ -914,6 +916,8 @@ RmeFileWriter *RmeFileWriter::createFileWriter(RmeFileFormat format, bool isPapa
         return new RmeXmlWriter(device, isPapa);
     case JsonFormat:
         return new RmeJsonWriter(device, isPapa);
+    default:
+        break;
     }
 
     return nullptr;
