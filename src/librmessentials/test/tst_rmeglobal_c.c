@@ -16,3 +16,8 @@ enum QuaZipUsage tstRmeQuaZipUsage()
 {
     return RmeQuaZipUsage();
 }
+
+enum XxteaUsage tstRmeXxteaUsage()
+{
+    return RmeXxteaUsage();
+}

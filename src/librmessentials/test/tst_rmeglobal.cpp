@@ -8,6 +8,7 @@
 extern "C" {
 const char *tstRmeVersion();
 QuaZipUsage tstRmeQuaZipUsage();
+XxteaUsage tstRmeXxteaUsage();
 }
 
 class tst_RmeGlobal : public QObject
@@ -29,6 +30,12 @@ private slots:
     {
         QuaZipUsage usage = tstRmeQuaZipUsage();
         QCOMPARE(usage, RmeQuaZipUsage());
+    }
+
+    void RmeGlobalRmeXxteaUsage()
+    {
+        XxteaUsage usage = tstRmeXxteaUsage();
+        QCOMPARE(usage, RmeXxteaUsage());
     }
 
     // C++ only interface, called for coverage

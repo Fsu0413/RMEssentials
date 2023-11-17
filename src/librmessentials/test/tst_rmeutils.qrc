@@ -15,5 +15,13 @@
         <file>tst_rmeutils/papasmallpng/papasmallpng_title_140_90.png</file>
         <file>tst_rmeutils/smallpnghd/smallpnghd_title_hd.png</file>
         <file>tst_rmeutils/smallpngipad/smallpngipad_title_ipad.png</file>
+        <file>tst_rmeutils/garbagepng/garbagepng_garbage.png</file>
+        <file>tst_rmeutils/garbagepng/garbagepng_garb2.png</file>
+        <file>tst_rmeutils/garbagepng/a.png</file>
+        <file>tst_rmeutils/garbagepng/a_ipad.png</file>
+        <file>tst_rmeutils/garbagepng/a_thumb.png</file>
+        <file>tst_rmeutils/garbagepng/a_title_hd.png</file>
+        <file>tst_rmeutils/garbagepng/a_title_ipad.png</file>
+        <file>tst_rmeutils/garbagepng/a_title_140_90.png</file>
     </qresource>
 </RCC>

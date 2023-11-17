@@ -37,6 +37,7 @@ private slots:
         QTest::addColumn<bool>("result");
 
         QTest::newRow("exist") << QStringLiteral("bigpng") << true;
+        QTest::newRow("garbage") << QStringLiteral("garbagepng") << false;
         QTest::newRow("non-exist") << QStringLiteral("empty") << false;
     }
     void RmeUtilsHasBigPngQDir()
@@ -57,6 +58,7 @@ private slots:
 
         QTest::newRow("hd") << QStringLiteral("smallpnghd") << true << QStringLiteral("_title_hd");
         QTest::newRow("ipad") << QStringLiteral("smallpngipad") << true << QStringLiteral("_title_ipad");
+        QTest::newRow("garbage") << QStringLiteral("garbagepng") << false << QString();
         QTest::newRow("non-exist") << QStringLiteral("empty") << false << QString();
     }
     void RmeUtilsHasSmallPngQDirQStringR()
@@ -79,6 +81,7 @@ private slots:
         QTest::addColumn<bool>("result");
 
         QTest::newRow("exist") << QStringLiteral("newbigpng") << true;
+        QTest::newRow("garbage") << QStringLiteral("garbagepng") << false;
         QTest::newRow("non-exist") << QStringLiteral("empty") << false;
     }
     void RmeUtilsHasNewBigPngQDir()
@@ -97,6 +100,7 @@ private slots:
         QTest::addColumn<bool>("result");
 
         QTest::newRow("exist") << QStringLiteral("newsmallpng") << true;
+        QTest::newRow("garbage") << QStringLiteral("garbagepng") << false;
         QTest::newRow("non-exist") << QStringLiteral("empty") << false;
     }
     void RmeUtilsHasNewSmallPngQDir()
@@ -121,6 +125,7 @@ private slots:
         QTest::addColumn<bool>("result");
 
         QTest::newRow("exist") << QStringLiteral("papasmallpng") << true;
+        QTest::newRow("garbage") << QStringLiteral("garbagepng") << false;
         QTest::newRow("non-exist") << QStringLiteral("empty") << false;
     }
     void RmeUtilsHasPapaSmallPngQDir()
