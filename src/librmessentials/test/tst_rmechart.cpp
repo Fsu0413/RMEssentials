@@ -219,7 +219,7 @@ private slots:
                                        };
 
         // from yingxiongsha
-        QTest::newRow("130/dur==0") << (unsigned char)4 << (unsigned int)78181 << (int)0 << false << (unsigned char)3 << (unsigned int)1 << (unsigned char)3
+        QTest::newRow("130/dur==0") << (unsigned char)4 << (unsigned int)78181 << (int)0 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)3
                                     << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_3_0) << (double)132 << (int)346
                                     << QVariantMap {
                                            // clang-format off
@@ -232,7 +232,7 @@ private slots:
                                            std::make_pair(QStringLiteral("pan"), 0),
                                            std::make_pair(QStringLiteral("attr"), 3),
                                            std::make_pair(QStringLiteral("time"), 78181),
-                                           std::make_pair(QStringLiteral("time_dur"), 1),
+                                           std::make_pair(QStringLiteral("time_dur"), -1),
                                            std::make_pair(QStringLiteral("idx"), 346),
                                            // clang-format on
                                        };

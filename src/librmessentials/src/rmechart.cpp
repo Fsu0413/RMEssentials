@@ -130,7 +130,7 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
     QJsonObject ob;
     ob.insert(QStringLiteral("tick"), (qint64)(timestamp2tick(timestamp, bpm)));
     ob.insert(QStringLiteral("key"), key);
-    if (attr != 0)
+    if (attr != 0 && timeDur != 0)
         ob.insert(QStringLiteral("dur"), (qint64)(timestamp2tick(timestamp + timeDur, bpm) - timestamp2tick(timestamp, bpm)));
     else
         ob.insert(QStringLiteral("dur"), (qint64)0);
@@ -142,7 +142,10 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
 
     if (version >= RmeChartVersion::v1_2_3) {
         ob.insert(QStringLiteral("time"), (qint64)timestamp);
-        ob.insert(QStringLiteral("time_dur"), (qint64)timeDur);
+        if (timeDur == 0)
+            ob.insert(QStringLiteral("time_dur"), (qint64)((qint64)toTrack - (qint64)track));
+        else
+            ob.insert(QStringLiteral("time_dur"), (qint64)timeDur);
         ob.insert(QStringLiteral("idx"), idx);
     }
 
