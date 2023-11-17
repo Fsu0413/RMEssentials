@@ -3,6 +3,8 @@
 
 #include <QFile>
 
+#include <array>
+
 const QString RmeSongClientHeaderStruct::CreateTime = QStringLiteral("   0-00-00 00:00:00");
 
 // use txt file with qrc to store the "limited time" chinese characters
