@@ -257,12 +257,25 @@ RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char tra
         note.key = ob.value(QStringLiteral("key")).toVariant().toInt();
     // silently accept data without "key". It is useless actually.
 
-    if (ob.contains(QStringLiteral("time_dur"))) {
-        note.timeDur = ob.value(QStringLiteral("time_dur")).toVariant().toULongLong();
-    } else if (ob.contains(QStringLiteral("dur")) && ob.contains(QStringLiteral("tick"))) {
-        qulonglong tick = ob.value(QStringLiteral("tick")).toVariant().toULongLong();
-        qulonglong tickplusdur = tick + ob.value(QStringLiteral("dur")).toVariant().toULongLong();
-        note.timeDur = tick2timestamp(tickplusdur, bpm) - note.timestamp;
+    // "dur" is the correct duration in actual chart. "time_dur" is only calculation result from IMD?
+    // so if "dur" is 0, we should ignore time_dur completely!
+    // the existing value in JSON converted from IMD may be completely wrong!
+    // "time_dur" can only be referenced if "dur" is not zero
+    if (ob.contains(QStringLiteral("dur"))) {
+        qulonglong dur = ob.value(QStringLiteral("dur")).toVariant().toULongLong();
+        if (dur != 0) {
+            if (ob.contains(QStringLiteral("time_dur"))) {
+                note.timeDur = ob.value(QStringLiteral("time_dur")).toVariant().toULongLong();
+            } else if (ob.contains(QStringLiteral("tick"))) {
+                qulonglong tick = ob.value(QStringLiteral("tick")).toVariant().toULongLong();
+                qulonglong tickplusdur = tick + dur;
+                note.timeDur = tick2timestamp(tickplusdur, bpm) - note.timestamp;
+            } else {
+                return note;
+            }
+        } else {
+            note.timeDur = 0;
+        }
     } else {
         return note;
     }
