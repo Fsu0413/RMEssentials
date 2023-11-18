@@ -1,6 +1,7 @@
 
 #include <RmEss/RmeGlobal>
 
+#include <QString>
 #include <QTest>
 
 // NOLINTBEGIN

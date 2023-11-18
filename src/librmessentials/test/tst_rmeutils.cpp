@@ -1,6 +1,8 @@
 
-#include <QTest>
 #include <RmEss/RmeUtils>
+
+#include <QString>
+#include <QTest>
 
 #include <type_traits>
 

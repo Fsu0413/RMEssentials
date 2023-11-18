@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>tst_rmeuncompresser/t.zip</file>
+        <file>tst_rmeuncompresser/uncompress_test.txt</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,10 @@
+井inculde 《stdio。h》
+
+int man(）
+{
+      paintf(“Hell worId!”);
+      remake0;
+}
+
+算法为什么不是 Deflate 啊！！！！
+Why shouldn't the algorithm be Deflate????!!!!
