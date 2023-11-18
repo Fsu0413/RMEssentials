@@ -47,7 +47,7 @@ private:
     v m_v;
 };
 
-// based on imdjson 1.2.1 format
+// based on imdjson 1.2.1 format, with timestamp / timeDur referenced as IMD type
 struct LIBRMESSENTIALS_EXPORT RmeChartNote
 {
     unsigned char track; // JSON track -> 3 / 4 / 5 / 6 / 7 / 8

@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QMutex>
+#include <tuple>
 
 #ifdef RME_USE_QUAZIP
 #include <quazip/QuaZipFile>
@@ -17,9 +18,7 @@ class RmeUncompresserPrivate
 {
 public:
     QMutex m;
-    QStringList zipNames;
-    QStringList fileNames;
-    QStringList extractedFileNames;
+    QList<std::tuple<QString /* zipName */, QString /* fileName */, QString /*extractedFileName */> > names;
 };
 
 RmeUncompresser::RmeUncompresser(QObject *parent)
@@ -44,27 +43,15 @@ void RmeUncompresser::addFile(const QString &zipName, const QString &fileName, c
     Q_D(RmeUncompresser);
     QMutexLocker locker(&d->m);
     Q_UNUSED(locker);
-    d->zipNames << zipName;
-    d->fileNames << fileName;
-    d->extractedFileNames << (extractedFileName.isEmpty() ? fileName : extractedFileName);
+    d->names << std::make_tuple(zipName, fileName, (extractedFileName.isEmpty() ? fileName : extractedFileName));
 }
 
 void RmeUncompresser::run()
 {
     Q_D(RmeUncompresser);
     d->m.lock();
-    if ((d->zipNames.length() != d->fileNames.length()) || (d->zipNames.length() != d->extractedFileNames.length())) {
-        qWarning() << "the length of these lists does not match";
-        d->zipNames.clear();
-        d->fileNames.clear();
-        d->extractedFileNames.clear();
-        d->m.unlock();
-        return;
-    }
-    while (!d->zipNames.isEmpty()) {
-        QString zipName = d->zipNames.takeFirst();
-        QString fileName = d->fileNames.takeFirst();
-        QString extractedFileName = d->extractedFileNames.takeFirst();
+    while (!d->names.isEmpty()) {
+        auto [/* QString */ zipName, /* QString */ fileName, /* QString */ extractedFileName] = d->names.takeFirst();
         d->m.unlock();
 
 #ifdef RME_USE_QUAZIP
