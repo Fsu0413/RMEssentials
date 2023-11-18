@@ -81,8 +81,10 @@ struct LIBRMESSENTIALS_EXPORT RmeChart
 {
     unsigned int totalTime;
     double bpm; // OR QList<RmeBpm> bpms;
-    QList<RmeChartNote> notes; // not keys by track!
+    std::list<RmeChartNote> notes; // not keys by track!
     RmeChartVersion version;
+
+    void sortNotes();
 
     QByteArray toImd() const;
     QJsonObject toJson(RmeChartVersion version = RmeChartVersion::v1_2_1) const;

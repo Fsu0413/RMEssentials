@@ -171,13 +171,6 @@ bool RmeChartNote::operator<(const RmeChartNote &arg2) const
         if (arg2.attr != 0 && arg2.timeDur == 0 && !arg2.isEnd && arg2.toTrack != arg2.track && attr == 4 && timeDur != 0 && arg2.toTrack == track)
             return false;
 
-        //            // slide / long-press is put before single-click
-        //            if (attr != 0 && arg2.attr == 0)
-        //                return true;
-        //            // strong sequence guarantee of above
-        //            if (arg2.attr != 0 && attr == 0)
-        //                return false;
-
         // After all, sort by track
         return track < arg2.track;
     }
@@ -336,15 +329,45 @@ RmeChartNote RmeChartNote::fromJsonNote(const QJsonObject &ob, unsigned char tra
     return note;
 }
 
+void RmeChart::sortNotes()
+{
+    std::list<RmeChartNote> temporaryList;
+    temporaryList.splice(temporaryList.end(), notes);
+    temporaryList.sort();
+
+    for (std::list<RmeChartNote>::iterator it = temporaryList.begin(); it != temporaryList.end(); it = temporaryList.begin()) {
+        if (it->attr != 0 && !it->isEnd) {
+            // 0x21 / 0x22 / 0x61 / 0x62 (but 0x61 and 0x62 won't happen here, it will be spliced in following loop
+            std::list<RmeChartNote> longPress;
+            longPress.splice(longPress.end(), temporaryList, it);
+            bool isEnd = false;
+            while (!isEnd) {
+                isEnd = true;
+                unsigned char track = it->toTrack;
+                unsigned int timestamp = it->timestamp + it->timeDur;
+                for (it = temporaryList.begin(); it != temporaryList.end(); ++it) {
+                    if (it->track == track && it->timestamp == timestamp && it->attr != 0) {
+                        isEnd = it->isEnd;
+                        longPress.splice(longPress.end(), temporaryList, it);
+                        break;
+                    }
+                }
+            }
+
+            notes.splice(notes.end(), longPress);
+        } else {
+            // 0x00 / 0x01 / 0x02 / 0xA1 / 0xA2 (but 0xA1 and 0xA2 won't happen here, since it will be spliced in above if)
+            notes.splice(notes.end(), temporaryList, it);
+        }
+    }
+}
+
 QByteArray RmeChart::toImd() const
 {
     uint32_t nBpm = totalTime * bpm / 60000. + 1;
 
-    QList<RmeChartNote> sortedNotes = notes;
-    std::sort(sortedNotes.begin(), sortedNotes.end());
-
     QByteArray arr;
-    arr.resize(8 + nBpm * 12 + 6 + sortedNotes.length() * 11);
+    arr.resize(8 + nBpm * 12 + 6 + notes.size() * 11);
     *(reinterpret_cast<uint32_t *>(arr.data())) = totalTime;
     *(reinterpret_cast<uint32_t *>(arr.data() + 4)) = nBpm;
     for (int i = 0; i < nBpm; ++i) {
@@ -352,10 +375,11 @@ QByteArray RmeChart::toImd() const
         *(reinterpret_cast<double *>(arr.data() + 8 + i * 12 + 4)) = bpm;
     }
     *(reinterpret_cast<uint16_t *>(arr.data() + 8 + nBpm * 12)) = (uint16_t)0x0303;
-    *(reinterpret_cast<uint32_t *>(arr.data() + 8 + nBpm * 12 + 2)) = (uint32_t)sortedNotes.length();
-    for (int i = 0; i < sortedNotes.length(); ++i) {
-        QByteArray imdNote = sortedNotes.at(i).toImdNote();
-        memcpy(arr.data() + 8 + nBpm * 12 + 6 + i * 11, imdNote.data(), 11);
+    *(reinterpret_cast<uint32_t *>(arr.data() + 8 + nBpm * 12 + 2)) = (uint32_t)notes.size();
+    int i = 0;
+    for (const RmeChartNote &note : notes) {
+        QByteArray imdNote = note.toImdNote();
+        memcpy(arr.data() + 8 + nBpm * 12 + 6 + (i++) * 11, imdNote.data(), 11);
     }
 
     return arr;
@@ -379,13 +403,12 @@ QJsonObject RmeChart::toJson(RmeChartVersion version) const
     QMap<unsigned char /* track */, QJsonArray /* notes */> trackNoteMap;
     QList<unsigned char> tracks;
 
-    QList<RmeChartNote> sortedNotes = notes;
-    std::sort(sortedNotes.begin(), sortedNotes.end());
-    for (int i = 0; i < sortedNotes.length(); ++i) {
-        unsigned char track = sortedNotes.at(i).track;
+    int i = 0;
+    for (const RmeChartNote &note : notes) {
+        unsigned char track = note.track;
         if (!tracks.contains(track))
             tracks << track;
-        trackNoteMap[track].append(sortedNotes.at(i).toJsonNote(version, bpm, i));
+        trackNoteMap[track].append(note.toJsonNote(version, bpm, i++));
     }
     std::sort(tracks.begin(), tracks.end());
     QJsonArray trackJson;
@@ -442,8 +465,11 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
 
         // ignore incorrect track when loading
         if (n.track <= 5)
-            chart.notes << n;
+            chart.notes.push_back(n);
     }
+
+    chart.sortNotes();
+
     *ok = true;
     return chart;
 }
@@ -518,7 +544,7 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
             // some 1.2.1 / 1.2.2 chart records start / stop time using invalid tracks
             // so load notes from corresponding track but do not use them.
             if ((track >= 3) && (track <= 8))
-                chart.notes << k;
+                chart.notes.push_back(k);
 
             // pre-1.3.0: calculate of totalTick is needed
             unsigned int currentTime = k.timestamp + k.timeDur;
@@ -530,6 +556,8 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
     // pre-1.3.0: calculate of totalTime is needed
     if (chart.version < RmeChartVersion::v1_3_0)
         chart.totalTime = maxTime;
+
+    chart.sortNotes();
 
     *ok = true;
     return chart;
