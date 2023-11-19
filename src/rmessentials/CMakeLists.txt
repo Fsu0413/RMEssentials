@@ -1,6 +1,7 @@
 
 set(RMESSENTIALSAPP_HEADERS
     src/changename.h
+    src/chartview.h
     src/download.h
     src/main.h
     src/songclientedit.h
@@ -9,6 +10,7 @@ set(RMESSENTIALSAPP_HEADERS
 
 set(RMESSENTIALSAPP_SOURCES
     src/main.cpp
+    src/chartview.cpp
     src/changename.cpp
     src/download.cpp
     src/songclientedit.cpp

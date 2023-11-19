@@ -204,3 +204,12 @@ QString RmeUtils::noteFileNameSuffix(ExistNote note)
 
     return suffixs.value(note, {});
 }
+
+QByteArray RmeUtils::rmpKeyForChart(const QString &fileName)
+{
+    static const QByteArray rmpKeyPrefix("RMP4TT3RN");
+
+    QByteArray res = rmpKeyPrefix + fileName.toLatin1();
+    res.resize(16);
+    return res;
+}

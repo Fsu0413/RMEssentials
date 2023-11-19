@@ -38,9 +38,9 @@ RmeFileFormat getOpenFileName(QWidget *parent, QString &filepath)
 
     if (selectedFilter.contains(QStringLiteral(".json")))
         return JsonFormat;
-    else if (selectedFilter.contains(QStringLiteral(".bin")))
+    if (selectedFilter.contains(QStringLiteral(".bin")))
         return BinFormat;
-    else if (selectedFilter.contains(QStringLiteral(".xml")))
+    if (selectedFilter.contains(QStringLiteral(".xml")))
         return XmlFormat;
 
     return UnknownFormat;
@@ -58,9 +58,9 @@ RmeFileFormat getSaveFileName(QWidget *parent, QString &filepath)
 
     if (selectedFilter.contains(QStringLiteral(".json")))
         return JsonFormat;
-    else if (selectedFilter.contains(QStringLiteral(".bin")))
+    if (selectedFilter.contains(QStringLiteral(".bin")))
         return BinFormat;
-    else if (selectedFilter.contains(QStringLiteral(".xml")))
+    if (selectedFilter.contains(QStringLiteral(".xml")))
         return XmlFormat;
 
     return UnknownFormat;

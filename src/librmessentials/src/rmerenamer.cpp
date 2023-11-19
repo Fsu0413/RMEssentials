@@ -88,8 +88,6 @@ bool RmeRenamer::runToEasy()
 
 bool RmeRenamerPrivate::renameSingleRmp(const QString &oldName, const QString &newName)
 {
-    static const QByteArray rmpKeyPrefix("RMP4TT3RN");
-
     QFileInfo fi(m_dir.absoluteFilePath(oldName));
     QFile f(fi.absolutePath());
     if (!f.open(QFile::ReadOnly))
@@ -98,12 +96,12 @@ bool RmeRenamerPrivate::renameSingleRmp(const QString &oldName, const QString &n
     QByteArray arr = f.readAll();
     f.close();
 
-    QByteArray rmpKeyOld = rmpKeyPrefix + fi.baseName().toLatin1();
+    QByteArray rmpKeyOld = RmeUtils::rmpKeyForChart(fi.baseName());
     rmpKeyOld.resize(16);
     QByteArray decryptedArr = RmeCrypt::decryptXxteaOnly(arr, rmpKeyOld);
 
     QFileInfo fiNew(m_dir.absoluteFilePath(newName));
-    QByteArray rmpKeyNew = rmpKeyPrefix + fiNew.baseName().toLatin1();
+    QByteArray rmpKeyNew = RmeUtils ::rmpKeyForChart(fiNew.baseName());
     rmpKeyNew.resize(16);
     QByteArray encryptedArr = RmeCrypt::encryptXxteaOnly(decryptedArr, rmpKeyNew);
 
@@ -473,8 +471,6 @@ bool RmeConverter::convertRmpToImdJson()
     bool flag = true;
 
     for (ExistNote i = RMP_4K_EZ; i <= RMP_6K_HD; i = static_cast<ExistNote>(i << 1)) {
-        static const QByteArray rmpKeyPrefix("RMP4TT3RN");
-
         QString file_name;
         file_name.append(d->m_dir.dirName()).append(noteFileNameSuffix(i));
         if (d->m_dir.exists(file_name)) {
@@ -491,8 +487,8 @@ bool RmeConverter::convertRmpToImdJson()
             QString toFileName;
             toFileName.append(d->m_dir.dirName()).append(noteFileNameSuffix(converted));
 
-            QByteArray rmpKeySuffix = file_name.chopped(4).toLatin1();
-            QByteArray imdjson = RmeCrypt::decryptFull(arr, rmpKeyPrefix + rmpKeySuffix);
+            QByteArray rmpKey = RmeUtils::rmpKeyForChart(file_name);
+            QByteArray imdjson = RmeCrypt::decryptFull(arr, rmpKey);
 
             QFile fImdJson(d->m_dir.absoluteFilePath(toFileName));
             if (!fImdJson.open(QFile::WriteOnly)) {
@@ -516,8 +512,6 @@ bool RmeConverter::convertImdJsonToRmp()
     bool flag = true;
 
     for (ExistNote i = IMDJSON_4K_EZ; i <= IMDJSON_6K_HD; i = static_cast<ExistNote>(i << 1)) {
-        static const QByteArray rmpKeyPrefix("RMP4TT3RN");
-
         QString file_name;
         file_name.append(d->m_dir.dirName()).append(noteFileNameSuffix(i));
         if (d->m_dir.exists(file_name)) {
@@ -534,8 +528,8 @@ bool RmeConverter::convertImdJsonToRmp()
             QString toFileName;
             toFileName.append(d->m_dir.dirName()).append(noteFileNameSuffix(converted));
 
-            QByteArray rmpKeySuffix = toFileName.chopped(4).toLatin1();
-            QByteArray rmp = RmeCrypt::encryptFull(arr, rmpKeyPrefix + rmpKeySuffix);
+            QByteArray rmpKey = RmeUtils::rmpKeyForChart(toFileName);
+            QByteArray rmp = RmeCrypt::encryptFull(arr, rmpKey);
 
             QFile fRmp(d->m_dir.absoluteFilePath(toFileName));
             if (!fRmp.open(QFile::WriteOnly)) {

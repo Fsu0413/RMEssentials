@@ -18,6 +18,7 @@ private slots:
     void showChangeNameDialog();
     void showSongClientEditDialog();
     void showPapaSongClientEditDialog();
+    void showChartViewer();
     void about();
 #ifdef RME_USE_QUAZIP
     void aboutQuaZip();
@@ -58,6 +59,7 @@ private:
     QPushButton *m_downloadBtn;
     QPushButton *m_songEditorBtn;
     QPushButton *m_papaSongEditorBtn;
+    QPushButton *m_chartViewBtn;
 
     // QWidget interface
 protected:

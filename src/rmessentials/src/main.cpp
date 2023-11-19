@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "changename.h"
+#include "chartview.h"
 #include "download.h"
 #include "papasongclientedit.h"
 #include "songclientedit.h"
@@ -66,6 +67,11 @@ MainDialog::MainDialog(QWidget *parent)
     m_papaSongEditorBtn->setEnabled(false);
     m_papaSongEditorBtn->setVisible(false);
 
+    m_chartViewBtn = new QPushButton(tr("Chart Viewer"));
+    connect(m_chartViewBtn, &QPushButton::clicked, this, &MainDialog::showChartViewer);
+    m_papaSongEditorBtn->setEnabled(false);
+    m_papaSongEditorBtn->setVisible(false);
+
     QMenu *popup = new QMenu(this);
     QAction *aboutThis = popup->addAction(tr("About RMEssentials..."));
     connect(aboutThis, &QAction::triggered, this, &MainDialog::about);
@@ -88,6 +94,7 @@ MainDialog::MainDialog(QWidget *parent)
     alllayout->addWidget(m_downloadBtn);
     alllayout->addWidget(m_songEditorBtn);
     alllayout->addWidget(m_papaSongEditorBtn);
+    alllayout->addWidget(m_chartViewBtn);
     alllayout->addWidget(aboutBtn);
 
     setLayout(alllayout);
@@ -156,6 +163,17 @@ void MainDialog::showPapaSongClientEditDialog()
 {
     PapaSongClientEditDialog *dl = new PapaSongClientEditDialog;
     connect(dl, &PapaSongClientEditDialog::finished, dl, &PapaSongClientEditDialog::deleteLater);
+#ifndef MOBILE_DEVICES
+    dl->show();
+#else
+    dl->showMaximized();
+#endif
+}
+
+void MainDialog::showChartViewer()
+{
+    ChartViewer *dl = new ChartViewer;
+    connect(dl, &ChartViewer::finished, dl, &ChartViewer::deleteLater);
 #ifndef MOBILE_DEVICES
     dl->show();
 #else
@@ -261,6 +279,7 @@ void MainDialog::enableButtons()
     m_downloadBtn->setEnabled(m_isPermissionOk && m_isNumOk);
     m_songEditorBtn->setEnabled(m_isPermissionOk);
     m_papaSongEditorBtn->setEnabled(false);
+    m_chartViewBtn->setEnabled(m_isPermissionOk);
 }
 
 void MainDialog::oneMetainfoFileDownloaded(const QString &url)

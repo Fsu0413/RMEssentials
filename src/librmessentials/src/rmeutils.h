@@ -61,6 +61,7 @@ LIBRMESSENTIALS_EXPORT QString existImdJsonVersion(const QDir &dir, ExistNote no
 
 LIBRMESSENTIALS_EXPORT QString calculateSongTime(int gameTime, bool remastered = false);
 LIBRMESSENTIALS_EXPORT QString noteFileNameSuffix(ExistNote note);
+LIBRMESSENTIALS_EXPORT QByteArray rmpKeyForChart(const QString &fileName);
 }
 
 #endif
