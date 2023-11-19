@@ -12,5 +12,24 @@
         <file>tst_rmechart/tojson/crunch_5k_hd.imd.json</file>
         <file>tst_rmechart/tojson/friend01_4k_nm.imd</file>
         <file>tst_rmechart/tojson/friend01_4k_nm.imd.json</file>
+        <file>tst_rmechart/fromjson/130durationtimeng.json</file>
+        <file>tst_rmechart/fromjson/130noduration.json</file>
+        <file>tst_rmechart/fromjson/130nodurationtime.json</file>
+        <file>tst_rmechart/fromjson/130notracks.json</file>
+        <file>tst_rmechart/fromjson/nosig.json</file>
+        <file>tst_rmechart/fromjson/notempo.json</file>
+        <file>tst_rmechart/fromjson/notracks.json</file>
+        <file>tst_rmechart/fromjson/noversion.json</file>
+        <file>tst_rmechart/fromjson/signg.json</file>
+        <file>tst_rmechart/fromjson/tempong.json</file>
+        <file>tst_rmechart/fromjson/trackng.json</file>
+        <file>tst_rmechart/fromjson/tracknonote.json</file>
+        <file>tst_rmechart/fromjson/tracknotesng.json</file>
+        <file>tst_rmechart/fromjson/tracknotetojsonng.json</file>
+        <file>tst_rmechart/fromjson/tracknotrack.json</file>
+        <file>tst_rmechart/fromjson/tracksng.json</file>
+        <file>tst_rmechart/fromjson/tracktrackng.json</file>
+        <file>tst_rmechart/fromjson/versionng.json</file>
+        <file>tst_rmechart/fromjson/tracknoteng.json</file>
     </qresource>
 </RCC>

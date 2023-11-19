@@ -692,9 +692,60 @@ private slots:
     //    void RmeChartFromImdQByteArrayBoolPS()
     //    {
     //    }
-    //    void RmeChartFromJsonQJsonObjectBoolPS()
-    //    {
-    //    }
+
+    void RmeChartFromJsonQJsonObjectBoolPS_data()
+    {
+        QTest::addColumn<QString>("type");
+
+#define AbnormalTypeDef(a) QTest::addRow(#a) << QStringLiteral(#a)
+
+        AbnormalTypeDef(nosig);
+        AbnormalTypeDef(signg);
+        AbnormalTypeDef(noversion);
+        AbnormalTypeDef(versionng);
+        AbnormalTypeDef(notempo);
+        AbnormalTypeDef(tempong);
+        AbnormalTypeDef(130noduration);
+        AbnormalTypeDef(130nodurationtime);
+        AbnormalTypeDef(130durationtimeng);
+        AbnormalTypeDef(notracks);
+        AbnormalTypeDef(130notracks);
+        AbnormalTypeDef(tracksng);
+        AbnormalTypeDef(trackng);
+        AbnormalTypeDef(tracknotrack);
+        AbnormalTypeDef(tracktrackng);
+        AbnormalTypeDef(tracknonote);
+        AbnormalTypeDef(tracknotesng);
+        AbnormalTypeDef(tracknoteng);
+        AbnormalTypeDef(tracknotetojsonng);
+
+#undef AbnormalTypeDef
+    }
+    void RmeChartFromJsonQJsonObjectBoolPS()
+    {
+        QFETCH(QString, type);
+        QString fileName = QStringLiteral(":/tst_rmechart/fromjson/") + type + QStringLiteral(".json");
+
+        QFile f(fileName);
+        if (!f.open(QFile::ReadOnly))
+            QFAIL(qPrintable(fileName + QStringLiteral(" open failed")));
+
+        QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
+        if (!doc.isObject())
+            QFAIL(qPrintable(fileName + QStringLiteral(" can't be loaded")));
+
+        bool ok = true;
+        (void)RmeChart::fromJson(doc.object(), &ok);
+        QCOMPARE(ok, false);
+    }
+
+    void RmeChartFromJsonQJsonObjectBoolPNS()
+    {
+        // coverage for ok == nullptr
+        // since it can't be data driven so call it separately
+
+        RmeChart::fromJson({});
+    }
 };
 
 QTEST_GUILESS_MAIN(tst_RmeChart)
