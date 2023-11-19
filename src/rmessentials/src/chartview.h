@@ -1,6 +1,7 @@
 #ifndef CHARTVIEW_H__INCLUDED
 #define CHARTVIEW_H__INCLUDED
 
+#include <RmEss/RmeChart>
 #include <RmEss/RmeGlobal>
 
 #include <QAbstractTableModel>
@@ -9,8 +10,6 @@
 
 class QLineEdit;
 class QTableView;
-struct RmeChart;
-struct RmeChartNote;
 
 class ChartViewerModel : public QAbstractTableModel
 {

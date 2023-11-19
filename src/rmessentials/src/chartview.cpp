@@ -241,9 +241,9 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
         } else {
             if (role == Qt::DisplayRole)
                 return QStringLiteral("{N/A}");
-            else if (role == Qt::BackgroundRole)
+            if (role == Qt::BackgroundRole)
                 return QColor(Qt::gray);
-            else if (role == Qt::ForegroundRole)
+            if (role == Qt::ForegroundRole)
                 return QColor(Qt::darkGray);
         }
         break;
@@ -255,9 +255,9 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
         } else {
             if (role == Qt::DisplayRole)
                 return QStringLiteral("{N/A}");
-            else if (role == Qt::BackgroundRole)
+            if (role == Qt::BackgroundRole)
                 return QColor(Qt::gray);
-            else if (role == Qt::ForegroundRole)
+            if (role == Qt::ForegroundRole)
                 return QColor(Qt::darkGray);
         }
         break;
