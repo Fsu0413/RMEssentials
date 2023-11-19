@@ -17,9 +17,7 @@ public:
     bool renameSingleRmp(const QString &oldName, const QString &newName);
 
     bool renameMp3();
-    bool renameBigPng();
-    bool renameSmallPng();
-    bool renamePapaPngs();
+    bool renamePngs();
     bool renamePatterns();
     bool renameImds();
     bool renameImdJsons();
@@ -67,7 +65,7 @@ bool RmeRenamer::run()
     if (!hasBigPng(d->m_dir))
         return false;
 
-    if (!(d->renameMp3() && d->renameBigPng() && d->renamePatterns() && d->renameSmallPng() && d->renamePapaPngs() && d->renameSelf()))
+    if (!(d->renameMp3() && d->renamePngs() && d->renamePatterns() && d->renameSelf()))
         return false;
 
     if (!d->deleteExtra())
@@ -185,9 +183,7 @@ bool RmeRenamerPrivate::renameRmpsToEasy()
 
 bool RmeRenamerPrivate::renameMp3()
 {
-    static QStringList l;
-    if (l.isEmpty())
-        l << QStringLiteral("*.mp3");
+    static const QStringList l {QStringLiteral("*.mp3")};
 
     QString origname;
     foreach (const QString &s, m_dir.entryList(l)) {
@@ -204,76 +200,43 @@ bool RmeRenamerPrivate::renameMp3()
     return true;
 }
 
-bool RmeRenamerPrivate::renameBigPng()
+bool RmeRenamerPrivate::renamePngs()
 {
-    static QStringList l;
-    if (l.isEmpty())
-        l << QStringLiteral("*.png");
+    static QStringList l {QStringLiteral("*.png")};
+    // clang-format off
+    static QStringList suffixes {
+        QLatin1String(""),
+        QStringLiteral("_title_hd"),
+        QStringLiteral("_title_ipad"),
+        QStringLiteral("_ipad"),
+        QStringLiteral("_thumb"),
+        QStringLiteral("_title_140_90"),
+    };
+    // clang-format on
 
-    QString origname;
+    QList<std::pair<QString /* origName */, QString /* toRename */> > renameList;
+
     foreach (const QString &s, m_dir.entryList(l)) {
-        if (s.toLower() == (m_dir.dirName() + QStringLiteral(".png")).toLower()) {
-            origname = s;
-            break;
+        foreach (const QString &suffix, suffixes) {
+            if (s.toLower() == (m_dir.dirName() + suffix + QStringLiteral(".png")).toLower()) {
+                QString renameSuffix = suffix;
+                if (renameSuffix == QStringLiteral("_title_hd"))
+                    renameSuffix = QStringLiteral("_title_ipad");
+
+                renameList << std::make_pair(s, m_toRename + suffix + QStringLiteral(".png"));
+                break;
+            }
         }
     }
 
-    if (origname.isEmpty())
-        return true; // in fact the Bluecat 3 version 2.1 can play imds without big pngs, so ignore this
+    if (renameList.isEmpty())
+        return true; // in fact the Bluecat 3 version 2.1 can play imds without any PNGs, so ignore this
 
-    m_dir.rename(origname, m_toRename + QStringLiteral(".png"));
-    return true;
-}
-
-bool RmeRenamerPrivate::renameSmallPng()
-{
-    static QStringList l;
-    if (l.isEmpty())
-        l << QStringLiteral("*.png");
-
-    QString suffix;
-    if (!hasSmallPng(m_dir, suffix))
-        return true; // in fact we can play this imd without small pngs in Bluecat 3, so temporily ignore this, I will make a setting later to set this
-
-    QString origname;
-    foreach (const QString &s, m_dir.entryList(l)) {
-        if (s.toLower() == (m_dir.dirName() + suffix + QStringLiteral(".png")).toLower()) {
-            origname = s;
-            break;
-        }
+    // !! foreach is macro so type can't contain comma in it. 'auto' is used here with the type listed !!
+    foreach (const auto /* std::pair<QString, QString> */ &p, renameList) {
+        const auto &[/* QString */ origName, /* QString */ toRename] = p;
+        m_dir.rename(origName, toRename);
     }
-
-    if (origname.isEmpty())
-        return true; // also ignore
-
-    m_dir.rename(origname, m_toRename + QStringLiteral("_title_ipad.png"));
-    // QFile::copy(m_dir.absoluteFilePath(m_toRename + "_title_ipad.png"), m_dir.absoluteFilePath(m_toRename + "_title_hd.png"));
-    return true;
-}
-
-bool RmeRenamerPrivate::renamePapaPngs()
-{
-    // in fact, not all notes has Papa mode, so ignore the result here
-    static QStringList l;
-    if (l.isEmpty())
-        l << QStringLiteral("*.png");
-
-    QString origname_small;
-    QString origname_big;
-    foreach (const QString &s, m_dir.entryList(l)) {
-        if (s.toLower() == (m_dir.dirName() + QStringLiteral("_title_140_90.png")).toLower()) {
-            origname_small = s;
-            break;
-        }
-        if (s.toLower() == (m_dir.dirName() + QStringLiteral("_ipad.png")).toLower()) {
-            origname_big = s;
-        }
-    }
-
-    if (!origname_small.isEmpty())
-        m_dir.rename(origname_small, m_toRename + QStringLiteral("_title_140_90.png"));
-    if (!origname_big.isEmpty())
-        m_dir.rename(origname_big, m_toRename + QStringLiteral("_ipad.png"));
 
     return true;
 }
