@@ -498,11 +498,16 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
 
     if (!ob.contains(QStringLiteral("tempo")))
         return chart;
+    if (!ob.value(QStringLiteral("tempo")).isDouble())
+        return chart;
     chart.bpm = ob.value(QStringLiteral("tempo")).toDouble();
+
     if (chart.version >= RmeChartVersion::v1_3_0) {
         if (!ob.contains(QStringLiteral("duration")))
             return chart;
         if (!ob.contains(QStringLiteral("durationtime")))
+            return chart;
+        if (!ob.value(QStringLiteral("durationtime")).isDouble())
             return chart;
         chart.totalTime = ob.value("durationtime").toVariant().toULongLong();
     }
@@ -524,6 +529,8 @@ RmeChart RmeChart::fromJson(const QJsonObject &ob, bool *ok)
 
         QJsonObject trackOb = trackV.toObject();
         if (!trackOb.contains(QStringLiteral("track")))
+            return chart;
+        if (!trackOb.value(QStringLiteral("track")).isDouble())
             return chart;
         unsigned char track = trackOb.value(QStringLiteral("track")).toVariant().toULongLong();
         if (!trackOb.contains(QStringLiteral("note")))
