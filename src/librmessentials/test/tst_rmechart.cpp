@@ -689,12 +689,54 @@ private slots:
         QJsonObject cJson = c.toJson(static_cast<RmeChartVersion::v>(version));
         QCOMPARE(cJson, doc.object());
     }
-    //    void RmeChartFromImdQByteArrayBoolPS()
-    //    {
-    //    }
+
+    void RmeChartFromImdQByteArrayBoolPS_data()
+    {
+        // Only abnormal case is tested here
+        // Normal case is tested in RmeChartToJsonRmeChartVersionC where it will output an IMDJson which can be put into RM for playing
+
+        QTest::addColumn<QString>("type");
+
+#define AbnormalTypeDef(a) QTest::addRow(#a) << QStringLiteral(#a)
+
+        AbnormalTypeDef(sizeng);
+        AbnormalTypeDef(sizebpmcountng);
+        AbnormalTypeDef(separatorng);
+        AbnormalTypeDef(noteng);
+        AbnormalTypeDef(sizenotecountng);
+
+#undef AbnormalTypeDef
+    }
+    void RmeChartFromImdQByteArrayBoolPS()
+    {
+        QFETCH(QString, type);
+        QString fileName = QStringLiteral(":/tst_rmechart/fromimd/") + type + QStringLiteral(".imd");
+
+        QFile f(fileName);
+        if (!f.open(QFile::ReadOnly))
+            QFAIL(qPrintable(fileName + QStringLiteral(" open failed")));
+
+        bool ok = true;
+        (void)RmeChart::fromImd(f.readAll(), &ok);
+
+        f.close();
+
+        QCOMPARE(ok, false);
+    }
+
+    void RmeChartFromImdQByteArrayBoolPNS()
+    {
+        // coverage for ok == nullptr
+        // since it can't be data driven so call it separately
+
+        RmeChart::fromImd({});
+    }
 
     void RmeChartFromJsonQJsonObjectBoolPS_data()
     {
+        // Only abnormal case is tested here
+        // Normal case is tested in RmeChartToImdC where it will output an IMD which can be put into RM for playing
+
         QTest::addColumn<QString>("type");
 
 #define AbnormalTypeDef(a) QTest::addRow(#a) << QStringLiteral(#a)
@@ -733,6 +775,8 @@ private slots:
         QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
         if (!doc.isObject())
             QFAIL(qPrintable(fileName + QStringLiteral(" can't be loaded")));
+
+        f.close();
 
         bool ok = true;
         (void)RmeChart::fromJson(doc.object(), &ok);

@@ -31,5 +31,10 @@
         <file>tst_rmechart/fromjson/tracktrackng.json</file>
         <file>tst_rmechart/fromjson/versionng.json</file>
         <file>tst_rmechart/fromjson/tracknoteng.json</file>
+        <file>tst_rmechart/fromimd/noteng.imd</file>
+        <file>tst_rmechart/fromimd/separatorng.imd</file>
+        <file>tst_rmechart/fromimd/sizebpmcountng.imd</file>
+        <file>tst_rmechart/fromimd/sizeng.imd</file>
+        <file>tst_rmechart/fromimd/sizenotecountng.imd</file>
     </qresource>
 </RCC>
