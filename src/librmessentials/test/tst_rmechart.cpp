@@ -494,28 +494,41 @@ private slots:
             // clang-format on
         } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
 
-        // 3. data with time and time_dur, without isEnd
+        // 3. data with time and time_dur, 0 as dur, without isEnd
         QTest::newRow("NG3") << QVariantMap {
             // clang-format off
             std::make_pair(QStringLiteral("time"), 0),
-            std::make_pair(QStringLiteral("time_dur"), 0)
+            std::make_pair(QStringLiteral("time_dur"), 12),
+            std::make_pair(QStringLiteral("dur"), 0),
             // clang-format on
         } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
 
-        // 4. data with time, time_dur and isEnd, without toTrack
+        // 4. data with time, time_dur and isEnd, 0 as dur, without toTrack
         QTest::newRow("NG4") << QVariantMap {
             // clang-format off
             std::make_pair(QStringLiteral("time"), 0),
-            std::make_pair(QStringLiteral("time_dur"), 0),
+            std::make_pair(QStringLiteral("time_dur"), 13),
+            std::make_pair(QStringLiteral("dur"), 0),
             std::make_pair(QStringLiteral("isEnd"), 0)
             // clang-format on
         } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
 
-        // 5. data with time, time_dur, isEnd and toTrack, without attr
+        // 5. data with time, time_dur, isEnd and toTrack, 0 as dur, without attr
         QTest::newRow("NG5") << QVariantMap {
             // clang-format off
             std::make_pair(QStringLiteral("time"), 0),
-            std::make_pair(QStringLiteral("time_dur"), 0),
+            std::make_pair(QStringLiteral("time_dur"), 14),
+            std::make_pair(QStringLiteral("dur"), 0),
+            std::make_pair(QStringLiteral("isEnd"), 0),
+            std::make_pair(QStringLiteral("toTrack"), 0)
+            // clang-format on
+        } << (unsigned char)3 << (double)100 << (unsigned int)1 << (int)1 << false << (unsigned char)3 << (unsigned int)0 << (unsigned char)0 << false;
+
+        // 6. data with time, isEnd and toTrack, non-0 as dur, without attr
+        QTest::newRow("NG6") << QVariantMap {
+            // clang-format off
+            std::make_pair(QStringLiteral("time"), 0),
+            std::make_pair(QStringLiteral("dur"), 111),
             std::make_pair(QStringLiteral("isEnd"), 0),
             std::make_pair(QStringLiteral("toTrack"), 0)
             // clang-format on
