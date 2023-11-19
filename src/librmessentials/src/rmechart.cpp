@@ -19,7 +19,7 @@ inline uint32_t tick2timestamp(unsigned int tick, double bpm)
 }
 inline unsigned int timestamp2tick(uint32_t timestamp, double bpm)
 {
-    return (timestamp + 1) * bpm / 1250;
+    return qRound64(timestamp * bpm / 1250.);
 }
 }
 
@@ -142,7 +142,7 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
 
     if (version >= RmeChartVersion::v1_2_3) {
         ob.insert(QStringLiteral("time"), (qint64)timestamp);
-        if (timeDur == 0)
+        if (timeDur == 0 && attr != 0)
             ob.insert(QStringLiteral("time_dur"), (qint64)((qint64)toTrack - (qint64)track));
         else
             ob.insert(QStringLiteral("time_dur"), (qint64)timeDur);
@@ -464,7 +464,7 @@ RmeChart RmeChart::fromImd(const QByteArray &arr, bool *ok)
             return chart;
 
         // ignore incorrect track when loading
-        if (n.track <= 5)
+        if (n.track >= 3 && n.track <= 8)
             chart.notes.push_back(n);
     }
 

@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>tst_rmechart/toimd/canonrock_4k_hd.imd</file>
+        <file>tst_rmechart/toimd/canonrock_4k_hd.imd.json</file>
+        <file>tst_rmechart/toimd/legend_5k_hd.imd</file>
+        <file>tst_rmechart/toimd/legend_5k_hd.imd.json</file>
+        <file>tst_rmechart/toimd/reai105dudeni_5k_hd.imd</file>
+        <file>tst_rmechart/toimd/reai105dudeni_5k_hd.imd.json</file>
+        <file>tst_rmechart/tojson/caiyilinbeast_6k_hd.imd</file>
+        <file>tst_rmechart/tojson/caiyilinbeast_6k_hd.imd.json</file>
+        <file>tst_rmechart/tojson/crunch_5k_hd.imd</file>
+        <file>tst_rmechart/tojson/crunch_5k_hd.imd.json</file>
+        <file>tst_rmechart/tojson/friend01_4k_nm.imd</file>
+        <file>tst_rmechart/tojson/friend01_4k_nm.imd.json</file>
+    </qresource>
+</RCC>

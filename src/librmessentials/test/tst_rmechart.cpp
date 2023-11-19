@@ -2,6 +2,8 @@
 #include <RmEss/RmeChart>
 
 #include <QByteArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QObject>
 #include <QString>
 #include <QTest>
@@ -200,11 +202,14 @@ private slots:
                                     };
 
         // from yueyawan
+        // Official chart use 9263 as the tick value but it is inexact.
+        // Tick 9264 corresponds to time 133103.4 while tick 9263 is time 133089.1
+        // If we want the tick be as exact as possible we should use 9264 as tick.
         QTest::newRow("123/dur!=0") << (unsigned char)5 << (unsigned int)133102 << (int)0 << false << (unsigned char)5 << (unsigned int)345 << (unsigned char)4
                                     << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_3) << (double)87 << (int)420
                                     << QVariantMap {
                                            // clang-format off
-                                           std::make_pair(QStringLiteral("tick"), 9263),
+                                           std::make_pair(QStringLiteral("tick"), 9264 /* 9263 */),
                                            std::make_pair(QStringLiteral("key"), 0),
                                            std::make_pair(QStringLiteral("dur"), 24),
                                            std::make_pair(QStringLiteral("isEnd"), 0),
@@ -540,7 +545,7 @@ private slots:
             std::make_pair(QStringLiteral("isEnd"), 1),
             std::make_pair(QStringLiteral("toTrack"), 6),
             std::make_pair(QStringLiteral("attr"), 3),
-            std::make_pair(QStringLiteral("time"),118672),
+            std::make_pair(QStringLiteral("time"), 118672),
             std::make_pair(QStringLiteral("time_dur"), 3531)
             // clang-format on
         } << (unsigned char)6 << (double)84.94 << (unsigned int)118672 << (int)0 << true << (unsigned char)6 << (unsigned int)3531 << (unsigned char)3 << true;
@@ -580,12 +585,97 @@ private slots:
         RmeChartNote::fromJsonNote({}, 0, 0);
     }
 
-    //    void RmeChartToImdC()
-    //    {
-    //    }
-    //    void RmeChartToJsonRmeChartVersionC()
-    //    {
-    //    }
+    void RmeChartToImdC_data()
+    {
+        // complexity 1, but we'd check all normal condition of RmeChart::fromJson (except ok == nullptr)
+
+        QTest::addColumn<QString>("prefix");
+
+        // All the charts are regenerated. Original charts are somewhat different than the generated and can't pass the checks
+        // e.g. The calculated total time is incorrect (reai105dudeni, legend) and the total time is modified (canonrock)
+        QTest::newRow("1.2.1/1.2.2") << QStringLiteral("reai105dudeni_5k_hd");
+        QTest::newRow("1.2.3") << QStringLiteral("legend_5k_hd");
+        QTest::newRow("1.3.0") << QStringLiteral("canonrock_4k_hd");
+    }
+    void RmeChartToImdC()
+    {
+        QFETCH(QString, prefix);
+        QString jsonFileName = QStringLiteral(":/tst_rmechart/toimd/") + prefix + QStringLiteral(".imd.json");
+        QString imdFileName = QStringLiteral(":/tst_rmechart/toimd/") + prefix + QStringLiteral(".imd");
+
+        QFile jsonFile(jsonFileName);
+        if (!jsonFile.open(QFile::ReadOnly))
+            QFAIL(qPrintable(jsonFileName + QStringLiteral(" open failed")));
+
+        QByteArray jsonArr = jsonFile.readAll();
+        jsonFile.close();
+
+        QJsonDocument doc = QJsonDocument::fromJson(jsonArr);
+        if (!doc.isObject())
+            QFAIL(qPrintable(jsonFileName + QStringLiteral(" is not object")));
+
+        bool ok = false;
+        RmeChart c = RmeChart::fromJson(doc.object(), &ok);
+        if (!ok)
+            QFAIL(qPrintable(jsonFileName + QStringLiteral(" load to RmeChart failed")));
+
+        QFile imdFile(imdFileName);
+        if (!imdFile.open(QFile::ReadOnly))
+            QFAIL(qPrintable(imdFileName + QStringLiteral(" open failed")));
+
+        QByteArray imdArr = imdFile.readAll();
+        imdFile.close();
+
+        QByteArray imd = c.toImd();
+        QCOMPARE(imd, imdArr);
+    }
+
+    void RmeChartToJsonRmeChartVersionC_data()
+    {
+        // complexity 1, but we'd check all normal condition of RmeChart::fromImd (except ok == nullptr)
+
+        QTest::addColumn<QString>("prefix");
+        QTest::addColumn<std::underlying_type_t<RmeChartVersion::v> >("version");
+
+        QTest::newRow("1.2.2") << QStringLiteral("crunch_5k_hd") << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_2);
+        QTest::newRow("1.2.3") << QStringLiteral("caiyilinbeast_6k_hd") << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_2_3);
+
+        // This imdjson is heavily modified. Original sequence is incorrect and tick is inexact
+        QTest::newRow("1.3.0") << QStringLiteral("friend01_4k_nm") << static_cast<std::underlying_type_t<RmeChartVersion::v> >(RmeChartVersion::v1_3_0);
+    }
+    void RmeChartToJsonRmeChartVersionC()
+    {
+        QFETCH(QString, prefix);
+        QFETCH(std::underlying_type_t<RmeChartVersion::v>, version);
+        QString imdFileName = QStringLiteral(":/tst_rmechart/tojson/") + prefix + QStringLiteral(".imd");
+        QString jsonFileName = QStringLiteral(":/tst_rmechart/tojson/") + prefix + QStringLiteral(".imd.json");
+
+        QFile imdFile(imdFileName);
+        if (!imdFile.open(QFile::ReadOnly))
+            QFAIL(qPrintable(imdFileName + QStringLiteral(" open failed")));
+
+        QByteArray imdArr = imdFile.readAll();
+        imdFile.close();
+
+        bool ok = false;
+        RmeChart c = RmeChart::fromImd(imdArr, &ok);
+        if (!ok)
+            QFAIL(qPrintable(imdFileName + QStringLiteral(" load to RmeChart failed")));
+
+        QFile jsonFile(jsonFileName);
+        if (!jsonFile.open(QFile::ReadOnly))
+            QFAIL(qPrintable(jsonFileName + QStringLiteral(" open failed")));
+
+        QByteArray jsonArr = jsonFile.readAll();
+        jsonFile.close();
+
+        QJsonDocument doc = QJsonDocument::fromJson(jsonArr);
+        if (!doc.isObject())
+            QFAIL(qPrintable(jsonFileName + QStringLiteral(" is not object")));
+
+        QJsonObject cJson = c.toJson(static_cast<RmeChartVersion::v>(version));
+        QCOMPARE(cJson, doc.object());
+    }
     //    void RmeChartFromImdQByteArrayBoolPS()
     //    {
     //    }
