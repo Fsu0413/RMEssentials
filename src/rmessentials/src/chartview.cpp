@@ -19,6 +19,8 @@
 #include <QTableWidget>
 #include <QVBoxLayout>
 
+#include <type_traits>
+
 namespace {
 enum ChartFormat
 {
@@ -70,13 +72,13 @@ ChartViewer::ChartViewer(QWidget *parent)
     layout1->addWidget(m_fileName);
     layout1->addWidget(browseButton);
 
-    m_currentChartModel = new ChartViewerModel;
-    m_chartTable = new QTableView;
-    m_chartTable->setModel(m_currentChartModel);
+    m_currentChartModel = new ChartViewerModel(this);
+    QTableView *chartTable = new QTableView;
+    chartTable->setModel(m_currentChartModel);
 
     QVBoxLayout *alllayout = new QVBoxLayout;
     alllayout->addLayout(layout1);
-    alllayout->addWidget(m_chartTable);
+    alllayout->addWidget(chartTable);
 
     setLayout(alllayout);
 }
@@ -159,8 +161,9 @@ void ChartViewer::selectFile()
     m_currentChartModel->setChart(newChart);
 }
 
-ChartViewerModel::ChartViewerModel()
-    : m_chart(nullptr)
+ChartViewerModel::ChartViewerModel(QObject *parent)
+    : QAbstractTableModel(parent)
+    , m_chart(nullptr)
 {
 }
 
@@ -192,55 +195,66 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
     switch (column) {
     case 0: {
         if (role == Qt::DisplayRole) {
-            QString type = QStringLiteral("Unknown");
+            QString type = tr("Unknown");
             if (note.attr == 0) {
-                type = QStringLiteral("Single Click");
+                type = tr("Single Click");
             } else if (note.attr == 3) {
                 if (note.timeDur == 0) {
                     if (note.isEnd)
-                        type = QStringLiteral("Single Slide");
+                        type = tr("Single Slide");
                     else
-                        type = QStringLiteral("Long Press Start Change Track");
+                        type = tr("Long Press Start Change Track");
                 } else {
                     if (note.isEnd)
-                        type = QStringLiteral("Single Long Press");
+                        type = tr("Single Long Press");
                     else
-                        type = QStringLiteral("Long Press Start");
+                        type = tr("Long Press Start");
                 }
             } else if (note.attr == 4) {
                 if (note.timeDur == 0) {
                     if (note.isEnd)
-                        type = QStringLiteral("Long Press End With Slide");
+                        type = tr("Long Press End With Slide");
                     else
-                        type = QStringLiteral("Long Press Continue Change Track");
+                        type = tr("Long Press Continue Change Track");
                 } else {
                     if (note.isEnd)
-                        type = QStringLiteral("Long Press End Without Slide");
+                        type = tr("Long Press End Without Slide");
                     else
-                        type = QStringLiteral("Long Press Continue Target Track");
+                        type = tr("Long Press Continue Target Track");
                 }
             }
             return type;
         }
+        if (role == Qt::TextAlignmentRole)
+            return static_cast<std::underlying_type_t<Qt::AlignmentFlag> >(Qt::AlignLeft | Qt::AlignVCenter);
+
         break;
     }
     case 1: {
         if (role == Qt::DisplayRole)
             return QString::number(note.timestamp);
+        if (role == Qt::TextAlignmentRole)
+            return Qt::AlignCenter;
         break;
     }
     case 2: {
         if (role == Qt::DisplayRole)
             return QString::number(note.track - 2);
+        if (role == Qt::TextAlignmentRole)
+            return Qt::AlignCenter;
         break;
     }
     case 3: {
         if ((note.attr != 0) && (note.timeDur == 0)) {
             if (role == Qt::DisplayRole)
                 return QString::number(note.toTrack - 2);
+            if (role == Qt::TextAlignmentRole)
+                return Qt::AlignCenter;
         } else {
             if (role == Qt::DisplayRole)
-                return QStringLiteral("{N/A}");
+                return tr("{N/A}");
+            if (role == Qt::TextAlignmentRole)
+                return Qt::AlignCenter;
             if (role == Qt::BackgroundRole)
                 return QColor(Qt::gray);
             if (role == Qt::ForegroundRole)
@@ -252,9 +266,13 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
         if (note.timeDur != 0) {
             if (role == Qt::DisplayRole)
                 return QString::number(note.timeDur);
+            if (role == Qt::TextAlignmentRole)
+                return Qt::AlignCenter;
         } else {
             if (role == Qt::DisplayRole)
-                return QStringLiteral("{N/A}");
+                return tr("{N/A}");
+            if (role == Qt::TextAlignmentRole)
+                return Qt::AlignCenter;
             if (role == Qt::BackgroundRole)
                 return QColor(Qt::gray);
             if (role == Qt::ForegroundRole)
@@ -273,15 +291,15 @@ QVariant ChartViewerModel::headerData(int section, Qt::Orientation orientation, 
         if (orientation == Qt::Horizontal) {
             switch (section) {
             case 0:
-                return tr("Type");
+                return tr("Note Type");
             case 1:
                 return tr("Timestamp");
             case 2:
                 return tr("Track");
             case 3:
-                return tr("ToTrack");
+                return tr("Target Track (of slide)");
             case 4:
-                return tr("Duration");
+                return tr("Duration (of long press)");
             }
         } else {
             return QString::number(section + 1);

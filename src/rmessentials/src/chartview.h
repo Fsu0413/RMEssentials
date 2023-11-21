@@ -9,14 +9,13 @@
 #include <QList>
 
 class QLineEdit;
-class QTableView;
 
 class ChartViewerModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    ChartViewerModel();
+    ChartViewerModel(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
@@ -39,7 +38,6 @@ public:
 
 private:
     QLineEdit *m_fileName;
-    QTableView *m_chartTable;
     ChartViewerModel *m_currentChartModel;
 
 private slots:
