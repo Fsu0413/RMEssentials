@@ -23,10 +23,22 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
     void setChart(RmeChart *chart);
+    RmeChart *chart();
+    const RmeChart *chart() const;
+
+    enum
+    {
+        ChartDrawRole = Qt::UserRole + 1,
+    };
+
+    int keys() const;
+
+public slots:
+    void switchTickTimestamp();
 
 private:
     RmeChart *m_chart;
-    QList<RmeChartNote> m_chartNotes;
+    bool m_isTick;
 };
 
 class ChartViewer : public QDialog
@@ -40,8 +52,15 @@ private:
     QLineEdit *m_fileName;
     ChartViewerModel *m_currentChartModel;
 
+    QLineEdit *m_keyCount;
+    QLineEdit *m_totalTime;
+    QLineEdit *m_bpm;
+    QLineEdit *m_totalKeyAmount;
+
 private slots:
     void selectFile();
+
+    void chartReloaded();
 };
 
 #endif

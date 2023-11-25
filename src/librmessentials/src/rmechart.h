@@ -75,16 +75,20 @@ struct LIBRMESSENTIALS_EXPORT RmeChartNote
 
     static RmeChartNote fromImdNote(const QByteArray &arr, bool *ok = nullptr);
     static RmeChartNote fromJsonNote(const QJsonObject &ob, unsigned char track, double bpm, bool *ok = nullptr);
+
+    static unsigned int timestampToTick(uint32_t timestamp, double bpm);
+    static uint32_t tickToTimestamp(unsigned int tick, double bpm);
 };
 
 struct LIBRMESSENTIALS_EXPORT RmeChart
 {
     unsigned int totalTime;
     double bpm; // OR QList<RmeBpm> bpms;
-    std::list<RmeChartNote> notes; // not keys by track!
+    QList<RmeChartNote> notes; // not keys by track!
     RmeChartVersion version;
 
     void sortNotes();
+    int calculateTotalKeyAmount() const;
 
     QByteArray toImd() const;
     QJsonObject toJson(RmeChartVersion version = RmeChartVersion::v1_2_1) const;

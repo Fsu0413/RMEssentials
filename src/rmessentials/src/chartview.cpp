@@ -7,8 +7,11 @@
 #include <RmEss/RmeUtils>
 
 #include <QDir>
+#include <QDoubleValidator>
 #include <QFileDialog>
+#include <QGridLayout>
 #include <QHBoxLayout>
+#include <QIntValidator>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
@@ -73,14 +76,49 @@ ChartViewer::ChartViewer(QWidget *parent)
     layout1->addWidget(browseButton);
 
     m_currentChartModel = new ChartViewerModel(this);
+    connect(m_currentChartModel, &ChartViewerModel::modelReset, this, &ChartViewer::chartReloaded);
     QTableView *chartTable = new QTableView;
+    chartTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     chartTable->setModel(m_currentChartModel);
 
-    QVBoxLayout *alllayout = new QVBoxLayout;
-    alllayout->addLayout(layout1);
-    alllayout->addWidget(chartTable);
+    QGridLayout *midLayout = new QGridLayout;
+    midLayout->addWidget(new QLabel(tr("Key count:")), 0, 0);
+    m_keyCount = new QLineEdit;
+    m_keyCount->setValidator(new QIntValidator(4, 6));
+    m_keyCount->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    midLayout->addWidget(m_keyCount, 0, 1);
+    midLayout->addWidget(new QLabel(tr("Total time:")), 1, 0);
+    m_totalTime = new QLineEdit;
+    m_totalTime->setValidator(new QIntValidator(1, 2147483647));
+    m_totalTime->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    midLayout->addWidget(m_totalTime, 1, 1);
+    midLayout->addWidget(new QLabel(tr("Tempo:")), 2, 0);
+    m_bpm = new QLineEdit;
+    m_bpm->setValidator(new QDoubleValidator(1., 1000000., 1));
+    m_bpm->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    midLayout->addWidget(m_bpm, 2, 1);
+    midLayout->addWidget(new QLabel(tr("Total key amount:")), 3, 0);
+    m_totalKeyAmount = new QLineEdit;
+    m_totalKeyAmount->setReadOnly(true);
+    m_totalKeyAmount->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    midLayout->addWidget(m_totalKeyAmount, 3, 1);
+    QPushButton *switchButton = new QPushButton(tr("Switch timestamp / tick"));
+    connect(switchButton, &QPushButton::clicked, m_currentChartModel, &ChartViewerModel::switchTickTimestamp);
+    switchButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    midLayout->addWidget(switchButton, 4, 0, 1, 2);
+    QWidget *spaceWidget = new QWidget;
+    spaceWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    midLayout->addWidget(spaceWidget, 5, 0, 1, 2);
 
-    setLayout(alllayout);
+    QVBoxLayout *leftLayout = new QVBoxLayout;
+    leftLayout->addLayout(layout1);
+    leftLayout->addWidget(chartTable);
+
+    QHBoxLayout *totalLayout = new QHBoxLayout;
+    totalLayout->addLayout(leftLayout);
+    totalLayout->addLayout(midLayout);
+
+    setLayout(totalLayout);
 }
 
 void ChartViewer::selectFile()
@@ -161,9 +199,21 @@ void ChartViewer::selectFile()
     m_currentChartModel->setChart(newChart);
 }
 
+void ChartViewer::chartReloaded()
+{
+    if (m_currentChartModel->chart() == nullptr)
+        return;
+
+    m_keyCount->setText(QString::number(m_currentChartModel->keys()));
+    m_totalTime->setText(QString::number(m_currentChartModel->chart()->totalTime));
+    m_bpm->setText(QString::number(m_currentChartModel->chart()->bpm));
+    m_totalKeyAmount->setText(QString::number(m_currentChartModel->chart()->calculateTotalKeyAmount()));
+}
+
 ChartViewerModel::ChartViewerModel(QObject *parent)
     : QAbstractTableModel(parent)
     , m_chart(nullptr)
+    , m_isTick(false)
 {
 }
 
@@ -175,7 +225,7 @@ int ChartViewerModel::rowCount(const QModelIndex &parent) const
     if (m_chart == nullptr)
         return 0;
 
-    return m_chartNotes.length();
+    return m_chart->notes.length();
 }
 
 int ChartViewerModel::columnCount(const QModelIndex &parent) const
@@ -188,58 +238,97 @@ int ChartViewerModel::columnCount(const QModelIndex &parent) const
 
 QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
 {
+    if (m_chart == nullptr)
+        return {};
+
     int column = index.column();
     int row = index.row();
 
-    const RmeChartNote &note = m_chartNotes.at(row);
+    const RmeChartNote &note = m_chart->notes.at(row);
     switch (column) {
     case 0: {
-        if (role == Qt::DisplayRole) {
-            QString type = tr("Unknown");
-            if (note.attr == 0) {
-                type = tr("Single Click");
-            } else if (note.attr == 3) {
-                if (note.timeDur == 0) {
-                    if (note.isEnd)
-                        type = tr("Single Slide");
-                    else
-                        type = tr("Long Press Start Change Track");
-                } else {
-                    if (note.isEnd)
-                        type = tr("Single Long Press");
-                    else
-                        type = tr("Long Press Start");
-                }
-            } else if (note.attr == 4) {
-                if (note.timeDur == 0) {
-                    if (note.isEnd)
-                        type = tr("Long Press End With Slide");
-                    else
-                        type = tr("Long Press Continue Change Track");
-                } else {
-                    if (note.isEnd)
-                        type = tr("Long Press End Without Slide");
-                    else
-                        type = tr("Long Press Continue Target Track");
-                }
-            }
-            return type;
-        }
         if (role == Qt::TextAlignmentRole)
             return static_cast<std::underlying_type_t<Qt::AlignmentFlag> >(Qt::AlignLeft | Qt::AlignVCenter);
 
+        if (note.attr == 0) {
+            if (role == Qt::DisplayRole)
+                return tr("Single Click");
+            if (role == ChartViewerModel::ChartDrawRole)
+                return 0;
+        } else if (note.attr == 3) {
+            if (note.timeDur == 0) {
+                if (note.isEnd) {
+                    if (role == Qt::DisplayRole)
+                        return tr("Single Slide");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 1;
+                } else {
+                    if (role == Qt::DisplayRole)
+                        return tr("Long Press Start Change Track");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 61;
+                }
+            } else {
+                if (note.isEnd) {
+                    if (role == Qt::DisplayRole)
+                        return tr("Single Long Press");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 2;
+                } else {
+                    if (role == Qt::DisplayRole)
+                        return tr("Long Press Start");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 62;
+                }
+            }
+        } else if (note.attr == 4) {
+            if (note.timeDur == 0) {
+                if (note.isEnd) {
+                    if (role == Qt::DisplayRole)
+                        return tr("Long Press End With Slide");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 101;
+                } else {
+                    if (role == Qt::DisplayRole)
+                        return tr("Long Press Continue Change Track");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 21;
+                }
+            } else {
+                if (note.isEnd) {
+                    if (role == Qt::DisplayRole)
+                        return tr("Long Press End Without Slide");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 102;
+                } else {
+                    if (role == Qt::DisplayRole)
+                        return tr("Long Press Continue Target Track");
+                    if (role == ChartViewerModel::ChartDrawRole)
+                        return 22;
+                }
+            }
+        }
+        if (role == Qt::DisplayRole)
+            return tr("Unknown");
         break;
     }
     case 1: {
-        if (role == Qt::DisplayRole)
+        if (role == Qt::DisplayRole) {
+            if (m_isTick)
+                return QString::number(RmeChartNote::timestampToTick(note.timestamp, m_chart->bpm));
             return QString::number(note.timestamp);
+        }
         if (role == Qt::TextAlignmentRole)
             return Qt::AlignCenter;
+        if (role == ChartViewerModel::ChartDrawRole)
+            return (int)(note.timestamp);
         break;
     }
     case 2: {
         if (role == Qt::DisplayRole)
             return QString::number(note.track - 2);
+        if (role == ChartViewerModel::ChartDrawRole)
+            return (int)(note.track - 2);
         if (role == Qt::TextAlignmentRole)
             return Qt::AlignCenter;
         break;
@@ -248,6 +337,8 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
         if ((note.attr != 0) && (note.timeDur == 0)) {
             if (role == Qt::DisplayRole)
                 return QString::number(note.toTrack - 2);
+            if (role == ChartViewerModel::ChartDrawRole)
+                return (int)(note.toTrack - 2);
             if (role == Qt::TextAlignmentRole)
                 return Qt::AlignCenter;
         } else {
@@ -264,8 +355,17 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
     }
     case 4: {
         if (note.timeDur != 0) {
-            if (role == Qt::DisplayRole)
+            if (role == Qt::DisplayRole) {
+                if (m_isTick) {
+                    unsigned int tickBegin = RmeChartNote::timestampToTick(note.timestamp, m_chart->bpm);
+                    unsigned int tickEnd = RmeChartNote::timestampToTick(note.timestamp + note.timeDur, m_chart->bpm);
+                    return QString::number(tickEnd - tickBegin);
+                }
+
                 return QString::number(note.timeDur);
+            }
+            if (role == ChartViewerModel::ChartDrawRole)
+                return (int)(note.timeDur);
             if (role == Qt::TextAlignmentRole)
                 return Qt::AlignCenter;
         } else {
@@ -293,13 +393,19 @@ QVariant ChartViewerModel::headerData(int section, Qt::Orientation orientation, 
             case 0:
                 return tr("Note Type");
             case 1:
+                if (m_isTick)
+                    return tr("Tick");
+
                 return tr("Timestamp");
             case 2:
                 return tr("Track");
             case 3:
                 return tr("Target Track (of slide)");
             case 4:
-                return tr("Duration (of long press)");
+                if (m_isTick)
+                    return tr("Duration (of long press) Tick");
+
+                return tr("Duration (of long press) Time");
             }
         } else {
             return QString::number(section + 1);
@@ -317,6 +423,35 @@ void ChartViewerModel::setChart(RmeChart *chart)
         m_chart = nullptr;
     }
     m_chart = chart;
-    m_chartNotes = QList(m_chart->notes.begin(), m_chart->notes.end());
+    endResetModel();
+}
+
+RmeChart *ChartViewerModel::chart()
+{
+    return m_chart;
+}
+
+const RmeChart *ChartViewerModel::chart() const
+{
+    return m_chart;
+}
+
+int ChartViewerModel::keys() const
+{
+    int maxTrack = 4;
+
+    if (m_chart == nullptr)
+        return maxTrack;
+
+    foreach (const RmeChartNote &n, m_chart->notes)
+        maxTrack = qMax(maxTrack, (int)(n.track - 2));
+
+    return qMin(maxTrack, 6);
+}
+
+void ChartViewerModel::switchTickTimestamp()
+{
+    beginResetModel();
+    m_isTick = !m_isTick;
     endResetModel();
 }
