@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>chartview/slideDown.png</file>
+        <file>chartview/slideDownFinal.png</file>
+        <file>chartview/slideHorizontal.png</file>
+        <file>chartview/slideLeft.png</file>
+        <file>chartview/slideLeftArrow.png</file>
+        <file>chartview/slideNote.png</file>
+        <file>chartview/slideRight.png</file>
+        <file>chartview/slideRightArrow.png</file>
+        <file>chartview/slideUp.png</file>
+        <file>chartview/slideVertical.png</file>
+        <file>chartview/note.png</file>
+    </qresource>
+</RCC>

@@ -1,6 +1,7 @@
 
 set(RMESSENTIALSAPP_HEADERS
     src/changename.h
+    src/chartviewermodel.h
     src/chartview.h
     src/download.h
     src/main.h
@@ -10,11 +11,16 @@ set(RMESSENTIALSAPP_HEADERS
 
 set(RMESSENTIALSAPP_SOURCES
     src/main.cpp
+    src/chartviewermodel.cpp
     src/chartview.cpp
     src/changename.cpp
     src/download.cpp
     src/songclientedit.cpp
     src/papasongclientedit.cpp
+)
+
+set(RMESSENTIALSAPP_RESOURCES
+    src/chartview.qrc
 )
 
 add_custom_target(RMEssentials ALL)
@@ -23,7 +29,7 @@ if (ANDROID)
 endif()
 
 if(Qt6_FOUND)
-    qt6_add_executable(RMEssentials6 WIN32 MACOSX_BUNDLE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES})
+    qt6_add_executable(RMEssentials6 WIN32 MACOSX_BUNDLE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES} ${RMESSENTIALSAPP_RESOURCES})
     add_dependencies(RMEssentials6 RmEss)
     add_dependencies(RMEssentials RMEssentials6)
 
@@ -71,9 +77,9 @@ if(Qt5_FOUND)
 
     if(ANDROID)
         # How to build it?
-        add_library(RMEssentials5 MODULE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES} ${RMESSENTIALSAPP_QMFILES5})
+        add_library(RMEssentials5 MODULE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES} ${RMESSENTIALSAPP_RESOURCES} ${RMESSENTIALSAPP_QMFILES5})
     else()
-        add_executable(RMEssentials5 WIN32 MACOSX_BUNDLE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES} ${RMESSENTIALSAPP_QMFILES5})
+        add_executable(RMEssentials5 WIN32 MACOSX_BUNDLE ${RMESSENTIALSAPP_HEADERS} ${RMESSENTIALSAPP_SOURCES} ${RMESSENTIALSAPP_RESOURCES} ${RMESSENTIALSAPP_QMFILES5})
     endif()
     add_dependencies(RMEssentials5 RmEss)
     add_dependencies(RMEssentials RMEssentials5)
