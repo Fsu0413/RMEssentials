@@ -39,6 +39,7 @@ public slots:
 private:
     RmeChart *m_chart;
     bool m_isTick;
+    bool m_remastered;
 };
 
 class ChartViewer : public QDialog

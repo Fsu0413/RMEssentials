@@ -55,6 +55,11 @@ ChartFormat getOpenFileName(QWidget *parent, const QString &dir, QString &filePa
 
     return ChartUnknown;
 }
+
+template <typename T> inline constexpr int sgn(T t1)
+{
+    return t1 == 0 ? 0 : (t1 > 0 ? 1 : -1);
+}
 }
 
 ChartViewer::ChartViewer(QWidget *parent)
@@ -214,6 +219,7 @@ ChartViewerModel::ChartViewerModel(QObject *parent)
     : QAbstractTableModel(parent)
     , m_chart(nullptr)
     , m_isTick(false)
+    , m_remastered(false)
 {
 }
 
@@ -321,7 +327,7 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
         if (role == Qt::TextAlignmentRole)
             return Qt::AlignCenter;
         if (role == ChartViewerModel::ChartDrawRole)
-            return (int)(note.timestamp);
+            return QString::number(RmeChartNote::timestampToTick(note.timestamp, m_chart->bpm));
         break;
     }
     case 2: {
@@ -337,10 +343,19 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
         if ((note.attr != 0) && (note.timeDur == 0)) {
             if (role == Qt::DisplayRole)
                 return QString::number(note.toTrack - 2);
-            if (role == ChartViewerModel::ChartDrawRole)
-                return (int)(note.toTrack - 2);
+
+            if (role == ChartViewerModel::ChartDrawRole) {
+                if (m_remastered && note.isEnd)
+                    return (int)(note.track + sgn(note.toTrack - note.track) - 2);
+                else
+                    return (int)(note.toTrack - 2);
+            }
             if (role == Qt::TextAlignmentRole)
                 return Qt::AlignCenter;
+            if (role == Qt::BackgroundRole) {
+                if (note.isEnd && qAbs(note.toTrack - note.track) > 1)
+                    return QColor(Qt::red);
+            }
         } else {
             if (role == Qt::DisplayRole)
                 return tr("{N/A}");
@@ -364,8 +379,11 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
 
                 return QString::number(note.timeDur);
             }
-            if (role == ChartViewerModel::ChartDrawRole)
-                return (int)(note.timeDur);
+            if (role == ChartViewerModel::ChartDrawRole) {
+                unsigned int tickBegin = RmeChartNote::timestampToTick(note.timestamp, m_chart->bpm);
+                unsigned int tickEnd = RmeChartNote::timestampToTick(note.timestamp + note.timeDur, m_chart->bpm);
+                return QString::number(tickEnd - tickBegin);
+            }
             if (role == Qt::TextAlignmentRole)
                 return Qt::AlignCenter;
         } else {
