@@ -172,15 +172,15 @@ SongClientEditDialog::SongClientEditDialog(QWidget *parent)
     connect(m_controls->szSongTime, &QCheckBox::toggled, this, &SongClientEditDialog::contentEdited);
     m_controls->iRegion = new QLineEdit;
     connect(m_controls->iRegion, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
-    QIntValidator *iRegionValidator = new QIntValidator(0, 11, this);
+    QIntValidator *iRegionValidator = new QIntValidator(0, 2147483647, this);
     m_controls->iRegion->setValidator(iRegionValidator);
     m_controls->iStyle = new QLineEdit;
     connect(m_controls->iStyle, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
-    QIntValidator *iStyleValidator = new QIntValidator(0, 20, this);
+    QIntValidator *iStyleValidator = new QIntValidator(0, 2147483647, this);
     m_controls->iStyle->setValidator(iStyleValidator);
     m_controls->szBPM = new QLineEdit;
     connect(m_controls->szBPM, &QLineEdit::textEdited, this, &SongClientEditDialog::contentEdited);
-    QDoubleValidator *szBPMValidator = new QDoubleValidator(0, 10000, 3, this);
+    QDoubleValidator *szBPMValidator = new QDoubleValidator(1., 625., 1, this);
     m_controls->szBPM->setValidator(szBPMValidator);
 
     m_controls->ucIsNew = new QCheckBox(QStringLiteral("ucIsNew"));
