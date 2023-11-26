@@ -29,7 +29,7 @@ private:
     QLineEdit *m_keyCount;
     QLineEdit *m_totalTime;
     QLineEdit *m_bpm;
-    QLineEdit *m_totalKeyAmount;
+    QLineEdit *m_totalJudgementAmount;
     QComboBox *m_tickPerGridBox;
 
 private slots:

@@ -97,11 +97,11 @@ ChartViewer::ChartViewer(QWidget *parent)
     m_bpm->setValidator(new QDoubleValidator(1., 625., 1, this));
     m_bpm->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     leftLayout->addWidget(m_bpm, 3, 1, 1, 2);
-    leftLayout->addWidget(new QLabel(tr("Total key amount:")), 4, 0);
-    m_totalKeyAmount = new QLineEdit;
-    m_totalKeyAmount->setReadOnly(true);
-    m_totalKeyAmount->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    leftLayout->addWidget(m_totalKeyAmount, 4, 1, 1, 2);
+    leftLayout->addWidget(new QLabel(tr("Total judgement amount:")), 4, 0);
+    m_totalJudgementAmount = new QLineEdit;
+    m_totalJudgementAmount->setReadOnly(true);
+    m_totalJudgementAmount->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    leftLayout->addWidget(m_totalJudgementAmount, 4, 1, 1, 2);
     m_currentChartModel = new ChartViewerModel(this);
     connect(m_currentChartModel, &ChartViewerModel::modelReset, this, &ChartViewer::chartReloaded);
     m_chartTableView = new QTableView;
@@ -231,7 +231,7 @@ void ChartViewer::chartReloaded()
     m_keyCount->setText(QString::number(m_currentChartModel->keys()));
     m_totalTime->setText(QString::number(m_currentChartModel->chart()->totalTime));
     m_bpm->setText(QString::number(m_currentChartModel->chart()->bpm));
-    m_totalKeyAmount->setText(QString::number(m_currentChartModel->chart()->calculateTotalKeyAmount()));
+    m_totalJudgementAmount->setText(QString::number(m_currentChartModel->chart()->calculateTotalKeyAmount()));
 }
 
 void ChartViewer::setTickPerGrid()
