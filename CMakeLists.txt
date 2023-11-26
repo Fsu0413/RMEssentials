@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.19)
 include(.FsEnv.cmake OPTIONAL)
 
 project(RMEssentials
-    VERSION 13.10.28
+    VERSION 13.11.26
     DESCRIPTION "Program for manipulating Rhythm Master files"
     HOMEPAGE_URL "https://github.com/Fsu0413/RMEssentials"
     LANGUAGES C CXX
@@ -16,7 +16,7 @@ if (RMESSENTIALS_SOURCE_DIR_ABSOLUTE STREQUAL RMESSENTIALS_BINARY_DIR_ABSOLUTE)
     message(FATAL_ERROR "Please!!!!! Do not in-place build RMEssentials. Instead make a separate build directory and build from there. See CMake manual for details.")
 endif()
 
-set(RMEVERSION 20231028)
+set(RMEVERSION 20231126)
 
 set(CMAKE_CXX_STANDARD 17)
 

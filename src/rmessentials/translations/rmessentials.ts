@@ -390,96 +390,106 @@ Are you sure?</source>
 <context>
     <name>ChartViewer</name>
     <message>
-        <location filename="../src/chartview.cpp" line="46"/>
+        <location filename="../src/chartview.cpp" line="47"/>
         <source>IMD Files</source>
         <translation>IMD 文件</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="46"/>
+        <location filename="../src/chartview.cpp" line="47"/>
         <source>IMD Json files</source>
         <translation>IMD Json 文件</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="47"/>
+        <location filename="../src/chartview.cpp" line="48"/>
         <source>RMP files</source>
         <translation>RMP 文件</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="68"/>
+        <location filename="../src/chartview.cpp" line="69"/>
         <source>Rhythm Master Chart Viewer</source>
         <translation>节奏大师谱面查看器</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="73"/>
+        <location filename="../src/chartview.cpp" line="74"/>
         <source>Browse the file using the Browse button</source>
         <translation>使用浏览按钮浏览文件</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="77"/>
+        <location filename="../src/chartview.cpp" line="78"/>
         <source>Browse...</source>
         <translation>浏览…</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="80"/>
+        <location filename="../src/chartview.cpp" line="81"/>
         <source>File:</source>
         <translation>文件：</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="84"/>
+        <location filename="../src/chartview.cpp" line="85"/>
         <source>Key count:</source>
         <translation>键数：</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="89"/>
+        <location filename="../src/chartview.cpp" line="90"/>
         <source>Total time:</source>
         <translation>总时间：</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="94"/>
+        <location filename="../src/chartview.cpp" line="95"/>
         <source>Tempo:</source>
         <translation>BPM：</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="99"/>
-        <source>Total key amount:</source>
+        <location filename="../src/chartview.cpp" line="100"/>
+        <source>Total judgement amount:</source>
         <translation>总判定个数：</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="110"/>
+        <location filename="../src/chartview.cpp" line="111"/>
         <source>Switch timestamp / tick</source>
         <translation>切换时间戳 / 时间点</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="134"/>
-        <location filename="../src/chartview.cpp" line="148"/>
-        <location filename="../src/chartview.cpp" line="162"/>
-        <location filename="../src/chartview.cpp" line="169"/>
-        <location filename="../src/chartview.cpp" line="179"/>
+        <location filename="../src/chartview.cpp" line="118"/>
+        <source>Tick per Grid:</source>
+        <translation>每格子时间点个数：</translation>
+    </message>
+    <message>
+        <location filename="../src/chartview.cpp" line="129"/>
+        <source>Switch Legacy / Remastered</source>
+        <translation>切换老式 / 新式节奏大师表示</translation>
+    </message>
+    <message>
+        <location filename="../src/chartview.cpp" line="164"/>
+        <location filename="../src/chartview.cpp" line="178"/>
+        <location filename="../src/chartview.cpp" line="192"/>
+        <location filename="../src/chartview.cpp" line="199"/>
+        <location filename="../src/chartview.cpp" line="209"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="134"/>
+        <location filename="../src/chartview.cpp" line="164"/>
         <source>The file can&apos;t be opened. Please double check.</source>
         <translation>无法打开文件。请再次确认。</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="148"/>
+        <location filename="../src/chartview.cpp" line="178"/>
         <source>RMP chart decrypt failed.</source>
         <translation>RMP 谱面解密失败。</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="162"/>
+        <location filename="../src/chartview.cpp" line="192"/>
         <source>Can&apos;t decode JSON file.</source>
         <translation>无法解码 JSON 文件。</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="169"/>
+        <location filename="../src/chartview.cpp" line="199"/>
         <source>JSON file is not a valid chart.</source>
         <translation>JSON 文件不是合规的谱面。</translation>
     </message>
     <message>
-        <location filename="../src/chartview.cpp" line="179"/>
+        <location filename="../src/chartview.cpp" line="209"/>
         <source>IMD file is not a valid chart.</source>
         <translation>IMD 文件不是合规的谱面。</translation>
     </message>

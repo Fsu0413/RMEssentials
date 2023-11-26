@@ -126,7 +126,7 @@ ChartViewer::ChartViewer(QWidget *parent)
     connect(m_tickPerGridBox, &QComboBox::currentIndexChanged, this, &ChartViewer::setTickPerGrid);
     m_tickPerGridBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     rightLayout->addWidget(m_tickPerGridBox, 0, 1, 1, 1);
-    QPushButton *switchButton2 = new QPushButton(tr("Switch Old / Remastered"));
+    QPushButton *switchButton2 = new QPushButton(tr("Switch Legacy / Remastered"));
     connect(switchButton2, &QPushButton::clicked, m_currentChartModel, &ChartViewerModel::switchLegacyRemastered);
     switchButton2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     rightLayout->addWidget(switchButton2, 0, 2, 1, 1);
