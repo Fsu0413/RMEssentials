@@ -718,6 +718,25 @@ Are you sure?</source>
         <translation>关于 QuaZip...</translation>
     </message>
     <message>
+        <location filename="../src/main.cpp" line="186"/>
+        <source>The version of RMEssentials frontend is: %1.
+
+RMEssentials is a small software written by Fsu0413 (from Wings of Melody). 
+It is used to operate the files for a game by Tencent: Rhythm Master. 
+It now contains 4 main features: Rename / Convert, Download SongClientEdit and ChartView. 
+
+This Program is linked against Qt %2, and loads Qt %3 to run.
+This Program is linked against libRmEss %1, and loads libRMEss %4 to run.</source>
+        <translation>当前节奏大师工具箱前端的版本是：%1.
+
+节奏大师工具箱是由 Wom★Fsu0413 编写的小软件。
+用来操作节奏大师（一款由腾讯开发的游戏）相关的文件的软件。
+现在包含 4 个主要功能：重命名 / 谱面转换、下载歌曲和谱面、客户端歌曲编辑和谱面查看。
+
+这个程序链接时使用 Qt %2，运行时加载 Qt %3。
+这个程序链接时使用 libRMEss %1，运行时加载libRMEss %4。</translation>
+    </message>
+    <message>
         <location filename="../src/main.cpp" line="197"/>
         <source>
 
@@ -788,25 +807,6 @@ This Program is linked against XXTEA-c %1.
         <location filename="../src/main.cpp" line="88"/>
         <source>About</source>
         <translation>关于</translation>
-    </message>
-    <message>
-        <location filename="../src/main.cpp" line="186"/>
-        <source>The version of RMEssentials frontend is: %1.
-
-RMEssentials is a small software written by Fsu0413 (from Wings of Melody). 
-It is used to operate the files for a game by Tencent: Rhythm Master. 
-It now contains 3 main features: Rename / Convert, Download and SongClientEdit. 
-
-This Program is linked against Qt %2, and loads Qt %3 to run.
-This Program is linked against libRmEss %1, and loads libRMEss %4 to run.</source>
-        <translation>当前节奏大师工具箱前端的版本是：%1.
-
-节奏大师工具箱是由 Wom★Fsu0413 编写的小软件。
-用来操作节奏大师（一款由腾讯开发的游戏）相关的文件的软件。
-现在包含 3 个主要功能：重命名 / 谱面转换，下载歌曲和谱面和客户端歌曲编辑。
-
-这个程序链接时使用 Qt %2，运行时加载 Qt %3。
-这个程序链接时使用 libRMEss %1，运行时加载libRMEss %4。</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="195"/>
