@@ -1,5 +1,6 @@
 
 #include "chartview.h"
+#include "chartscene.h"
 #include "chartviewermodel.h"
 
 #include <RmEss/RmeChart>
@@ -7,6 +8,7 @@
 #include <RmEss/RmeDownloader>
 #include <RmEss/RmeUtils>
 
+#include <QComboBox>
 #include <QDir>
 #include <QDoubleValidator>
 #include <QFileDialog>
@@ -22,6 +24,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QScrollBar>
 #include <QStandardPaths>
 #include <QTableView>
 #include <QVBoxLayout>
@@ -101,16 +104,45 @@ ChartViewer::ChartViewer(QWidget *parent)
     leftLayout->addWidget(m_totalKeyAmount, 4, 1, 1, 2);
     m_currentChartModel = new ChartViewerModel(this);
     connect(m_currentChartModel, &ChartViewerModel::modelReset, this, &ChartViewer::chartReloaded);
-    m_chartView = new QTableView;
-    m_chartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_chartView->setModel(m_currentChartModel);
-    leftLayout->addWidget(m_chartView, 5, 0, 1, 3);
+    m_chartTableView = new QTableView;
+    m_chartTableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_chartTableView->setModel(m_currentChartModel);
+    leftLayout->addWidget(m_chartTableView, 5, 0, 1, 3);
     QPushButton *switchButton = new QPushButton(tr("Switch timestamp / tick"));
     connect(switchButton, &QPushButton::clicked, m_currentChartModel, &ChartViewerModel::switchTickTimestamp);
     switchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     leftLayout->addWidget(switchButton, 6, 0, 1, 3);
 
-    setLayout(leftLayout);
+    QGridLayout *rightLayout = new QGridLayout;
+
+    rightLayout->addWidget(new QLabel(tr("Tick per Grid:")), 0, 0, 1, 1);
+    m_tickPerGridBox = new QComboBox;
+    m_tickPerGridBox->setEditable(false);
+    for (int i = 1; i < 48; ++i) {
+        if (48 % i == 0)
+            m_tickPerGridBox->addItem(QString::number(i));
+    }
+    m_tickPerGridBox->setCurrentText(QStringLiteral("12"));
+    connect(m_tickPerGridBox, &QComboBox::currentIndexChanged, this, &ChartViewer::setTickPerGrid);
+    m_tickPerGridBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    rightLayout->addWidget(m_tickPerGridBox, 0, 1, 1, 1);
+    QPushButton *switchButton2 = new QPushButton(tr("Switch Old / Remastered"));
+    connect(switchButton2, &QPushButton::clicked, m_currentChartModel, &ChartViewerModel::switchLegacyRemastered);
+    switchButton2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    rightLayout->addWidget(switchButton2, 0, 2, 1, 1);
+
+    m_chartGraphicsView = new QGraphicsView;
+    m_chartGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_chartScene = new ChartScene;
+    m_chartGraphicsView->setScene(m_chartScene);
+    m_chartScene->setChartModel(m_currentChartModel);
+    rightLayout->addWidget(m_chartGraphicsView, 1, 0, 1, 3);
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addLayout(leftLayout);
+    layout->addLayout(rightLayout);
+
+    setLayout(layout);
 }
 
 void ChartViewer::selectFile()
@@ -202,6 +234,12 @@ void ChartViewer::chartReloaded()
     m_totalKeyAmount->setText(QString::number(m_currentChartModel->chart()->calculateTotalKeyAmount()));
 }
 
+void ChartViewer::setTickPerGrid()
+{
+    int tpg = m_tickPerGridBox->currentText().toInt();
+    m_chartScene->setTickPerGrid(tpg);
+}
+
 void ChartViewer::showEvent(QShowEvent *event)
 {
     QDialog::showEvent(event);
@@ -226,14 +264,15 @@ void ChartViewer::showEvent(QShowEvent *event)
     // clang-format on
 
     noteTypeWidth *= 1.1;
-    m_chartView->setColumnWidth(0, noteTypeWidth);
+    m_chartTableView->setColumnWidth(0, noteTypeWidth);
     totalWidth += noteTypeWidth;
 
     for (int i : {1, 2, 3, 4}) {
         int currentWidth = fm.horizontalAdvance(m_currentChartModel->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString()) * 1.3;
         totalWidth += currentWidth;
-        m_chartView->setColumnWidth(i, currentWidth);
+        m_chartTableView->setColumnWidth(i, currentWidth);
     }
 
-    m_chartView->setMinimumWidth(totalWidth);
+    m_chartTableView->setMinimumWidth(totalWidth);
+    m_chartGraphicsView->setFixedWidth(450 + m_chartGraphicsView->verticalScrollBar()->width());
 }

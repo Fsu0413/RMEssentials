@@ -17,16 +17,17 @@ public:
 
     enum NoteType
     {
-        SingleClick = 0, // 0x0
-        SingleSlide = 1, // 0x1
-        SingleLongPress = 2, // 0x2
-        LongPressContinueChangeTrack = 3, // 0x21
-        LongPressContinueTargetTrack = 4, // 0x22
-        LongPressStartChangeTrack = 5, // 0x61
-        LongPressStart = 6, // 0x62
-        LongPressEndWithSlide = 7, // 0xA1, so-called "Hook"
-        LongPressEnd = 8, // 0xA2
+        SingleClick, // 0x0
+        SingleSlide, // 0x1
+        SingleLongPress, // 0x2
+        LongPressContinueChangeTrack, // 0x21
+        LongPressContinueTargetTrack, // 0x22
+        LongPressStartChangeTrack, // 0x61
+        LongPressStart, // 0x62
+        LongPressEndWithSlide, // 0xA1, so-called "Hook"
+        LongPressEnd, // 0xA2
 
+        NoteTypeMax,
         NoteTypeUnknown = 255,
     };
 
@@ -47,6 +48,7 @@ public:
 
 public slots:
     void switchTickTimestamp();
+    void switchLegacyRemastered();
 
 private:
     RmeChart *m_chart;

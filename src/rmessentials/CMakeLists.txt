@@ -2,6 +2,7 @@
 set(RMESSENTIALSAPP_HEADERS
     src/changename.h
     src/chartviewermodel.h
+    src/chartscene.h
     src/chartview.h
     src/download.h
     src/main.h
@@ -12,6 +13,7 @@ set(RMESSENTIALSAPP_HEADERS
 set(RMESSENTIALSAPP_SOURCES
     src/main.cpp
     src/chartviewermodel.cpp
+    src/chartscene.cpp
     src/chartview.cpp
     src/changename.cpp
     src/download.cpp
