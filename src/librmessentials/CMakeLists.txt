@@ -92,7 +92,7 @@ if (Qt6_FOUND)
             PUBLIC Qt6::Gui
         )
     endif()
-    target_include_directories(RmEss6 PUBLIC ${CMAKE_BINARY_DIR}/dist/include)
+    target_include_directories(RmEss6 PUBLIC ${CMAKE_BINARY_DIR}/build/include)
     rmessentials_win32_rc(RmEss6 false "")
 
     install(TARGETS RmEss6
@@ -160,7 +160,7 @@ if (Qt5_FOUND)
             PUBLIC Qt5::Gui
         )
     endif()
-    target_include_directories(RmEss5 PUBLIC ${CMAKE_BINARY_DIR}/dist/include)
+    target_include_directories(RmEss5 PUBLIC ${CMAKE_BINARY_DIR}/build/include)
     rmessentials_win32_rc(RmEss5 false "")
 
     install(TARGETS RmEss5

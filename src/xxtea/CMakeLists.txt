@@ -18,7 +18,7 @@ if (NOT BUILD_SHARED_LIBS)
     target_compile_definitions(xxtea INTERFACE RMESSENTIALS_BUILD_STATIC_XXTEA)
 endif()
 
-target_include_directories(xxtea INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
+target_include_directories(xxtea INTERFACE ${CMAKE_BINARY_DIR}/build/include)
 
 install(TARGETS xxtea
     RUNTIME

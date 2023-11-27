@@ -50,7 +50,7 @@ if (DEFINED PROJECT_NAME)
             list(PREPEND header_generated_file_names "${header_file_name}")
             set(header_generated_paths)
             foreach (header_generated_file_name IN LISTS header_generated_file_names)
-                list(APPEND header_generated_paths "${CMAKE_BINARY_DIR}/dist/include/${target}/${header_generated_file_name}")
+                list(APPEND header_generated_paths "${CMAKE_BINARY_DIR}/build/include/${target}/${header_generated_file_name}")
             endforeach()
             add_custom_command(OUTPUT ${header_generated_paths}
                                COMMAND "${CMAKE_COMMAND}" -P "${RMESSENTIALS_AUTO_GENERATE_HEADER_CMAKE_FILE}" "${header_path_absolute}" ${header_generated_paths}
@@ -58,6 +58,10 @@ if (DEFINED PROJECT_NAME)
                                COMMENT "Generating header files \"${header_file}\"..."
             )
             target_sources("${target}" PRIVATE ${header_generated_paths})
+            install(FILES ${header_generated_paths}
+                DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${target}"
+                OPTIONAL
+            )
         endforeach()
     endfunction()
 else()

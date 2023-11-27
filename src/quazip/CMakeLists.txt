@@ -68,7 +68,7 @@ if (Qt6_FOUND)
         PUBLIC Qt6::Core
         PUBLIC Qt6::Core5Compat
     )
-    target_include_directories(quazip6 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
+    target_include_directories(quazip6 INTERFACE ${CMAKE_BINARY_DIR}/build/include)
 
     if (RMESSENTIALS_USE_QUAZIP)
         install(TARGETS quazip6
@@ -108,7 +108,7 @@ if (Qt5_FOUND)
     target_link_libraries(quazip5
         PUBLIC Qt5::Core
     )
-    target_include_directories(quazip5 INTERFACE ${CMAKE_BINARY_DIR}/dist/include)
+    target_include_directories(quazip5 INTERFACE ${CMAKE_BINARY_DIR}/build/include)
 
     if (RMESSENTIALS_USE_QUAZIP)
         install(TARGETS quazip5
