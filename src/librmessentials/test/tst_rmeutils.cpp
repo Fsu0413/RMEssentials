@@ -209,6 +209,13 @@ private slots:
 
         QCOMPARE(r, result);
     }
+
+    void RmeUtilsRmpKeyForChartQString()
+    {
+        QString fileName = QStringLiteral("x_5k_ez.imd");
+        QByteArray arr = RmeUtils::rmpKeyForChart(fileName);
+        QCOMPARE(arr, QByteArray("RMP4TT3RNx_5k_ez"));
+    }
 };
 
 const QString tst_RmeUtils::resourcePrefix = QStringLiteral(":/tst_rmeutils/");
