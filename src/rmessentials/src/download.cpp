@@ -498,7 +498,7 @@ void DownloadDialog::startDownloadAllMissingLegacySong()
         m_legacySongNameCombo->setCurrentIndex(m_legacySongNameCombo->currentIndex() + 1);
     }
 
-    startDownloadSong(Mis);
+    startDownloadSong(MisLegacy);
 }
 
 void DownloadDialog::startDownloadNextMissingLegacy()
@@ -513,7 +513,7 @@ void DownloadDialog::startDownloadNextMissingLegacy()
         m_legacySongNameCombo->setCurrentIndex(m_legacySongNameCombo->currentIndex() + 1);
     }
 
-    startDownloadSong(Mis);
+    startDownloadSong(MisLegacy);
 }
 
 void DownloadDialog::startDownloadSong(DownloadMode mode)
