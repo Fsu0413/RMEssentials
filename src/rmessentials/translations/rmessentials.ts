@@ -498,92 +498,92 @@ Are you sure?</source>
     <name>ChartViewerModel</name>
     <message>
         <location filename="../src/chartviewermodel.cpp" line="134"/>
-        <location filename="../src/chartviewermodel.cpp" line="164"/>
+        <location filename="../src/chartviewermodel.cpp" line="162"/>
         <source>{N/A}</source>
         <translation>【不适用】</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="185"/>
+        <location filename="../src/chartviewermodel.cpp" line="183"/>
         <source>Note Type</source>
         <translation>按键类型</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="188"/>
+        <location filename="../src/chartviewermodel.cpp" line="186"/>
         <source>Tick</source>
         <translation>时间点</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="190"/>
+        <location filename="../src/chartviewermodel.cpp" line="188"/>
         <source>Timestamp</source>
         <translation>时间戳</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="194"/>
+        <location filename="../src/chartviewermodel.cpp" line="192"/>
         <source>Target track</source>
         <translation>目标轨道</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="197"/>
+        <location filename="../src/chartviewermodel.cpp" line="195"/>
         <source>Tick Duration</source>
         <translation>时间点长度</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="199"/>
+        <location filename="../src/chartviewermodel.cpp" line="197"/>
         <source>Time Duration</source>
         <translation>时间长度</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="246"/>
+        <location filename="../src/chartviewermodel.cpp" line="244"/>
         <source>Single Click</source>
         <translation>单点</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="247"/>
+        <location filename="../src/chartviewermodel.cpp" line="245"/>
         <source>Single Slide</source>
         <translation>滑动</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="248"/>
+        <location filename="../src/chartviewermodel.cpp" line="246"/>
         <source>Single Long Press</source>
         <translation>长按 - 单独出现</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="249"/>
+        <location filename="../src/chartviewermodel.cpp" line="247"/>
         <source>Long Press Continue Change Track</source>
         <translation>长按 - 中途切换轨道</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="250"/>
+        <location filename="../src/chartviewermodel.cpp" line="248"/>
         <source>Long Press Continue Target Track</source>
         <translation>长按 - 切换目标轨道</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="251"/>
+        <location filename="../src/chartviewermodel.cpp" line="249"/>
         <source>Long Press Start Change Track</source>
         <translation>长按 - 起始时切换轨道</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="252"/>
+        <location filename="../src/chartviewermodel.cpp" line="250"/>
         <source>Long Press Start</source>
         <translation>长按 - 起始时按住</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="253"/>
+        <location filename="../src/chartviewermodel.cpp" line="251"/>
         <source>Long Press End With Slide</source>
         <translation>长按 - 切换轨道后结束</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="254"/>
+        <location filename="../src/chartviewermodel.cpp" line="252"/>
         <source>Long Press End Without Slide</source>
         <translation>长按 - 按住后结束</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="256"/>
+        <location filename="../src/chartviewermodel.cpp" line="254"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="../src/chartviewermodel.cpp" line="192"/>
+        <location filename="../src/chartviewermodel.cpp" line="190"/>
         <source>Track</source>
         <translation>轨道</translation>
     </message>

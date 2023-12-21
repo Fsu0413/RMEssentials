@@ -145,17 +145,15 @@ QVariant ChartViewerModel::data(const QModelIndex &index, int role) const
         if (note.timeDur != 0) {
             if (role == Qt::DisplayRole) {
                 if (m_isTick) {
-                    unsigned int tickBegin = RmeChartNote::timestampToTick(note.timestamp, m_chart->bpm);
-                    unsigned int tickEnd = RmeChartNote::timestampToTick(note.timestamp + note.timeDur, m_chart->bpm);
-                    return QString::number(tickEnd - tickBegin);
+                    unsigned int tickEnd = RmeChartNote::timestampToTick(note.timeDur, m_chart->bpm);
+                    return QString::number(tickEnd);
                 }
 
                 return QString::number(note.timeDur);
             }
             if (role == ChartViewerModel::ChartDrawRole) {
-                unsigned int tickBegin = RmeChartNote::timestampToTick(note.timestamp, m_chart->bpm);
-                unsigned int tickEnd = RmeChartNote::timestampToTick(note.timestamp + note.timeDur, m_chart->bpm);
-                return (int64_t)(tickEnd - tickBegin);
+                unsigned int tickEnd = RmeChartNote::timestampToTick(note.timeDur, m_chart->bpm);
+                return QString::number(tickEnd);
             }
             if (role == Qt::TextAlignmentRole)
                 return Qt::AlignCenter;

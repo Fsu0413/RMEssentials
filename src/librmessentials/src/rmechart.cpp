@@ -120,7 +120,7 @@ QJsonObject RmeChartNote::toJsonNote(RmeChartVersion version, double bpm, int id
     ob.insert(QStringLiteral("tick"), (qint64)(RmeChartNote::timestampToTick(timestamp, bpm)));
     ob.insert(QStringLiteral("key"), key);
     if (attr != 0 && timeDur != 0)
-        ob.insert(QStringLiteral("dur"), (qint64)(RmeChartNote::timestampToTick(timestamp + timeDur, bpm) - RmeChartNote::timestampToTick(timestamp, bpm)));
+        ob.insert(QStringLiteral("dur"), (qint64)(RmeChartNote::timestampToTick(timeDur, bpm)));
     else
         ob.insert(QStringLiteral("dur"), (qint64)0);
     ob.insert(QStringLiteral("isEnd"), isEnd ? 1 : 0);
@@ -371,9 +371,10 @@ int RmeChart::calculateTotalKeyAmount() const
             if (!(note.attr != 0 && !note.isEnd))
                 ++totalNum;
         } else {
-            unsigned int tickBegin = RmeChartNote::timestampToTick(note.timestamp, bpm);
-            unsigned int tickEnd = RmeChartNote::timestampToTick(note.timestamp + note.timeDur, bpm);
-            totalNum += ((tickEnd - tickBegin) / 12 + 1);
+            //            unsigned int tickBegin = RmeChartNote::timestampToTick(note.timestamp, bpm);
+            //            unsigned int tickEnd = RmeChartNote::timestampToTick(note.timestamp + note.timeDur, bpm);
+            //            totalNum += ((tickEnd - tickBegin) / 12 + 1);
+            totalNum += (RmeChartNote::timestampToTick(note.timeDur, bpm) / 12 + 1);
         }
     }
 
