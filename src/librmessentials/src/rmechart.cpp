@@ -373,7 +373,7 @@ int RmeChart::calculateTotalKeyAmount() const
         } else {
             unsigned int tickBegin = RmeChartNote::timestampToTick(note.timestamp, bpm);
             unsigned int tickEnd = RmeChartNote::timestampToTick(note.timestamp + note.timeDur, bpm);
-            totalNum += ((tickEnd - tickBegin + 1) / 12 + 1);
+            totalNum += ((tickEnd - tickBegin) / 12 + 1);
         }
     }
 
